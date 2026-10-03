@@ -33,6 +33,8 @@ Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합
 
 브랜치 생성, PR 대상, 릴리즈 절차는 [기여 및 Git Flow 규칙](CONTRIBUTING.md)을 따릅니다.
 
+모든 PR의 추가·삭제 줄 수 합은 **800 이하**로 제한합니다. 개발 PR은 `ui/ux`·`data`·`domain`·`feat`별로 나누고 영역 라벨 하나를 붙입니다. `PR policy` 필수 검사가 변경량, 라벨, 한국어 제목과 유형 접두어 사용 여부를 확인합니다.
+
 ## Codex 슬래시 커맨드
 
 이 저장소의 [Codex 설정](.codex/config.toml)은 새 세션의 모델을 `gpt-6-luna`, 추론 수준을 `max`로 지정합니다. 프로젝트를 신뢰한 Codex 세션에서 적용되며, 세션에서 명시적으로 선택한 모델이 있으면 그 선택이 우선합니다.
@@ -47,7 +49,7 @@ python3 scripts/install_codex_prompts.py
 | --- | --- | --- |
 | `/prompts:yapp-commit` | 변경 검토·검증·커밋 | `/prompts:yapp-commit ISSUE=1 TYPE=chore` |
 | `/prompts:yapp-issue` | 중복 확인·이슈 생성 | `/prompts:yapp-issue TYPE=bug TITLE="로그인 오류" DETAILS="재현 방법..."` |
-| `/prompts:yapp-pr` | 대상 브랜치 확인·검증·PR 생성 | `/prompts:yapp-pr ISSUE=1 TITLE="Codex 슬래시 커맨드 추가"` |
+| `/prompts:yapp-pr` | 대상 브랜치·800줄 제한·영역 확인·PR 생성 | `/prompts:yapp-pr ISSUE=1 AREA=build TITLE="Codex 슬래시 커맨드 추가"` |
 
 설치된 파일을 원본에 맞춰 갱신하려면 `python3 scripts/install_codex_prompts.py --force`를 실행합니다. 사용자 정의 프롬프트는 명령을 실행할 때 현재 세션의 모델을 자동으로 바꾸지 않습니다.
 

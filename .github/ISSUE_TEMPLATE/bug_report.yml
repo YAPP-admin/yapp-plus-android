@@ -7,7 +7,7 @@ body:
     id: description
     attributes:
       label: 발생한 문제
-      description: 실제로 일어난 일을 설명해 주세요.
+      description: 실제로 일어난 일을 설명해 주세요. 수정 시 bug와 작업 영역(ui/ux·data·domain·feat·build·refactor) 라벨을 함께 붙입니다.
       placeholder: 어떤 화면에서 어떤 문제가 발생했나요?
     validations:
       required: true

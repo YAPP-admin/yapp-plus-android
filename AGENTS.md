@@ -9,6 +9,26 @@
 - 구현 요청은 필요한 이슈 작성, 구현, 검증, 커밋, 푸시와 PR 생성까지 진행한다. 사용자가 범위를 제한하면 그 범위를 따른다. 이미 승인된 작업을 다시 승인받지 않는다.
 - 요청이 설계 논의나 조사에 한정되면 먼저 결과를 정리한다. 제품 정책·API 계약 등 구현에 필요한 정보가 없으면 해당 정보만 질문한다.
 
+## 프로젝트 스킬과 승인된 규칙
+
+아래 스킬은 사용자와 검토한 1~35번 규칙을 YAPP 구조에 맞춰 정리한 실행 기준이다.
+작업에 해당하는 스킬을 읽고 구현·리뷰·검증에 적용한다.
+
+| 작업 | 스킬 |
+| --- | --- |
+| 책임 배치·계층 경계·의존성 변경 | [yapp-architecture](.agents/skills/yapp-architecture/SKILL.md) |
+| Kotlin·Gradle Kotlin 작성·리뷰 | [yapp-coding-conventions](.agents/skills/yapp-coding-conventions/SKILL.md) |
+| 화면·상태·요청·Repository·객체 조립·화면 이동 | [yapp-design-patterns](.agents/skills/yapp-design-patterns/SKILL.md) |
+| 파일 배치·패키지·모듈 추가·이동 | [yapp-module-structure](.agents/skills/yapp-module-structure/SKILL.md) |
+
+- Kotlin 변경에는 coding-conventions를 항상 적용한다. 서식 기준은 `.editorconfig`에도 기록한다.
+- 확장 함수는 허용한다. `private` 클래스는 금지하고 파일당 클래스·인터페이스는 하나로 둔다.
+  sealed 타입과 관련 하위 타입은 같은 파일에 둘 수 있다.
+- 제어문 중첩은 최대 2단계다. 함수는 15줄 초과 시 분리를 검토하고 다른 책임이 있으면 나눈다.
+- 포맷터·정적 분석 플러그인과 DI 라이브러리는 별도로 선택한다.
+- 다른 프로젝트 문서는 참고 자료다. 승인되지 않은 규칙이나 구현체를 그대로 적용하지 않는다.
+  KMP·iOS 구조, Ramap 전용 타입·패키지·라이브러리와 작업 승인 절차는 가져오지 않는다.
+
 ## 승인된 모듈 구조
 
 | 모듈 | 책임 | 현재 상태 |
@@ -107,6 +127,7 @@ git diff --check
 
 ## Code Review Rules
 
+- 변경에 해당하는 프로젝트 스킬을 읽고 승인된 코딩·UI·데이터·모듈 규칙을 확인한다.
 - 승인된 모듈 의존성 방향, DTO 경계, Compose와 ViewModel의 역할이 지켜지는지 확인한다.
 - 로딩·실패·재시도, 중복 입력, 취소 처리와 요구사항의 주요 경계 조건을 확인한다.
 - PR diff가 라벨의 작업 영역 하나에 해당하고 선행 계약과 호환되는지 확인한다. 실제 영역 분리는 라벨 검사만으로 증명되지 않는다.

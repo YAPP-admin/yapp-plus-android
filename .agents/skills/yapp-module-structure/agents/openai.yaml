@@ -1,0 +1,4 @@
+interface:
+    display_name: "YAPP Module Structure"
+    short_description: "Place YAPP files and modules within approved boundaries"
+    default_prompt: "Use $yapp-module-structure to place files or add a module in YAPP."

@@ -1,0 +1,4 @@
+interface:
+    display_name: "YAPP Coding Conventions"
+    short_description: "Apply approved YAPP Kotlin style and naming conventions"
+    default_prompt: "Use $yapp-coding-conventions to write or review Kotlin code in YAPP."

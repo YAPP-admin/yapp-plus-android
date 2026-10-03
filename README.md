@@ -60,3 +60,18 @@ python3 scripts/install_codex_prompts.py
 설치된 파일을 원본에 맞춰 갱신하려면 `python3 scripts/install_codex_prompts.py --force`를 실행합니다. 사용자 정의 프롬프트는 명령을 실행할 때 현재 세션의 모델을 자동으로 바꾸지 않습니다.
 
 OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지만, 명시적인 `/prompts:<이름>` 명령을 위해 이 형식을 사용합니다. Codex가 명령을 읽지 못하면 새 채팅에서 다시 시도하거나 Codex를 재시작합니다.
+
+## 프로젝트 개발 스킬
+
+검토·승인한 1~35번 규칙은 `.agents/skills/`에 YAPP용 스킬로 정리했습니다.
+[AGENTS.md](AGENTS.md)의 작업별 안내를 따라 적용하거나 아래 이름으로 요청할 수 있습니다.
+
+| 스킬 | 적용 범위 |
+| --- | --- |
+| [$yapp-architecture](.agents/skills/yapp-architecture/SKILL.md) | 계층 책임·의존성 방향 |
+| [$yapp-coding-conventions](.agents/skills/yapp-coding-conventions/SKILL.md) | Kotlin 서식·가시성·함수·이름·리소스 |
+| [$yapp-design-patterns](.agents/skills/yapp-design-patterns/SKILL.md) | Route/Content·상태·요청·Repository·화면 이동 |
+| [$yapp-module-structure](.agents/skills/yapp-module-structure/SKILL.md) | 파일·패키지 배치와 모듈 추가·검증 |
+
+[.editorconfig](.editorconfig)에 기본 서식과 Kotlin 최대 줄 길이 100자를 기록했습니다.
+포맷터·정적 분석 플러그인과 DI 라이브러리는 별도로 선택합니다.

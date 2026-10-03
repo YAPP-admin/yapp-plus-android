@@ -47,7 +47,7 @@ python3 scripts/install_codex_prompts.py
 | --- | --- | --- |
 | `/prompts:yapp-commit` | 변경 검토·검증·커밋 | `/prompts:yapp-commit ISSUE=1 TYPE=chore` |
 | `/prompts:yapp-issue` | 중복 확인·이슈 생성 | `/prompts:yapp-issue TYPE=bug TITLE="로그인 오류" DETAILS="재현 방법..."` |
-| `/prompts:yapp-pr` | 대상 브랜치 확인·검증·PR 생성 | `/prompts:yapp-pr ISSUE=1` |
+| `/prompts:yapp-pr` | 대상 브랜치 확인·검증·PR 생성 | `/prompts:yapp-pr ISSUE=1 TITLE="Codex 슬래시 커맨드 추가"` |
 
 설치된 파일을 원본에 맞춰 갱신하려면 `python3 scripts/install_codex_prompts.py --force`를 실행합니다. 사용자 정의 프롬프트는 명령을 실행할 때 현재 세션의 모델을 자동으로 바꾸지 않습니다.
 

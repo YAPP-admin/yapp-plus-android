@@ -4,7 +4,13 @@
 
 ## 현재 상태
 
-Jetpack Compose 기반의 단일 `:app` 모듈과 시작 화면이 준비되어 있습니다. 출석 기능, 인증, 서버 연동은 아직 구현되지 않았습니다.
+Jetpack Compose 기반의 `:app`, 공통 테마를 제공하는 `:core:designsystem` 모듈과 시작 화면이 준비되어 있습니다. 출석 기능, 인증, 서버 연동은 아직 구현되지 않았습니다.
+
+## 아키텍처와 모듈
+
+MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다. 승인된 목표 구조는 `:app`, `:feature:attendance`, `:domain`, `:data`, `:core:designsystem`, `:core:network`입니다. 기능을 구현할 때 해당 모듈을 추가합니다.
+
+현재 `:app`은 `:core:designsystem`의 `YappTheme`을 사용합니다. 모듈 책임·의존성 방향·개발 순서와 자동화 절차는 [AGENTS.md](AGENTS.md)에 정의합니다.
 
 ## 개발 환경
 

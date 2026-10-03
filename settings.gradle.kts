@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "YappAttendance"
 include(":app")
+include(":core:designsystem")

@@ -9,19 +9,11 @@
 ## 아키텍처와 모듈
 
 MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
+현재 6개 모듈의 기본 설정과 디자인시스템 테마가 준비되어 있습니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 HTTP 라이브러리는 확정된 요구사항에 따라 구현·선택합니다.
 
-| 모듈 | 구성·역할 |
-| --- | --- |
-| `:app` | Android 앱 진입점·전체 객체 조립 |
-| `:feature:attendance` | Android Library·Compose·ViewModel·생명주기 의존성 |
-| `:domain` | Android에 의존하지 않는 순수 Kotlin/JVM |
-| `:data` | Android Library, Domain·Network 의존성 |
-| `:core:designsystem` | Android Library·Compose 공통 테마 |
-| `:core:network` | Android Library, 공통 통신 설정을 위한 경계 |
+## 프로젝트 지식
 
-새 모듈은 기본 설정 단계입니다. 출석 모델·정책·Repository·UI와 HTTP 라이브러리는 요구사항에 맞춰 구현·선택합니다. 인증·로컬 저장 모듈은 필요할 때 추가합니다.
-
-현재 `:app`은 `:core:designsystem`의 `YappTheme`을 사용합니다. 모듈 책임·의존성 방향·개발 순서와 자동화 절차는 [AGENTS.md](AGENTS.md)에 정의합니다.
+[YAPP LLM Wiki](docs/wiki/README.md)는 앱 정책, 아키텍처, 설계 패턴, 코딩 규칙의 기준 문서입니다. 확정된 정책은 분야별 문서와 [결정 기록](docs/wiki/decisions.md)에 함께 반영합니다. 아직 공식화되지 않은 재사용 지식은 [후보함](docs/wiki/inbox/README.md)에서 사용 근거를 검토합니다. Codex의 세션 갱신 절차는 [AGENTS.md](AGENTS.md)에 있습니다.
 
 ## 개발 환경
 
@@ -80,8 +72,7 @@ OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지�
 
 ## 프로젝트 개발 스킬
 
-검토·승인한 1~35번 규칙은 `.agents/skills/`에 YAPP용 스킬로 정리했습니다.
-[AGENTS.md](AGENTS.md)의 작업별 안내를 따라 적용하거나 아래 이름으로 요청할 수 있습니다.
+검토·승인한 1~35번 규칙은 Wiki에 보관하고 `.agents/skills/`에서 작업별로 연결합니다. [AGENTS.md](AGENTS.md)의 안내에 따라 적용하거나 아래 이름으로 요청할 수 있습니다.
 
 | 스킬 | 적용 범위 |
 | --- | --- |

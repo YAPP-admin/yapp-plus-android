@@ -1,0 +1,4 @@
+interface:
+    display_name: "YAPP Design Patterns"
+    short_description: "Apply YAPP UI state, repository and composition patterns"
+    default_prompt: "Use $yapp-design-patterns to implement or review a YAPP screen and data flow."

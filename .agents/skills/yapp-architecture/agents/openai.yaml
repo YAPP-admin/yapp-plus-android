@@ -1,0 +1,4 @@
+interface:
+    display_name: "YAPP Architecture"
+    short_description: "Apply YAPP layer responsibilities and dependency rules"
+    default_prompt: "Use $yapp-architecture to review responsibility placement and dependencies in YAPP."

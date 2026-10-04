@@ -24,3 +24,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "YappAttendance"
 include(":app")
+include(":domain")
+include(":data")
+include(":feature:attendance")
+include(":core:designsystem")
+include(":core:network")

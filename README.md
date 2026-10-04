@@ -4,7 +4,24 @@
 
 ## 현재 상태
 
-Jetpack Compose 기반의 단일 `:app` 모듈과 시작 화면이 준비되어 있습니다. 출석 기능, 인증, 서버 연동은 아직 구현되지 않았습니다.
+승인한 6개 모듈의 Gradle 설정과 의존성 연결, 공통 테마와 시작 화면이 준비되어 있습니다. 출석 기능, 인증, 서버 연동은 아직 구현되지 않았습니다.
+
+## 아키텍처와 모듈
+
+MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
+
+| 모듈 | 구성·역할 |
+| --- | --- |
+| `:app` | Android 앱 진입점·전체 객체 조립 |
+| `:feature:attendance` | Android Library·Compose·ViewModel·생명주기 의존성 |
+| `:domain` | Android에 의존하지 않는 순수 Kotlin/JVM |
+| `:data` | Android Library, Domain·Network 의존성 |
+| `:core:designsystem` | Android Library·Compose 공통 테마 |
+| `:core:network` | Android Library, 공통 통신 설정을 위한 경계 |
+
+새 모듈은 기본 설정 단계입니다. 출석 모델·정책·Repository·UI와 HTTP 라이브러리는 요구사항에 맞춰 구현·선택합니다. 인증·로컬 저장 모듈은 필요할 때 추가합니다.
+
+현재 `:app`은 `:core:designsystem`의 `YappTheme`을 사용합니다. 모듈 책임·의존성 방향·개발 순서와 자동화 절차는 [AGENTS.md](AGENTS.md)에 정의합니다.
 
 ## 개발 환경
 
@@ -19,6 +36,12 @@ Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합
 
 ```bash
 ./gradlew :app:assembleDebug
+```
+
+전체 모듈 설정과 연결을 검증합니다.
+
+```bash
+./gradlew :domain:build assembleDebug lintDebug
 ```
 
 단위 테스트가 추가되면 다음 명령으로 실행합니다.
@@ -54,3 +77,18 @@ python3 scripts/install_codex_prompts.py
 설치된 파일을 원본에 맞춰 갱신하려면 `python3 scripts/install_codex_prompts.py --force`를 실행합니다. 사용자 정의 프롬프트는 명령을 실행할 때 현재 세션의 모델을 자동으로 바꾸지 않습니다.
 
 OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지만, 명시적인 `/prompts:<이름>` 명령을 위해 이 형식을 사용합니다. Codex가 명령을 읽지 못하면 새 채팅에서 다시 시도하거나 Codex를 재시작합니다.
+
+## 프로젝트 개발 스킬
+
+검토·승인한 1~35번 규칙은 `.agents/skills/`에 YAPP용 스킬로 정리했습니다.
+[AGENTS.md](AGENTS.md)의 작업별 안내를 따라 적용하거나 아래 이름으로 요청할 수 있습니다.
+
+| 스킬 | 적용 범위 |
+| --- | --- |
+| [$yapp-architecture](.agents/skills/yapp-architecture/SKILL.md) | 계층 책임·의존성 방향 |
+| [$yapp-coding-conventions](.agents/skills/yapp-coding-conventions/SKILL.md) | Kotlin 서식·가시성·함수·이름·리소스 |
+| [$yapp-design-patterns](.agents/skills/yapp-design-patterns/SKILL.md) | Route/Content·상태·요청·Repository·화면 이동 |
+| [$yapp-module-structure](.agents/skills/yapp-module-structure/SKILL.md) | 파일·패키지 배치와 모듈 추가·검증 |
+
+[.editorconfig](.editorconfig)에 기본 서식과 Kotlin 최대 줄 길이 100자를 기록했습니다.
+포맷터·정적 분석 플러그인과 DI 라이브러리는 별도로 선택합니다.

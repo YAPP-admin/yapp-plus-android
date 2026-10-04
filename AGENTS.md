@@ -3,7 +3,7 @@
 ## 프로젝트와 실행 기준
 
 - YAPP 공식 출석 앱의 Android 저장소다. Kotlin과 Jetpack Compose를 사용한다.
-- 승인된 아키텍처는 MVVM + 단방향 상태 흐름(UDF) + 필요한 범위의 Clean Architecture다.
+- 승인된 아키텍처는 [Wiki의 아키텍처 문서](docs/wiki/architecture.md)에 기록된 MVVM + 단방향 상태 흐름(UDF) + 필요한 범위의 Clean Architecture다.
 - GitHub 저장소는 `YAPP-admin/yapp-plus-android`다. 브랜치·제목·라벨·변경량 정책의 기준은 [CONTRIBUTING.md](CONTRIBUTING.md)다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.
 - 구현 요청은 필요한 이슈 작성, 구현, 검증, 커밋, 푸시와 PR 생성까지 진행한다. 사용자가 범위를 제한하면 그 범위를 따른다. 이미 승인된 작업을 다시 승인받지 않는다.
@@ -11,8 +11,7 @@
 
 ## 프로젝트 스킬과 승인된 규칙
 
-아래 스킬은 사용자와 검토한 1~35번 규칙을 YAPP 구조에 맞춰 정리한 실행 기준이다.
-작업에 해당하는 스킬을 읽고 구현·리뷰·검증에 적용한다.
+장기 정책과 도메인 지식의 기준은 [YAPP LLM Wiki](docs/wiki/README.md)다. 아래 스킬은 해당 Wiki 규칙을 작업에 적용하는 안내다. 작업에 해당하는 스킬과 연결된 Wiki 문서를 읽고 구현·리뷰·검증에 적용한다.
 
 | 작업 | 스킬 |
 | --- | --- |
@@ -21,54 +20,17 @@
 | 화면·상태·요청·Repository·객체 조립·화면 이동 | [yapp-design-patterns](.agents/skills/yapp-design-patterns/SKILL.md) |
 | 파일 배치·패키지·모듈 추가·이동 | [yapp-module-structure](.agents/skills/yapp-module-structure/SKILL.md) |
 
-- Kotlin 변경에는 coding-conventions를 항상 적용한다. 서식 기준은 `.editorconfig`에도 기록한다.
-- 확장 함수는 허용한다. `private` 클래스는 금지하고 파일당 클래스·인터페이스는 하나로 둔다.
-  sealed 타입과 관련 하위 타입은 같은 파일에 둘 수 있다.
-- 제어문 중첩은 최대 2단계다. 함수는 15줄 초과 시 분리를 검토하고 다른 책임이 있으면 나눈다.
-- 포맷터·정적 분석 플러그인과 DI 라이브러리는 별도로 선택한다.
-- 다른 프로젝트 문서는 참고 자료다. 승인되지 않은 규칙이나 구현체를 그대로 적용하지 않는다.
-  KMP·iOS 구조, Ramap 전용 타입·패키지·라이브러리와 작업 승인 절차는 가져오지 않는다.
+- Kotlin 변경에는 [코딩 컨벤션](docs/wiki/coding-conventions.md)을 항상 적용한다. 서식 기준은 `.editorconfig`에도 기록한다.
+- 승인된 모듈 상태·의존성·파일 배치는 [모듈 구조](docs/wiki/module-structure.md), 화면·데이터 구현은 [설계 패턴](docs/wiki/design-patterns.md)을 따른다.
+- 출석 정책과 API 계약은 [제품 정책](docs/wiki/product-policy.md)에서 확인된 요구사항만 구현한다.
+- 다른 프로젝트 문서는 참고 자료다. 승인되지 않은 규칙·구현체·작업 승인 절차를 그대로 적용하지 않는다.
 
-## 승인된 모듈 구조
+## 세션 정책과 지식 후보의 자동 유지보수
 
-| 모듈 | 책임 | 현재 상태 |
-| --- | --- | --- |
-| `:app` | 앱 진입점, 전체 내비게이션, 의존성 조립 | 구현됨 |
-| `:feature:attendance` | 출석 화면, ViewModel, UiState와 기능 흐름 | Android Library·Compose 기본 설정됨 |
-| `:domain` | Kotlin 모델, 비즈니스 정책, Repository 인터페이스와 UseCase | 순수 Kotlin/JVM 기본 설정됨 |
-| `:data` | Repository 구현, 데이터 소스, DTO와 매핑 | Android Library 기본 설정됨 |
-| `:core:designsystem` | YAPP 테마와 재사용 가능한 Compose 컴포넌트 | 구현됨 |
-| `:core:network` | HTTP 클라이언트와 공통 통신 설정 | Android Library 기본 설정됨 |
-
-사용자 요청에 따라 목표 모듈 6개의 Gradle 설정과 의존성을 준비했다. 새 모듈의 업무 코드와 Network의 HTTP 라이브러리는 기능·API 요구사항이 정해질 때 구현·선택한다.
-
-인증 기능이 확정되면 `:feature:auth`, 로컬 저장이 필요하면 `:core:datastore`를 추가한다. 추가 모듈은 실제 책임이 생길 때 만들고, 변경 시 위 상태와 README를 갱신한다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정한다.
-
-### 의존성 방향
-
-```text
-:app → :feature:* / :data / :core:designsystem
-:feature:* → :domain / :core:designsystem
-:data → :domain / :core:network / 필요 시 :core:datastore
-:domain → Kotlin 및 필요한 순수 Kotlin 라이브러리
-```
-
-- Feature는 Data 구현에 직접 의존하지 않는다. App의 의존성 조립에서 Domain 인터페이스와 Data 구현을 연결한다.
-- Domain은 Android, Compose, HTTP 클라이언트, DB 구현에 의존하지 않는다.
-- Feature끼리 직접 의존하지 않는다. 화면 간 이동은 App에서 조율하고 필요한 식별자와 입력만 전달한다.
-- Designsystem은 App, Feature, Domain, Data에 의존하지 않는다. 테마와 공통 UI만 소유한다.
-- Network와 Datastore는 Feature의 화면·상태를 알지 못한다. 순환 의존성을 만들지 않는다.
-
-### 화면·데이터 구현 규칙
-
-- 흐름은 `사용자 입력 → ViewModel → Repository/UseCase → UiState → Compose`다.
-- 화면은 UiState를 표시하고 사용자 입력을 전달한다. 네트워크·DB·Repository 구현을 직접 호출하지 않는다.
-- ViewModel은 읽기 전용 `StateFlow<UiState>`를 노출하고 UI는 생명주기에 맞춰 수집한다. Activity나 Context를 ViewModel에 보관하지 않는다.
-- 로딩·실패·재시도 상태를 명시한다. 처리 결과를 UI 상태에 반영하고, 중요한 결과를 유실 가능한 일회성 이벤트로만 전달하지 않는다.
-- UseCase는 실제 비즈니스 규칙, 여러 Repository의 조합, 재사용이 필요할 때 추가한다. 단순 전달용 클래스를 일괄 생성하지 않는다.
-- DTO는 Data 내부에 두고 Domain 모델로 변환한다. 화면에 필요한 표현은 Feature의 UiState에서 정한다.
-- 출석 정책과 API 계약은 확인된 요구사항을 기준으로 구현한다. 클라이언트 표시와 서버가 확정한 출석 결과를 구분한다.
-- 비동기 작업은 Coroutines와 Flow를 사용하고 취소를 오류로 삼키지 않는다.
+- 매 작업에서 확정된 정책, 반복해 사용할 지식, Wiki와 코드의 불일치가 생겼는지 확인한다. [Wiki 갱신 절차](docs/wiki/README.md)를 따라 확정된 정책은 해당 기준 문서와 [결정 기록](docs/wiki/decisions.md)에 같은 작업에서 반영한다. 사용자가 문서 갱신을 따로 요청할 필요는 없다.
+- 제안·질문·단순 참조를 확정 정책으로 만들지 않는다. 근거가 부족한 재사용 지식은 [후보함](docs/wiki/inbox/README.md)에 보관하고 실제 사용 이력을 기록한다. 승격 기준을 충족해도 자동 승격하지 않는다. 새 정책의 의미는 사용자의 확정에 따른다.
+- 문서와 구현이 다르면 기존 Wiki·코드·테스트와 승인된 요구사항을 비교한다. 기술적 사실만으로 제품 정책을 바꾸지 않는다. 정책이 확정됐지만 구현은 후속인 경우 문서에 적용 상태를 적는다.
+- PR 전 `python3 scripts/check_wiki.py`를 실행하고 정책 문서·결정 기록·후보 상태를 검토한다. 서브에이전트는 사용자가 요청한 경우에만 사용한다.
 
 ## 작업 오케스트레이션
 

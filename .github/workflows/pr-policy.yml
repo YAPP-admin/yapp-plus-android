@@ -23,6 +23,8 @@ jobs:
           persist-credentials: false
       - name: Test policy boundaries
         run: python3 -m unittest discover -s scripts/tests -v
+      - name: Validate Wiki
+        run: python3 scripts/check_wiki.py
       - name: Check current PR size, title and labels
         env:
           GH_TOKEN: ${{ github.token }}

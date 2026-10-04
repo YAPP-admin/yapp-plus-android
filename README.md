@@ -4,11 +4,22 @@
 
 ## 현재 상태
 
-Jetpack Compose 기반의 `:app`, 공통 테마를 제공하는 `:core:designsystem` 모듈과 시작 화면이 준비되어 있습니다. 출석 기능, 인증, 서버 연동은 아직 구현되지 않았습니다.
+승인한 6개 모듈의 Gradle 설정과 의존성 연결, 공통 테마와 시작 화면이 준비되어 있습니다. 출석 기능, 인증, 서버 연동은 아직 구현되지 않았습니다.
 
 ## 아키텍처와 모듈
 
-MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다. 승인된 목표 구조는 `:app`, `:feature:attendance`, `:domain`, `:data`, `:core:designsystem`, `:core:network`입니다. 기능을 구현할 때 해당 모듈을 추가합니다.
+MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
+
+| 모듈 | 구성·역할 |
+| --- | --- |
+| `:app` | Android 앱 진입점·전체 객체 조립 |
+| `:feature:attendance` | Android Library·Compose·ViewModel·생명주기 의존성 |
+| `:domain` | Android에 의존하지 않는 순수 Kotlin/JVM |
+| `:data` | Android Library, Domain·Network 의존성 |
+| `:core:designsystem` | Android Library·Compose 공통 테마 |
+| `:core:network` | Android Library, 공통 통신 설정을 위한 경계 |
+
+새 모듈은 기본 설정 단계입니다. 출석 모델·정책·Repository·UI와 HTTP 라이브러리는 요구사항에 맞춰 구현·선택합니다. 인증·로컬 저장 모듈은 필요할 때 추가합니다.
 
 현재 `:app`은 `:core:designsystem`의 `YappTheme`을 사용합니다. 모듈 책임·의존성 방향·개발 순서와 자동화 절차는 [AGENTS.md](AGENTS.md)에 정의합니다.
 
@@ -25,6 +36,12 @@ Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합
 
 ```bash
 ./gradlew :app:assembleDebug
+```
+
+전체 모듈 설정과 연결을 검증합니다.
+
+```bash
+./gradlew :domain:build assembleDebug lintDebug
 ```
 
 단위 테스트가 추가되면 다음 명령으로 실행합니다.

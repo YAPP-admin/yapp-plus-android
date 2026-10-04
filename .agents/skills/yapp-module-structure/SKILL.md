@@ -15,19 +15,20 @@ description: YAPP Android 프로젝트에서 파일 위치·패키지를 정하�
 | --- | --- | --- |
 | `:app` | `com.yapp.plus` | 현재 존재 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 현재 존재 |
-| `:feature:attendance` | `com.yapp.plus.feature.attendance` | 출석 화면·기능 구현 시 |
-| `:domain` | `com.yapp.plus.domain` | 모델·정책·Repository 계약 필요 시 |
-| `:data` | `com.yapp.plus.data` | 데이터 소스·Repository 구현 필요 시 |
-| `:core:network` | `com.yapp.plus.core.network` | 서버 연동 시 |
+| `:feature:attendance` | `com.yapp.plus.feature.attendance` | Android Library·Compose 기본 설정됨 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM 기본 설정됨 |
+| `:data` | `com.yapp.plus.data` | Android Library 기본 설정됨 |
+| `:core:network` | `com.yapp.plus.core.network` | Android Library 기본 설정됨 |
 | `:feature:auth` | `com.yapp.plus.feature.auth` | 인증 기능 확정 시 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 로컬 저장 필요 시 |
 
-모듈은 실제 책임과 사용처가 생길 때 추가한다.
+사용자 요청에 따라 목표 모듈의 기본 설정을 준비했다. 추가 모듈은 실제 책임과 사용처가 생길 때 만든다.
 Domain·Data의 기능별 분리는 규모와 의존 관계에 따라 결정한다.
 
 ## 파일 배치
 
-- Kotlin 소스는 현재 모듈의 `src/main/java/<패키지 경로>/`에 둔다.
+- Android 모듈의 Kotlin 소스는 `src/main/java/<패키지 경로>/`에 둔다.
+- 순수 Kotlin/JVM Domain 소스는 `domain/src/main/kotlin/<패키지 경로>/`에 둔다.
 - 단위 테스트는 `src/test/`, 기기 테스트는 `src/androidTest/`의 해당 패키지에 둔다.
 - App은 Android 진입점·전체 내비게이션·객체 조립을 소유한다.
 - Feature 안에서 화면·ViewModel·UiState와 해당 기능의 UI 변환을 함께 관리한다.

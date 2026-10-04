@@ -34,13 +34,15 @@
 | 모듈 | 책임 | 현재 상태 |
 | --- | --- | --- |
 | `:app` | 앱 진입점, 전체 내비게이션, 의존성 조립 | 구현됨 |
-| `:feature:attendance` | 출석 화면, ViewModel, UiState와 기능 흐름 | 해당 기능 구현 시 추가 |
-| `:domain` | Kotlin 모델, 비즈니스 정책, Repository 인터페이스와 UseCase | 해당 기능 구현 시 추가 |
-| `:data` | Repository 구현, 데이터 소스, DTO와 매핑 | 해당 기능 구현 시 추가 |
+| `:feature:attendance` | 출석 화면, ViewModel, UiState와 기능 흐름 | Android Library·Compose 기본 설정됨 |
+| `:domain` | Kotlin 모델, 비즈니스 정책, Repository 인터페이스와 UseCase | 순수 Kotlin/JVM 기본 설정됨 |
+| `:data` | Repository 구현, 데이터 소스, DTO와 매핑 | Android Library 기본 설정됨 |
 | `:core:designsystem` | YAPP 테마와 재사용 가능한 Compose 컴포넌트 | 구현됨 |
-| `:core:network` | HTTP 클라이언트와 공통 통신 설정 | 서버 연동 시 추가 |
+| `:core:network` | HTTP 클라이언트와 공통 통신 설정 | Android Library 기본 설정됨 |
 
-인증 기능이 확정되면 `:feature:auth`, 로컬 저장이 필요하면 `:core:datastore`를 추가한다. 모듈은 실제 책임이 생길 때 추가하고, 변경 시 위 상태와 README를 갱신한다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정한다.
+사용자 요청에 따라 목표 모듈 6개의 Gradle 설정과 의존성을 준비했다. 새 모듈의 업무 코드와 Network의 HTTP 라이브러리는 기능·API 요구사항이 정해질 때 구현·선택한다.
+
+인증 기능이 확정되면 `:feature:auth`, 로컬 저장이 필요하면 `:core:datastore`를 추가한다. 추가 모듈은 실제 책임이 생길 때 만들고, 변경 시 위 상태와 README를 갱신한다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정한다.
 
 ### 의존성 방향
 
@@ -111,6 +113,12 @@ Designsystem 변경은 라이브러리 자체와 App 소비를 함께 확인한�
 
 ```bash
 ./gradlew :core:designsystem:assembleDebug :core:designsystem:lintDebug :app:assembleDebug :app:lintDebug
+```
+
+모듈 설정·의존성 변경은 전체 연결을 확인한다:
+
+```bash
+./gradlew :domain:build assembleDebug lintDebug
 ```
 
 정책 검사나 자동화 스크립트를 바꾸면 관련 형식을 확인하고 정책 테스트를 실행한다:

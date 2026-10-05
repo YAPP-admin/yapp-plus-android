@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.theme.YappColor
 
 @Composable
 fun YappBackgroundGradient(
@@ -33,7 +34,7 @@ fun YappBackgroundGradient(
         when (surface) {
             YappBackgroundGradientSurface.Normal,
             YappBackgroundGradientSurface.Elevated -> {
-                if (alternative) Color(0xFFF7F7F8) else Color.White
+                if (alternative) YappColor.gradientLightSurface else YappColor.white
             }
         }
     }
@@ -54,8 +55,8 @@ fun YappStaticGradient(
     size: Dp = 40.dp
 ) {
     val baseColor = when (color) {
-        YappStaticGradientColor.White -> Color.White
-        YappStaticGradientColor.Black -> Color.Black
+        YappStaticGradientColor.White -> YappColor.white
+        YappStaticGradientColor.Black -> YappColor.black
     }
     val alpha = when (emphasis) {
         YappStaticGradientEmphasis.Light -> 0.12f
@@ -102,7 +103,7 @@ private fun YappGradientPreview() {
                 YappStaticGradient()
             }
             GradientSample("White") {
-                Box(Modifier.background(Color(0xFF171719))) {
+                Box(Modifier.background(YappColor.textPrimary)) {
                     YappStaticGradient(color = YappStaticGradientColor.White)
                 }
             }
@@ -117,7 +118,7 @@ private fun GradientSample(label: String, content: @Composable () -> Unit) {
             modifier = Modifier
                 .size(64.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFFF0F0F2)),
+                .background(YappColor.gradientBackground),
             content = { content() }
         )
         Text(label)

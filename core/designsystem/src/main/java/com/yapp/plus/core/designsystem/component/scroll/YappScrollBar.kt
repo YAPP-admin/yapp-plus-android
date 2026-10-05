@@ -16,11 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.theme.YappColor
 
 @Composable
 fun YappScrollBar(
@@ -55,7 +55,7 @@ fun YappScrollBar(
                 .width(size.width)
                 .fillMaxHeight(percent.fraction)
                 .clip(CircleShape)
-                .background(Color(0xFF70737C).copy(alpha = 0.16f))
+                .background(YappColor.scrollIndicator)
         )
     }
 }

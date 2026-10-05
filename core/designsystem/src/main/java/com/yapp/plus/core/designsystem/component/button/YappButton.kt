@@ -14,12 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 
 @Composable
@@ -119,53 +119,41 @@ private fun buttonColors(
     enabled: Boolean
 ) = when (variant) {
     YappButtonVariant.SolidPrimary -> ButtonColors(
-        container = if (enabled) PrimaryColor else DisabledContainerColor,
-        content = if (enabled) WhiteColor else DisabledPrimaryContentColor,
+        container = if (enabled) YappColor.primary else YappColor.coolNeutralWeak,
+        content = if (enabled) YappColor.white else YappColor.contentDisabled,
         border = null
     )
 
     YappButtonVariant.SolidSecondary -> ButtonColors(
-        container = if (enabled) SecondaryContainerColor else DisabledSecondaryContainerColor,
-        content = if (enabled) PrimaryColor else DisabledSecondaryContentColor,
+        container = if (enabled) YappColor.orangeWeak else YappColor.disabledSecondaryContainer,
+        content = if (enabled) YappColor.primary else YappColor.disabledSecondaryContent,
         border = null
     )
 
     YappButtonVariant.OutlinedPrimary -> ButtonColors(
-        container = Color.Transparent,
-        content = if (enabled) PrimaryColor else DisabledOutlineContentColor,
-        border = if (enabled) PrimaryColor else DisabledOutlineBorderColor
+        container = YappColor.transparent,
+        content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
+        border = YappColor.border
     )
 
     YappButtonVariant.OutlinedSecondary -> ButtonColors(
-        container = Color.Transparent,
-        content = if (enabled) PrimaryColor else DisabledOutlineContentColor,
-        border = if (enabled) NeutralBorderColor else DisabledOutlineBorderColor
+        container = YappColor.transparent,
+        content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
+        border = if (enabled) YappColor.border else YappColor.border
     )
 
     YappButtonVariant.OutlinedAssistive -> ButtonColors(
-        container = Color.Transparent,
-        content = if (enabled) LabelColor else DisabledOutlineContentColor,
-        border = if (enabled) NeutralBorderColor else DisabledOutlineBorderColor
+        container = YappColor.transparent,
+        content = if (enabled) YappColor.textPrimary else YappColor.disabledOutlineContent,
+        border = if (enabled) YappColor.border else YappColor.border
     )
 }
-
-private val PrimaryColor = Color(0xFFFA6027)
-private val SecondaryContainerColor = Color(0xFFFFEFE9)
-private val DisabledContainerColor = Color(0xFFF4F4F5)
-private val DisabledSecondaryContainerColor = Color(0xFFFFF8F5)
-private val WhiteColor = Color(0xFFFFFFFF)
-private val LabelColor = Color(0xFF171719)
-private val NeutralBorderColor = Color(0x3870737C)
-private val DisabledOutlineBorderColor = Color(0x3870737C)
-private val DisabledPrimaryContentColor = Color(0x4737383C)
-private val DisabledSecondaryContentColor = Color(0xFFFDBBA2)
-private val DisabledOutlineContentColor = Color(0x2937383C)
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable
 private fun YappButtonPreview() {
     YappTheme(dynamicColor = false) {
-        Surface(color = Color.White) {
+        Surface(color = YappColor.white) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)

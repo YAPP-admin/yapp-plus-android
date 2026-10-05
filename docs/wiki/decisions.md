@@ -6,7 +6,7 @@ last_verified: 2026-10-06
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0004`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0006`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -42,4 +42,14 @@ last_verified: 2026-10-06
 - 이유: 동일 색상의 컴포넌트별 중복 선언을 없애고 디자인 변경을 한 곳에서 반영합니다.
 - 근거: 이번 세션의 사용자 요청, [이슈 #13](https://github.com/YAPP-admin/yapp-plus-android/issues/13)의 Figma Components 구현 범위.
 - 반영: [디자인시스템](design-system.md), `:core:designsystem`의 `theme/Color.kt`, PR #14·#16·#18·#19.
+- 대체한 결정: 없음.
+
+## DEC-0005 · Gradle convention plugin, Hilt와 Ktor 구성
+
+- 기록일: 2026-10-06
+- 결정: 공통 빌드 설정은 `build-logic` included build의 convention plugin으로 관리합니다. Android DI는 Hilt, HTTP client는 Ktor Android engine을 사용하고 JSON 직렬화는 Kotlin serialization을 사용합니다. Hilt 컴파일은 KSP로 처리합니다.
+- 이유: 모듈마다 중복된 SDK·JVM·Compose 설정을 한 곳에서 유지하고, 사용자 요청에 따라 앱 DI와 네트워크 기술을 확정합니다. 프로젝트 Kotlin 2.2.10과 호환되는 Ktor 3.3.3 및 kotlinx.serialization 1.9.0을 선택합니다. Ktor 3.3.3의 version catalog는 Kotlin 2.2.21, serialization 1.9.0은 Kotlin 2.2.0을 기준으로 합니다.
+- 근거: 사용자 요청, [이슈 #20](https://github.com/YAPP-admin/yapp-plus-android/issues/20), [Gradle convention plugin 안내](https://docs.gradle.org/current/userguide/best_practices_structuring_builds.html), [Ktor 3.3.3 버전 카탈로그](https://github.com/ktorio/ktor/blob/3.3.3/gradle/libs.versions.toml), [Kotlin serialization 1.9.0 릴리스](https://github.com/Kotlin/kotlinx.serialization/releases/tag/v1.9.0), [Hilt 공식 설정](https://developer.android.com/training/dependency-injection/hilt-android), [Dagger 2.60.1 릴리스](https://github.com/google/dagger/releases/tag/dagger-2.60.1).
+- 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `settings.gradle.kts`, `build-logic/`, `gradle/libs.versions.toml`.
+- 적용 상태: Convention plugin과 App Hilt 진입점, Ktor·Kotlin serialization 의존성을 설정했습니다. API별 HttpClient 사용, DTO와 Repository 구현은 서버 계약이 없어 후속입니다. AGP 9의 내장 Kotlin에서 KSP가 generated source를 등록하도록 `android.disallowKotlinSourceSets=false`를 설정했습니다 ([KSP #2729](https://github.com/google/ksp/issues/2729)).
 - 대체한 결정: 없음.

@@ -1,6 +1,9 @@
 package com.yapp.plus.core.designsystem.component.chip
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -9,9 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yapp.plus.core.designsystem.theme.YappTheme
 
 enum class YappChipColor {
     Red,
@@ -153,3 +158,40 @@ private val LightBlueWeakColor = Color(0xFFE5F7FF)
 private val PinkColor = Color(0xFFF553DA)
 private val PinkWeakColor = Color(0xFFFEECFB)
 private val WhiteColor = Color(0xFFFFFFFF)
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun YappChipPreview() {
+    YappTheme(dynamicColor = false) {
+        Surface(color = Color.White) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                YappChip(
+                    text = "Large Fill",
+                    color = YappChipColor.Orange,
+                    size = YappChipSize.Large,
+                    style = YappChipStyle.Fill
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    YappChip("Red", color = YappChipColor.Red)
+                    YappChip("Orange", color = YappChipColor.Orange)
+                    YappChip("Yellow", color = YappChipColor.Yellow)
+                    YappChip("Neutral", color = YappChipColor.Neutral)
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    YappChip("Cool", color = YappChipColor.CoolNeutral)
+                    YappChip("Lime", color = YappChipColor.Lime)
+                    YappChip("Violet", color = YappChipColor.Violet)
+                    YappChip("Blue", color = YappChipColor.Blue)
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    YappChip("Light Blue", color = YappChipColor.LightBlue)
+                    YappChip("Pink", color = YappChipColor.Pink)
+                    YappChip("Small Fill", style = YappChipStyle.Fill)
+                }
+            }
+        }
+    }
+}

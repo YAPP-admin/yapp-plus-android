@@ -3,6 +3,7 @@ package com.yapp.plus.core.designsystem.component.button
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yapp.plus.core.designsystem.theme.YappTheme
 
 enum class YappButtonVariant {
     SolidPrimary,
@@ -188,3 +191,54 @@ private val DisabledOutlineBorderColor = Color(0x3870737C)
 private val DisabledPrimaryContentColor = Color(0x4737383C)
 private val DisabledSecondaryContentColor = Color(0xFFFDBBA2)
 private val DisabledOutlineContentColor = Color(0x2937383C)
+
+@Preview(showBackground = true, widthDp = 390)
+@Composable
+private fun YappButtonPreview() {
+    YappTheme(dynamicColor = false) {
+        Surface(color = Color.White) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    YappButton("Primary", {}, variant = YappButtonVariant.SolidPrimary)
+                    YappButton("Disabled", {}, enabled = false)
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    YappButton("Secondary", {}, variant = YappButtonVariant.SolidSecondary)
+                    YappButton(
+                        "Disabled",
+                        {},
+                        variant = YappButtonVariant.SolidSecondary,
+                        enabled = false
+                    )
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    YappButton("Primary", {}, variant = YappButtonVariant.OutlinedPrimary)
+                    YappButton(
+                        "Disabled",
+                        {},
+                        variant = YappButtonVariant.OutlinedPrimary,
+                        enabled = false
+                    )
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    YappButton("Secondary", {}, variant = YappButtonVariant.OutlinedSecondary)
+                    YappButton(
+                        "Assistive",
+                        {},
+                        variant = YappButtonVariant.OutlinedAssistive
+                    )
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    YappButton("XL", {}, size = YappButtonSize.XLarge)
+                    YappButton("L", {}, size = YappButtonSize.Large)
+                    YappButton("M", {}, size = YappButtonSize.Medium)
+                    YappButton("S", {}, size = YappButtonSize.Small)
+                    YappButton("XS", {}, size = YappButtonSize.XSmall)
+                }
+            }
+        }
+    }
+}

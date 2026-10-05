@@ -20,6 +20,10 @@ YAPP 출석 Android 앱의 정책과 설계 결정을 찾고 유지하는 문서
 | 브랜치·PR·라벨·변경량 | [CONTRIBUTING.md](../../CONTRIBUTING.md) |
 | 기계가 읽는 서식 설정 | [.editorconfig](../../.editorconfig) |
 
+## 연결된 외부 문서
+
+- [Yapp+ Notion](https://app.notion.com/p/3e20f436649f8019b68ce3823a7beeee) — YAPP+ 관련 문서 모음.
+
 [AGENTS.md](../../AGENTS.md)는 에이전트 작업 절차, `.agents/skills/`는 작업별 적용 안내입니다. 이 두 곳과 README는 Wiki 규칙을 반복 정의하지 않고 연결합니다. `settings.gradle.kts`와 소스 코드는 구현 상태를 확인하는 근거입니다. 문서와 구현이 어긋나면 확정된 정책과 실제 코드를 확인해 같은 변경에서 정리합니다.
 
 ## 세션에서 정책을 갱신하는 방법

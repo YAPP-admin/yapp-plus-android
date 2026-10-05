@@ -25,16 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
-enum class YappToastColor {
-    Dark,
-    White
-}
-
-enum class YappToastType {
-    Default,
-    Error
-}
-
 @Composable
 fun YappToast(
     text: String,

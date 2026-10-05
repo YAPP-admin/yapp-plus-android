@@ -45,11 +45,6 @@ private val PrimaryColor = Color(0xFFFA6027)
 private val LineColor = Color(0xFF70737C).copy(alpha = 0.22f)
 private val ScrimColor = Color(0xFF171719)
 
-enum class YappAlertButtonLayout {
-    Horizontal,
-    Vertical
-}
-
 @Composable
 fun YappAlertDialog(
     onDismissRequest: () -> Unit,

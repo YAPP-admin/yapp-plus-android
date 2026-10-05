@@ -18,26 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.theme.YappTheme
-
-enum class YappButtonVariant {
-    SolidPrimary,
-    SolidSecondary,
-    OutlinedPrimary,
-    OutlinedSecondary,
-    OutlinedAssistive
-}
-
-enum class YappButtonSize {
-    XLarge,
-    Large,
-    Medium,
-    Small,
-    XSmall
-}
 
 @Composable
 fun YappButton(
@@ -165,20 +148,6 @@ private fun buttonColors(
         border = if (enabled) NeutralBorderColor else DisabledOutlineBorderColor
     )
 }
-
-private data class ButtonMetrics(
-    val horizontalPadding: Dp,
-    val verticalPadding: Dp,
-    val cornerRadius: Dp,
-    val iconSpacing: Dp,
-    val iconSize: Dp
-)
-
-private data class ButtonColors(
-    val container: Color,
-    val content: Color,
-    val border: Color?
-)
 
 private val PrimaryColor = Color(0xFFFA6027)
 private val SecondaryContainerColor = Color(0xFFFFEFE9)

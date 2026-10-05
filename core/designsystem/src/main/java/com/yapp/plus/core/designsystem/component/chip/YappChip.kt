@@ -13,33 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.theme.YappTheme
-
-enum class YappChipColor {
-    Red,
-    Orange,
-    Yellow,
-    Neutral,
-    CoolNeutral,
-    Lime,
-    Violet,
-    Blue,
-    LightBlue,
-    Pink
-}
-
-enum class YappChipSize {
-    Large,
-    Small
-}
-
-enum class YappChipStyle {
-    Fill,
-    Weak
-}
 
 @Composable
 fun YappChip(
@@ -118,23 +94,6 @@ private fun chipColors(
     YappChipStyle.Fill -> ChipColors(palette.fill, WhiteColor)
     YappChipStyle.Weak -> ChipColors(palette.weak, palette.weakText)
 }
-
-private data class ChipMetrics(
-    val horizontalPadding: Dp,
-    val verticalPadding: Dp,
-    val cornerRadius: Dp
-)
-
-private data class ChipPalette(
-    val fill: Color,
-    val weak: Color,
-    val weakText: Color
-)
-
-private data class ChipColors(
-    val container: Color,
-    val content: Color
-)
 
 private val RedColor = Color(0xFFE32908)
 private val RedWeakColor = Color(0xFFFEE6E1)

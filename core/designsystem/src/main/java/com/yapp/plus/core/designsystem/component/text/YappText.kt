@@ -12,7 +12,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 
-/** Shared text that inherits the current Material 3 style and content color by default. */
 @Composable
 fun YappText(
     text: String,

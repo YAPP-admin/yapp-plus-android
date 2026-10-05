@@ -20,7 +20,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -28,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.component.text.YappText
+import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
@@ -49,7 +49,11 @@ fun YappTextField(
     val metrics = inputMetrics(size)
     Box(modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            YappText(title, style = YappTypography.label1NormalMedium, color = LabelColor)
+            YappText(
+                title,
+                style = YappTypography.label1NormalMedium,
+                color = YappColor.textPrimary
+            )
             Spacer(Modifier.height(4.dp))
             BasicTextField(
                 value = value,
@@ -61,8 +65,8 @@ fun YappTextField(
                     .padding(horizontal = metrics.horizontalPadding),
                 enabled = enabled,
                 singleLine = true,
-                textStyle = inputTextStyle(size).copy(color = LabelColor),
-                cursorBrush = SolidColor(PrimaryColor),
+                textStyle = inputTextStyle(size).copy(color = YappColor.textPrimary),
+                cursorBrush = SolidColor(YappColor.primary),
                 decorationBox = { innerTextField ->
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -70,9 +74,16 @@ fun YappTextField(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         leadingIcon?.invoke()
-                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+                        Box(
+                            modifier = Modifier.weight(1f),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
                             if (value.isEmpty()) {
-                                YappText(placeholder, style = inputTextStyle(size), color = PlaceholderColor)
+                                YappText(
+                                    placeholder,
+                                    style = inputTextStyle(size),
+                                    color = YappColor.placeholder
+                                )
                             }
                             innerTextField()
                         }
@@ -106,11 +117,19 @@ fun YappTextArea(
     enabled: Boolean = true,
     required: Boolean = false
 ) {
-    val inputSize = if (size == YappTextAreaSize.Large) YappInputSize.Large else YappInputSize.Medium
+    val inputSize = if (size == YappTextAreaSize.Large) {
+        YappInputSize.Large
+    } else {
+        YappInputSize.Medium
+    }
     val metrics = inputMetrics(inputSize)
     Box(modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            YappText(title, style = YappTypography.label1NormalMedium, color = LabelColor)
+            YappText(
+                title,
+                style = YappTypography.label1NormalMedium,
+                color = YappColor.textPrimary
+            )
             Spacer(Modifier.height(4.dp))
             Box(
                 modifier = Modifier
@@ -124,15 +143,15 @@ fun YappTextArea(
                     onValueChange = { if (it.length <= maxLength) onValueChange(it) },
                     modifier = Modifier.fillMaxSize().padding(bottom = 20.dp),
                     enabled = enabled,
-                    textStyle = inputTextStyle(inputSize).copy(color = LabelColor),
-                    cursorBrush = SolidColor(PrimaryColor),
+                    textStyle = inputTextStyle(inputSize).copy(color = YappColor.textPrimary),
+                    cursorBrush = SolidColor(YappColor.primary),
                     decorationBox = { innerTextField ->
                         Box(Modifier.fillMaxSize()) {
                             if (value.isEmpty()) {
                                 YappText(
                                     placeholder,
                                     style = inputTextStyle(inputSize),
-                                    color = PlaceholderColor
+                                    color = YappColor.placeholder
                                 )
                             }
                             innerTextField()
@@ -143,7 +162,7 @@ fun YappTextArea(
                     text = "${value.length} / $maxLength",
                     modifier = Modifier.align(Alignment.BottomEnd),
                     style = YappTypography.label2Regular,
-                    color = HelperColor
+                    color = YappColor.neutralText
                 )
             }
         }
@@ -173,33 +192,24 @@ private fun inputMetrics(size: YappInputSize) = when (size) {
 }
 
 private fun inputBorderColor(state: YappInputState) = when (state) {
-    YappInputState.Default -> NeutralBorderColor
-    YappInputState.Active -> PrimaryColor
-    YappInputState.Success -> StrongBorderColor
-    YappInputState.Error -> ErrorColor
+    YappInputState.Default -> YappColor.border
+    YappInputState.Active -> YappColor.primary
+    YappInputState.Success -> YappColor.borderStrong
+    YappInputState.Error -> YappColor.error
 }
 
 private fun supportingTextColor(state: YappInputState) = when (state) {
-    YappInputState.Success -> SuccessColor
-    YappInputState.Error -> ErrorColor
+    YappInputState.Success -> YappColor.success
+    YappInputState.Error -> YappColor.error
     YappInputState.Default,
-    YappInputState.Active -> LabelColor
+    YappInputState.Active -> YappColor.textPrimary
 }
-
-private val LabelColor = Color(0xFF171719)
-private val PlaceholderColor = Color(0x4737383C)
-private val HelperColor = Color(0xFF5C5C5C)
-private val PrimaryColor = Color(0xFFFA6027)
-private val NeutralBorderColor = Color(0x3870737C)
-private val StrongBorderColor = Color(0x8570737C)
-private val SuccessColor = Color(0xFF00BF40)
-private val ErrorColor = Color(0xFFFF4242)
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable
 private fun YappInputPreview() {
     YappTheme(dynamicColor = false) {
-        Surface(color = Color.White) {
+        Surface(color = YappColor.white) {
             Column(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)

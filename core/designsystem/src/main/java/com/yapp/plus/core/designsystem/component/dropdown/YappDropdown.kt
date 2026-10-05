@@ -26,12 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.component.text.YappText
+import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
@@ -49,7 +49,11 @@ fun YappDropdown(
     var expanded by remember { mutableStateOf(false) }
     val metrics = dropdownMetrics(size)
     Column(modifier = modifier) {
-        YappText(title, style = YappTypography.label1NormalMedium, color = LabelColor)
+        YappText(
+                title,
+                style = YappTypography.label1NormalMedium,
+                color = YappColor.textPrimary
+            )
         Spacer(Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             Surface(
@@ -57,14 +61,14 @@ fun YappDropdown(
                 modifier = Modifier.fillMaxWidth().height(metrics.height),
                 enabled = enabled,
                 shape = RoundedCornerShape(metrics.cornerRadius),
-                color = Color.White,
-                contentColor = LabelColor,
+                color = YappColor.white,
+                contentColor = YappColor.textPrimary,
                 border = BorderStroke(
                     1.dp,
                     when {
-                        expanded -> PrimaryColor
-                        selectedOption != null -> StrongBorderColor
-                        else -> NeutralBorderColor
+                        expanded -> YappColor.primary
+                        selectedOption != null -> YappColor.borderStrong
+                        else -> YappColor.border
                     }
                 )
             ) {
@@ -77,7 +81,11 @@ fun YappDropdown(
                         text = selectedOption ?: placeholder,
                         modifier = Modifier.weight(1f),
                         style = YappTypography.body1NormalRegular,
-                        color = if (selectedOption == null) PlaceholderColor else LabelColor
+                        color = if (selectedOption == null) {
+                            YappColor.placeholder
+                        } else {
+                            YappColor.textPrimary
+                        }
                     )
                     Image(
                         painter = painterResource(
@@ -100,15 +108,19 @@ fun YappDropdown(
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.widthIn(min = 320.dp),
                 shape = RoundedCornerShape(12.dp),
-                containerColor = Color.White,
+                containerColor = YappColor.white,
                 tonalElevation = 0.dp,
                 shadowElevation = 2.dp,
-                border = BorderStroke(1.dp, NeutralBorderColor)
+                border = BorderStroke(1.dp, YappColor.border)
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
                         text = {
-                            YappText(option, style = YappTypography.body1NormalRegular, color = LabelColor)
+                            YappText(
+                                option,
+                                style = YappTypography.body1NormalRegular,
+                                color = YappColor.textPrimary
+                            )
                         },
                         onClick = {
                             onOptionSelected(option)
@@ -117,7 +129,10 @@ fun YappDropdown(
                         modifier = Modifier
                             .width(320.dp)
                             .height(metrics.menuItemHeight)
-                            .background(if (option == selectedOption) SelectedColor else Color.Transparent),
+                            .background(
+                                if (option == selectedOption) YappColor.selectionOverlay
+                                else YappColor.transparent
+                            ),
                         contentPadding = PaddingValues(horizontal = 8.dp)
                     )
                 }
@@ -131,18 +146,11 @@ private fun dropdownMetrics(size: YappDropdownSize) = when (size) {
     YappDropdownSize.Medium -> DropdownMetrics(40.dp, 10.dp, 8.dp, 20.dp, 40.dp)
 }
 
-private val LabelColor = Color(0xFF171719)
-private val PlaceholderColor = Color(0x4737383C)
-private val PrimaryColor = Color(0xFFFA6027)
-private val NeutralBorderColor = Color(0x3870737C)
-private val StrongBorderColor = Color(0x8570737C)
-private val SelectedColor = Color(0x1470737C)
-
 @Preview(showBackground = true, widthDp = 390)
 @Composable
 private fun YappDropdownPreview() {
     YappTheme(dynamicColor = false) {
-        Surface(color = Color.White) {
+        Surface(color = YappColor.white) {
             Column(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)

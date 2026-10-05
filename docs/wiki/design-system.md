@@ -1,10 +1,14 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-05
+last_verified: 2026-10-06
 ---
 
 # 디자인시스템
+
+## 색상
+
+공용 Compose 색상 토큰은 `:core:designsystem`의 `theme/Color.kt`에 있는 `YappColor`에서 제공합니다. Figma Components 기준으로 이미 구현한 ARGB 값과 알파값을 보존하면서 컴포넌트와 Preview가 같은 토큰을 사용합니다. 컴포넌트 파일에 고정 색상 리터럴이나 로컬 색상 상수를 새로 두지 않습니다.
 
 ## 타이포그래피
 

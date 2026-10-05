@@ -15,6 +15,7 @@ YAPP 출석 Android 앱의 정책과 설계 결정을 찾고 유지하는 문서
 | 모듈 상태와 파일 배치 | [모듈 구조](module-structure.md) |
 | 화면·상태·데이터 접근 패턴 | [설계 패턴](design-patterns.md) |
 | Kotlin·Gradle Kotlin 작성 규칙 | [코딩 컨벤션](coding-conventions.md) |
+| 디자인시스템 타이포그래피 | [디자인시스템](design-system.md) |
 | 정책 변경의 근거와 이력 | [결정 기록](decisions.md) |
 | 미확정 지식과 승격 절차 | [지식 후보함](inbox/README.md) |
 | 브랜치·PR·라벨·변경량 | [CONTRIBUTING.md](../../CONTRIBUTING.md) |

@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,13 +36,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.yapp.plus.core.designsystem.component.text.YappText
+import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
-
-private val LabelColor = Color(0xFF171719)
-private val NeutralLabelColor = Color(0xFF2E2F33)
-private val PrimaryColor = Color(0xFFFA6027)
-private val LineColor = Color(0xFF70737C).copy(alpha = 0.22f)
-private val ScrimColor = Color(0xFF171719)
 
 @Composable
 fun YappAlertDialog(
@@ -76,7 +70,7 @@ fun YappAlertDialog(
                     .fillMaxWidth()
                     .shadow(elevation = 36.dp, shape = RoundedCornerShape(20.dp))
                     .clip(RoundedCornerShape(20.dp))
-                    .background(Color.White)
+                    .background(YappColor.white)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -90,7 +84,7 @@ fun YappAlertDialog(
                                 text = it,
                                 modifier = Modifier.fillMaxWidth(),
                                 style = YappTypography.headline1Bold,
-                                color = LabelColor
+                                color = YappColor.textPrimary
                             )
                         }
                         body?.let {
@@ -102,7 +96,7 @@ fun YappAlertDialog(
                                     lineHeight = 22.sp,
                                     letterSpacing = 0.203.sp
                                 ),
-                                color = NeutralLabelColor
+                                color = YappColor.textSecondary
                             )
                         }
                     }
@@ -194,10 +188,10 @@ fun YappBottomSheet(
             .padding(horizontal = 8.dp),
         sheetState = actualSheetState,
         shape = RoundedCornerShape(20.dp),
-        containerColor = Color.White,
-        contentColor = LabelColor,
+        containerColor = YappColor.white,
+        contentColor = YappColor.textPrimary,
         tonalElevation = 0.dp,
-        scrimColor = ScrimColor.copy(alpha = 0.28f),
+        scrimColor = YappColor.scrim,
         dragHandle = handle
     ) {
         Column(
@@ -216,7 +210,7 @@ fun YappBottomSheet(
                             text = it,
                             modifier = Modifier.fillMaxWidth(),
                             style = YappTypography.headline1Bold,
-                            color = LabelColor
+                            color = YappColor.textPrimary
                         )
                     }
                     body?.let {
@@ -228,7 +222,7 @@ fun YappBottomSheet(
                                 lineHeight = 22.sp,
                                 letterSpacing = 0.203.sp
                             ),
-                            color = NeutralLabelColor
+                            color = YappColor.textSecondary
                         )
                     }
                 }
@@ -281,7 +275,7 @@ private fun YappBottomSheetHandle(contentDescription: String?) {
                 .width(48.dp)
                 .height(6.dp)
                 .clip(RoundedCornerShape(3.dp))
-                .background(Color(0xFF70737C).copy(alpha = 0.16f))
+                .background(YappColor.scrollIndicator)
         )
     }
 }
@@ -299,8 +293,8 @@ private fun YappPopupActionButton(
         onClick = onClick,
         modifier = modifier.height(height),
         shape = shape,
-        color = if (primary) PrimaryColor else Color.White,
-        border = if (primary) null else BorderStroke(1.dp, LineColor)
+        color = if (primary) YappColor.primary else YappColor.white,
+        border = if (primary) null else BorderStroke(1.dp, YappColor.divider)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -309,7 +303,7 @@ private fun YappPopupActionButton(
             Text(
                 text = text,
                 style = YappTypography.body1NormalBold,
-                color = if (primary) Color.White else PrimaryColor
+                color = if (primary) YappColor.white else YappColor.primary
             )
         }
     }
@@ -351,9 +345,9 @@ private fun YappBottomSheetPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .background(Color(0xFFFFEFE9))
+                    .background(YappColor.orangeWeak)
                     .padding(16.dp),
-                color = NeutralLabelColor
+                color = YappColor.textSecondary
             )
         }
     )

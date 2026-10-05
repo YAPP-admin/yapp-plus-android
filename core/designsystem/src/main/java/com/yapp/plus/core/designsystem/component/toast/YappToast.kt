@@ -17,12 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
+import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
 @Composable
@@ -35,17 +35,17 @@ fun YappToast(
 ) {
     val shape = RoundedCornerShape(12.dp)
     val statusColor = when (type) {
-        YappToastType.Default -> Color(0xFF00BF40)
-        YappToastType.Error -> Color(0xFFFF4242)
+        YappToastType.Default -> YappColor.success
+        YappToastType.Error -> YappColor.error
     }
     val backgroundColor = when (color) {
-        YappToastColor.Dark -> Color(0xE02E2F33)
-        YappToastColor.White -> Color.White
+        YappToastColor.Dark -> YappColor.toastBackgroundDark
+        YappToastColor.White -> YappColor.white
     }
     val textColor = when {
-        type == YappToastType.Error -> Color(0xFFFF4242)
-        color == YappToastColor.Dark -> Color.White
-        else -> Color.Black
+        type == YappToastType.Error -> YappColor.error
+        color == YappToastColor.Dark -> YappColor.white
+        else -> YappColor.black
     }
     val iconResource = when (type) {
         YappToastType.Default -> R.drawable.ic_yapp_toast_success
@@ -59,8 +59,8 @@ fun YappToast(
             .shadow(
                 elevation = if (color == YappToastColor.Dark) 8.dp else 4.dp,
                 shape = shape,
-                ambientColor = Color.Black.copy(alpha = 0.12f),
-                spotColor = Color.Black.copy(alpha = 0.12f)
+                ambientColor = YappColor.toastShadow,
+                spotColor = YappColor.toastShadow
             )
             .clip(shape)
             .background(backgroundColor)
@@ -90,7 +90,7 @@ fun YappToast(
 private fun YappToastPreview() {
     Column(
         modifier = Modifier
-            .background(Color.White)
+            .background(YappColor.white)
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -99,7 +99,7 @@ private fun YappToastPreview() {
         YappToast(text = "다시 시도해 주세요.", type = YappToastType.Error)
         Box(
             modifier = Modifier
-                .background(Color(0xFF171719), RoundedCornerShape(16.dp))
+                .background(YappColor.textPrimary, RoundedCornerShape(16.dp))
                 .padding(16.dp)
         ) {
             YappToast(

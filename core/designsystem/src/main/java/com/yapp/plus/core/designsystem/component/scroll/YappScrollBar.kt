@@ -20,29 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-enum class YappScrollBarSize(
-    val width: Dp,
-    val containerWidth: Dp
-) {
-    Normal(width = 7.dp, containerWidth = 13.dp),
-    Small(width = 3.dp, containerWidth = 9.dp)
-}
-
-enum class YappScrollBarPosition {
-    Top,
-    Center,
-    Bottom
-}
-
-enum class YappScrollBarPercent(val fraction: Float) {
-    Full(1f),
-    ThreeQuarters(0.75f),
-    Half(0.5f),
-    Quarter(0.25f)
-}
 
 @Composable
 fun YappScrollBar(

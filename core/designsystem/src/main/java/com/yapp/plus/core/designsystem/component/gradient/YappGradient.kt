@@ -22,22 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-enum class YappBackgroundGradientSurface {
-    Normal,
-    Elevated
-}
-
-enum class YappStaticGradientColor {
-    White,
-    Black
-}
-
-enum class YappStaticGradientEmphasis {
-    Light,
-    Normal,
-    Emphasis
-}
-
 @Composable
 fun YappBackgroundGradient(
     modifier: Modifier = Modifier,

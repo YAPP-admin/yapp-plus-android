@@ -29,17 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
-
-enum class YappDropdownSize {
-    Large,
-    Medium
-}
 
 @Composable
 fun YappDropdown(
@@ -136,14 +130,6 @@ private fun dropdownMetrics(size: YappDropdownSize) = when (size) {
     YappDropdownSize.Large -> DropdownMetrics(48.dp, 16.dp, 10.dp, 24.dp, 48.dp)
     YappDropdownSize.Medium -> DropdownMetrics(40.dp, 10.dp, 8.dp, 20.dp, 40.dp)
 }
-
-private data class DropdownMetrics(
-    val height: Dp,
-    val horizontalPadding: Dp,
-    val cornerRadius: Dp,
-    val iconSize: Dp,
-    val menuItemHeight: Dp
-)
 
 private val LabelColor = Color(0xFF171719)
 private val PlaceholderColor = Color(0x4737383C)

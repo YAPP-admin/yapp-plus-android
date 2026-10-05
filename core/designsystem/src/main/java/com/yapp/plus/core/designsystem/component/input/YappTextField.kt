@@ -25,30 +25,11 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
-
-enum class YappInputSize {
-    Large,
-    Medium,
-    Small
-}
-
-enum class YappInputState {
-    Default,
-    Active,
-    Success,
-    Error
-}
-
-enum class YappTextAreaSize {
-    Large,
-    Medium
-}
 
 @Composable
 fun YappTextField(
@@ -204,13 +185,6 @@ private fun supportingTextColor(state: YappInputState) = when (state) {
     YappInputState.Default,
     YappInputState.Active -> LabelColor
 }
-
-private data class InputMetrics(
-    val height: Dp,
-    val horizontalPadding: Dp,
-    val cornerRadius: Dp,
-    val iconSpacing: Dp
-)
 
 private val LabelColor = Color(0xFF171719)
 private val PlaceholderColor = Color(0x4737383C)

@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-04
+last_verified: 2026-10-06
 ---
 
 # 코딩 컨벤션
@@ -45,4 +45,6 @@ Kotlin·Gradle Kotlin 코드에 적용합니다. 기계가 읽는 서식은 [.ed
 - 공통 텍스트·버튼·색상·타이포그래피는 `:core:designsystem`에서 제공하고 반복되는 변형은 공통 컴포넌트의 variant로 추가합니다.
 - API 키, 서명 정보, 개인 로컬 설정을 커밋하지 않습니다.
 
-업무 규칙, 상태 전이, 매핑, 오류 처리처럼 실패 위험이 있는 동작을 검증합니다. 기존 도구를 사용하고 표현을 그대로 반복하는 테스트는 추가하지 않습니다. 실제 실행한 명령·결과·남은 실패를 보고합니다. 포맷터와 정적 분석 플러그인은 아직 선택하지 않았습니다.
+Kotlin과 Gradle Kotlin DSL 서식 검사는 ktlint Gradle plugin 14.2.0을 사용하며, 전체 검사는 `./gradlew ktlintCheck`로 실행합니다. 현재 `:app`과 `:core:designsystem`의 기존 위반은 각 모듈의 `ktlint-baseline.xml`에 기록되어 있습니다. 기존 코드를 정리할 때 해당 항목도 baseline에서 제거합니다.
+
+업무 규칙, 상태 전이, 매핑, 오류 처리처럼 실패 위험이 있는 동작을 검증합니다. 기존 도구를 사용하고 표현을 그대로 반복하는 테스트는 추가하지 않습니다. 실제 실행한 명령·결과·남은 실패를 보고합니다.

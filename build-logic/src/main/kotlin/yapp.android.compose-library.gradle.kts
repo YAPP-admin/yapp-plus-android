@@ -2,6 +2,7 @@ import com.yapp.plus.buildlogic.COMPILE_SDK_VERSION
 import com.yapp.plus.buildlogic.MIN_SDK_VERSION
 
 plugins {
+    id("yapp.ktlint")
     id("com.android.library")
     id("org.jetbrains.kotlin.plugin.compose")
 }

@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     `java-library`
+    id("yapp.ktlint")
     id("org.jetbrains.kotlin.jvm")
 }
 

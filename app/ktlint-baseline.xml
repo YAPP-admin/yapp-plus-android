@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="src/main/java/com/yapp/plus/MainActivity.kt">
+        <error line="39" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="43" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="47" column="60" source="standard:trailing-comma-on-call-site" />
+    </file>
+</baseline>

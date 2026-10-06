@@ -4,12 +4,12 @@
 
 ## 현재 상태
 
-승인한 6개 모듈의 Gradle 설정과 의존성 연결, 공통 테마와 시작 화면이 준비되어 있습니다. 출석 기능, 인증, 서버 연동은 아직 구현되지 않았습니다.
+6개 앱 모듈의 공통 설정은 `build-logic` convention plugin에서 관리합니다. Hilt 앱 진입점과 Ktor·Kotlin serialization 의존성, 공통 테마와 시작 화면이 준비되어 있습니다. 출석 기능, 인증, API 호출은 아직 구현되지 않았습니다.
 
 ## 아키텍처와 모듈
 
 MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
-현재 6개 모듈의 기본 설정과 디자인시스템 테마가 준비되어 있습니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 HTTP 라이브러리는 확정된 요구사항에 따라 구현·선택합니다.
+현재 6개 앱 모듈과 Gradle build-logic 설정, 디자인시스템 테마가 준비되어 있습니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.
 
 ## 프로젝트 지식
 
@@ -82,4 +82,4 @@ OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지�
 | [$yapp-module-structure](.agents/skills/yapp-module-structure/SKILL.md) | 파일·패키지 배치와 모듈 추가·검증 |
 
 [.editorconfig](.editorconfig)에 기본 서식과 Kotlin 최대 줄 길이 100자를 기록했습니다.
-포맷터·정적 분석 플러그인과 DI 라이브러리는 별도로 선택합니다.
+포맷터와 정적 분석 플러그인은 별도로 선택합니다.

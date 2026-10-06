@@ -5,6 +5,7 @@
 - YAPP 공식 출석 앱의 Android 저장소다. Kotlin과 Jetpack Compose를 사용한다.
 - 승인된 아키텍처는 [Wiki의 아키텍처 문서](docs/wiki/architecture.md)에 기록된 MVVM + 단방향 상태 흐름(UDF) + 필요한 범위의 Clean Architecture다.
 - GitHub 저장소는 `YAPP-admin/yapp-plus-android`다. 브랜치·제목·라벨·변경량 정책의 기준은 [CONTRIBUTING.md](CONTRIBUTING.md)다.
+- 공통 Gradle convention plugin은 `build-logic/` included build에서 관리하고, 라이브러리 버전은 `gradle/libs.versions.toml`에 둔다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.
 - 구현 요청은 필요한 이슈 작성, 구현, 검증, 커밋, 푸시와 PR 생성까지 진행한다. 사용자가 범위를 제한하면 그 범위를 따른다. 이미 승인된 작업을 다시 승인받지 않는다.
 - 요청이 설계 논의나 조사에 한정되면 먼저 결과를 정리한다. 제품 정책·API 계약 등 구현에 필요한 정보가 없으면 해당 정보만 질문한다.

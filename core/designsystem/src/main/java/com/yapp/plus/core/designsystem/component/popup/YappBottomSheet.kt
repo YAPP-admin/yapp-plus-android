@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +81,7 @@ fun YappBottomSheet(
                             modifier = Modifier.fillMaxWidth(),
                             style = YappTypography.headline1Bold,
                             color = YappColor.textPrimary,
+                            textAlign = TextAlign.Center,
                         )
                     }
                     body?.let {
@@ -92,6 +94,7 @@ fun YappBottomSheet(
                                 letterSpacing = 0.203.sp,
                             ),
                             color = YappColor.textSecondary,
+                            textAlign = TextAlign.Center,
                         )
                     }
                 }

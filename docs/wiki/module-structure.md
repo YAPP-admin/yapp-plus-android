@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-04
+last_verified: 2026-10-06
 ---
 
 # 모듈 구조
@@ -16,10 +16,11 @@ last_verified: 2026-10-04
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM 기본 설정됨 |
 | `:data` | `com.yapp.plus.data` | Android Library 기본 설정됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Android Library 기본 설정됨 |
+| `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:feature:auth` | `com.yapp.plus.feature.auth` | 인증 기능 확정 시 추가 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 로컬 저장 필요 시 추가 |
 
-목표 모듈 6개의 Gradle 설정과 의존성을 준비했습니다. 새 모듈의 업무 코드와 Network의 HTTP 라이브러리는 요구사항·API 계약이 정해질 때 구현·선택합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+6개 앱 모듈의 공통 Gradle 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
 ## 파일 배치
 

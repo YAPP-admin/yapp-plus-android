@@ -22,4 +22,5 @@ dependencies {
     implementation(libs.kotlin.serialization.gradle.plugin)
     implementation(libs.ksp.gradle.plugin)
     implementation(libs.hilt.gradle.plugin)
+    implementation(libs.ktlint.gradle.plugin)
 }

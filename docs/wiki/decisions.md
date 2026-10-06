@@ -53,3 +53,13 @@ last_verified: 2026-10-06
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `settings.gradle.kts`, `build-logic/`, `gradle/libs.versions.toml`.
 - 적용 상태: Convention plugin과 App Hilt 진입점, Ktor·Kotlin serialization 의존성을 설정했습니다. API별 HttpClient 사용, DTO와 Repository 구현은 서버 계약이 없어 후속입니다. AGP 9의 내장 Kotlin에서 KSP가 generated source를 등록하도록 `android.disallowKotlinSourceSets=false`를 설정했습니다 ([KSP #2729](https://github.com/google/ksp/issues/2729)).
 - 대체한 결정: 없음.
+
+## DEC-0006 · ktlint와 Android CI 검사 도입
+
+- 기록일: 2026-10-06
+- 결정: Kotlin과 Gradle Kotlin DSL 서식 검사에는 ktlint Gradle plugin 14.2.0을 사용하고 PR CI에서 `./gradlew ktlintCheck`, `./gradlew test`, `./gradlew :app:assembleDebug :app:bundleRelease`를 실행합니다.
+- 이유: CI에서 코드 서식, 기존 Android·Domain 단위 테스트, 앱 Debug APK와 Release bundle을 함께 검증합니다. 저장소의 앱 모듈은 `:app`이며 `testAndroidHostTest` 태스크는 없습니다. `./gradlew test`가 현재 모듈들의 단위 테스트 태스크를 실행합니다.
+- 근거: 사용자 요청, [이슈 #22](https://github.com/YAPP-admin/yapp-plus-android/issues/22), [ktlint Gradle plugin 14.2.0](https://plugins.gradle.org/plugin/org.jlleitschuh.gradle.ktlint/14.2.0).
+- 반영: [코딩 컨벤션](coding-conventions.md), `gradle/libs.versions.toml`, `build.gradle.kts`, `.github/workflows/android-ci.yml`.
+- 적용 상태: `:app`과 `:core:designsystem`의 적용 전 위반을 각 `ktlint-baseline.xml`에 기록했습니다. `ktlintCheck`는 기준 파일에 없는 신규 위반을 계속 검사합니다.
+- 대체한 결정: 없음.

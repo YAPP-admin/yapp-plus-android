@@ -41,19 +41,19 @@ fun YappDropdown(
     options: List<String>,
     selectedOption: String?,
     onOptionSelected: (String) -> Unit,
+    placeholder: String,
+    size: YappDropdownSize,
     modifier: Modifier = Modifier,
-    placeholder: String = "선택해주세요",
-    size: YappDropdownSize = YappDropdownSize.Large,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val metrics = dropdownMetrics(size)
     Column(modifier = modifier) {
         YappText(
-                title,
-                style = YappTypography.label1NormalMedium,
-                color = YappColor.textPrimary
-            )
+            title,
+            style = YappTypography.label1NormalMedium,
+            color = YappColor.textPrimary,
+        )
         Spacer(Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             Surface(
@@ -63,43 +63,49 @@ fun YappDropdown(
                 shape = RoundedCornerShape(metrics.cornerRadius),
                 color = YappColor.white,
                 contentColor = YappColor.textPrimary,
-                border = BorderStroke(
-                    1.dp,
-                    when {
-                        expanded -> YappColor.primary
-                        selectedOption != null -> YappColor.borderStrong
-                        else -> YappColor.border
-                    }
-                )
+                border =
+                    BorderStroke(
+                        1.dp,
+                        when {
+                            expanded -> YappColor.primary
+                            selectedOption != null -> YappColor.borderStrong
+                            else -> YappColor.border
+                        },
+                    ),
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = metrics.horizontalPadding),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     YappText(
                         text = selectedOption ?: placeholder,
                         modifier = Modifier.weight(1f),
                         style = YappTypography.body1NormalRegular,
-                        color = if (selectedOption == null) {
-                            YappColor.placeholder
-                        } else {
-                            YappColor.textPrimary
-                        }
+                        color =
+                            if (selectedOption == null) {
+                                YappColor.placeholder
+                            } else {
+                                YappColor.textPrimary
+                            },
                     )
                     Image(
-                        painter = painterResource(
-                            if (size == YappDropdownSize.Large) {
-                                if (expanded) R.drawable.ic_dropdown_caret_up_large
-                                else R.drawable.ic_dropdown_caret_down_large
-                            } else if (expanded) {
-                                R.drawable.ic_dropdown_caret_up_medium
-                            } else {
-                                R.drawable.ic_dropdown_caret_down_medium
-                            }
-                        ),
+                        painter =
+                            painterResource(
+                                if (size == YappDropdownSize.Large) {
+                                    if (expanded) {
+                                        R.drawable.ic_dropdown_caret_up_large
+                                    } else {
+                                        R.drawable.ic_dropdown_caret_down_large
+                                    }
+                                } else if (expanded) {
+                                    R.drawable.ic_dropdown_caret_up_medium
+                                } else {
+                                    R.drawable.ic_dropdown_caret_down_medium
+                                },
+                            ),
                         contentDescription = null,
-                        modifier = Modifier.size(metrics.iconSize)
+                        modifier = Modifier.size(metrics.iconSize),
                     )
                 }
             }
@@ -111,7 +117,7 @@ fun YappDropdown(
                 containerColor = YappColor.white,
                 tonalElevation = 0.dp,
                 shadowElevation = 2.dp,
-                border = BorderStroke(1.dp, YappColor.border)
+                border = BorderStroke(1.dp, YappColor.border),
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
@@ -119,21 +125,25 @@ fun YappDropdown(
                             YappText(
                                 option,
                                 style = YappTypography.body1NormalRegular,
-                                color = YappColor.textPrimary
+                                color = YappColor.textPrimary,
                             )
                         },
                         onClick = {
                             onOptionSelected(option)
                             expanded = false
                         },
-                        modifier = Modifier
-                            .width(320.dp)
-                            .height(metrics.menuItemHeight)
-                            .background(
-                                if (option == selectedOption) YappColor.selectionOverlay
-                                else YappColor.transparent
-                            ),
-                        contentPadding = PaddingValues(horizontal = 8.dp)
+                        modifier =
+                            Modifier
+                                .width(320.dp)
+                                .height(metrics.menuItemHeight)
+                                .background(
+                                    if (option == selectedOption) {
+                                        YappColor.selectionOverlay
+                                    } else {
+                                        YappColor.transparent
+                                    },
+                                ),
+                        contentPadding = PaddingValues(horizontal = 8.dp),
                     )
                 }
             }
@@ -141,10 +151,11 @@ fun YappDropdown(
     }
 }
 
-private fun dropdownMetrics(size: YappDropdownSize) = when (size) {
-    YappDropdownSize.Large -> DropdownMetrics(48.dp, 16.dp, 10.dp, 24.dp, 48.dp)
-    YappDropdownSize.Medium -> DropdownMetrics(40.dp, 10.dp, 8.dp, 20.dp, 40.dp)
-}
+private fun dropdownMetrics(size: YappDropdownSize) =
+    when (size) {
+        YappDropdownSize.Large -> DropdownMetrics(48.dp, 16.dp, 10.dp, 24.dp, 48.dp)
+        YappDropdownSize.Medium -> DropdownMetrics(40.dp, 10.dp, 8.dp, 20.dp, 40.dp)
+    }
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable
@@ -153,20 +164,23 @@ private fun YappDropdownPreview() {
         Surface(color = YappColor.white) {
             Column(
                 modifier = Modifier.padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 YappDropdown(
                     title = "참석 여부",
                     options = listOf("참석", "불참", "미정"),
                     selectedOption = null,
-                    onOptionSelected = {}
+                    onOptionSelected = {},
+                    placeholder = "선택해주세요",
+                    size = YappDropdownSize.Large,
                 )
                 YappDropdown(
                     title = "참석 여부",
                     options = listOf("참석", "불참"),
                     selectedOption = "참석",
                     onOptionSelected = {},
-                    size = YappDropdownSize.Medium
+                    placeholder = "선택해주세요",
+                    size = YappDropdownSize.Medium,
                 )
             }
         }

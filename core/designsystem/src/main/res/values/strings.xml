@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yapp_preview_auth_next">다음</string>
+    <string name="yapp_preview_auth_name_hint">본인 이름을 입력해 주세요</string>
+    <string name="yapp_preview_auth_error_title">앗, 예기치 못한 오류가 발생했어요!</string>
+    <string name="yapp_preview_auth_error_body">계속해서 같은 문제가 발생한다면\n운영팀에 제보해주세요!</string>
+    <string name="yapp_preview_auth_report">제보하기</string>
+    <string name="yapp_preview_auth_close">닫기</string>
+</resources>

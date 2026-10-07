@@ -16,6 +16,14 @@ internal object YappColor {
     val transparent = Color.Transparent
 
     val primary = Color(0xFFFA6027)
+    val brand = Color(0xFFFF6600)
+    val foregroundNeutral = Color(0xFF1A1C20)
+    val foregroundMuted = Color(0xFF555D6D)
+    val foregroundSubtle = Color(0xFF868B94)
+    val foregroundFaint = Color(0xFFB0B3BA)
+    val strokeNeutralWeak = Color(0xFFDCDEE3)
+    val backgroundBasement = Color(0xFFF3F4F5)
+    val kakaoContainer = Color(0xFFFAE300)
     val orange = primary
     val orangeWeak = Color(0xFFFFEFE9)
     val red = Color(0xFFE32908)

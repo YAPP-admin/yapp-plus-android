@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # 디자인시스템
@@ -9,6 +9,21 @@ last_verified: 2026-10-06
 ## 색상
 
 공용 Compose 색상 토큰은 `:core:designsystem`의 `theme/Color.kt`에 있는 `YappColor`에서 제공합니다. Figma Components 기준으로 이미 구현한 ARGB 값과 알파값을 보존하면서 컴포넌트와 Preview가 같은 토큰을 사용합니다. 컴포넌트 파일에 고정 색상 리터럴이나 로컬 색상 상수를 새로 두지 않습니다.
+
+[로그인·회원가입 Figma](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487)의 변형은 별도 색상 토큰을 사용합니다. 기존 `primary`와 공용 컴포넌트 기본값을 바꾸지 않습니다.
+
+Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand`, `textPrimary`, `textSecondary`, `textSubtle`, `textFaint`, `background`를 사용합니다. 나머지 공용 색상과 컴포넌트 내부 색상은 `YappColor`에서 관리합니다.
+
+| 토큰 | 값 | 사용처 |
+| --- | --- | --- |
+| `brand` | `#FF6600` | CTA·Compact 팝업의 주요 버튼 |
+| `foregroundNeutral` | `#1A1C20` | Auth 입력·Compact 제목·카카오 버튼 글자 |
+| `foregroundMuted` | `#555D6D` | Auth 포커스 테두리·커서·Compact 본문 |
+| `foregroundSubtle` | `#868B94` | Compact 보조 버튼 글자 |
+| `foregroundFaint` | `#B0B3BA` | Auth placeholder |
+| `strokeNeutralWeak` | `#DCDEE3` | Auth 기본 테두리 |
+| `backgroundBasement` | `#F3F4F5` | Compact 보조 버튼 배경 |
+| `kakaoContainer` | `#FAE300` | 카카오 버튼 배경 |
 
 ## 타이포그래피
 

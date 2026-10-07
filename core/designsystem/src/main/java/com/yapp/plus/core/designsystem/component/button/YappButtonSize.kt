@@ -5,5 +5,7 @@ enum class YappButtonSize {
     Large,
     Medium,
     Small,
-    XSmall
+    XSmall,
+    CallToAction,
+    Social,
 }

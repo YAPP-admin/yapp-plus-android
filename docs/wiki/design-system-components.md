@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-05
+last_verified: 2026-10-07
 ---
 
 # 디자인시스템 공통 컴포넌트
@@ -23,3 +23,14 @@ YappText(
 ```
 
 컴포넌트 사용 범위는 공통으로 관리할 텍스트 표현입니다. 기능 화면의 상태·동작 로직은 각 Feature 모듈에 둡니다.
+
+## 로그인·회원가입용 변형
+
+[Figma 로그인·회원가입](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487)에서 확인한 변형만 명시적으로 선택합니다. 기존 기본값과 호출부 표현은 유지합니다.
+
+- `YappButtonVariant.SolidBrand`와 `YappButtonSize.CallToAction`은 `#FF6600`, 18sp/24sp, 12dp 모서리, 가운데 정렬 CTA입니다. 비활성 상태는 버튼 전체를 50% 투명도로 표시하며 입력을 받지 않습니다.
+- `YappButtonVariant.Kakao`와 `YappButtonSize.Social`은 높이 최소 54dp, 16sp/24sp, 12dp 모서리입니다. Feature가 Figma 원본 카카오 로고를 `leadingIcon` 슬롯에 전달합니다. 슬롯은 36dp이며 컴포넌트는 실제 인증을 수행하지 않습니다.
+- `YappTextFieldVariant.Auth`는 기존 `size` 대신 54dp 높이와 12dp 모서리를 사용합니다. `title`을 생략하면 라벨과 라벨 간격이 없습니다. 실제 포커스를 반영하되 호출부의 오류·성공 상태를 덮어쓰지 않습니다. 입력값과 검증은 호출부가 소유하며 `keyboardOptions`·`keyboardActions`로 IME를 연결합니다.
+- `YappAlertDialogVariant.Compact`는 최대 너비 285dp, 12dp 모서리, 왼쪽 정렬 제목·본문, 44dp 높이와 8dp 모서리 버튼, 45% 배경 dim을 사용합니다. 닫기·제보 같은 행동은 호출부 콜백에 전달합니다.
+
+표현 상태는 `AuthComponentsPreview.kt`에서 확인합니다. 화면·상태 전이와 카카오 로고 리소스는 후속 Feature 구현이 소유합니다.

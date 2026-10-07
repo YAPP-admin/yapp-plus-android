@@ -8,11 +8,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 private const val TOAST_BUFFER_CAPACITY = 16
 
 class YappToastManager {
-    private val mutableToasts = MutableSharedFlow<YappToastData>(
-        replay = 0,
-        extraBufferCapacity = TOAST_BUFFER_CAPACITY,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+    private val mutableToasts =
+        MutableSharedFlow<YappToastData>(
+            replay = 0,
+            extraBufferCapacity = TOAST_BUFFER_CAPACITY,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     val toasts: SharedFlow<YappToastData> = mutableToasts.asSharedFlow()
 

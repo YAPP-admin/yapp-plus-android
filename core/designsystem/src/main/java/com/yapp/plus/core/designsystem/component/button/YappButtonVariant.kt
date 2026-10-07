@@ -5,5 +5,7 @@ enum class YappButtonVariant {
     SolidSecondary,
     OutlinedPrimary,
     OutlinedSecondary,
-    OutlinedAssistive
+    OutlinedAssistive,
+    SolidBrand,
+    Kakao,
 }

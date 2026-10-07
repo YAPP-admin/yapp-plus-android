@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
@@ -21,15 +22,35 @@ internal fun YappPopupActionButton(
     primary: Boolean,
     height: Dp,
     modifier: Modifier = Modifier,
+    variant: YappAlertDialogVariant = YappAlertDialogVariant.Default,
     onClick: () -> Unit,
 ) {
-    val shape = RoundedCornerShape(if (primary) 12.dp else 10.dp)
+    val isCompact = variant == YappAlertDialogVariant.Compact
+    val cornerRadius =
+        when {
+            isCompact -> 8.dp
+            primary -> 12.dp
+            else -> 10.dp
+        }
+    val containerColor =
+        when {
+            isCompact && primary -> YappColor.brand
+            isCompact -> YappColor.backgroundBasement
+            primary -> YappColor.primary
+            else -> YappColor.white
+        }
+    val contentColor =
+        when {
+            primary -> YappColor.white
+            isCompact -> YappColor.foregroundSubtle
+            else -> YappColor.primary
+        }
     Surface(
         onClick = onClick,
         modifier = modifier.height(height),
-        shape = shape,
-        color = if (primary) YappColor.primary else YappColor.white,
-        border = if (primary) null else BorderStroke(1.dp, YappColor.divider),
+        shape = RoundedCornerShape(cornerRadius),
+        color = containerColor,
+        border = if (primary || isCompact) null else BorderStroke(1.dp, YappColor.divider),
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -37,8 +58,16 @@ internal fun YappPopupActionButton(
         ) {
             Text(
                 text = text,
-                style = YappTypography.body1NormalBold,
-                color = if (primary) YappColor.white else YappColor.primary,
+                style =
+                    if (isCompact) {
+                        YappTypography.label1NormalBold.copy(
+                            lineHeight = 18.sp,
+                            letterSpacing = 0.sp,
+                        )
+                    } else {
+                        YappTypography.body1NormalBold
+                    },
+                color = contentColor,
             )
         }
     }

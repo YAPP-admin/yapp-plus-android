@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.core.designsystem.theme.YappTypography
+
+private const val DISABLED_BRAND_ALPHA = 0.5f
 
 @Composable
 fun YappButton(
@@ -31,32 +36,39 @@ fun YappButton(
     size: YappButtonSize = YappButtonSize.Large,
     enabled: Boolean = true,
     leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null
+    trailingIcon: (@Composable () -> Unit)? = null,
 ) {
     val metrics = buttonMetrics(size)
     val colors = buttonColors(variant, enabled)
 
     Surface(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.alpha(colors.alpha),
         enabled = enabled,
         shape = RoundedCornerShape(metrics.cornerRadius),
         color = colors.container,
         contentColor = colors.content,
-        border = colors.border?.let { BorderStroke(1.dp, it) }
+        border = colors.border?.let { BorderStroke(1.dp, it) },
     ) {
         Row(
-            modifier = Modifier.padding(
-                horizontal = metrics.horizontalPadding,
-                vertical = metrics.verticalPadding
-            ),
-            horizontalArrangement = Arrangement.spacedBy(metrics.iconSpacing),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .heightIn(min = metrics.minimumHeight)
+                    .padding(
+                        horizontal = metrics.horizontalPadding,
+                        vertical = metrics.verticalPadding,
+                    ),
+            horizontalArrangement =
+                Arrangement.spacedBy(
+                    space = metrics.iconSpacing,
+                    alignment = metrics.horizontalAlignment,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             leadingIcon?.let { icon ->
                 Box(
                     modifier = Modifier.size(metrics.iconSize),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     icon()
                 }
@@ -66,12 +78,12 @@ fun YappButton(
                 style = buttonTextStyle(size),
                 textAlign = TextAlign.Center,
                 maxLines = 1,
-                softWrap = false
+                softWrap = false,
             )
             trailingIcon?.let { icon ->
                 Box(
                     modifier = Modifier.size(metrics.iconSize),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     icon()
                 }
@@ -81,72 +93,129 @@ fun YappButton(
 }
 
 @Composable
-private fun buttonTextStyle(size: YappButtonSize) = when (size) {
-    YappButtonSize.XLarge,
-    YappButtonSize.Large -> MaterialTheme.typography.bodyLarge.copy(
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.0912.sp,
-        fontWeight = FontWeight.SemiBold
-    )
+private fun buttonTextStyle(size: YappButtonSize) =
+    when (size) {
+        YappButtonSize.CallToAction ->
+            YappTypography.headline1Bold.copy(
+                lineHeight = 24.sp,
+                letterSpacing = 0.sp,
+            )
 
-    YappButtonSize.Medium -> MaterialTheme.typography.bodyMedium.copy(
-        fontSize = 15.sp,
-        lineHeight = 22.sp,
-        letterSpacing = 0.144.sp,
-        fontWeight = FontWeight.SemiBold
-    )
+        YappButtonSize.Social -> YappTypography.body1NormalBold.copy(letterSpacing = 0.sp)
 
-    YappButtonSize.Small,
-    YappButtonSize.XSmall -> MaterialTheme.typography.labelMedium.copy(
-        fontSize = 13.sp,
-        lineHeight = 18.sp,
-        letterSpacing = 0.2522.sp,
-        fontWeight = FontWeight.SemiBold
-    )
-}
+        YappButtonSize.XLarge,
+        YappButtonSize.Large,
+        ->
+            MaterialTheme.typography.bodyLarge.copy(
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                letterSpacing = 0.0912.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
 
-private fun buttonMetrics(size: YappButtonSize) = when (size) {
-    YappButtonSize.XLarge -> ButtonMetrics(36.dp, 16.dp, 12.dp, 6.dp, 20.dp)
-    YappButtonSize.Large -> ButtonMetrics(28.dp, 12.dp, 10.dp, 6.dp, 20.dp)
-    YappButtonSize.Medium -> ButtonMetrics(20.dp, 9.dp, 8.dp, 5.dp, 18.dp)
-    YappButtonSize.Small -> ButtonMetrics(14.dp, 7.dp, 6.dp, 4.dp, 16.dp)
-    YappButtonSize.XSmall -> ButtonMetrics(12.dp, 5.dp, 4.dp, 4.dp, 16.dp)
-}
+        YappButtonSize.Medium ->
+            MaterialTheme.typography.bodyMedium.copy(
+                fontSize = 15.sp,
+                lineHeight = 22.sp,
+                letterSpacing = 0.144.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+
+        YappButtonSize.Small,
+        YappButtonSize.XSmall,
+        ->
+            MaterialTheme.typography.labelMedium.copy(
+                fontSize = 13.sp,
+                lineHeight = 18.sp,
+                letterSpacing = 0.2522.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+    }
+
+private fun buttonMetrics(size: YappButtonSize) =
+    when (size) {
+        YappButtonSize.CallToAction ->
+            ButtonMetrics(
+                horizontalPadding = 20.dp,
+                verticalPadding = 16.dp,
+                cornerRadius = 12.dp,
+                iconSpacing = 8.dp,
+                iconSize = 24.dp,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            )
+
+        YappButtonSize.Social ->
+            ButtonMetrics(
+                horizontalPadding = 20.dp,
+                verticalPadding = 9.dp,
+                cornerRadius = 12.dp,
+                iconSpacing = 0.dp,
+                iconSize = 36.dp,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                minimumHeight = 54.dp,
+            )
+
+        YappButtonSize.XLarge -> ButtonMetrics(36.dp, 16.dp, 12.dp, 6.dp, 20.dp)
+        YappButtonSize.Large -> ButtonMetrics(28.dp, 12.dp, 10.dp, 6.dp, 20.dp)
+        YappButtonSize.Medium -> ButtonMetrics(20.dp, 9.dp, 8.dp, 5.dp, 18.dp)
+        YappButtonSize.Small -> ButtonMetrics(14.dp, 7.dp, 6.dp, 4.dp, 16.dp)
+        YappButtonSize.XSmall -> ButtonMetrics(12.dp, 5.dp, 4.dp, 4.dp, 16.dp)
+    }
 
 private fun buttonColors(
     variant: YappButtonVariant,
-    enabled: Boolean
+    enabled: Boolean,
 ) = when (variant) {
-    YappButtonVariant.SolidPrimary -> ButtonColors(
-        container = if (enabled) YappColor.primary else YappColor.coolNeutralWeak,
-        content = if (enabled) YappColor.white else YappColor.contentDisabled,
-        border = null
-    )
+    YappButtonVariant.SolidBrand ->
+        ButtonColors(
+            container = YappColor.brand,
+            content = YappColor.white,
+            border = null,
+            alpha = if (enabled) 1f else DISABLED_BRAND_ALPHA,
+        )
 
-    YappButtonVariant.SolidSecondary -> ButtonColors(
-        container = if (enabled) YappColor.orangeWeak else YappColor.disabledSecondaryContainer,
-        content = if (enabled) YappColor.primary else YappColor.disabledSecondaryContent,
-        border = null
-    )
+    YappButtonVariant.Kakao ->
+        ButtonColors(
+            container = YappColor.kakaoContainer,
+            content = YappColor.foregroundNeutral,
+            border = null,
+            alpha = if (enabled) 1f else DISABLED_BRAND_ALPHA,
+        )
 
-    YappButtonVariant.OutlinedPrimary -> ButtonColors(
-        container = YappColor.transparent,
-        content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
-        border = YappColor.border
-    )
+    YappButtonVariant.SolidPrimary ->
+        ButtonColors(
+            container = if (enabled) YappColor.primary else YappColor.coolNeutralWeak,
+            content = if (enabled) YappColor.white else YappColor.contentDisabled,
+            border = null,
+        )
 
-    YappButtonVariant.OutlinedSecondary -> ButtonColors(
-        container = YappColor.transparent,
-        content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
-        border = if (enabled) YappColor.border else YappColor.border
-    )
+    YappButtonVariant.SolidSecondary ->
+        ButtonColors(
+            container = if (enabled) YappColor.orangeWeak else YappColor.disabledSecondaryContainer,
+            content = if (enabled) YappColor.primary else YappColor.disabledSecondaryContent,
+            border = null,
+        )
 
-    YappButtonVariant.OutlinedAssistive -> ButtonColors(
-        container = YappColor.transparent,
-        content = if (enabled) YappColor.textPrimary else YappColor.disabledOutlineContent,
-        border = if (enabled) YappColor.border else YappColor.border
-    )
+    YappButtonVariant.OutlinedPrimary ->
+        ButtonColors(
+            container = YappColor.transparent,
+            content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
+            border = YappColor.border,
+        )
+
+    YappButtonVariant.OutlinedSecondary ->
+        ButtonColors(
+            container = YappColor.transparent,
+            content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
+            border = if (enabled) YappColor.border else YappColor.border,
+        )
+
+    YappButtonVariant.OutlinedAssistive ->
+        ButtonColors(
+            container = YappColor.transparent,
+            content = if (enabled) YappColor.textPrimary else YappColor.disabledOutlineContent,
+            border = if (enabled) YappColor.border else YappColor.border,
+        )
 }
 
 @Preview(showBackground = true, widthDp = 390)
@@ -156,7 +225,7 @@ private fun YappButtonPreview() {
         Surface(color = YappColor.white) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     YappButton("Primary", {}, variant = YappButtonVariant.SolidPrimary)
@@ -168,7 +237,7 @@ private fun YappButtonPreview() {
                         "Disabled",
                         {},
                         variant = YappButtonVariant.SolidSecondary,
-                        enabled = false
+                        enabled = false,
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -177,7 +246,7 @@ private fun YappButtonPreview() {
                         "Disabled",
                         {},
                         variant = YappButtonVariant.OutlinedPrimary,
-                        enabled = false
+                        enabled = false,
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -185,7 +254,7 @@ private fun YappButtonPreview() {
                     YappButton(
                         "Assistive",
                         {},
-                        variant = YappButtonVariant.OutlinedAssistive
+                        variant = YappButtonVariant.OutlinedAssistive,
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {

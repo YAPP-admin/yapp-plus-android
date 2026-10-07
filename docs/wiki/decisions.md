@@ -6,7 +6,7 @@ last_verified: 2026-10-07
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0008`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0009`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -71,4 +71,14 @@ last_verified: 2026-10-07
 - 이유: 계획 검토와 구현을 모델 역할별로 분리하면서, 승인 전에 저장소나 GitHub 상태가 바뀌지 않도록 합니다.
 - 근거: 사용자 요청 및 승인, [이슈 #24](https://github.com/YAPP-admin/yapp-plus-android/issues/24).
 - 반영: `AGENTS.md`, `.codex/prompts/yapp-work.md`.
+- 대체한 결정: 없음.
+
+## DEC-0008 · 로그인·회원가입용 공용 UI 변형
+
+- 기록일: 2026-10-07
+- 결정: 승인된 Figma의 로그인·회원가입 표현을 버튼·입력창·팝업의 명시적 변형과 별도 색상 토큰으로 제공합니다. 기존 공용 기본값을 유지하며 화면 상태·검증·인증 연동과 로고 리소스는 Feature가 소유합니다.
+- 이유: 기존 공용 표현과 다른 색상·크기·정렬을 보존하면서 후속 인증 화면에서 같은 UI 계약을 재사용합니다.
+- 근거: UI만 구현하고 카카오 제공자를 사용하는 사용자 승인, [이슈 #26](https://github.com/YAPP-admin/yapp-plus-android/issues/26), [Figma 로그인·회원가입](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487).
+- 반영: [디자인시스템](design-system.md), [공통 컴포넌트](design-system-components.md), `:core:designsystem`.
+- 적용 상태: 공용 UI 변형을 추가했습니다. 화면과 앱 진입점 연결은 [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27)에서 진행합니다.
 - 대체한 결정: 없음.

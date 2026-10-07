@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <baseline version="1.0">
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/chip/ChipColors.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/chip/ChipMetrics.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/chip/ChipPalette.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/chip/YappChip.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/chip/YappChipColor.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/chip/YappChipSize.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/chip/YappChipStyle.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/dropdown/DropdownMetrics.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/dropdown/YappDropdown.kt">
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/dropdown/YappDropdownSize.kt">
+    </file>
     <file name="src/main/java/com/yapp/plus/core/designsystem/component/input/InputMetrics.kt">
         <error line="9" column="24" source="standard:trailing-comma-on-declaration-site" />
     </file>
@@ -24,6 +44,8 @@
         <error line="137" column="20" source="standard:multiline-expression-wrapping" />
         <error line="146" column="24" source="standard:multiline-expression-wrapping" />
         <error line="170" column="28" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/com/yapp/plus/core/designsystem/component/text/YappText.kt">
     </file>
     <file name="src/main/java/com/yapp/plus/core/designsystem/component/toast/YappToast.kt">
         <error line="34" column="29" source="standard:trailing-comma-on-declaration-site" />

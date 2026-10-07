@@ -14,15 +14,17 @@ last_verified: 2026-10-07
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:attendance` | `com.yapp.plus.feature.attendance` | Android Library·Compose 기본 설정됨 |
+| `:feature:login` | `com.yapp.plus.feature.login` | 카카오 로그인·오류 UI 구현됨; 앱 초기 화면 |
+| `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM 기본 설정됨 |
 | `:data` | `com.yapp.plus.data` | Android Library 기본 설정됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Android Library 기본 설정됨 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
-| `:feature:login` | `com.yapp.plus.feature.login` | 공통 UI 기반 병합 후 후속 인증 화면 작업에서 추가 |
-| `:feature:signup` | `com.yapp.plus.feature.signup` | 공통 UI 기반 병합 후 후속 인증 화면 작업에서 추가 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 로컬 저장 필요 시 추가 |
 
-7개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+9개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+
+`:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. App은 현재 Login만 연결합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모 경로는 승인됐으며, 모듈 분리 PR 병합 후 별도 Navigation 2 PR에서 연결할 예정입니다. 입력 검증·실제 인증·가입 서버 처리는 포함하지 않습니다.
 
 ## 파일 배치
 

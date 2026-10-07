@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-04
+last_verified: 2026-10-07
 ---
 
 # 설계 패턴
@@ -10,10 +10,16 @@ last_verified: 2026-10-04
 
 ## Route와 Content
 
-- Route는 ViewModel 연결, 생명주기에 맞춘 상태 수집과 화면 이동을 처리합니다.
+- Route는 ViewModel 연결, 생명주기에 맞춘 상태 수집과 App이 제공하는 화면 이동 콜백 연결을 처리합니다.
 - Content는 상태와 콜백을 받아 화면을 그립니다. 하위 UI 컴포넌트는 Repository·DataSource를 호출하거나 화면 이동을 직접 조립하지 않습니다.
 - 펼침 여부 같은 일시적인 UI 상태는 Composable에서, 업무 처리·공유·복원이 필요한 화면 상태는 ViewModel에서 관리합니다.
 - 공통 텍스트·버튼·색상·타이포그래피는 Designsystem에서 제공하고 반복되는 변형은 공통 컴포넌트의 variant로 추가합니다.
+
+## Preview
+
+- 컴포넌트별 Preview를 `src/debug`에 두고 화면 연결 없이 표시값과 콜백으로 렌더링합니다.
+- enum 전체 값은 `:core:preview`의 `EnumPreviewParameterProvider`를 상속해 제공합니다. 입력 예시는 `TextInputPreviewParameterProvider`의 범용 fixture를 재사용하고 필요한 예시 값을 전달할 수 있습니다.
+- 범용 fixture는 UI 라이브러리의 상태 타입·Feature enum·업무 검증 규칙을 포함하지 않습니다. fixture를 실제 UI 상태로 바꾸는 책임은 소비 모듈의 debug Preview에 둡니다.
 
 ## ViewModel과 요청
 
@@ -35,8 +41,9 @@ last_verified: 2026-10-04
 
 ## 객체 조립과 화면 이동
 
-- 각 모듈은 자신의 객체 구성 정보를 제공하고 전체 조립은 App에서 담당합니다. DI 라이브러리는 아직 선택하지 않았습니다.
+- 각 모듈은 자신의 객체 구성 정보를 제공하고 전체 조립은 App에서 담당합니다. Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유합니다.
 - 화면 목적지는 타입으로 표현합니다. 전체 이동은 App에서 조율하고 Feature 경계를 유지합니다.
 - 하위 UI 컴포넌트는 콜백으로 이동을 요청하며, 다른 화면의 구현 대신 필요한 식별자와 입력을 전달합니다.
+- 시스템 뒤로 가기와 전체 내비게이션은 App이 소유합니다. 공통 레이아웃은 뒤로 버튼의 콜백만 전달하고 `BackHandler`나 목적지 선택을 포함하지 않습니다. 시스템 바 inset도 App에서 공급합니다.
 
 업무 정책·상태 전이·매핑·오류 처리의 경계 조건을 기존 테스트 도구로 검증합니다. Repository 테스트 대역은 가능한 경우 Fake를 사용합니다. 여러 모듈에서 재사용할 Fake·테스트 도구가 생기면 테스트 의존성으로만 연결합니다. 변경 모듈과 영향받는 호출부부터 검증하고 실제 결과를 기록합니다.

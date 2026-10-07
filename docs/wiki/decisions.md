@@ -82,3 +82,12 @@ last_verified: 2026-10-07
 - 반영: [디자인시스템](design-system.md), [공통 컴포넌트](design-system-components.md), `:core:designsystem`.
 - 적용 상태: 공용 UI 변형을 추가했습니다. 화면과 앱 진입점 연결은 [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27)에서 진행합니다.
 - 대체한 결정: 없음.
+
+## DEC-0009 · 로그인 화면에서 회원가입 진입 요소 제거
+
+- 기록일: 2026-10-07
+- 결정: 앱 초기 화면은 카카오 로그인 UI만 제공합니다. 회원가입 안내 문구·버튼과 “또는” 구분선은 표시하지 않습니다. 이름·전화번호 입력 및 가입 상태 화면은 UI로 유지하되, 화면 이동과 실제 인증 처리는 연결하지 않습니다.
+- 이유: 사용자가 Figma에 없는 회원가입 진입 요소도 제거한다고 확정했습니다. 현재 범위는 승인된 카카오 로그인 시작 UI와 호출부가 제어하는 화면 표현에 한정합니다.
+- 근거: 사용자 명시 요청 및 승인, [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27), [Figma 로그인·회원가입](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487).
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `:feature:auth`의 로그인 UI와 앱 초기 화면.
+- 대체한 결정: 없음.

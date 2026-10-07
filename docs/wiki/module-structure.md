@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # 모듈 구조
@@ -13,14 +13,16 @@ last_verified: 2026-10-06
 | `:app` | `com.yapp.plus` | 앱 진입점 구현됨 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마 구현됨 |
 | `:feature:attendance` | `com.yapp.plus.feature.attendance` | Android Library·Compose 기본 설정됨 |
+| `:feature:auth` | `com.yapp.plus.feature.auth` | 로그인·가입 입력·상태·오류 UI 구현됨; 앱 초기 화면은 카카오 로그인 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM 기본 설정됨 |
 | `:data` | `com.yapp.plus.data` | Android Library 기본 설정됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Android Library 기본 설정됨 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
-| `:feature:auth` | `com.yapp.plus.feature.auth` | 인증 기능 확정 시 추가 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 로컬 저장 필요 시 추가 |
 
-6개 앱 모듈의 공통 Gradle 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+7개 앱 모듈의 공통 Gradle 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+
+`:feature:auth`는 `:core:designsystem`을 재사용하는 상태·콜백 기반 UI입니다. 로그인에서 회원가입으로 이동하는 링크·구분선은 제공하지 않습니다. 입력 검증, 화면 진행, 카카오 SDK·API·토큰 연동은 포함하지 않으며 서버 계약이 정해진 뒤 연결합니다.
 
 ## 파일 배치
 

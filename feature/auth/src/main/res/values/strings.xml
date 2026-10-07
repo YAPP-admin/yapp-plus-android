@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="auth_back">뒤로 가기</string>
+    <string name="auth_login_title">당신의 작은 아이디어가\n세상을 바꿉니다.</string>
+    <string name="auth_kakao_continue">카카오톡으로 계속하기</string>
+    <string name="auth_name_title">이름을 입력해 주세요</string>
+    <string name="auth_name_hint">본인 이름을 입력해 주세요</string>
+    <string name="auth_phone_title">휴대폰 번호를 입력해 주세요</string>
+    <string name="auth_phone_hint">휴대폰 번호를 입력해 주세요</string>
+    <string name="auth_next">다음</string>
+    <string name="auth_pending_title" tools:ignore="TypographyEllipsis">운영진 승인을 기다리고 있어요...</string>
+    <string name="auth_pending_description">승인 완료까지 잠시만 기다려 주세요</string>
+    <string name="auth_complete_title">회원가입을 완료했어요!</string>
+    <string name="auth_complete_description">YAPP의 새로운 멤버가 되신 걸 진심으로 환영해요</string>
+    <string name="auth_start">시작하기</string>
+    <string name="auth_problem_title">앗, 문제가 발생했어요!</string>
+    <string name="auth_problem_description">운영진에게 문의하면 빠르게 해결할 수 있어요</string>
+    <string name="auth_contact">운영진에게 문의하기</string>
+    <string name="auth_error_title">앗, 예기치 못한 오류가 발생했어요!</string>
+    <string name="auth_error_description">계속해서 같은 문제가 발생한다면\n운영팀에 제보해주세요!</string>
+    <string name="auth_close">닫기</string>
+    <string name="auth_report">제보하기</string>
+    <string name="auth_preview_name">김아뿌</string>
+    <string name="auth_preview_phone" tools:ignore="TypographyDashes">010-1234-5678</string>
+</resources>

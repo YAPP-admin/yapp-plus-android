@@ -25,6 +25,7 @@ android {
 
 dependencies {
     implementation(project(":feature:attendance"))
+    implementation(project(":feature:auth"))
     implementation(project(":data"))
     implementation(project(":core:designsystem"))
     implementation(platform(libs.androidx.compose.bom))

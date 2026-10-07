@@ -10,5 +10,5 @@ enum class YappChipColor {
     Violet,
     Blue,
     LightBlue,
-    Pink,
+    Pink
 }

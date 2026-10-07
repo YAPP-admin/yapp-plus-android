@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,19 +45,17 @@ fun YappBottomSheet(
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val actualSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val handle: @Composable (() -> Unit)? =
-        if (showHandle) {
-            { YappBottomSheetHandle(contentDescription = contentDescription) }
-        } else {
-            null
-        }
+    val handle: @Composable (() -> Unit)? = if (showHandle) {
+        { YappBottomSheetHandle(contentDescription = contentDescription) }
+    } else {
+        null
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         sheetState = actualSheetState,
         shape = RoundedCornerShape(20.dp),
         containerColor = YappColor.white,
@@ -67,10 +65,9 @@ fun YappBottomSheet(
         dragHandle = handle,
     ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             if (title != null || body != null) {
@@ -91,12 +88,11 @@ fun YappBottomSheet(
                         YappText(
                             text = it,
                             modifier = Modifier.fillMaxWidth(),
-                            style =
-                                YappTypography.body2NormalRegular.copy(
-                                    fontSize = 14.sp,
-                                    lineHeight = 22.sp,
-                                    letterSpacing = 0.203.sp,
-                                ),
+                            style = YappTypography.body2NormalRegular.copy(
+                                fontSize = 14.sp,
+                                lineHeight = 22.sp,
+                                letterSpacing = 0.203.sp,
+                            ),
                             color = YappColor.textSecondary,
                             textAlign = TextAlign.Center,
                         )
@@ -138,22 +134,20 @@ fun YappBottomSheet(
 @Composable
 private fun YappBottomSheetHandle(contentDescription: String?) {
     Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(6.dp)
-                .semantics {
-                    if (contentDescription != null) this.contentDescription = contentDescription
-                },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(6.dp)
+            .semantics {
+                if (contentDescription != null) this.contentDescription = contentDescription
+            },
         contentAlignment = Alignment.Center,
     ) {
         Box(
-            modifier =
-                Modifier
-                    .width(48.dp)
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp))
-                    .background(YappColor.scrollIndicator),
+            modifier = Modifier
+                .width(48.dp)
+                .height(6.dp)
+                .clip(RoundedCornerShape(3.dp))
+                .background(YappColor.scrollIndicator),
         )
     }
 }
@@ -173,12 +167,11 @@ private fun YappBottomSheetPreview() {
         content = {
             Text(
                 text = "선택 항목을 여기에 표시합니다.",
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(120.dp)
-                        .background(YappColor.orangeWeak)
-                        .padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(YappColor.orangeWeak)
+                    .padding(16.dp),
                 color = YappColor.textSecondary,
             )
         },

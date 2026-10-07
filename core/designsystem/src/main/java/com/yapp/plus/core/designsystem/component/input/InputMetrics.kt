@@ -6,5 +6,5 @@ internal data class InputMetrics(
     val height: Dp,
     val horizontalPadding: Dp,
     val cornerRadius: Dp,
-    val iconSpacing: Dp,
+    val iconSpacing: Dp
 )

@@ -7,5 +7,5 @@ internal data class DropdownMetrics(
     val horizontalPadding: Dp,
     val cornerRadius: Dp,
     val iconSize: Dp,
-    val menuItemHeight: Dp,
+    val menuItemHeight: Dp
 )

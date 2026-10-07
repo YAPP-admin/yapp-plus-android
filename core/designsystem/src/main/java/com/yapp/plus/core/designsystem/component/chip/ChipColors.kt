@@ -4,5 +4,5 @@ import androidx.compose.ui.graphics.Color
 
 internal data class ChipColors(
     val container: Color,
-    val content: Color,
+    val content: Color
 )

@@ -50,13 +50,12 @@ fun YappToastHost(
         toastManager.toasts.collectLatest { toast ->
             currentToast = toast
             isVisible = true
-            val recommendedTimeout =
-                accessibilityManager?.calculateRecommendedTimeoutMillis(
-                    originalTimeoutMillis = toast.durationMillis,
-                    containsIcons = toast.showIcon,
-                    containsText = true,
-                    containsControls = false,
-                ) ?: toast.durationMillis
+            val recommendedTimeout = accessibilityManager?.calculateRecommendedTimeoutMillis(
+                originalTimeoutMillis = toast.durationMillis,
+                containsIcons = toast.showIcon,
+                containsText = true,
+                containsControls = false,
+            ) ?: toast.durationMillis
 
             delay(recommendedTimeout)
             isVisible = false
@@ -66,33 +65,29 @@ fun YappToastHost(
     }
 
     Box(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .imePadding(),
+        modifier = modifier
+            .fillMaxSize()
+            .imePadding(),
         contentAlignment = Alignment.BottomCenter,
     ) {
         AnimatedVisibility(
             visible = isVisible && currentToast != null,
-            enter =
-                slideInVertically(
-                    initialOffsetY = { it },
-                    animationSpec = tween(TOAST_ANIMATION_DURATION_MILLIS.toInt()),
-                ) + fadeIn(tween(TOAST_ANIMATION_DURATION_MILLIS.toInt())),
-            exit =
-                slideOutVertically(
-                    targetOffsetY = { it },
-                    animationSpec = tween(TOAST_ANIMATION_DURATION_MILLIS.toInt()),
-                ) + fadeOut(tween(TOAST_ANIMATION_DURATION_MILLIS.toInt())),
+            enter = slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = tween(TOAST_ANIMATION_DURATION_MILLIS.toInt()),
+            ) + fadeIn(tween(TOAST_ANIMATION_DURATION_MILLIS.toInt())),
+            exit = slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = tween(TOAST_ANIMATION_DURATION_MILLIS.toInt()),
+            ) + fadeOut(tween(TOAST_ANIMATION_DURATION_MILLIS.toInt())),
         ) {
             currentToast?.let { toast ->
                 YappToast(
                     text = toast.text,
-                    modifier =
-                        Modifier
-                            .padding(horizontal = 16.dp)
-                            .padding(bottom = toastBottomPadding)
-                            .semantics { liveRegion = LiveRegionMode.Polite },
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = toastBottomPadding)
+                        .semantics { liveRegion = LiveRegionMode.Polite },
                     color = toast.color,
                     type = toast.type,
                     showIcon = toast.showIcon,

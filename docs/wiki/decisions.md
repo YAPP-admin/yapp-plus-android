@@ -6,7 +6,7 @@ last_verified: 2026-10-07
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0009`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0010`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -82,3 +82,13 @@ last_verified: 2026-10-07
 - 반영: [디자인시스템](design-system.md), [공통 컴포넌트](design-system-components.md), `:core:designsystem`.
 - 적용 상태: 공용 UI 변형을 추가했습니다. 화면과 앱 진입점 연결은 [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27)에서 진행합니다.
 - 대체한 결정: 없음.
+
+## DEC-0009 · 인증 공통 표현과 독립 Preview 기반
+
+- 기록일: 2026-10-07
+- 결정: 인증의 재사용 가능한 표현을 Designsystem에서 제공하고 시스템 뒤로 가기·전체 화면 이동은 App이 소유합니다. 범용 Preview provider·입력 fixture는 독립된 `:core:preview`의 debug 소스에 두며 소비 모듈도 debug 의존성으로만 연결합니다. 새로 만들거나 이동·수정하는 모든 UI 컴포넌트에는 개별 Preview를 제공하고, 코드에 드러난 내용을 반복하는 불필요한 주석·KDoc을 추가하지 않습니다. PR에 첨부하는 스크린샷은 `<img src="..." width="300" />`으로 표시합니다.
+- 이유: 후속 로그인·회원가입 모듈에서 공통 표현과 Preview 데이터를 재사용하면서 기능 상태·목적지·업무 정책의 경계를 유지합니다.
+- 근거: 이번 세션의 사용자 승인, [이슈 #33](https://github.com/YAPP-admin/yapp-plus-android/issues/33), 후속 화면 작업 [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
+- 반영: [코딩 컨벤션](coding-conventions.md), [모듈 구조](module-structure.md), [설계 패턴](design-patterns.md), [공통 컴포넌트](design-system-components.md), `README.md`, `.codex/prompts/yapp-work.md`, `.codex/prompts/yapp-pr.md`.
+- 적용 상태: 공통 표현 5개와 각각의 Preview, 범용 Preview 지원 모듈을 제공합니다. 로그인·회원가입 모듈 분리와 화면 연결은 기반 PR 병합 뒤 후속 작업에서 구현합니다. Hilt 객체 조립 문구는 DEC-0005의 확정 내용과 실제 코드에 맞춰 동기화했습니다.
+- 대체한 결정: 없음. DEC-0008의 기능 상태·검증·인증 연동·카카오 로고의 Feature 소유는 유지합니다.

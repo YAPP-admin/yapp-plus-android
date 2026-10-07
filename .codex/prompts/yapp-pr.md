@@ -11,6 +11,7 @@ argument-hint: '[TITLE="제목"] [ISSUE=번호] [AREA=ui/ux|data|domain|feat|bui
 4. `CONTRIBUTING.md`의 영역 정의에 따라 개발 PR에는 `ui/ux`, `data`, `domain`, `feat` 중 정확히 하나를 선택한다. `feat`로 여러 영역을 합치지 않는다. 유지보수는 `build`/`refactor`, 버그 수정은 해당 영역에 `bug`를 추가한다. `AREA`가 diff와 맞는지 확인하고 `gh label list`로 실제 라벨 존재 여부를 검증한다. Android 코드 변경은 `./gradlew :app:assembleDebug :app:lintDebug`와 관련 테스트를 실행한다. 문서·설정 변경은 해당 파일의 형식과 내용으로 검증한다.
 5. PR 제목은 변경 내용을 한국어로 작성한다. `chore:`, `feat:`, `fix:` 같은 유형 접두어를 붙이지 않는다. `TITLE`에 접두어가 있거나 영어 문장으로 주어져도 의미를 유지하며 이 규칙에 맞게 고친다. 기술명과 고유명사는 원래 표기를 사용할 수 있다.
 6. `.github/pull_request_template.md` 형식에 맞춰 변경 목적, 관련 이슈, Wiki 동기화, 실제 검증 결과를 쓴다. 영역 라벨은 PR 라벨로 지정하고, 변경량과 선행·후속 관계는 diff와 브랜치 관계에서 확인하되 본문에 별도 필드로 쓰지 않는다. `develop` 대상 PR에서는 이슈 자동 종료를 가정하지 않고 `Related #번호`로 연결한다. 근거 없는 완료 표시를 하지 않는다.
+   스크린샷을 첨부할 때는 `<img src="..." width="300" />`으로 표시한다. 기존 PR 템플릿의 구조와 사용자가 편집한 내용은 보존한다.
 7. 필요하면 현재 작업 브랜치를 원격에 푸시한 뒤 `gh pr create --repo YAPP-admin/yapp-plus-android --base ... --head ... --title ... --body-file ... --label ...`로 영역 라벨과 함께 생성한다. 검증이 완료되지 않았거나 `DRAFT=true`면 Draft로 만들고, 검증이 완료되었으며 Draft 요청이 없으면 일반 PR로 만든다.
 8. 생성된 PR을 `gh api repos/YAPP-admin/yapp-plus-android/pulls/<번호>`로 조회해 JSON을 임시 파일에 저장하고 `python3 scripts/check_pr_policy.py <파일>`로 GitHub가 집계한 변경량·제목·라벨을 검증한다. 실패하면 성공으로 보고하지 않고 PR을 나누거나 제목·라벨을 수정한다. `gh pr checks <번호>`로 필수 검사 상태도 확인하며 대기 중인 검사를 통과로 보고하지 않는다. base·head·제목·라벨·Draft 상태를 다시 확인한다. Codex의 PR 첨부 도구가 있으면 생성한 PR을 현재 작업에 첨부하고 URL과 검증 결과를 보고한다.
 

@@ -4,12 +4,12 @@
 
 ## 현재 상태
 
-6개 앱 모듈의 공통 설정은 `build-logic` convention plugin에서 관리합니다. Hilt 앱 진입점과 Ktor·Kotlin serialization 의존성, 공통 테마와 시작 화면이 준비되어 있습니다. 출석 기능, 인증, API 호출은 아직 구현되지 않았습니다.
+7개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin에서 관리합니다. Hilt 앱 진입점과 Ktor·Kotlin serialization 의존성, 공통 테마·인증 UI 표현·debug 전용 Preview 지원과 시작 화면이 준비되어 있습니다. 출석 기능, 인증 연동, API 호출은 아직 구현되지 않았습니다.
 
 ## 아키텍처와 모듈
 
 MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
-현재 6개 앱 모듈과 Gradle build-logic 설정, 디자인시스템 테마가 준비되어 있습니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.
+현재 7개 Gradle 모듈과 build-logic 설정, 디자인시스템 공통 표현, `:core:preview`의 재사용 Preview 데이터가 준비되어 있습니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.
 
 ## 프로젝트 지식
 

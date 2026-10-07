@@ -1,0 +1,8 @@
+<resources>
+    <string name="auth_login_title">당신의 작은 아이디어가\n세상을 바꿉니다.</string>
+    <string name="auth_kakao_continue">카카오톡으로 계속하기</string>
+    <string name="auth_error_title">앗, 예기치 못한 오류가 발생했어요!</string>
+    <string name="auth_error_description">계속해서 같은 문제가 발생한다면\n운영팀에 제보해주세요!</string>
+    <string name="auth_close">닫기</string>
+    <string name="auth_report">제보하기</string>
+</resources>

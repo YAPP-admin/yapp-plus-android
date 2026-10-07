@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # 코딩 컨벤션
@@ -37,12 +37,13 @@ Kotlin·Gradle Kotlin 코드에 적용합니다. 기계가 읽는 서식은 [.ed
 - 수치는 `elapsedMs`, `remainingRatio`, `retryCount`처럼 의미와 단위를 드러냅니다.
 - 의미 있는 고정 숫자와 반복 문자열은 이름 있는 상수로 추출합니다.
 - 식별자·검증 규칙이 있는 값은 value class를 검토합니다. 컬렉션에 자체 규칙·행동이 있으면 별도 타입으로 캡슐화합니다. 모든 값에 래퍼를 일괄 적용하지 않습니다.
-- 주석은 코드만으로 드러나지 않는 의도·제약·선택 이유를 설명합니다.
+- 불필요한 주석을 추가하지 않습니다. 주석·KDoc은 코드만으로 드러나지 않는 의도·제약·선택 이유가 있을 때만 쓰고, 이름·매개변수·구현을 다시 설명하지 않습니다.
 
 ## UI 리소스와 정보 관리
 
 - 사용자 문구는 `strings.xml`에서 관리합니다. 값 삽입에는 `%1$s`, `%2$d` 같은 위치 지정 placeholder를 사용합니다.
 - 공통 텍스트·버튼·색상·타이포그래피는 `:core:designsystem`에서 제공하고 반복되는 변형은 공통 컴포넌트의 variant로 추가합니다.
+- 새로 만들거나 이동·수정하는 모든 UI 컴포넌트에 개별 Preview를 추가합니다. 화면 전체의 Preview로 하위 컴포넌트의 Preview를 대신하지 않습니다. Preview 전용 코드·리소스는 `src/debug`에 두고, 범용 데이터는 `:core:preview`에서 재사용합니다. 기존 전체 UI의 일괄 변경은 각 작업 범위에 포함하지 않습니다.
 - API 키, 서명 정보, 개인 로컬 설정을 커밋하지 않습니다.
 
 Kotlin과 Gradle Kotlin DSL 서식 검사는 ktlint Gradle plugin 14.2.0을 사용하며, 전체 검사는 `./gradlew ktlintCheck`로 실행합니다. 현재 `:app`과 `:core:designsystem`의 기존 위반은 각 모듈의 `ktlint-baseline.xml`에 기록되어 있습니다. 기존 코드를 정리할 때 해당 항목도 baseline에서 제거합니다.

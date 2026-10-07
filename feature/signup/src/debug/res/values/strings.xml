@@ -1,0 +1,4 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="auth_preview_name">김아뿌</string>
+    <string name="auth_preview_phone" tools:ignore="TypographyDashes">010-1234-5678</string>
+</resources>

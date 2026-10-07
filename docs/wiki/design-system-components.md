@@ -38,4 +38,10 @@ YappText(
 - `YappTextFieldVariant.Auth`는 기존 `size` 대신 54dp 높이와 12dp 모서리를 사용합니다. `title`을 생략하면 라벨과 라벨 간격이 없습니다. 실제 포커스를 반영하되 호출부의 오류·성공 상태를 덮어쓰지 않습니다. 입력값과 검증은 호출부가 소유하며 `keyboardOptions`·`keyboardActions`로 IME를 연결합니다.
 - `YappAlertDialogVariant.Compact`는 최대 너비 285dp, 12dp 모서리, 왼쪽 정렬 제목·본문, 44dp 높이와 8dp 모서리 버튼, 45% 배경 dim을 사용합니다. 닫기·제보 같은 행동은 호출부 콜백에 전달합니다.
 
-표현 상태는 `AuthComponentsPreview.kt`에서 확인합니다. 화면·상태 전이와 카카오 로고 리소스는 후속 Feature 구현이 소유합니다.
+표현 상태는 `src/debug`의 `AuthComponentsPreview.kt`에서 확인합니다. 화면·상태 전이와 카카오 로고 리소스는 후속 Feature 구현이 소유합니다.
+
+## 인증 공통 표현
+
+`component/auth/`의 `AuthLayout`, `AuthHeading`, `AuthGraphic`, `AuthPrimaryAction`, `AuthErrorDialog`는 표시값과 콜백으로 인증 UI 표현을 재사용합니다. `AuthLayout`은 뒤로 버튼과 content·bottom 슬롯을 제공하고 시스템 뒤로 가기·inset은 App에서 공급합니다. 오류 문구와 닫기·제보 행동도 호출부에서 전달합니다.
+
+각 컴포넌트는 `src/debug`의 `component/auth/AuthPreviews.kt`에 개별 Preview를 갖습니다. 화면·목적지·검증 규칙·인증 연동은 이 공통 표현의 책임에 포함하지 않습니다.

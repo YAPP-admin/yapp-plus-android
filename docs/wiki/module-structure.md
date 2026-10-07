@@ -11,18 +11,20 @@ last_verified: 2026-10-07
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
 | `:app` | `com.yapp.plus` | 앱 진입점 구현됨 |
-| `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마 구현됨 |
+| `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
+| `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:attendance` | `com.yapp.plus.feature.attendance` | Android Library·Compose 기본 설정됨 |
-| `:feature:auth` | `com.yapp.plus.feature.auth` | 로그인·가입 입력·상태·오류 UI 구현됨; 앱 초기 화면은 카카오 로그인 |
+| `:feature:login` | `com.yapp.plus.feature.login` | 카카오 로그인·오류 UI 구현됨; 앱 초기 화면 |
+| `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM 기본 설정됨 |
 | `:data` | `com.yapp.plus.data` | Android Library 기본 설정됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Android Library 기본 설정됨 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 로컬 저장 필요 시 추가 |
 
-7개 앱 모듈의 공통 Gradle 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+9개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
-`:feature:auth`는 `:core:designsystem`을 재사용하는 상태·콜백 기반 UI입니다. 로그인에서 회원가입으로 이동하는 링크·구분선은 제공하지 않습니다. 입력 검증, 화면 진행, 카카오 SDK·API·토큰 연동은 포함하지 않으며 서버 계약이 정해진 뒤 연결합니다.
+`:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. App은 현재 Login만 연결합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모 경로는 승인됐으며, 모듈 분리 PR 병합 후 별도 Navigation 2 PR에서 연결할 예정입니다. 입력 검증·실제 인증·가입 서버 처리는 포함하지 않습니다.
 
 ## 파일 배치
 
@@ -31,6 +33,8 @@ last_verified: 2026-10-07
 - App에는 Android 진입점·전체 내비게이션·객체 조립을, Feature에는 화면·ViewModel·UiState와 기능별 UI 변환을 둡니다.
 - Domain에는 모델·정책·Repository 계약·필요한 UseCase를, Data에는 Repository 구현·DataSource·DTO·Domain 변환을 둡니다.
 - Designsystem의 테마는 `core/designsystem/src/main/java/com/yapp/plus/core/designsystem/theme/`에 있습니다. 공통 컴포넌트도 이 모듈에서 관리합니다.
+- 인증의 공통 표현은 Designsystem의 `component/auth/`에 둡니다. 표시값과 콜백만 받고 Feature 상태·목적지·인증 정책을 알지 못합니다. 기능별 문구·카카오 로고·상태 변환은 Feature가 소유합니다.
+- Preview 전용 소스·리소스는 각 모듈의 `src/debug/`에 둡니다. `:core:preview`도 debug 소스에만 provider·fixture를 제공하며 Designsystem·Feature·Domain·Data·Navigation에 의존하지 않습니다. 소비 모듈은 필요한 경우에만 `debugImplementation(project(":core:preview"))`으로 연결합니다. `src/main`은 debug 타입을 참조하지 않고 앱 release 의존성 그래프에 Preview 모듈을 포함하지 않습니다.
 - 사용자 문구는 해당 Android 모듈의 `src/main/res/values/strings.xml`에 둡니다.
 - 범용 파일·모듈을 미리 만들지 않습니다. 여러 사용처의 실제 공통 책임이 확인되면 공통화합니다.
 

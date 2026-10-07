@@ -6,7 +6,7 @@ last_verified: 2026-10-07
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0009`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0012`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -83,11 +83,32 @@ last_verified: 2026-10-07
 - 적용 상태: 공용 UI 변형을 추가했습니다. 화면과 앱 진입점 연결은 [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27)에서 진행합니다.
 - 대체한 결정: 없음.
 
-## DEC-0009 · 로그인 화면에서 회원가입 진입 요소 제거
+## DEC-0009 · 인증 공통 표현과 독립 Preview 기반
 
 - 기록일: 2026-10-07
-- 결정: 앱 초기 화면은 카카오 로그인 UI만 제공합니다. 회원가입 안내 문구·버튼과 “또는” 구분선은 표시하지 않습니다. 이름·전화번호 입력 및 가입 상태 화면은 UI로 유지하되, 화면 이동과 실제 인증 처리는 연결하지 않습니다.
-- 이유: 사용자가 Figma에 없는 회원가입 진입 요소도 제거한다고 확정했습니다. 현재 범위는 승인된 카카오 로그인 시작 UI와 호출부가 제어하는 화면 표현에 한정합니다.
+- 결정: 인증의 재사용 가능한 표현을 Designsystem에서 제공하고 시스템 뒤로 가기·전체 화면 이동은 App이 소유합니다. 범용 Preview provider·입력 fixture는 독립된 `:core:preview`의 debug 소스에 두며 소비 모듈도 debug 의존성으로만 연결합니다. 새로 만들거나 이동·수정하는 모든 UI 컴포넌트에는 개별 Preview를 제공하고, 코드에 드러난 내용을 반복하는 불필요한 주석·KDoc을 추가하지 않습니다. PR에 첨부하는 스크린샷은 `<img src="..." width="300" />`으로 표시합니다.
+- 이유: 후속 로그인·회원가입 모듈에서 공통 표현과 Preview 데이터를 재사용하면서 기능 상태·목적지·업무 정책의 경계를 유지합니다.
+- 근거: 이번 세션의 사용자 승인, [이슈 #33](https://github.com/YAPP-admin/yapp-plus-android/issues/33), 후속 화면 작업 [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
+- 반영: [코딩 컨벤션](coding-conventions.md), [모듈 구조](module-structure.md), [설계 패턴](design-patterns.md), [공통 컴포넌트](design-system-components.md), `README.md`, `.codex/prompts/yapp-work.md`, `.codex/prompts/yapp-pr.md`.
+- 적용 상태: 공통 표현 5개와 각각의 Preview, 범용 Preview 지원 모듈을 제공합니다. 로그인·회원가입 모듈 분리와 화면 연결은 기반 PR 병합 뒤 후속 작업에서 구현합니다. Hilt 객체 조립 문구는 DEC-0005의 확정 내용과 실제 코드에 맞춰 동기화했습니다.
+- 대체한 결정: 없음. DEC-0008의 기능 상태·검증·인증 연동·카카오 로고의 Feature 소유는 유지합니다.
+
+## DEC-0010 · 로그인 시작점과 회원가입 진입 요소 제거
+
+- 기록일: 2026-10-07
+- 결정: 앱 초기 화면은 카카오 로그인 UI로 제공합니다. 회원가입 안내 문구·버튼과 “또는” 구분선은 표시하지 않습니다.
+- 이유: 사용자가 로그인 화면의 회원가입 진입 요소와 구분선을 제거하도록 확정했습니다.
 - 근거: 사용자 명시 요청 및 승인, [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27), [Figma 로그인·회원가입](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487).
-- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `:feature:auth`의 로그인 UI와 앱 초기 화면.
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `:feature:login`과 앱 초기 화면.
+- 적용 상태: 로그인·가입 UI를 별도 모듈로 제공하고 앱은 로그인 화면으로 시작합니다.
+- 대체한 결정: 없음.
+
+## DEC-0011 · Navigation 2 기반 가입 UI 데모 경로 승인
+
+- 기록일: 2026-10-07
+- 결정: 카카오 버튼 → 이름 입력 → 휴대폰 번호 입력 → 운영진 승인 대기의 UI 데모 경로를 Navigation 2로 연결합니다. 실제 인증·가입 서버 처리는 포함하지 않습니다.
+- 이유: 화면 표현을 독립 모듈로 분리한 뒤 App에서 승인된 데모 흐름을 연결하기 위해 단계별 PR로 진행합니다.
+- 근거: 이번 세션의 사용자 승인, [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`.
+- 적용 상태: 승인됐으며 모듈 분리 PR 병합 후 별도 Navigation PR에서 구현할 예정입니다. 현재 앱의 카카오 버튼은 화면 전환을 수행하지 않습니다.
 - 대체한 결정: 없음.

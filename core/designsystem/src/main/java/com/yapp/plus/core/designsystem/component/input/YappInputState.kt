@@ -4,5 +4,5 @@ enum class YappInputState {
     Default,
     Active,
     Success,
-    Error
+    Error,
 }

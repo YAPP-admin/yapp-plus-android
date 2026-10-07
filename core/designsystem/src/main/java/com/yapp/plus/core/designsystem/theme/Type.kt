@@ -9,27 +9,28 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.R
 
-private val PretendardJp = FontFamily(
-    Font(R.font.pretendard_jp_regular, FontWeight.Normal),
-    Font(R.font.pretendard_jp_medium, FontWeight.Medium),
-    Font(R.font.pretendard_jp_semi_bold, FontWeight.SemiBold),
-    Font(R.font.pretendard_jp_bold, FontWeight.Bold)
-)
+private val PretendardJp =
+    FontFamily(
+        Font(R.font.pretendard_jp_regular, FontWeight.Normal),
+        Font(R.font.pretendard_jp_medium, FontWeight.Medium),
+        Font(R.font.pretendard_jp_semi_bold, FontWeight.SemiBold),
+        Font(R.font.pretendard_jp_bold, FontWeight.Bold),
+    )
 
-private const val YappFontFeatureSettings = "\"ss10\" 1"
+private const val YAPP_FONT_FEATURE_SETTINGS = "\"ss10\" 1"
 
 private fun yappTextStyle(
     fontWeight: FontWeight,
     fontSize: TextUnit,
     lineHeight: TextUnit,
-    letterSpacing: TextUnit
+    letterSpacing: TextUnit,
 ) = TextStyle(
     fontFamily = PretendardJp,
     fontWeight = fontWeight,
     fontSize = fontSize,
     lineHeight = lineHeight,
     letterSpacing = letterSpacing,
-    fontFeatureSettings = YappFontFeatureSettings
+    fontFeatureSettings = YAPP_FONT_FEATURE_SETTINGS,
 )
 
 /** Typography tokens from the YAPP Figma type scale. */
@@ -67,20 +68,21 @@ object YappTypography {
     val caption2Bold = yappTextStyle(FontWeight.SemiBold, 11.sp, 14.sp, 0.3421.sp)
 }
 
-internal val Typography = Typography(
-    displayLarge = YappTypography.display1Bold,
-    displayMedium = YappTypography.display2Bold,
-    displaySmall = YappTypography.title1Bold,
-    headlineLarge = YappTypography.title2Bold,
-    headlineMedium = YappTypography.title3Bold,
-    headlineSmall = YappTypography.heading1Bold,
-    titleLarge = YappTypography.heading2Bold,
-    titleMedium = YappTypography.headline1Bold,
-    titleSmall = YappTypography.headline2Bold,
-    bodyLarge = YappTypography.body1NormalRegular,
-    bodyMedium = YappTypography.body2NormalRegular,
-    bodySmall = YappTypography.label1NormalMedium,
-    labelLarge = YappTypography.label1NormalBold,
-    labelMedium = YappTypography.label2Medium,
-    labelSmall = YappTypography.caption1Bold
-)
+internal val Typography =
+    Typography(
+        displayLarge = YappTypography.display1Bold,
+        displayMedium = YappTypography.display2Bold,
+        displaySmall = YappTypography.title1Bold,
+        headlineLarge = YappTypography.title2Bold,
+        headlineMedium = YappTypography.title3Bold,
+        headlineSmall = YappTypography.heading1Bold,
+        titleLarge = YappTypography.heading2Bold,
+        titleMedium = YappTypography.headline1Bold,
+        titleSmall = YappTypography.headline2Bold,
+        bodyLarge = YappTypography.body1NormalRegular,
+        bodyMedium = YappTypography.body2NormalRegular,
+        bodySmall = YappTypography.label1NormalMedium,
+        labelLarge = YappTypography.label1NormalBold,
+        labelMedium = YappTypography.label2Medium,
+        labelSmall = YappTypography.caption1Bold,
+    )

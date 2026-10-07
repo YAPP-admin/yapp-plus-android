@@ -4,18 +4,13 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.feature.login.LoginContent
+import com.yapp.plus.navigation.AuthDemoRoute
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,20 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(statusBarStyle = barStyle, navigationBarStyle = barStyle)
         setContent {
             YappTheme(darkTheme = false, dynamicColor = false) {
-                BackHandler(onBack = ::finish)
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = YappAuthColor.background,
-                ) { innerPadding ->
-                    LoginContent(
-                        onBack = ::finish,
-                        onKakaoLogin = {},
-                        modifier =
-                            Modifier
-                                .padding(innerPadding)
-                                .consumeWindowInsets(innerPadding),
-                    )
-                }
+                AuthDemoRoute(onExit = ::finish)
             }
         }
     }

@@ -1,6 +1,7 @@
 plugins {
     id("yapp.android.application")
     id("yapp.hilt")
+    id("yapp.kotlin.serialization")
 }
 
 android {
@@ -26,6 +27,7 @@ android {
 dependencies {
     implementation(project(":feature:attendance"))
     implementation(project(":feature:login"))
+    implementation(project(":feature:signup"))
     implementation(project(":data"))
     implementation(project(":core:designsystem"))
     implementation(platform(libs.androidx.compose.bom))
@@ -36,6 +38,12 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
@@ -43,6 +51,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    debugImplementation(project(":core:preview"))
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -110,5 +110,5 @@ last_verified: 2026-10-07
 - 이유: 화면 표현을 독립 모듈로 분리한 뒤 App에서 승인된 데모 흐름을 연결하기 위해 단계별 PR로 진행합니다.
 - 근거: 이번 세션의 사용자 승인, [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`.
-- 적용 상태: 승인됐으며 모듈 분리 PR 병합 후 별도 Navigation PR에서 구현할 예정입니다. 현재 앱의 카카오 버튼은 화면 전환을 수행하지 않습니다.
+- 적용 상태: 모듈 분리 PR #29 병합 후 [이슈 #35](https://github.com/YAPP-admin/yapp-plus-android/issues/35)에서 Navigation Compose 2.10.2의 타입 기반 목적지와 App의 공통 ViewModel·`SavedStateHandle`로 데모 흐름을 구현했습니다. 뒤로 가기·반복 탭·입력값 유지·복원을 연결하고 입력 검증 없이 다음 버튼을 활성화합니다. 완료·문제 상태는 Preview 전용이며 실제 인증·가입 서버 처리는 후속입니다.
 - 대체한 결정: 없음.

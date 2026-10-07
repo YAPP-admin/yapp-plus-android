@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-06
+last_verified: 2026-10-07
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0006`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0008`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -62,4 +62,13 @@ last_verified: 2026-10-06
 - 근거: 사용자 요청, [이슈 #22](https://github.com/YAPP-admin/yapp-plus-android/issues/22), [ktlint Gradle plugin 14.2.0](https://plugins.gradle.org/plugin/org.jlleitschuh.gradle.ktlint/14.2.0).
 - 반영: [코딩 컨벤션](coding-conventions.md), `gradle/libs.versions.toml`, `build.gradle.kts`, `.github/workflows/android-ci.yml`.
 - 적용 상태: `:app`과 `:core:designsystem`의 적용 전 위반을 각 `ktlint-baseline.xml`에 기록했습니다. `ktlintCheck`는 기준 파일에 없는 신규 위반을 계속 검사합니다.
+- 대체한 결정: 없음.
+
+## DEC-0007 · opt-in Astra 계획·6.1 SOL 구현 흐름
+
+- 기록일: 2026-10-07
+- 결정: 사용자가 `/yapp-work`를 호출한 경우에만 `gpt-6-astra` 서브에이전트가 읽기 전용 계획을 작성합니다. 사용자의 명시적 승인 뒤 `gpt-6.1-sol` 서브에이전트가 승인된 계획을 구현합니다. 두 단계는 추론 수준 `max`로 직렬 실행하며, 기본 모델과 다른 작업의 흐름은 변경하지 않습니다.
+- 이유: 계획 검토와 구현을 모델 역할별로 분리하면서, 승인 전에 저장소나 GitHub 상태가 바뀌지 않도록 합니다.
+- 근거: 사용자 요청 및 승인, [이슈 #24](https://github.com/YAPP-admin/yapp-plus-android/issues/24).
+- 반영: `AGENTS.md`, `.codex/prompts/yapp-work.md`.
 - 대체한 결정: 없음.

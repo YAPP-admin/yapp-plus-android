@@ -50,5 +50,17 @@ fun AttendanceHomeScreen(
                     .padding(top = 14.dp),
             onAttendanceClick = onAttendanceClick,
         )
+        AttendanceHistoryCard(
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp),
+        )
+        DemoDataLabel(
+            modifier =
+                Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 12.dp, bottom = 20.dp),
+        )
     }
 }

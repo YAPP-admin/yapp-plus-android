@@ -65,6 +65,7 @@ fun AttendanceScheduleScreen(modifier: Modifier = Modifier) {
                     isOnline = index != 1 && index != 4,
                 )
             }
+            DemoDataLabel(modifier = Modifier.padding(vertical = 16.dp))
         }
     }
 }

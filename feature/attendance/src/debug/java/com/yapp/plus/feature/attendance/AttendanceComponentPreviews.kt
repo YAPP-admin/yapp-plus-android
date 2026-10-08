@@ -40,6 +40,21 @@ private fun AttendanceScheduleItemPreview() {
     }
 }
 
+@Preview(name = "Demo schedule item", widthDp = 353, showBackground = true)
+@Composable
+private fun AttendanceDemoScheduleItemPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        AttendanceScheduleItem(
+            date = stringResource(R.string.attendance_schedule_date_first),
+            title = stringResource(R.string.attendance_schedule_event),
+            place = stringResource(R.string.attendance_schedule_place_online),
+            time = stringResource(R.string.attendance_schedule_time),
+            isPast = false,
+            isOnline = true,
+        )
+    }
+}
+
 @Preview(name = "Board category selector", widthDp = 353, showBackground = true)
 @Composable
 private fun BoardCategorySelectorPreview(

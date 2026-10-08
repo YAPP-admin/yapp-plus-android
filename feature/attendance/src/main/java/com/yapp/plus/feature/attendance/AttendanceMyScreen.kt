@@ -70,6 +70,7 @@ fun AttendanceMyScreen(
                     title = stringResource(R.string.attendance_my_support),
                     onClick = onSupportClick,
                 )
+                DemoDataLabel(modifier = Modifier.padding(top = 8.dp, bottom = 20.dp))
             }
         }
     }

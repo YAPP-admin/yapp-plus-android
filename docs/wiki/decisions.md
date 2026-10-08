@@ -120,5 +120,5 @@ last_verified: 2026-10-08
 - 이유: 인증 서버가 없는 상태에서 승인 대기 이후의 메인 화면과 하단 탭을 확인할 수 있도록 합니다.
 - 근거: 사용자 요청 및 [이슈 #37](https://github.com/YAPP-admin/yapp-plus-android/issues/37), [Figma 아이콘 모음](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816).
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:attendance`, `:app`.
-- 적용 상태: 정적 탭 화면과 공통 하단 내비게이션, 탭 선택·복원, 승인 대기에서 App의 타입 기반 메인 목적지로 이동하는 흐름을 구현했습니다. debug는 홈 탭으로 시작하고 release는 카카오 로그인으로 시작합니다. 실제 기기 캡처는 후속 작업입니다. 실제 인증·출석 API와 정책은 포함하지 않습니다.
+- 적용 상태: 정적 탭 화면과 공통 하단 내비게이션, 탭 선택·복원, 승인 대기에서 App의 타입 기반 메인 목적지로 이동하는 흐름을 [PR #42](https://github.com/YAPP-admin/yapp-plus-android/pull/42)까지 구현했습니다. 초안의 고유 표현인 홈의 데모 출석 이력과 홈·일정·My의 데모 데이터 안내도 연결했습니다. debug는 홈 탭으로 시작하고 release는 카카오 로그인으로 시작합니다. 실제 기기 캡처는 후속 작업입니다. 실제 인증·출석 API와 정책은 포함하지 않습니다.
 - 대체한 결정: 없음.

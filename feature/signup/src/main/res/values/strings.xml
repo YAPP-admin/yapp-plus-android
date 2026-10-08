@@ -6,6 +6,7 @@
     <string name="auth_next">다음</string>
     <string name="auth_pending_title" tools:ignore="TypographyEllipsis">운영진 승인을 기다리고 있어요...</string>
     <string name="auth_pending_description">승인 완료까지 잠시만 기다려 주세요</string>
+    <string name="auth_pending_demo_action">앱 둘러보기</string>
     <string name="auth_complete_title">회원가입을 완료했어요!</string>
     <string name="auth_complete_description">YAPP의 새로운 멤버가 되신 걸 진심으로 환영해요</string>
     <string name="auth_start">시작하기</string>

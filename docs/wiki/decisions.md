@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-07
+last_verified: 2026-10-08
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0012`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0013`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -111,4 +111,14 @@ last_verified: 2026-10-07
 - 근거: 이번 세션의 사용자 승인, [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`.
 - 적용 상태: 모듈 분리 PR #29 병합 후 [이슈 #35](https://github.com/YAPP-admin/yapp-plus-android/issues/35)에서 Navigation Compose 2.10.2의 타입 기반 목적지와 App의 공통 ViewModel·`SavedStateHandle`로 데모 흐름을 구현했습니다. 뒤로 가기·반복 탭·입력값 유지·복원을 연결하고 입력 검증 없이 다음 버튼을 활성화합니다. 완료·문제 상태는 Preview 전용이며 실제 인증·가입 서버 처리는 후속입니다.
+- 대체한 결정: 없음.
+
+## DEC-0012 · 승인 대기 화면에서 메인 탭 UI 데모로 진입
+
+- 기록일: 2026-10-08
+- 결정: 승인 대기 화면의 “앱 둘러보기” 동작으로 홈·일정·게시판·My 탭을 가진 정적 UI 데모에 진입합니다. 실제 기기 스크린샷을 위한 임시 홈 시작 경로는 debug 변형에만 추가하고 release의 기존 로그인 진입 흐름을 유지합니다. 탭 화면의 회원·일정·출석 표시는 실제 사용자 데이터나 서버 확정 결과가 아닙니다.
+- 이유: 인증 서버가 없는 상태에서 승인 대기 이후의 메인 화면과 하단 탭을 확인할 수 있도록 합니다.
+- 근거: 사용자 요청 및 [이슈 #37](https://github.com/YAPP-admin/yapp-plus-android/issues/37), [Figma 아이콘 모음](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816).
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:attendance`.
+- 적용 상태: 정적 탭 화면과 공통 하단 내비게이션 어댑터, 탭 선택·복원, 승인 대기 상태의 버튼·콜백을 구현했습니다. App의 타입 기반 메인 목적지 연결과 debug 전용 홈 시작 경로는 후속 `feat` PR에 남아 있습니다. 실제 인증·출석 API와 정책은 포함하지 않습니다.
 - 대체한 결정: 없음.

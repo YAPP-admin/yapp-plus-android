@@ -7,6 +7,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.navigation.AuthDemoDestination
 import com.yapp.plus.navigation.AuthDemoRoute
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,7 +20,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(statusBarStyle = barStyle, navigationBarStyle = barStyle)
         setContent {
             YappTheme(darkTheme = false, dynamicColor = false) {
-                AuthDemoRoute(onExit = ::finish)
+                AuthDemoRoute(
+                    onExit = ::finish,
+                    startDestination =
+                        if (BuildConfig.DEBUG) {
+                            AuthDemoDestination.Main
+                        } else {
+                            AuthDemoDestination.Login
+                        },
+                )
             }
         }
     }

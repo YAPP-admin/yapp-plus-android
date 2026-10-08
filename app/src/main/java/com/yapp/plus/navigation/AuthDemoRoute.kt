@@ -15,6 +15,7 @@ import com.yapp.plus.core.designsystem.theme.YappAuthColor
 internal fun AuthDemoRoute(
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
+    startDestination: AuthDemoDestination = AuthDemoDestination.Login,
     viewModel: AuthDemoViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -27,6 +28,7 @@ internal fun AuthDemoRoute(
             onNameChange = viewModel::updateName,
             onPhoneNumberChange = viewModel::updatePhoneNumber,
             onExit = onExit,
+            startDestination = startDestination,
             modifier =
                 Modifier
                     .padding(innerPadding)

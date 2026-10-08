@@ -18,6 +18,19 @@ private fun AuthDemoRoutePreview() {
     }
 }
 
+@Preview(name = "Main demo app", widthDp = 393, heightDp = 756)
+@Composable
+private fun MainDemoRoutePreview() {
+    val viewModel = remember { AuthDemoViewModel(SavedStateHandle()) }
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        AuthDemoRoute(
+            onExit = {},
+            startDestination = AuthDemoDestination.Main,
+            viewModel = viewModel,
+        )
+    }
+}
+
 @Preview(name = "Auth demo navigation", widthDp = 393, heightDp = 756)
 @Composable
 private fun AuthDemoNavHostPreview() {

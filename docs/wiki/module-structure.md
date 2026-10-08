@@ -10,7 +10,7 @@ last_verified: 2026-10-08
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·Navigation 2 가입 UI 데모 흐름 구현됨; 메인 목적지·debug 전용 홈 시작 경로 후속 |
+| `:app` | `com.yapp.plus` | 앱 진입점·Navigation 2 가입 UI 데모 흐름·메인 목적지 구현됨; debug는 홈 시작, release는 로그인 시작 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:attendance` | `com.yapp.plus.feature.attendance` | 홈·일정·게시판·My 데모 화면과 공통 하단 탭 조합 구현됨; App 진입 연결 후속 |
@@ -26,7 +26,7 @@ last_verified: 2026-10-08
 
 `:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지로 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모 경로를 연결합니다. App의 공통 ViewModel과 `SavedStateHandle`이 데모 입력값을 유지·복원하며 Feature에는 표시값과 콜백만 전달합니다. 전체 뒤로 가기와 시스템 inset 적용·소비도 App이 소유합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. 입력 검증·실제 인증·가입 서버 처리는 포함하지 않습니다.
 
-`:feature:attendance`의 메인 UI는 홈·일정·게시판·My의 정적 데모 화면을 `YappBottomNavigation`과 `YappBottomNavigationItem`으로 조합합니다. Feature가 탭 선택을 유지·복원하고, 시스템 inset과 전체 화면 이동은 App이 소유합니다. `:feature:signup`은 승인 대기 상태에서만 “앱 둘러보기” 버튼으로 전달받은 콜백을 호출합니다. App의 타입 기반 메인 목적지 연결과 실제 기기 캡처용 임시 debug 홈 시작 경로는 후속 `feat` PR에서 구현합니다. release의 기존 로그인 진입 흐름은 유지합니다. 데모 표시는 실제 출석 기록이나 서버 확정 상태를 의미하지 않습니다.
+`:feature:attendance`의 메인 UI는 홈·일정·게시판·My의 정적 데모 화면을 `YappBottomNavigation`과 `YappBottomNavigationItem`으로 조합합니다. Feature가 탭 선택을 유지·복원하고, 시스템 inset과 전체 화면 이동은 App이 소유합니다. `:feature:signup`은 승인 대기 상태에서만 “앱 둘러보기” 버튼으로 전달받은 콜백을 호출하고, App은 이를 타입 기반 메인 목적지로 연결합니다. debug 빌드는 캡처 편의를 위해 홈 탭으로 바로 시작하며, release 빌드는 기존 로그인에서 시작합니다. 데모 표시는 실제 출석 기록이나 서버 확정 상태를 의미하지 않습니다.
 
 ## 파일 배치
 

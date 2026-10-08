@@ -7,12 +7,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.yapp.plus.feature.attendance.AttendanceContent
 import com.yapp.plus.feature.login.LoginContent
 import com.yapp.plus.feature.signup.AuthStatus
 import com.yapp.plus.feature.signup.AuthStatusContent
@@ -26,16 +26,17 @@ internal fun AuthDemoNavHost(
     onPhoneNumberChange: (String) -> Unit,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
+    startDestination: AuthDemoDestination = AuthDemoDestination.Login,
     navController: NavHostController = rememberNavController(),
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     BackHandler(
-        enabled = currentEntry?.destination?.hasRoute<AuthDemoDestination.Login>() == true,
+        enabled = currentEntry != null && navController.previousBackStackEntry == null,
         onBack = onExit,
     )
     NavHost(
         navController = navController,
-        startDestination = AuthDemoDestination.Login,
+        startDestination = startDestination,
         modifier = modifier.fillMaxSize(),
     ) {
         composable<AuthDemoDestination.Login> { entry ->
@@ -71,9 +72,12 @@ internal fun AuthDemoNavHost(
             AuthStatusContent(
                 status = AuthStatus.Pending,
                 onBack = { navController.navigateBackFrom(entry, onExit) },
-                onAction = {},
+                onAction = { navController.navigateFrom(entry, AuthDemoDestination.Main) },
                 modifier = Modifier.fillMaxSize(),
             )
+        }
+        composable<AuthDemoDestination.Main> {
+            AttendanceContent(modifier = Modifier.fillMaxSize())
         }
     }
 }
@@ -91,7 +95,7 @@ internal fun NavHostController.navigateBackFrom(
     onExit: () -> Unit,
 ) {
     if (!canNavigateFrom(entry)) return
-    if (entry.destination.hasRoute<AuthDemoDestination.Login>()) {
+    if (previousBackStackEntry == null) {
         onExit()
     } else {
         popBackStack()

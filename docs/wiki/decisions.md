@@ -119,6 +119,6 @@ last_verified: 2026-10-08
 - 결정: 승인 대기 화면의 “앱 둘러보기” 동작으로 홈·일정·게시판·My 탭을 가진 정적 UI 데모에 진입합니다. 실제 기기 스크린샷을 위한 임시 홈 시작 경로는 debug 변형에만 추가하고 release의 기존 로그인 진입 흐름을 유지합니다. 탭 화면의 회원·일정·출석 표시는 실제 사용자 데이터나 서버 확정 결과가 아닙니다.
 - 이유: 인증 서버가 없는 상태에서 승인 대기 이후의 메인 화면과 하단 탭을 확인할 수 있도록 합니다.
 - 근거: 사용자 요청 및 [이슈 #37](https://github.com/YAPP-admin/yapp-plus-android/issues/37), [Figma 아이콘 모음](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816).
-- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:attendance`.
-- 적용 상태: 정적 탭 화면과 공통 하단 내비게이션 어댑터, 탭 선택·복원, 승인 대기 상태의 버튼·콜백을 구현했습니다. App의 타입 기반 메인 목적지 연결과 debug 전용 홈 시작 경로는 후속 `feat` PR에 남아 있습니다. 실제 인증·출석 API와 정책은 포함하지 않습니다.
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:attendance`, `:app`.
+- 적용 상태: 정적 탭 화면과 공통 하단 내비게이션, 탭 선택·복원, 승인 대기에서 App의 타입 기반 메인 목적지로 이동하는 흐름을 구현했습니다. debug는 홈 탭으로 시작하고 release는 카카오 로그인으로 시작합니다. 실제 기기 캡처는 후속 작업입니다. 실제 인증·출석 API와 정책은 포함하지 않습니다.
 - 대체한 결정: 없음.

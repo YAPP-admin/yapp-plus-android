@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-07
+last_verified: 2026-10-08
 ---
 
 # 디자인시스템
@@ -14,6 +14,8 @@ last_verified: 2026-10-07
 
 Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand`, `textPrimary`, `textSecondary`, `textSubtle`, `textFaint`, `background`를 사용합니다. 나머지 공용 색상과 컴포넌트 내부 색상은 `YappColor`에서 관리합니다.
 
+메인 탭 데모의 배경·표면·본문·구분선 색상은 `:core:designsystem/theme/YappMainColor.kt`에서 관리합니다. 인증 화면에서 사용하는 기존 색상 토큰은 변경하지 않습니다.
+
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
 | `brand` | `#FF6600` | CTA·Compact 팝업의 주요 버튼 |
@@ -24,6 +26,30 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 | `strokeNeutralWeak` | `#DCDEE3` | Auth 기본 테두리 |
 | `backgroundBasement` | `#F3F4F5` | Compact 보조 버튼 배경 |
 | `kakaoContainer` | `#FAE300` | 카카오 버튼 배경 |
+
+## 아이콘
+
+[YAPP Figma 아이콘 모음](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816)의 탭 아이콘 4개와 Lucide 영역의 아이콘 17개를 `:core:designsystem/src/main/res/drawable/`에 제공합니다. 모두 원본 경로·색상·선 두께를 보존한 24dp VectorDrawable이며, Feature는 공통 디자인시스템의 `R.drawable`을 참조합니다.
+
+| Figma 아이콘 | 리소스 |
+| --- | --- |
+| house, calendar, presentation, user | `ic_navigation_house`, `ic_navigation_calendar`, `ic_navigation_presentation`, `ic_navigation_user` |
+| chevron | `ic_chevron_left`, `ic_chevron_right`, `ic_chevron_up`, `ic_chevron_down` |
+| brand logo | `ic_apple`, `ic_kakao_chat` |
+| bell | `ic_notification`, `ic_notification_badge` |
+| menu | `ic_menu` |
+| check, notice, info | `ic_status_success`, `ic_status_warning`, `ic_status_info` |
+| setting | `ic_settings` |
+| question | `ic_help` |
+| clock | `ic_clock` |
+| map-pin | `ic_map_pin` |
+| link | `ic_link` |
+
+단색 탭·방향 아이콘은 화면 상태에 맞는 색상으로 tint할 수 있습니다. 원본의 흰색 기호·빨간 알림 점·회색 배경을 포함한 `ic_status_*`, `ic_notification_badge`, `ic_help`는 Compose `Icon`에 `tint = Color.Unspecified`를 지정하거나 `Image`로 표시해 리소스 색상을 보존합니다. 브랜드 로고도 원본 색상을 보존해 사용합니다.
+
+## 하단 내비게이션
+
+`:core:designsystem/component/navigation/`의 `YappBottomNavigation`은 탭 배치·상단 구분선을, `YappBottomNavigationItem`은 아이콘·라벨·선택 상태와 탭 semantics를 담당합니다. 호출자가 아이콘 리소스, 표시 라벨, 선택 상태와 클릭 콜백을 전달하며, Feature 상태나 App Navigation에는 의존하지 않습니다. 컴포넌트 Preview는 `:core:preview`의 재사용 enum parameter provider를 사용합니다.
 
 ## 타이포그래피
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yapp_preview_navigation_home">홈</string>
+    <string name="yapp_preview_navigation_schedule">일정</string>
+    <string name="yapp_preview_navigation_board">게시판</string>
+    <string name="yapp_preview_navigation_my">MY</string>
+</resources>

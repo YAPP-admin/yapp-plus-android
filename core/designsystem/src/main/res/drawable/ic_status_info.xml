@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <group android:translateX="-316" android:translateY="-560">
+        <path android:pathData="M328 582C333.523 582 338 577.523 338 572C338 566.477 333.523 562 328 562C322.477 562 318 566.477 318 572C318 577.523 322.477 582 328 582Z" android:fillColor="#FF1A1C20" />
+        <path android:pathData="M328 576V572M328 568H328.01" android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF" android:strokeWidth="2" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+</vector>

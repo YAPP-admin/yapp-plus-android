@@ -4,7 +4,7 @@
 
 ## 현재 상태
 
-9개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor·Kotlin serialization 의존성, 공통 테마·인증 UI 표현·debug 전용 Preview 지원이 준비되어 있습니다. 로그인·회원가입 UI는 별도 모듈로 구현했고, 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모를 Navigation 2로 연결했습니다. 홈·일정·게시판·My의 정적 데모 화면을 공통 하단 탭으로 조합했습니다. 승인 대기에는 “앱 둘러보기” 버튼을 제공하며, 버튼의 App 타입 기반 메인 목적지 연결과 실제 기기 캡처용 debug 전용 홈 시작 경로는 후속 `feat` PR에서 진행합니다. 출석 기능과 실제 인증·API 연동은 아직 구현되지 않았습니다.
+9개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor·Kotlin serialization 의존성, 공통 테마·인증 UI 표현·debug 전용 Preview 지원이 준비되어 있습니다. 로그인·회원가입 UI는 별도 모듈로 구현했고, 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모를 Navigation 2로 연결했습니다. 홈·일정·게시판·My의 정적 데모 화면을 공통 하단 탭으로 조합했습니다. 승인 대기의 “앱 둘러보기” 버튼은 App의 타입 기반 메인 목적지로 이동합니다. debug 빌드는 화면 캡처 편의를 위해 홈 탭으로 시작하고, release 빌드는 기존 카카오 로그인으로 시작합니다. 출석 기능과 실제 인증·API 연동은 아직 구현되지 않았습니다.
 
 ## 아키텍처와 모듈
 

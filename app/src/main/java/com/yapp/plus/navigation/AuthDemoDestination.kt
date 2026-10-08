@@ -15,4 +15,7 @@ internal sealed interface AuthDemoDestination {
 
     @Serializable
     data object Pending : AuthDemoDestination
+
+    @Serializable
+    data object Main : AuthDemoDestination
 }

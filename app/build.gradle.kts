@@ -6,6 +6,9 @@ plugins {
 
 android {
     namespace = "com.yapp.plus"
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId = "com.yapp.plus"
         targetSdk = 37

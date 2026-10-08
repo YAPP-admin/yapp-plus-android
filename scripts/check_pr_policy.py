@@ -38,7 +38,7 @@ def validate_pr(pr: dict) -> list[str]:
     ):
         errors.append("PR 라벨을 확인할 수 없습니다. PR REST 응답을 사용하세요.")
     else:
-        names = {label["name"] for label in labels}
+        names = {label["name"].casefold() for label in labels}
         areas = names & DEVELOPMENT_LABELS
         if len(areas) > 1:
             errors.append("ui/ux·data·domain·feat별로 PR을 나누고 개발 영역 라벨 하나만 붙이세요.")

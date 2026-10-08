@@ -38,6 +38,11 @@ class PrPolicyTests(unittest.TestCase):
             with self.subTest(area=area):
                 self.assertEqual([], validate_pr(pr(labels=(area, "bug", "refactor"))))
 
+    def test_development_area_label_names_are_case_insensitive(self):
+        for area in ["UI/UX", "Data", "Domain", "Feat"]:
+            with self.subTest(area=area):
+                self.assertEqual([], validate_pr(pr(labels=(area,))))
+
     def test_maintenance_without_development_area_is_allowed(self):
         for labels in [("build",), ("refactor",), ("build", "refactor")]:
             with self.subTest(labels=labels):

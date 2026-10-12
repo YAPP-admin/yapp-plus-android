@@ -101,16 +101,13 @@ class AuthDemoNavHostTest {
     }
 
     @Test
-    fun pendingActionOpensMainAndBackReturnsThroughTheAuthDemo() {
+    fun authDemoEndsAtPendingAndBackReturnsThroughTheAuthDemo() {
         composeRule.onNodeWithText("카카오톡으로 계속하기").performClick()
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
-        composeRule.onNodeWithText("앱 둘러보기").performClick()
-        assertCurrentRoute<AuthDemoDestination.Main>()
-        composeRule.onNodeWithText("이번주 세션").assertIsDisplayed()
-
-        Espresso.pressBack()
+        assertCurrentRoute<AuthDemoDestination.Pending>()
         composeRule.onNodeWithText("운영진 승인을 기다리고 있어요...").assertIsDisplayed()
+        composeRule.onNodeWithText("앱 둘러보기").assertDoesNotExist()
         Espresso.pressBack()
         composeRule.onAllNodesWithText("휴대폰 번호를 입력해 주세요")[0].assertIsDisplayed()
         Espresso.pressBack()
@@ -128,12 +125,10 @@ class AuthDemoNavHostTest {
         composeRule.onNodeWithText("다음").performClick()
         updateInput("01012345678")
         composeRule.onNodeWithText("다음").performClick()
-        composeRule.onNodeWithText("앱 둘러보기").performClick()
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertCurrentRoute<AuthDemoDestination.Main>()
-        Espresso.pressBack()
+        assertCurrentRoute<AuthDemoDestination.Pending>()
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("01012345678")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()

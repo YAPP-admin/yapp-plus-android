@@ -106,12 +106,7 @@ internal fun AuthStatusAction(
     isEnabled: Boolean,
 ) {
     when (status) {
-        AuthStatus.Pending ->
-            AuthPrimaryAction(
-                text = stringResource(R.string.auth_pending_demo_action),
-                onClick = onAction,
-                isEnabled = isEnabled,
-            )
+        AuthStatus.Pending -> Unit
         AuthStatus.Complete ->
             AuthPrimaryAction(stringResource(R.string.auth_start), onAction, isEnabled)
         AuthStatus.Problem ->

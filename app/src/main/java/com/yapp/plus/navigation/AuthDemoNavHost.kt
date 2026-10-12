@@ -72,7 +72,7 @@ internal fun AuthDemoNavHost(
             AuthStatusContent(
                 status = AuthStatus.Pending,
                 onBack = { navController.navigateBackFrom(entry, onExit) },
-                onAction = { navController.navigateFrom(entry, AuthDemoDestination.Main) },
+                onAction = {},
                 modifier = Modifier.fillMaxSize(),
             )
         }

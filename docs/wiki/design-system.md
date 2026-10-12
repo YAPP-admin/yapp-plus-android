@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-08
+last_verified: 2026-10-12
 ---
 
 # 디자인시스템
@@ -46,6 +46,10 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 | link | `ic_link` |
 
 단색 탭·방향 아이콘은 화면 상태에 맞는 색상으로 tint할 수 있습니다. 원본의 흰색 기호·빨간 알림 점·회색 배경을 포함한 `ic_status_*`, `ic_notification_badge`, `ic_help`는 Compose `Icon`에 `tint = Color.Unspecified`를 지정하거나 `Image`로 표시해 리소스 색상을 보존합니다. 브랜드 로고도 원본 색상을 보존해 사용합니다.
+
+## YAPP 로고
+
+홈의 `graphic_yapp_logo`는 [Figma YAPP-logo](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=142-23072) 자체를 SVG로 내보내 변환한 `res/drawable/graphic_yapp_logo.xml`입니다. 원본의 80×30 영역, 내부 여백, 네 개의 경로, `#1A1C20` 색상과 투명 배경을 보존합니다. 홈은 기존 `R.drawable.graphic_yapp_logo`와 80dp×30dp 크기로 표시합니다.
 
 ## 하단 내비게이션
 

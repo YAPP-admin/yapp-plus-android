@@ -11,8 +11,8 @@ class SessionScheduleRepositoryImpl(
     private val remoteDataSource = SessionScheduleRemoteDataSource(httpClient)
 
     override suspend fun fetchCurrentWeekSchedule(): CurrentWeekSchedule =
-        remoteDataSource.fetchCurrentWeekSchedule().toDomain()
+        CurrentWeekScheduleMapper.toDomain(remoteDataSource.fetchCurrentWeekSchedule())
 
     override suspend fun fetchCurrentGenerationSchedule(): CurrentGenerationSchedule =
-        remoteDataSource.fetchCurrentGenerationSchedule().toDomain()
+        CurrentGenerationScheduleMapper.toDomain(remoteDataSource.fetchCurrentGenerationSchedule())
 }

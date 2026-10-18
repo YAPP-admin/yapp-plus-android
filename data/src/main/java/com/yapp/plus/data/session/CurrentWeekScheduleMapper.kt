@@ -6,19 +6,21 @@ import com.yapp.plus.domain.session.CurrentWeekSession
 import java.time.LocalDate
 import java.time.LocalTime
 
-internal fun CurrentWeekScheduleResponse.toDomain(): CurrentWeekSchedule =
-    CurrentWeekSchedule(
-        weekStartDate = LocalDate.parse(weekStartDate),
-        weekEndDate = LocalDate.parse(weekEndDate),
-        session = session?.toDomain(),
-    )
+internal object CurrentWeekScheduleMapper {
+    fun toDomain(response: CurrentWeekScheduleResponse): CurrentWeekSchedule =
+        CurrentWeekSchedule(
+            weekStartDate = LocalDate.parse(response.weekStartDate),
+            weekEndDate = LocalDate.parse(response.weekEndDate),
+            session = response.session?.let(::toDomain),
+        )
 
-private fun CurrentWeekSessionResponse.toDomain(): CurrentWeekSession =
-    CurrentWeekSession(
-        sessionId = sessionId,
-        name = name,
-        date = LocalDate.parse(date),
-        startTime = LocalTime.parse(startTime),
-        location = location,
-        attendanceStatus = AttendanceStatus.valueOf(attendanceStatus),
-    )
+    private fun toDomain(response: CurrentWeekSessionResponse): CurrentWeekSession =
+        CurrentWeekSession(
+            sessionId = response.sessionId,
+            name = response.name,
+            date = LocalDate.parse(response.date),
+            startTime = LocalTime.parse(response.startTime),
+            location = response.location,
+            attendanceStatus = AttendanceStatus.valueOf(response.attendanceStatus),
+        )
+}

@@ -7,21 +7,23 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 
-internal fun CurrentGenerationScheduleResponse.toDomain(): CurrentGenerationSchedule =
-    CurrentGenerationSchedule(
-        generationId = generationId,
-        generationNumber = generationNumber,
-        sessions = sessions.map(ScheduledSessionResponse::toDomain),
-    )
+internal object CurrentGenerationScheduleMapper {
+    fun toDomain(response: CurrentGenerationScheduleResponse): CurrentGenerationSchedule =
+        CurrentGenerationSchedule(
+            generationId = response.generationId,
+            generationNumber = response.generationNumber,
+            sessions = response.sessions.map(::toDomain),
+        )
 
-private fun ScheduledSessionResponse.toDomain(): ScheduledSession =
-    ScheduledSession(
-        sessionId = sessionId,
-        name = name,
-        date = LocalDate.parse(date),
-        dayOfWeek = DayOfWeek.valueOf(dayOfWeek),
-        location = location,
-        startTime = LocalTime.parse(startTime),
-        endTime = LocalTime.parse(endTime),
-        type = SessionType.valueOf(type),
-    )
+    private fun toDomain(response: ScheduledSessionResponse): ScheduledSession =
+        ScheduledSession(
+            sessionId = response.sessionId,
+            name = response.name,
+            date = LocalDate.parse(response.date),
+            dayOfWeek = DayOfWeek.valueOf(response.dayOfWeek),
+            location = response.location,
+            startTime = LocalTime.parse(response.startTime),
+            endTime = LocalTime.parse(response.endTime),
+            type = SessionType.valueOf(response.type),
+        )
+}

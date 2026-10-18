@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.main.my
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,16 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.component.main.YappDemoDataLabel
 import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.component.AttendanceMenuItem
-import com.yapp.plus.feature.attendance.component.AttendanceProfileCard
-import com.yapp.plus.feature.attendance.component.AttendanceSummaryCard
-import com.yapp.plus.feature.attendance.component.DemoDataLabel
+import com.yapp.plus.feature.main.my.component.MyMenuItem
+import com.yapp.plus.feature.main.my.component.MyProfileCard
+import com.yapp.plus.feature.main.my.component.MySummaryCard
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
-fun AttendanceMyScreen(
+fun MyScreen(
     modifier: Modifier = Modifier,
     onSettingsClick: () -> Unit = {},
     onHistoryClick: () -> Unit = {},
@@ -35,9 +35,9 @@ fun AttendanceMyScreen(
                 .background(YappMainColor.surface),
     ) {
         YappMainHeader(
-            title = stringResource(R.string.attendance_my_title),
+            title = stringResource(R.string.my_title),
             iconResource = DesignSystemR.drawable.ic_settings,
-            iconDescription = stringResource(R.string.attendance_my_settings),
+            iconDescription = stringResource(R.string.my_settings),
             onIconClick = onSettingsClick,
         )
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -47,12 +47,12 @@ fun AttendanceMyScreen(
                         .padding(horizontal = 20.dp)
                         .padding(bottom = 28.dp),
             ) {
-                AttendanceProfileCard(
-                    name = stringResource(R.string.attendance_my_name),
-                    role = stringResource(R.string.attendance_my_role),
-                    generation = stringResource(R.string.attendance_my_generation),
+                MyProfileCard(
+                    name = stringResource(R.string.my_name),
+                    role = stringResource(R.string.my_role),
+                    generation = stringResource(R.string.my_generation),
                 )
-                AttendanceSummaryCard()
+                MySummaryCard()
             }
             Box(
                 modifier =
@@ -67,15 +67,18 @@ fun AttendanceMyScreen(
                         .padding(horizontal = 20.dp)
                         .padding(top = 10.dp),
             ) {
-                AttendanceMenuItem(
-                    title = stringResource(R.string.attendance_my_history),
+                MyMenuItem(
+                    title = stringResource(R.string.my_history),
                     onClick = onHistoryClick,
                 )
-                AttendanceMenuItem(
-                    title = stringResource(R.string.attendance_my_support),
+                MyMenuItem(
+                    title = stringResource(R.string.my_support),
                     onClick = onSupportClick,
                 )
-                DemoDataLabel(modifier = Modifier.padding(top = 8.dp, bottom = 20.dp))
+                YappDemoDataLabel(
+                    text = stringResource(R.string.my_demo_data),
+                    modifier = Modifier.padding(top = 8.dp, bottom = 20.dp),
+                )
             }
         }
     }

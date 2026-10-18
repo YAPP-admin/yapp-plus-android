@@ -11,11 +11,3 @@ import com.yapp.plus.core.designsystem.theme.YappTheme
 private fun AttendanceScheduleScreenPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) { AttendanceScheduleScreen() }
 }
-
-@Preview(name = "My page", widthDp = 393, heightDp = 692)
-@Preview(name = "Tall My page", widthDp = 393, heightDp = 852)
-@Preview(name = "Compact My page", widthDp = 320, heightDp = 560)
-@Composable
-private fun AttendanceMyScreenPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) { AttendanceMyScreen() }
-}

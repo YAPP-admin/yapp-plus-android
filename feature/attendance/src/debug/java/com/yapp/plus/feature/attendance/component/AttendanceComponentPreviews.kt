@@ -99,37 +99,3 @@ private fun sampleScheduleSession(status: AttendanceScheduleStatusUiModel) =
         type = AttendanceScheduleTypeUiModel.Regular,
         status = status,
     )
-
-@Preview(name = "Profile", widthDp = 353, showBackground = true)
-@Composable
-private fun AttendanceProfileCardPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        AttendanceProfileCard(
-            name = stringResource(R.string.attendance_my_name),
-            role = stringResource(R.string.attendance_my_role),
-            generation = stringResource(R.string.attendance_my_generation),
-        )
-    }
-}
-
-@Preview(name = "Attendance summary", widthDp = 353, showBackground = true)
-@Composable
-private fun AttendanceSummaryCardPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) { AttendanceSummaryCard() }
-}
-
-@Preview(name = "Attendance statistic", widthDp = 85, showBackground = true)
-@Composable
-private fun AttendanceStatisticPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        AttendanceStatistic(label = stringResource(R.string.attendance_my_present), count = 3)
-    }
-}
-
-@Preview(name = "My menu item", widthDp = 353, showBackground = true)
-@Composable
-private fun AttendanceMenuItemPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        AttendanceMenuItem(title = stringResource(R.string.attendance_my_history))
-    }
-}

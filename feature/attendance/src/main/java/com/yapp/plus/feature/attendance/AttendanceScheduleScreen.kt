@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.component.button.YappButton
 import com.yapp.plus.core.designsystem.component.button.YappButtonSize
 import com.yapp.plus.core.designsystem.component.button.YappButtonVariant
+import com.yapp.plus.core.designsystem.component.main.YappDemoDataLabel
 import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.attendance.component.AttendanceScheduleItem
-import com.yapp.plus.feature.attendance.component.DemoDataLabel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
@@ -151,7 +151,10 @@ private fun ScheduleSessionsList(
             AttendanceScheduleItem(session = session)
         }
         if (showDemoDataLabel) {
-            DemoDataLabel(modifier = Modifier.padding(vertical = 16.dp))
+            YappDemoDataLabel(
+                text = stringResource(R.string.attendance_demo_data),
+                modifier = Modifier.padding(vertical = 16.dp),
+            )
         }
     }
 }

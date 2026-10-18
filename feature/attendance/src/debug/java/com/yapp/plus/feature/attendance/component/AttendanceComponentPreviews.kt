@@ -1,21 +1,14 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.component
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.feature.attendance.component.AttendanceBoardEmptyState
-import com.yapp.plus.feature.attendance.component.AttendanceDetail
-import com.yapp.plus.feature.attendance.component.AttendanceMenuItem
-import com.yapp.plus.feature.attendance.component.AttendanceProfileCard
-import com.yapp.plus.feature.attendance.component.AttendanceScheduleItem
-import com.yapp.plus.feature.attendance.component.AttendanceStatistic
-import com.yapp.plus.feature.attendance.component.AttendanceSummaryCard
-import com.yapp.plus.feature.attendance.component.BoardCategoryChip
-import com.yapp.plus.feature.attendance.component.BoardCategorySelector
-import com.yapp.plus.feature.attendance.component.HomeSessionCard
+import com.yapp.plus.feature.attendance.BoardCategoryPreviewParameterProvider
+import com.yapp.plus.feature.attendance.R
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
@@ -30,6 +23,20 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 private fun HomeSessionCardPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeSessionCard(state = AttendanceUiState.Content(sampleCurrentWeekSession()))
+    }
+}
+
+@Preview(name = "Home session card states", widthDp = 361, heightDp = 600)
+@Composable
+private fun HomeSessionCardStatesPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        Column {
+            listOf(
+                AttendanceUiState.Loading,
+                AttendanceUiState.Empty,
+                AttendanceUiState.Error,
+            ).forEach { HomeSessionCard(state = it) }
+        }
     }
 }
 

@@ -13,7 +13,7 @@ last_verified: 2026-10-18
 | `:app` | `com.yapp.plus` | 앱 진입점·Navigation 2 가입 UI 데모·메인 탭 내비게이션 및 선택 상태 구현됨; debug는 홈 시작, release는 로그인 시작 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
-| `:feature:attendance` | `com.yapp.plus.feature.attendance` | 홈 데모 화면·기능 컴포넌트 구현됨; 탭 셸은 App으로 이동 |
+| `:feature:main:home` | `com.yapp.plus.feature.main.home` | 홈 데모 화면·모델·컴포넌트·리소스 구현됨; App에서 연결 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 일정 데모 화면·모델·리소스 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 게시판 화면·분류 상태·빈 상태 구현됨; App에서 연결 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | My 화면·컴포넌트·리소스 구현됨; App에서 연결 |
@@ -29,7 +29,7 @@ last_verified: 2026-10-18
 
 `:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지로 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모 경로를 연결합니다. App의 공통 ViewModel과 `SavedStateHandle`이 데모 입력값을 유지·복원하며 Feature에는 표시값과 콜백만 전달합니다. 전체 뒤로 가기와 시스템 inset 적용·소비도 App이 소유합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. 입력 검증·실제 인증·가입 서버 처리는 포함하지 않습니다.
 
-현재 `:feature:main:board`가 게시판 화면을, `:feature:main:my`가 My 화면을, `:feature:main:schedule`이 일정 화면을 제공합니다. `:feature:attendance`는 홈 화면을 제공합니다. App이 `YappBottomNavigation`과 `YappBottomNavigationItem`을 조합해 메인 탭 선택을 저장·복원합니다. 남은 홈 화면은 `:feature:main:home`으로 분리합니다. App은 각 화면 모듈을 조립해 네 탭을 제공하며 Feature 간 직접 의존성은 없습니다. 공통 헤더와 데모 데이터 안내 표시는 `:core:designsystem`의 `YappMainHeader`, `YappDemoDataLabel`을 사용합니다. `:feature:signup`의 승인 대기 상태에는 하단 액션을 제공하지 않으며, App의 가입 UI 데모는 승인 대기에서 끝납니다. debug 빌드는 캡처 편의를 위해 홈 탭으로 바로 시작하며, release 빌드는 기존 로그인에서 시작합니다. 데모 표시는 실제 출석 기록이나 서버 확정 상태를 의미하지 않습니다.
+현재 `:feature:main:home`, `:feature:main:schedule`, `:feature:main:board`, `:feature:main:my`가 각각 홈·일정·게시판·My 화면을 제공합니다. 기존 `:feature:attendance` 모듈은 제거했습니다. App이 `YappBottomNavigation`과 `YappBottomNavigationItem`을 조합해 메인 탭 선택을 저장·복원합니다. App은 각 화면 모듈을 조립해 네 탭을 제공하며 Feature 간 직접 의존성은 없습니다. 공통 헤더와 데모 데이터 안내 표시는 `:core:designsystem`의 `YappMainHeader`, `YappDemoDataLabel`을 사용합니다. `:feature:signup`의 승인 대기 상태에는 하단 액션을 제공하지 않으며, App의 가입 UI 데모는 승인 대기에서 끝납니다. debug 빌드는 캡처 편의를 위해 홈 탭으로 바로 시작하며, release 빌드는 기존 로그인에서 시작합니다. 데모 표시는 실제 출석 기록이나 서버 확정 상태를 의미하지 않습니다.
 
 홈에는 데모 배지를 가진 최근 출석 이력 예시를 제공하고, 홈·일정·My의 기존 콘텐츠 뒤에는 데모 데이터 안내를 표시합니다. 이력 카드·항목과 각 탭·하단 아이템의 개별 Preview는 각 Feature의 `src/debug`에서 제공하며, 게시판 분류의 Preview provider는 해당 Feature의 debug 소스에서 `:core:preview`를 재사용합니다.
 

@@ -1,10 +1,11 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.yapp.plus.core.designsystem.component.navigation.YappBottomNavigation
 import com.yapp.plus.core.designsystem.component.navigation.YappBottomNavigationItem
+import com.yapp.plus.feature.attendance.model.AttendanceTab
 
 @Composable
 fun AttendanceBottomNavigation(

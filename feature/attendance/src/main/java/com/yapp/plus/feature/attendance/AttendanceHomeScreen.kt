@@ -14,6 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.theme.YappMainColor
+import com.yapp.plus.feature.attendance.component.AttendanceHeader
+import com.yapp.plus.feature.attendance.component.AttendanceHistoryCard
+import com.yapp.plus.feature.attendance.component.DemoDataLabel
+import com.yapp.plus.feature.attendance.component.HomeSessionCard
+import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceUiState
+import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -21,6 +28,22 @@ fun AttendanceHomeScreen(
     modifier: Modifier = Modifier,
     onNotificationsClick: () -> Unit = {},
     onAttendanceClick: () -> Unit = {},
+) {
+    AttendanceHomeScreen(
+        state = demoCurrentWeekSessionUiState(),
+        modifier = modifier,
+        onNotificationsClick = onNotificationsClick,
+        onAttendanceClick = onAttendanceClick,
+    )
+}
+
+@Composable
+fun AttendanceHomeScreen(
+    state: AttendanceUiState<CurrentWeekSessionUiModel>,
+    modifier: Modifier = Modifier,
+    onNotificationsClick: () -> Unit = {},
+    onAttendanceClick: () -> Unit = {},
+    onRetry: () -> Unit = {},
 ) {
     Column(
         modifier =
@@ -44,11 +67,13 @@ fun AttendanceHomeScreen(
             },
         )
         HomeSessionCard(
+            state = state,
             modifier =
                 Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 14.dp),
             onAttendanceClick = onAttendanceClick,
+            onRetry = onRetry,
         )
         AttendanceHistoryCard(
             modifier =
@@ -61,6 +86,21 @@ fun AttendanceHomeScreen(
                 Modifier
                     .padding(horizontal = 20.dp)
                     .padding(top = 12.dp, bottom = 20.dp),
+            textResource = R.string.attendance_home_history_demo_data,
         )
     }
 }
+
+@Composable
+private fun demoCurrentWeekSessionUiState(): AttendanceUiState<CurrentWeekSessionUiModel> =
+    AttendanceUiState.Content(
+        CurrentWeekSessionUiModel(
+            weekStartDateLabel = stringResource(R.string.attendance_home_demo_week_start),
+            weekEndDateLabel = stringResource(R.string.attendance_home_demo_week_end),
+            dateLabel = stringResource(R.string.attendance_home_demo_session_date),
+            name = stringResource(R.string.attendance_home_demo_session_name),
+            startTimeLabel = stringResource(R.string.attendance_home_demo_session_time),
+            location = stringResource(R.string.attendance_home_demo_session_location),
+            attendanceStatus = AttendanceStatusUiModel.Available,
+        ),
+    )

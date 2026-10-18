@@ -1,17 +1,43 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.component
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.attendance.BoardCategoryPreviewParameterProvider
+import com.yapp.plus.feature.attendance.R
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceUiState
+import com.yapp.plus.feature.attendance.model.BoardCategory
+import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Preview(name = "Home session card", widthDp = 361)
 @Composable
 private fun HomeSessionCardPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) { HomeSessionCard() }
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeSessionCard(state = AttendanceUiState.Content(sampleCurrentWeekSession()))
+    }
+}
+
+@Preview(name = "Home session card states", widthDp = 361, heightDp = 600)
+@Composable
+private fun HomeSessionCardStatesPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        Column {
+            listOf(
+                AttendanceUiState.Loading,
+                AttendanceUiState.Empty,
+                AttendanceUiState.Error,
+            ).forEach { HomeSessionCard(state = it) }
+        }
+    }
 }
 
 @Preview(name = "Schedule detail", widthDp = 250, showBackground = true)
@@ -25,35 +51,58 @@ private fun AttendanceDetailPreview() {
     }
 }
 
-@Preview(name = "Schedule item", widthDp = 353, showBackground = true)
+@Preview(name = "Schedule item today", widthDp = 353, showBackground = true)
 @Composable
 private fun AttendanceScheduleItemPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         AttendanceScheduleItem(
-            date = stringResource(R.string.attendance_schedule_date_second),
-            title = stringResource(R.string.attendance_schedule_planning),
-            place = stringResource(R.string.attendance_schedule_place_second),
-            time = stringResource(R.string.attendance_schedule_time_second),
-            isPast = false,
-            isOnline = false,
+            session = sampleScheduleSession(AttendanceScheduleStatusUiModel.Today),
         )
     }
 }
 
-@Preview(name = "Demo schedule item", widthDp = 353, showBackground = true)
+@Preview(name = "Schedule item upcoming", widthDp = 353, showBackground = true)
 @Composable
-private fun AttendanceDemoScheduleItemPreview() {
+private fun AttendanceScheduleUpcomingItemPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         AttendanceScheduleItem(
-            date = stringResource(R.string.attendance_schedule_date_first),
-            title = stringResource(R.string.attendance_schedule_event),
-            place = stringResource(R.string.attendance_schedule_place_online),
-            time = stringResource(R.string.attendance_schedule_time),
-            isPast = false,
-            isOnline = true,
+            session = sampleScheduleSession(AttendanceScheduleStatusUiModel.Upcoming),
         )
     }
 }
+
+@Preview(name = "Schedule item past", widthDp = 353, showBackground = true)
+@Composable
+private fun AttendanceSchedulePastItemPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        AttendanceScheduleItem(
+            session = sampleScheduleSession(AttendanceScheduleStatusUiModel.Past),
+        )
+    }
+}
+
+@Composable
+private fun sampleCurrentWeekSession() =
+    CurrentWeekSessionUiModel(
+        weekStartDateLabel = stringResource(R.string.attendance_home_demo_week_start),
+        weekEndDateLabel = stringResource(R.string.attendance_home_demo_week_end),
+        dateLabel = stringResource(R.string.attendance_home_demo_session_date),
+        name = stringResource(R.string.attendance_home_demo_session_name),
+        startTimeLabel = stringResource(R.string.attendance_home_demo_session_time),
+        location = stringResource(R.string.attendance_home_demo_session_location),
+        attendanceStatus = AttendanceStatusUiModel.Available,
+    )
+
+@Composable
+private fun sampleScheduleSession(status: AttendanceScheduleStatusUiModel) =
+    AttendanceScheduleSessionUiModel(
+        dateLabel = stringResource(R.string.attendance_schedule_date_second),
+        name = stringResource(R.string.attendance_schedule_planning),
+        location = stringResource(R.string.attendance_schedule_place_second),
+        timeLabel = stringResource(R.string.attendance_schedule_time_second),
+        type = AttendanceScheduleTypeUiModel.Regular,
+        status = status,
+    )
 
 @Preview(name = "Board category selector", widthDp = 353, showBackground = true)
 @Composable

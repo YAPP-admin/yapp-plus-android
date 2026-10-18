@@ -7,6 +7,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.yapp.plus.core.designsystem.component.navigation.YappBottomNavigationItem
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.attendance.component.AttendanceBottomNavigation
+import com.yapp.plus.feature.attendance.model.AttendanceTab
 
 @Preview(name = "Attendance bottom navigation", widthDp = 393)
 @Preview(name = "Compact attendance bottom navigation", widthDp = 320)

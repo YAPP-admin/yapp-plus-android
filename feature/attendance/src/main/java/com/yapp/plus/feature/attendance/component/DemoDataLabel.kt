@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -6,11 +6,15 @@ import androidx.compose.ui.res.stringResource
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.attendance.R
 
 @Composable
-fun DemoDataLabel(modifier: Modifier = Modifier) {
+fun DemoDataLabel(
+    modifier: Modifier = Modifier,
+    textResource: Int = R.string.attendance_demo_data,
+) {
     YappText(
-        text = stringResource(R.string.attendance_demo_data),
+        text = stringResource(textResource),
         style = YappTypography.caption1Bold,
         color = YappMainColor.textSecondary,
         modifier = modifier,

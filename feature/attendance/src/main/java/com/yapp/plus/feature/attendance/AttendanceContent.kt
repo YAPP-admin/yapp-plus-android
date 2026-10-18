@@ -13,6 +13,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.core.designsystem.theme.YappMainColor
+import com.yapp.plus.feature.attendance.component.AttendanceBottomNavigation
+import com.yapp.plus.feature.attendance.model.AttendanceTab
 
 @Composable
 fun AttendanceContent(

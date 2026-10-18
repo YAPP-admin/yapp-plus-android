@@ -1,7 +1,8 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.yapp.plus.feature.attendance.R
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 enum class AttendanceTab(

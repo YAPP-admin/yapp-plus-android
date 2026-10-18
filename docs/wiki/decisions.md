@@ -6,7 +6,7 @@ last_verified: 2026-10-18
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0015`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0017`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -150,5 +150,15 @@ last_verified: 2026-10-18
 - 이유: 메인 화면의 네 기능을 독립된 Feature 경계로 관리하면서 기존 App 중심 화면 이동과 공통 디자인시스템 책임을 유지합니다.
 - 근거: 사용자 명시 결정, [이슈 #62](https://github.com/YAPP-admin/yapp-plus-android/issues/62). App의 전체 내비게이션 소유와 Feature 간 비의존 원칙은 기존 [아키텍처](architecture.md)를 적용했습니다.
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), [디자인시스템](design-system.md), `AGENTS.md`, `README.md`, App 및 Feature 모듈.
-- 적용 상태: 첫 단계로 탭 내비게이션과 선택 상태를 App으로 옮겼습니다. 네 화면은 아직 `:feature:attendance`에 있으며, 독립 Feature 모듈로 옮기는 후속 작업이 남았습니다.
+- 적용 상태: 탭 내비게이션과 선택 상태는 App으로 이동했습니다. 화면 분리 경로는 DEC-0016에서 `:feature:main` 아래로 재정의했으며, 네 탭을 독립 모듈로 옮기고 기존 `:feature:attendance`를 제거했습니다.
 - 대체한 결정: 없음.
+
+## DEC-0016 · 메인 탭 Feature 모듈 경로를 `feature:main` 아래로 구성
+
+- 기록일: 2026-10-18
+- 결정: 홈·일정·게시판·My를 각각 `:feature:main:home`, `:feature:main:schedule`, `:feature:main:board`, `:feature:main:my`로 둡니다. App은 메인 내비게이션과 선택 상태를 소유하고 네 모듈을 조립합니다. Feature 간 직접 의존성은 두지 않으며 공통 메인 헤더는 `:core:designsystem`에서 제공합니다.
+- 이유: 네 탭의 독립 Feature 경계를 `:feature:main` 아래에 모아 표현하고 공통 UI와 App 조립 책임을 명확히 합니다.
+- 근거: 사용자의 명시 요청, [이슈 #62](https://github.com/YAPP-admin/yapp-plus-android/issues/62), App으로 탭 셸을 이동한 [PR #64](https://github.com/YAPP-admin/yapp-plus-android/pull/64).
+- 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `:feature:main:board`, `:core:designsystem`.
+- 적용 상태: 게시판 화면과 분류 상태를 `:feature:main:board`에, My 화면과 컴포넌트를 `:feature:main:my`에, 일정 화면·상태·모델·리소스를 `:feature:main:schedule`에, 홈 화면·상태·모델·컴포넌트·리소스를 `:feature:main:home`에 분리했습니다. App이 네 화면과 탭 선택을 조립하고 기존 `:feature:attendance`는 제거했습니다. 공통 헤더·데모 안내·아이콘 라벨은 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 Designsystem에 둡니다.
+- 대체한 결정: DEC-0015의 개별 탭 모듈 경로만 대체합니다. App 소유의 메인 내비게이션과 선택 상태, 공통 하단 탭 표현, Feature 간 비의존 원칙은 유지합니다.

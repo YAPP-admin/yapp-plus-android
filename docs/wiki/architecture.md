@@ -29,7 +29,7 @@ Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유�
 ```
 
 - Feature는 Data 구현이나 다른 Feature에 직접 의존하지 않습니다. 전체 화면 이동과 Domain 계약에 대한 Data 구현 연결은 App에서 조율합니다.
-- 메인 화면의 홈·일정·게시판·My는 각각 독립된 Feature 모듈로 둡니다. App이 이들을 조립하고 공통 메인 내비게이션과 탭 선택 상태를 소유합니다. 탭의 공통 시각 컴포넌트는 Designsystem이 제공하며 Feature 간 의존성은 두지 않습니다.
+- 메인 화면의 홈·일정·게시판·My는 각각 `:feature:main:home`, `:feature:main:schedule`, `:feature:main:board`, `:feature:main:my` 독립 Feature 모듈로 둡니다. App이 이들을 조립하고 공통 메인 내비게이션과 탭 선택 상태를 소유합니다. 탭의 공통 시각 컴포넌트는 Designsystem이 제공하며 Feature 간 의존성은 두지 않습니다.
 - Domain은 Android, Compose, HTTP 클라이언트, DB 구현에 의존하지 않습니다. 업무 정책과 UseCase를 Data 구현으로 옮기지 않습니다.
 - Designsystem은 App, Feature, Domain, Data를 알지 못합니다. Network와 Datastore는 Feature의 화면·상태를 알지 못합니다. 순환 의존성을 만들지 않습니다.
 - DTO는 Data 내부에 두고 Domain 모델로 변환합니다. Domain에서 UI 모델·리소스로 바꾸는 책임은 해당 Feature에 둡니다. 여러 Feature가 실제로 공유할 때 의존성 방향을 유지하며 공통화합니다.

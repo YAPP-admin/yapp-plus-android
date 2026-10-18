@@ -13,10 +13,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.AttendanceBoardScreen
-import com.yapp.plus.feature.attendance.AttendanceHomeRoute
-import com.yapp.plus.feature.attendance.AttendanceMyScreen
-import com.yapp.plus.feature.attendance.AttendanceScheduleRoute
+import com.yapp.plus.feature.main.board.BoardScreen
+import com.yapp.plus.feature.main.home.HomeRoute
+import com.yapp.plus.feature.main.my.MyScreen
+import com.yapp.plus.feature.main.schedule.ScheduleRoute
 
 @Composable
 internal fun MainTabScaffold(
@@ -43,10 +43,10 @@ internal fun MainTabScaffold(
                     .consumeWindowInsets(contentPadding),
         ) {
             when (selectedTab) {
-                MainTab.Home -> AttendanceHomeRoute()
-                MainTab.Schedule -> AttendanceScheduleRoute()
-                MainTab.Board -> AttendanceBoardScreen()
-                MainTab.My -> AttendanceMyScreen()
+                MainTab.Home -> HomeRoute()
+                MainTab.Schedule -> ScheduleRoute()
+                MainTab.Board -> BoardScreen()
+                MainTab.My -> MyScreen()
             }
         }
     }

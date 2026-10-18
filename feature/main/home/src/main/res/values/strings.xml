@@ -1,0 +1,24 @@
+<resources>
+    <string name="attendance_demo_status">데모</string>
+    <string name="attendance_home_title">YAPP</string>
+    <string name="attendance_home_notifications">알림</string>
+    <string name="attendance_home_session_label">이번 주 세션</string>
+    <string name="attendance_home_session_action">출석하기</string>
+    <string name="attendance_home_week_range">이번 주 %1$s ~ %2$s</string>
+    <string name="attendance_home_session_empty">이번 주 예정된 세션이 없어요</string>
+    <string name="attendance_home_session_error">이번 주 세션을 불러오지 못했어요</string>
+    <string name="attendance_home_demo_week_start">10월 18일</string>
+    <string name="attendance_home_demo_week_end">10월 24일</string>
+    <string name="attendance_home_demo_session_date">10월 24일 (토)</string>
+    <string name="attendance_home_demo_session_name">개발-디자인 세션</string>
+    <string name="attendance_home_demo_session_time">오후 2시</string>
+    <string name="attendance_home_demo_session_location">DMC 첨단산업센터</string>
+    <string name="attendance_status_not_eligible">이번 세션은 출석 대상이 아니에요</string>
+    <string name="attendance_status_not_open">지금은 출석할 수 없어요</string>
+    <string name="attendance_status_available">출석할 수 있어요</string>
+    <string name="attendance_retry">다시 시도</string>
+    <string name="attendance_home_history_title">최근 출석 현황</string>
+    <string name="attendance_home_history_session">개발·디자인 세션</string>
+    <string name="attendance_home_history_date">9월 26일</string>
+    <string name="attendance_home_history_demo_data">최근 출석 현황은 화면 확인용 데모 데이터예요</string>
+</resources>

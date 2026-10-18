@@ -23,8 +23,9 @@ object ApiHttpClientFactory {
             }
 
             install(DefaultRequest) {
+                val shouldAttachAuthorization = shouldAttachAuthorization(url, apiOrigin)
                 url(BuildConfig.API_BASE_URL)
-                if (isApiOrigin(url, apiOrigin)) {
+                if (shouldAttachAuthorization) {
                     accessTokenProvider.currentAccessToken()?.let { accessToken ->
                         header(HttpHeaders.Authorization, "Bearer $accessToken")
                     }
@@ -32,6 +33,11 @@ object ApiHttpClientFactory {
             }
         }
     }
+
+    internal fun shouldAttachAuthorization(
+        requestUrl: URLBuilder,
+        apiOrigin: URI,
+    ): Boolean = requestUrl.host.isBlank() || isApiOrigin(requestUrl, apiOrigin)
 
     private fun isApiOrigin(
         requestUrl: URLBuilder,

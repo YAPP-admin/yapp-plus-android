@@ -55,7 +55,7 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 
 [Figma Graphic 페이지](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-26431)의 Hero 8종, Point 6종, None 1종은 Figma 벡터 레이어를 Android VectorDrawable `res/drawable/graphic_*.xml`로 변환해 제공합니다. 드롭다운 방향 표시 2종과 인증 화면 뒤로가기 아이콘도 [Figma Components](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-17002) 및 [Icons](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816)의 벡터 레이어를 사용합니다. Compose에서는 `painterResource(R.drawable.*)`로 표시하고 컴포넌트가 기존 표시 크기를 지정합니다.
 
-Figma의 알파 마스크는 VectorDrawable의 클리핑 경로로 옮겼습니다. `ic_input_required.xml`은 같은 모양의 Figma 레이어를 찾지 못해 기존 16dp PNG의 중앙 4dp 점을 벡터로 다시 그린 에셋이며, 기존 크기와 색을 유지합니다.
+Figma의 알파 마스크는 VectorDrawable의 클리핑 경로로 옮겼습니다. 원본의 `mix-blend-mode:multiply`는 VectorDrawable에 대응 속성이 없어 생략했으며, 겹친 음영 일부는 달라질 수 있습니다. Figma SVG에 잘못된 `NaN` 좌표가 있던 경로는 그 점을 제외하고 앞뒤의 유효 좌표를 연결했습니다. `ic_input_required.xml`은 같은 모양의 Figma 레이어를 찾지 못해 기존 16dp PNG의 중앙 4dp 점을 벡터로 다시 그린 에셋이며, 기존 크기와 색을 유지합니다.
 
 ## 하단 내비게이션
 

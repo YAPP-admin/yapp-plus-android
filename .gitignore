@@ -5,6 +5,9 @@
 /.idea/
 .DS_Store
 **/build/
+mock-api/node_modules/
+mock-api/openapi.json
+mock-api/mock-openapi.json
 /captures
 .externalNativeBuild
 .cxx

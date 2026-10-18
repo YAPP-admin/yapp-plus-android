@@ -53,6 +53,13 @@ check(debugApiTarget in setOf("dev", "mock")) {
     "yapp.api.debug.target must be either 'dev' or 'mock'"
 }
 
+fun mockApiExample(propertyName: String): String =
+    if (debugApiTarget == "mock") {
+        localProperties.getProperty(propertyName, "").trim()
+    } else {
+        ""
+    }
+
 android {
     namespace = "com.yapp.plus.core.network"
 
@@ -63,6 +70,17 @@ android {
     buildTypes {
         getByName("debug") {
             buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl(debugApiTarget)}\"")
+            buildConfigField("Boolean", "MOCK_API_ENABLED", (debugApiTarget == "mock").toString())
+            buildConfigField(
+                "String",
+                "CURRENT_WEEK_MOCK_EXAMPLE",
+                buildConfigString(mockApiExample("yapp.api.mock.example.current-week")),
+            )
+            buildConfigField(
+                "String",
+                "CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE",
+                buildConfigString(mockApiExample("yapp.api.mock.example.generation-sessions")),
+            )
             buildConfigField(
                 "String",
                 "DEBUG_ACCESS_TOKEN",
@@ -72,6 +90,9 @@ android {
 
         getByName("release") {
             buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl("prod")}\"")
+            buildConfigField("Boolean", "MOCK_API_ENABLED", "false")
+            buildConfigField("String", "CURRENT_WEEK_MOCK_EXAMPLE", "\"\"")
+            buildConfigField("String", "CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE", "\"\"")
             buildConfigField("String", "DEBUG_ACCESS_TOKEN", "\"\"")
         }
     }

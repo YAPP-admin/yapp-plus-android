@@ -18,6 +18,27 @@ The repository's `local.properties` can select the target for the debug build:
 ```properties
 yapp.api.debug.target=mock
 yapp.api.mock.host=http://10.0.2.2:4010
+yapp.api.mock.example.current-week=available
+yapp.api.mock.example.generation-sessions=sample
+```
+
+The session schedule APIs support named response examples. Set either property to a name below; the
+debug app sends the selected Prism example only when its target is `mock`.
+
+| Property | Available examples |
+| --- | --- |
+| `yapp.api.mock.example.current-week` | `available`, `not-eligible`, `not-open`, `no-session` |
+| `yapp.api.mock.example.generation-sessions` | `sample`, `empty` |
+
+Remove a property or leave it empty to use Prism's generated response for that API. Change the JSON
+values in `mock-api/examples/session-schedule-examples.json` to customize them, then restart
+`npm run mock`. The original downloaded `openapi.json` stays unchanged. Rebuild the Android debug app
+after changing `local.properties` so Gradle includes the new selection.
+
+The same examples can be requested directly from Prism:
+
+```sh
+curl -H 'Prefer: example=not-open' http://localhost:4010/api/sessions/current-week
 ```
 
 When the backend provides a development access token, use the real dev API and

@@ -1,0 +1,12 @@
+{
+  "name": "yapp-plus-mock-api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local OpenAPI mock server for YAPP Plus Android development",
+  "scripts": {
+    "contract:update": "node scripts/update-contract.mjs",
+    "contract:ensure": "node scripts/ensure-contract.mjs",
+    "prepare:mock": "node scripts/prepare-mock-spec.mjs",
+    "mock": "npm run contract:ensure && npm run prepare:mock && npx --yes @stoplight/prism-cli@5.16.0 mock --dynamic mock-openapi.json --host 0.0.0.0 --port 4010"
+  }
+}

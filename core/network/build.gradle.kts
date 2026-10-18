@@ -18,9 +18,24 @@ fun apiBaseUrl(environment: String): String {
             .getProperty("yapp.api.$environment.host")
             ?.trimEnd('/')
             ?.takeIf(String::isNotBlank)
-            ?: return ""
+            ?: if (environment == "mock") {
+                error("Set yapp.api.mock.host in local.properties to use the Mock API")
+            } else {
+                return ""
+            }
 
     return "$apiHost/api/"
+}
+
+val debugApiTarget =
+    localProperties
+        .getProperty("yapp.api.debug.target")
+        ?.trim()
+        ?.takeIf(String::isNotBlank)
+        ?: "dev"
+
+check(debugApiTarget in setOf("dev", "mock")) {
+    "yapp.api.debug.target must be either 'dev' or 'mock'"
 }
 
 android {
@@ -32,7 +47,7 @@ android {
 
     buildTypes {
         getByName("debug") {
-            buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl("dev")}\"")
+            buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl(debugApiTarget)}\"")
         }
 
         getByName("release") {

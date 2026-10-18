@@ -3,6 +3,7 @@ package com.yapp.plus.feature.attendance.component
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.yapp.plus.core.designsystem.component.main.YappDemoDataLabel
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.feature.attendance.R
 
@@ -10,7 +11,7 @@ import com.yapp.plus.feature.attendance.R
 @Composable
 private fun DemoDataLabelPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        DemoDataLabel()
+        YappDemoDataLabel(text = stringResource(R.string.attendance_demo_data))
     }
 }
 

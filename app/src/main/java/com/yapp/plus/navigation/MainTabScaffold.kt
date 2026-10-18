@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.attendance.AttendanceHomeScreen
-import com.yapp.plus.feature.attendance.AttendanceMyScreen
 import com.yapp.plus.feature.attendance.AttendanceScheduleScreen
 import com.yapp.plus.feature.main.board.BoardScreen
+import com.yapp.plus.feature.main.my.MyScreen
 
 @Composable
 internal fun MainTabScaffold(
@@ -46,7 +46,7 @@ internal fun MainTabScaffold(
                 MainTab.Home -> AttendanceHomeScreen()
                 MainTab.Schedule -> AttendanceScheduleScreen()
                 MainTab.Board -> BoardScreen()
-                MainTab.My -> AttendanceMyScreen()
+                MainTab.My -> MyScreen()
             }
         }
     }

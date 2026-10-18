@@ -4,12 +4,12 @@
 
 ## 현재 상태
 
-10개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor 공통 API 클라이언트, JSON 직렬화, debug 로컬 Bearer 토큰 공급 경로가 준비되어 있고, 세션 일정 조회의 Domain 계약과 Data 요청·매핑·Repository 구현을 추가했습니다. 로그인·회원가입 UI는 별도 모듈로 구현했고, 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모를 Navigation 2로 연결했습니다. 게시판은 `:feature:main:board`로 분리됐고 홈·일정·My의 정적 데모 화면은 아직 `:feature:attendance`가 제공합니다. App은 메인 탭 내비게이션과 선택 상태를 관리합니다. 나머지 세 화면도 `:feature:main` 아래의 독립 Feature 모듈로 순차 분리합니다. 가입 UI 데모는 승인 대기에서 끝나며, 승인 대기 화면에는 하단 액션을 제공하지 않습니다. 홈의 최근 출석 현황은 데모 이력으로 표시하며, 홈·일정·My에는 데모 데이터 안내를 제공합니다. debug 빌드는 화면 캡처 편의를 위해 홈 탭으로 시작하고, release 빌드는 기존 카카오 로그인으로 시작합니다. 실제 로그인 및 화면의 API 연결은 아직 구현되지 않았습니다.
+11개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor 공통 API 클라이언트, JSON 직렬화, debug 로컬 Bearer 토큰 공급 경로가 준비되어 있고, 세션 일정 조회의 Domain 계약과 Data 요청·매핑·Repository 구현을 추가했습니다. 로그인·회원가입 UI는 별도 모듈로 구현했고, 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모를 Navigation 2로 연결했습니다. 게시판과 My는 각각 `:feature:main:board`, `:feature:main:my`로 분리됐고 홈·일정의 정적 데모 화면은 아직 `:feature:attendance`가 제공합니다. App은 메인 탭 내비게이션과 선택 상태를 관리합니다. 홈·일정도 `:feature:main` 아래의 독립 Feature 모듈로 순차 분리합니다. 가입 UI 데모는 승인 대기에서 끝나며, 승인 대기 화면에는 하단 액션을 제공하지 않습니다. 홈의 최근 출석 현황은 데모 이력으로 표시하며, 홈·일정·My에는 데모 데이터 안내를 제공합니다. debug 빌드는 화면 캡처 편의를 위해 홈 탭으로 시작하고, release 빌드는 기존 카카오 로그인으로 시작합니다. 실제 로그인 및 화면의 API 연결은 아직 구현되지 않았습니다.
 
 ## 아키텍처와 모듈
 
 MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
-현재 10개 Gradle 모듈과 build-logic 설정, 디자인시스템 공통 표현, `:core:preview`의 재사용 Preview 데이터가 준비되어 있습니다. 로그인은 `:feature:login`, 가입 입력·상태는 `:feature:signup`이 소유합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지로 인증 데모 흐름을 조율하고, 메인 탭 내비게이션과 선택 상태도 소유합니다. 이름·휴대폰 번호를 공통 ViewModel과 `SavedStateHandle`로 유지·복원합니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.
+현재 11개 Gradle 모듈과 build-logic 설정, 디자인시스템 공통 표현, `:core:preview`의 재사용 Preview 데이터가 준비되어 있습니다. 로그인은 `:feature:login`, 가입 입력·상태는 `:feature:signup`이 소유합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지로 인증 데모 흐름을 조율하고, 메인 탭 내비게이션과 선택 상태도 소유합니다. 이름·휴대폰 번호를 공통 ViewModel과 `SavedStateHandle`로 유지·복원합니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.
 
 ## 프로젝트 지식
 

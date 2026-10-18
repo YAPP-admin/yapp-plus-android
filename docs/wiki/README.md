@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-04
+last_verified: 2026-10-18
 ---
 
 # YAPP LLM Wiki
@@ -10,6 +10,7 @@ YAPP 출석 Android 앱의 정책과 설계 결정을 찾고 유지하는 문서
 
 | 분야 | 기준 문서 |
 | --- | --- |
+| 회원 구분·직군·역할 용어 | [회원·역할 정책](membership-policy.md) |
 | 앱의 출석 정책과 미확정 요구사항 | [제품 정책](product-policy.md) |
 | 계층 책임과 의존성 | [아키텍처](architecture.md) |
 | 모듈 상태와 파일 배치 | [모듈 구조](module-structure.md) |

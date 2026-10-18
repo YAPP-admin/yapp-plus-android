@@ -3,6 +3,8 @@ package com.yapp.plus.di
 import com.yapp.plus.core.network.AccessTokenProvider
 import com.yapp.plus.core.network.ApiHttpClientFactory
 import com.yapp.plus.core.network.MutableAccessTokenProvider
+import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
+import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,4 +29,9 @@ object NetworkModule {
     @Singleton
     fun provideApiHttpClient(accessTokenProvider: AccessTokenProvider): HttpClient =
         ApiHttpClientFactory.create(accessTokenProvider)
+
+    @Provides
+    @Singleton
+    fun provideSessionScheduleRepository(httpClient: HttpClient): SessionScheduleRepository =
+        SessionScheduleRepositoryImpl(httpClient)
 }

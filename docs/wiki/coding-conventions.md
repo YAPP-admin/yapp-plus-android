@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-07
+last_verified: 2026-10-18
 ---
 
 # 코딩 컨벤션
@@ -38,6 +38,10 @@ Kotlin·Gradle Kotlin 코드에 적용합니다. 기계가 읽는 서식은 [.ed
 - 의미 있는 고정 숫자와 반복 문자열은 이름 있는 상수로 추출합니다.
 - 식별자·검증 규칙이 있는 값은 value class를 검토합니다. 컬렉션에 자체 규칙·행동이 있으면 별도 타입으로 캡슐화합니다. 모든 값에 래퍼를 일괄 적용하지 않습니다.
 - 불필요한 주석을 추가하지 않습니다. 주석·KDoc은 코드만으로 드러나지 않는 의도·제약·선택 이유가 있을 때만 쓰고, 이름·매개변수·구현을 다시 설명하지 않습니다.
+
+## Android API 호환
+
+- Android 최소 지원 버전은 API 24입니다. `java.time`처럼 API 26부터 제공되는 표준 API는 공통 Android convention plugin의 core library desugaring을 통해 하위 버전에서도 사용할 수 있게 유지합니다.
 
 ## UI 리소스와 정보 관리
 

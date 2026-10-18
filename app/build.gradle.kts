@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":feature:main:schedule"))
     implementation(project(":feature:login"))
     implementation(project(":feature:signup"))
+    implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":core:network"))
     implementation(project(":core:designsystem"))

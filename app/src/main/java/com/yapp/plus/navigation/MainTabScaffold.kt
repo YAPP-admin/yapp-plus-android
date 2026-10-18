@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.BoardScreen
-import com.yapp.plus.feature.main.home.HomeScreen
+import com.yapp.plus.feature.main.home.HomeRoute
 import com.yapp.plus.feature.main.my.MyScreen
-import com.yapp.plus.feature.main.schedule.ScheduleScreen
+import com.yapp.plus.feature.main.schedule.ScheduleRoute
 
 @Composable
 internal fun MainTabScaffold(
@@ -43,8 +43,8 @@ internal fun MainTabScaffold(
                     .consumeWindowInsets(contentPadding),
         ) {
             when (selectedTab) {
-                MainTab.Home -> HomeScreen()
-                MainTab.Schedule -> ScheduleScreen()
+                MainTab.Home -> HomeRoute()
+                MainTab.Schedule -> ScheduleRoute()
                 MainTab.Board -> BoardScreen()
                 MainTab.My -> MyScreen()
             }

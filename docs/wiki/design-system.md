@@ -51,6 +51,12 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 
 홈의 `graphic_yapp_logo`는 [Figma YAPP-logo](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=142-23072) 자체를 SVG로 내보내 변환한 `res/drawable/graphic_yapp_logo.xml`입니다. 원본의 80×30 영역, 내부 여백, 네 개의 경로, `#1A1C20` 색상과 투명 배경을 보존합니다. 홈은 기존 `R.drawable.graphic_yapp_logo`와 80dp×30dp 크기로 표시합니다.
 
+## 그래픽과 UI 에셋
+
+[Figma Graphic 페이지](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-26431)의 Hero 8종, Point 6종, None 1종은 Figma 벡터 레이어를 Android VectorDrawable `res/drawable/graphic_*.xml`로 변환해 제공합니다. 드롭다운 방향 표시 2종과 인증 화면 뒤로가기 아이콘도 [Figma Components](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-17002) 및 [Icons](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816)의 벡터 레이어를 사용합니다. Compose에서는 `painterResource(R.drawable.*)`로 표시하고 컴포넌트가 기존 표시 크기를 지정합니다.
+
+Figma의 알파 마스크는 VectorDrawable의 클리핑 경로로 옮겼습니다. 원본의 `mix-blend-mode:multiply`는 VectorDrawable에 대응 속성이 없어 생략했으며, 겹친 음영 일부는 달라질 수 있습니다. Figma SVG에 잘못된 `NaN` 좌표가 있던 경로는 그 점을 제외하고 앞뒤의 유효 좌표를 연결했습니다. `ic_input_required.xml`은 같은 모양의 Figma 레이어를 찾지 못해 기존 16dp PNG의 중앙 4dp 점을 벡터로 다시 그린 에셋이며, 기존 크기와 색을 유지합니다.
+
 ## 하단 내비게이션
 
 `:core:designsystem/component/navigation/`의 `YappBottomNavigation`은 탭 배치·상단 구분선을, `YappBottomNavigationItem`은 아이콘·라벨·선택 상태와 탭 semantics를 담당합니다. App이 아이콘 리소스, 표시 라벨, 선택 상태와 클릭 콜백을 전달하고 탭 선택 상태와 화면 연결도 App에서 소유합니다. 공통 컴포넌트는 앱 Navigation에 의존하지 않습니다. 컴포넌트 Preview는 `:core:preview`의 재사용 enum parameter provider를 사용합니다.

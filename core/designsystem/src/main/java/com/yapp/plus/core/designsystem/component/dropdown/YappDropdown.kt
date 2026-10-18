@@ -92,16 +92,10 @@ fun YappDropdown(
                     Image(
                         painter =
                             painterResource(
-                                if (size == YappDropdownSize.Large) {
-                                    if (expanded) {
-                                        R.drawable.ic_dropdown_caret_up_large
-                                    } else {
-                                        R.drawable.ic_dropdown_caret_down_large
-                                    }
-                                } else if (expanded) {
-                                    R.drawable.ic_dropdown_caret_up_medium
+                                if (expanded) {
+                                    R.drawable.ic_dropdown_caret_up
                                 } else {
-                                    R.drawable.ic_dropdown_caret_down_medium
+                                    R.drawable.ic_dropdown_caret_down
                                 },
                             ),
                         contentDescription = null,

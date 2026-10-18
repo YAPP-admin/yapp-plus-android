@@ -8,9 +8,12 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
 @Composable
-fun DemoDataLabel(modifier: Modifier = Modifier) {
+fun DemoDataLabel(
+    modifier: Modifier = Modifier,
+    textResource: Int = R.string.attendance_demo_data,
+) {
     YappText(
-        text = stringResource(R.string.attendance_demo_data),
+        text = stringResource(textResource),
         style = YappTypography.caption1Bold,
         color = YappMainColor.textSecondary,
         modifier = modifier,

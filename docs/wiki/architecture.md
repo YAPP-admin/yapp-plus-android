@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-06
+last_verified: 2026-10-18
 ---
 
 # 아키텍처
@@ -22,7 +22,7 @@ MVVM과 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙에 필
 Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유합니다. Network는 Ktor를 사용하고 JSON은 Kotlin serialization으로 처리합니다. 서버 계약이 정해지기 전에는 API별 요청·응답 모델이나 통신 정책을 추가하지 않습니다.
 
 ```text
-:app → :feature:* / :data / :core:designsystem
+:app → :feature:* / :data / :core:network / :core:designsystem
 :feature:* → :domain / :core:designsystem
 :data → :domain / :core:network / 필요 시 :core:datastore
 :domain → Kotlin 및 필요한 순수 Kotlin 라이브러리

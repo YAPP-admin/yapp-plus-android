@@ -20,6 +20,19 @@ yapp.api.debug.target=mock
 yapp.api.mock.host=http://10.0.2.2:4010
 ```
 
+When the backend provides a development access token, use the real dev API and
+add the token to the ignored `local.properties` file:
+
+```properties
+yapp.api.debug.target=dev
+yapp.api.debug.token=<development access token>
+```
+
+The token is used only by debug builds and is kept out of version control. Do not
+share debug APKs containing a personal development token. Leaving the property
+empty sends requests without an `Authorization` header, so the Mock API remains
+usable without a token.
+
 The `release` build always uses `yapp.api.prod.host`. If `yapp.api.debug.target` is omitted, `debug` uses `yapp.api.dev.host`.
 
 ## Update the backend contract

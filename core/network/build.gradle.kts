@@ -27,6 +27,21 @@ fun apiBaseUrl(environment: String): String {
     return "$apiHost/api/"
 }
 
+fun buildConfigString(value: String): String =
+    buildString {
+        append('"')
+        value.forEach { character ->
+            when (character) {
+                '\\' -> append("\\\\")
+                '"' -> append("\\\"")
+                '\n' -> append("\\n")
+                '\r' -> append("\\r")
+                else -> append(character)
+            }
+        }
+        append('"')
+    }
+
 val debugApiTarget =
     localProperties
         .getProperty("yapp.api.debug.target")
@@ -48,10 +63,16 @@ android {
     buildTypes {
         getByName("debug") {
             buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl(debugApiTarget)}\"")
+            buildConfigField(
+                "String",
+                "DEBUG_ACCESS_TOKEN",
+                buildConfigString(localProperties.getProperty("yapp.api.debug.token", "").trim()),
+            )
         }
 
         getByName("release") {
             buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl("prod")}\"")
+            buildConfigField("String", "DEBUG_ACCESS_TOKEN", "\"\"")
         }
     }
 }

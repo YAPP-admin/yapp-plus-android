@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-12
+last_verified: 2026-10-18
 ---
 
 # 모듈 구조
@@ -18,11 +18,11 @@ last_verified: 2026-10-12
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM 기본 설정됨 |
 | `:data` | `com.yapp.plus.data` | Android Library 기본 설정됨 |
-| `:core:network` | `com.yapp.plus.core.network` | Android Library 기본 설정됨 |
+| `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 개발 Bearer token 공급 구현; API별 DataSource는 계약 확정 후 추가 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 로컬 저장 필요 시 추가 |
 
-9개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점을 갖고, `:core:network`는 Ktor Android client와 Kotlin serialization JSON 의존성을 사용합니다. 실제 API 호출과 DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+9개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL, debug 로컬 Bearer token 공급을 제공합니다. API별 호출·DTO는 서버 계약이 정해진 뒤 구현합니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
 `:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지로 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모 경로를 연결합니다. App의 공통 ViewModel과 `SavedStateHandle`이 데모 입력값을 유지·복원하며 Feature에는 표시값과 콜백만 전달합니다. 전체 뒤로 가기와 시스템 inset 적용·소비도 App이 소유합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. 입력 검증·실제 인증·가입 서버 처리는 포함하지 않습니다.
 

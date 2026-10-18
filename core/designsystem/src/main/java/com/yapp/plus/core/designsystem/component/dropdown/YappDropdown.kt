@@ -26,11 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.component.text.YappText
+import com.yapp.plus.core.designsystem.resource.svgPainterResource
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -91,17 +91,11 @@ fun YappDropdown(
                     )
                     Image(
                         painter =
-                            painterResource(
-                                if (size == YappDropdownSize.Large) {
-                                    if (expanded) {
-                                        R.drawable.ic_dropdown_caret_up_large
-                                    } else {
-                                        R.drawable.ic_dropdown_caret_down_large
-                                    }
-                                } else if (expanded) {
-                                    R.drawable.ic_dropdown_caret_up_medium
+                            svgPainterResource(
+                                if (expanded) {
+                                    R.raw.ic_dropdown_caret_up
                                 } else {
-                                    R.drawable.ic_dropdown_caret_down_medium
+                                    R.raw.ic_dropdown_caret_down
                                 },
                             ),
                         contentDescription = null,

@@ -26,13 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.component.text.YappText
+import com.yapp.plus.core.designsystem.resource.svgPainterResource
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -206,7 +206,7 @@ fun YappTextArea(
 @Composable
 private fun RequiredBadge() {
     Image(
-        painter = painterResource(R.drawable.ic_input_required),
+        painter = svgPainterResource(R.raw.ic_input_required),
         contentDescription = null,
         modifier = Modifier.offset(x = (-8).dp, y = (-8).dp).size(16.dp),
     )

@@ -44,6 +44,7 @@ import com.yapp.plus.core.designsystem.component.chip.YappChipColor
 import com.yapp.plus.core.designsystem.component.chip.YappChipSize
 import com.yapp.plus.core.designsystem.component.chip.YappChipStyle
 import com.yapp.plus.core.designsystem.component.text.YappText
+import com.yapp.plus.core.designsystem.resource.svgPainterResource
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.attendance.R
@@ -328,7 +329,7 @@ fun AttendanceBoardEmptyState(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.graphic_none),
+            painter = svgPainterResource(DesignSystemR.raw.graphic_none),
             contentDescription = null,
             modifier = Modifier.size(width = 90.dp, height = 74.dp),
         )

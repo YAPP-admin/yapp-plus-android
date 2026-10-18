@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.component.button.YappButton
 import com.yapp.plus.core.designsystem.component.button.YappButtonSize
 import com.yapp.plus.core.designsystem.component.button.YappButtonVariant
+import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
-import com.yapp.plus.feature.attendance.component.AttendanceHeader
 import com.yapp.plus.feature.attendance.component.AttendanceScheduleItem
 import com.yapp.plus.feature.attendance.component.DemoDataLabel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
@@ -56,7 +56,7 @@ fun AttendanceScheduleScreen(
                 .fillMaxSize()
                 .background(YappMainColor.surface),
     ) {
-        AttendanceHeader(title = stringResource(R.string.attendance_schedule_title))
+        YappMainHeader(title = stringResource(R.string.attendance_schedule_title))
         when (state) {
             AttendanceUiState.Loading -> ScheduleLoading(modifier = Modifier.weight(1f))
             AttendanceUiState.Empty ->

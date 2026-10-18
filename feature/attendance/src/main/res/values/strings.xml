@@ -43,12 +43,6 @@
     <string name="attendance_schedule_upcoming">예정</string>
     <string name="attendance_schedule_empty">등록된 세션 일정이 없어요</string>
     <string name="attendance_schedule_error">세션 일정을 불러오지 못했어요</string>
-    <string name="attendance_board_title">게시판</string>
-    <string name="attendance_board_all">전체</string>
-    <string name="attendance_board_session">세션</string>
-    <string name="attendance_board_assignment">과제</string>
-    <string name="attendance_board_other">기타</string>
-    <string name="attendance_board_empty">아직 작성된 공지사항이 없어요</string>
     <string name="attendance_my_title">마이페이지</string>
     <string name="attendance_my_settings">설정</string>
     <string name="attendance_my_name">김야뿌</string>

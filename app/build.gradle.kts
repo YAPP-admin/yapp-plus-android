@@ -29,6 +29,7 @@ android {
 
 dependencies {
     implementation(project(":feature:attendance"))
+    implementation(project(":feature:main:board"))
     implementation(project(":feature:login"))
     implementation(project(":feature:signup"))
     implementation(project(":data"))

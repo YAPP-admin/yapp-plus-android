@@ -25,6 +25,10 @@ YappText(
 
 컴포넌트 사용 범위는 공통으로 관리할 텍스트 표현입니다. 기능 화면의 상태·동작 로직은 각 Feature 모듈에 둡니다.
 
+## 메인 헤더
+
+메인 탭에서 재사용하는 제목·선택 아이콘 표현은 `component/main/YappMainHeader.kt`에서 제공합니다. 제목, 선택 아이콘, leading 슬롯과 클릭 콜백을 받아 표시하며 App이나 Feature의 내비게이션 상태를 소유하지 않습니다. 개별 Preview는 `src/debug`에 둡니다.
+
 ## Chip·Dropdown 표현 인자
 
 `YappChip`의 `color`·`size`·`style`과 `YappDropdown`의 `placeholder`·`size`는 호출부에서 명시합니다. 기존 Preview는 이전 기본값을 직접 전달해 같은 표현을 유지합니다. `Modifier`와 Dropdown의 `enabled` 기본값은 유지합니다.

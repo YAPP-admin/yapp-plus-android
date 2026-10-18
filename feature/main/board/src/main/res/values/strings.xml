@@ -1,0 +1,8 @@
+<resources>
+    <string name="board_title">게시판</string>
+    <string name="board_category_all">전체</string>
+    <string name="board_category_session">세션</string>
+    <string name="board_category_assignment">과제</string>
+    <string name="board_category_other">기타</string>
+    <string name="board_empty">아직 작성된 공지사항이 없어요</string>
+</resources>

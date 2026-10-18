@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.main.board
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,14 +12,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.component.AttendanceBoardEmptyState
-import com.yapp.plus.feature.attendance.component.AttendanceHeader
-import com.yapp.plus.feature.attendance.component.BoardCategorySelector
-import com.yapp.plus.feature.attendance.model.BoardCategory
+import com.yapp.plus.feature.main.board.component.BoardCategorySelector
+import com.yapp.plus.feature.main.board.component.BoardEmptyState
+import com.yapp.plus.feature.main.board.model.BoardCategory
 
 @Composable
-fun AttendanceBoardScreen(modifier: Modifier = Modifier) {
+fun BoardScreen(modifier: Modifier = Modifier) {
     var selectedCategory by rememberSaveable { mutableStateOf(BoardCategory.All) }
     Column(
         modifier =
@@ -27,7 +27,7 @@ fun AttendanceBoardScreen(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .background(YappMainColor.surface),
     ) {
-        AttendanceHeader(title = stringResource(R.string.attendance_board_title))
+        YappMainHeader(title = stringResource(R.string.board_title))
         Column(
             modifier =
                 Modifier
@@ -39,7 +39,7 @@ fun AttendanceBoardScreen(modifier: Modifier = Modifier) {
                 selectedCategory = selectedCategory,
                 onCategorySelected = { selectedCategory = it },
             )
-            AttendanceBoardEmptyState(
+            BoardEmptyState(
                 modifier =
                     Modifier
                         .weight(1f)

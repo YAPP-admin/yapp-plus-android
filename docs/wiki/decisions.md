@@ -6,7 +6,7 @@ last_verified: 2026-10-18
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0015`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0017`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -152,3 +152,13 @@ last_verified: 2026-10-18
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), [디자인시스템](design-system.md), `AGENTS.md`, `README.md`, App 및 Feature 모듈.
 - 적용 상태: 첫 단계로 탭 내비게이션과 선택 상태를 App으로 옮겼습니다. 네 화면은 아직 `:feature:attendance`에 있으며, 독립 Feature 모듈로 옮기는 후속 작업이 남았습니다.
 - 대체한 결정: 없음.
+
+## DEC-0016 · 메인 탭 Feature 모듈 경로를 `feature:main` 아래로 구성
+
+- 기록일: 2026-10-18
+- 결정: 홈·일정·게시판·My를 각각 `:feature:main:home`, `:feature:main:schedule`, `:feature:main:board`, `:feature:main:my`로 둡니다. App은 메인 내비게이션과 선택 상태를 소유하고 네 모듈을 조립합니다. Feature 간 직접 의존성은 두지 않으며 공통 메인 헤더는 `:core:designsystem`에서 제공합니다.
+- 이유: 네 탭의 독립 Feature 경계를 `:feature:main` 아래에 모아 표현하고 공통 UI와 App 조립 책임을 명확히 합니다.
+- 근거: 사용자의 명시 요청, [이슈 #62](https://github.com/YAPP-admin/yapp-plus-android/issues/62), App으로 탭 셸을 이동한 [PR #64](https://github.com/YAPP-admin/yapp-plus-android/pull/64).
+- 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `:feature:main:board`, `:core:designsystem`.
+- 적용 상태: 게시판 화면과 분류 상태를 첫 단계로 `:feature:main:board`에 분리했습니다. 홈·일정·My는 아직 `:feature:attendance`에 있으며 순차 분리합니다. 공통 헤더는 `YappMainHeader`로 Designsystem에 두었습니다.
+- 대체한 결정: DEC-0015의 개별 탭 모듈 경로만 대체합니다. App 소유의 메인 내비게이션과 선택 상태, 공통 하단 탭 표현, Feature 간 비의존 원칙은 유지합니다.

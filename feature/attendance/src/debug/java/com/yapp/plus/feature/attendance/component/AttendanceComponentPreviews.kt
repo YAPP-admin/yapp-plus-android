@@ -1,20 +1,16 @@
 package com.yapp.plus.feature.attendance.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.feature.attendance.BoardCategoryPreviewParameterProvider
 import com.yapp.plus.feature.attendance.R
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceUiState
-import com.yapp.plus.feature.attendance.model.BoardCategory
 import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
@@ -103,35 +99,6 @@ private fun sampleScheduleSession(status: AttendanceScheduleStatusUiModel) =
         type = AttendanceScheduleTypeUiModel.Regular,
         status = status,
     )
-
-@Preview(name = "Board category selector", widthDp = 353, showBackground = true)
-@Composable
-private fun BoardCategorySelectorPreview(
-    @PreviewParameter(BoardCategoryPreviewParameterProvider::class) category: BoardCategory,
-) {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        BoardCategorySelector(selectedCategory = category, onCategorySelected = {})
-    }
-}
-
-@Preview(name = "Board category tab", showBackground = true)
-@Composable
-private fun BoardCategoryChipPreview(
-    @PreviewParameter(BoardCategoryPreviewParameterProvider::class) category: BoardCategory,
-) {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        Row {
-            BoardCategoryChip(category = category, isSelected = true, onClick = {})
-            BoardCategoryChip(category = category, isSelected = false, onClick = {})
-        }
-    }
-}
-
-@Preview(name = "Board empty state", widthDp = 353, heightDp = 240, showBackground = true)
-@Composable
-private fun AttendanceBoardEmptyStatePreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) { AttendanceBoardEmptyState() }
-}
 
 @Preview(name = "Profile", widthDp = 353, showBackground = true)
 @Composable

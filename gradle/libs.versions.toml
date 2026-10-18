@@ -11,7 +11,6 @@ kotlin = "2.2.10"
 ktlintGradle = "14.2.0"
 composeBom = "2026.02.01"
 kotlinxCoroutines = "1.9.0"
-androidsvg = "1.4"
 hilt = "2.60.1"
 ksp = "2.2.10-2.0.2"
 ktor = "3.3.3"
@@ -54,7 +53,6 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 ktlint-gradle-plugin = { group = "org.jlleitschuh.gradle.ktlint", name = "org.jlleitschuh.gradle.ktlint.gradle.plugin", version.ref = "ktlintGradle" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-androidsvg = { group = "com.caverock", name = "androidsvg-aar", version.ref = "androidsvg" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

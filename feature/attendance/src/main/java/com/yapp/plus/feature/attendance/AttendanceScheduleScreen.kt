@@ -15,6 +15,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,7 +23,6 @@ import com.yapp.plus.core.designsystem.component.button.YappButton
 import com.yapp.plus.core.designsystem.component.button.YappButtonSize
 import com.yapp.plus.core.designsystem.component.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.component.text.YappText
-import com.yapp.plus.core.designsystem.resource.svgPainterResource
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.attendance.component.AttendanceHeader
@@ -112,7 +112,7 @@ private fun SchedulePlaceholder(
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
     ) {
         Image(
-            painter = svgPainterResource(DesignSystemR.raw.graphic_none),
+            painter = painterResource(DesignSystemR.drawable.graphic_none),
             contentDescription = null,
             modifier = Modifier.height(74.dp),
         )

@@ -42,7 +42,7 @@ fun LoginContent(
             AuthHeading(stringResource(R.string.auth_login_title))
             Spacer(Modifier.height(48.dp))
             AuthGraphic(
-                resource = DesignSystemR.raw.graphic_point_enabled,
+                resource = DesignSystemR.drawable.graphic_point_enabled,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
             )
             Spacer(Modifier.height(64.dp))

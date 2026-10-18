@@ -50,9 +50,9 @@ fun AuthStatusContent(
         }
     val graphic =
         when (status) {
-            AuthStatus.Pending -> DesignSystemR.raw.graphic_point_construction
-            AuthStatus.Complete -> DesignSystemR.raw.graphic_point_happy
-            AuthStatus.Problem -> DesignSystemR.raw.graphic_point_disabled
+            AuthStatus.Pending -> DesignSystemR.drawable.graphic_point_construction
+            AuthStatus.Complete -> DesignSystemR.drawable.graphic_point_happy
+            AuthStatus.Problem -> DesignSystemR.drawable.graphic_point_disabled
         }
     AuthLayout(
         onBack = onBack,

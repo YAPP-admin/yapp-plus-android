@@ -57,7 +57,7 @@ private fun AuthHeadingPreview() {
 @Composable
 private fun AuthGraphicPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        AuthGraphic(resource = R.raw.graphic_point_construction)
+        AuthGraphic(resource = R.drawable.graphic_point_construction)
     }
 }
 

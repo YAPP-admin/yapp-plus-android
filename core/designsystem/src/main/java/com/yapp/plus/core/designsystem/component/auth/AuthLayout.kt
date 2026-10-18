@@ -15,10 +15,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
-import com.yapp.plus.core.designsystem.resource.svgPainterResource
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 
 @Composable
@@ -47,7 +47,7 @@ fun AuthLayout(
             ) {
                 IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
                     Image(
-                        painter = svgPainterResource(R.raw.ic_auth_back),
+                        painter = painterResource(R.drawable.ic_auth_back),
                         contentDescription = stringResource(R.string.yapp_auth_back),
                         modifier = Modifier.size(24.dp),
                     )

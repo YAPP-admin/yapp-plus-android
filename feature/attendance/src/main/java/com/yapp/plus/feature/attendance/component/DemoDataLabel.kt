@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -6,6 +6,7 @@ import androidx.compose.ui.res.stringResource
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.attendance.R
 
 @Composable
 fun DemoDataLabel(

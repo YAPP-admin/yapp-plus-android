@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.model
 
 data class AttendanceScheduleSessionUiModel(
     val dateLabel: String,

@@ -25,6 +25,13 @@ import com.yapp.plus.core.designsystem.component.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.attendance.component.AttendanceHeader
+import com.yapp.plus.feature.attendance.component.AttendanceScheduleItem
+import com.yapp.plus.feature.attendance.component.DemoDataLabel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceUiState
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable

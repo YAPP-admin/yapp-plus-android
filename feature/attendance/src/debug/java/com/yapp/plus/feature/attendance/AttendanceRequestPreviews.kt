@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceUiState
 
 @Preview(name = "Schedule loading", widthDp = 393, heightDp = 692)
 @Composable

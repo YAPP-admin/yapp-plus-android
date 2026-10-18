@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.model
 
 data class CurrentWeekSessionUiModel(
     val weekStartDateLabel: String,

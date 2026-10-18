@@ -14,6 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.theme.YappMainColor
+import com.yapp.plus.feature.attendance.component.AttendanceHeader
+import com.yapp.plus.feature.attendance.component.AttendanceHistoryCard
+import com.yapp.plus.feature.attendance.component.DemoDataLabel
+import com.yapp.plus.feature.attendance.component.HomeSessionCard
+import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceUiState
+import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable

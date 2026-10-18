@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.model
 
 sealed interface AttendanceUiState<out T> {
     data object Loading : AttendanceUiState<Nothing>

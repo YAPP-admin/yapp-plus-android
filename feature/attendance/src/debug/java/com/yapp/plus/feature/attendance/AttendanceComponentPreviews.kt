@@ -6,6 +6,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.attendance.component.AttendanceBoardEmptyState
+import com.yapp.plus.feature.attendance.component.AttendanceDetail
+import com.yapp.plus.feature.attendance.component.AttendanceMenuItem
+import com.yapp.plus.feature.attendance.component.AttendanceProfileCard
+import com.yapp.plus.feature.attendance.component.AttendanceScheduleItem
+import com.yapp.plus.feature.attendance.component.AttendanceStatistic
+import com.yapp.plus.feature.attendance.component.AttendanceSummaryCard
+import com.yapp.plus.feature.attendance.component.BoardCategoryChip
+import com.yapp.plus.feature.attendance.component.BoardCategorySelector
+import com.yapp.plus.feature.attendance.component.HomeSessionCard
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceUiState
+import com.yapp.plus.feature.attendance.model.BoardCategory
+import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Preview(name = "Home session card", widthDp = 361)
@@ -13,30 +30,6 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 private fun HomeSessionCardPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeSessionCard(state = AttendanceUiState.Content(sampleCurrentWeekSession()))
-    }
-}
-
-@Preview(name = "Home session card loading", widthDp = 361)
-@Composable
-private fun HomeSessionCardLoadingPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeSessionCard(state = AttendanceUiState.Loading)
-    }
-}
-
-@Preview(name = "Home session card empty", widthDp = 361)
-@Composable
-private fun HomeSessionCardEmptyPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeSessionCard(state = AttendanceUiState.Empty)
-    }
-}
-
-@Preview(name = "Home session card error", widthDp = 361)
-@Composable
-private fun HomeSessionCardErrorPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeSessionCard(state = AttendanceUiState.Error)
     }
 }
 

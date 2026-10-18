@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.attendance.component.AttendanceHistoryCard
+import com.yapp.plus.feature.attendance.component.AttendanceHistoryItem
+import com.yapp.plus.feature.attendance.component.DemoDataLabel
 
 @Preview(name = "Demo data label", showBackground = true)
 @Composable

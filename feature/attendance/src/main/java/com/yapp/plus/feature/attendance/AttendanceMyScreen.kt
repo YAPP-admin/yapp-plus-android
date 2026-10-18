@@ -14,6 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.theme.YappMainColor
+import com.yapp.plus.feature.attendance.component.AttendanceHeader
+import com.yapp.plus.feature.attendance.component.AttendanceMenuItem
+import com.yapp.plus.feature.attendance.component.AttendanceProfileCard
+import com.yapp.plus.feature.attendance.component.AttendanceSummaryCard
+import com.yapp.plus.feature.attendance.component.DemoDataLabel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable

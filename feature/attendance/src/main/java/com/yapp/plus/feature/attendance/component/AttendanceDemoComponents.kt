@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
@@ -46,6 +46,14 @@ import com.yapp.plus.core.designsystem.component.chip.YappChipStyle
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.attendance.R
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.attendance.model.AttendanceUiState
+import com.yapp.plus.feature.attendance.model.BoardCategory
+import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable

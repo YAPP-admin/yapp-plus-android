@@ -1,6 +1,7 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.attendance.model
 
 import androidx.annotation.StringRes
+import com.yapp.plus.feature.attendance.R
 
 enum class BoardCategory(
     @param:StringRes val labelResource: Int,

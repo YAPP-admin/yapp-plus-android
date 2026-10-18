@@ -6,7 +6,7 @@
 - 승인된 아키텍처는 [Wiki의 아키텍처 문서](docs/wiki/architecture.md)에 기록된 MVVM + 단방향 상태 흐름(UDF) + 필요한 범위의 Clean Architecture다.
 - GitHub 저장소는 `YAPP-admin/yapp-plus-android`다. 브랜치·제목·라벨·변경량 정책의 기준은 [CONTRIBUTING.md](CONTRIBUTING.md)다.
 - 공통 Gradle convention plugin은 `build-logic/` included build에서 관리하고, 라이브러리 버전은 `gradle/libs.versions.toml`에 둔다.
-- 세션 일정 조회는 Domain 계약과 Data 요청·DTO 매핑·Repository 구현까지 완료됐고, 앱 조립과 화면 연결은 후속 작업이다.
+- 홈의 이번 주 세션 요약과 일정 화면은 Domain·Data 구현을 거쳐 `:feature:attendance`의 ViewModel·화면 및 App 의존성 조립까지 연결됐다. 로그인·회원 정보·출석 기록 API와 게시판·My 연동은 후속 작업이다.
 - 현재 네 메인 탭의 화면은 `:feature:attendance`에 있고, 탭 내비게이션·선택 상태는 App이 소유한다. 화면을 `:feature:home`, `:feature:schedule`, `:feature:board`, `:feature:my`로 나누는 후속 구조는 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.
 - 구현 요청은 필요한 이슈 작성, 구현, 검증, 커밋, 푸시와 PR 생성까지 진행한다. 사용자가 범위를 제한하면 그 범위를 따른다. 이미 승인된 작업을 다시 승인받지 않는다.

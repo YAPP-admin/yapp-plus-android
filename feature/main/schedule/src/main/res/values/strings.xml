@@ -1,0 +1,25 @@
+<resources>
+    <string name="schedule_demo_data">화면 확인용 데모 데이터</string>
+    <string name="schedule_title">일정</string>
+    <string name="schedule_date_first">9.12 (토)</string>
+    <string name="schedule_date_second">9.19 (토)</string>
+    <string name="schedule_date_third">9.26 (토)</string>
+    <string name="schedule_date_fourth">10.3 (토)</string>
+    <string name="schedule_date_fifth">10.10 (토)</string>
+    <string name="schedule_date_sixth">10.19 (토)</string>
+    <string name="schedule_team">팀 세션</string>
+    <string name="schedule_planning">기획 세션</string>
+    <string name="schedule_user_test">1차 UT 세션</string>
+    <string name="schedule_place_first">디캠프 선릉 6층 이벤트홀</string>
+    <string name="schedule_place_second">ICT콤플렉스 6층 커뮤니티라운지</string>
+    <string name="schedule_place_fifth">DMC 첨단산업센터 7층 세미나포럼장</string>
+    <string name="schedule_time">오후 1시 ~ 오후 6시</string>
+    <string name="schedule_time_second">오후 12시 ~ 오후 6시</string>
+    <string name="schedule_time_fifth">오후 1시 ~ 오후 5시</string>
+    <string name="schedule_regular">정기 세션</string>
+    <string name="schedule_today">오늘</string>
+    <string name="schedule_upcoming">예정</string>
+    <string name="schedule_empty">등록된 세션 일정이 없어요</string>
+    <string name="schedule_error">세션 일정을 불러오지 못했어요</string>
+    <string name="schedule_retry">다시 시도</string>
+</resources>

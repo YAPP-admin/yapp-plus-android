@@ -1,7 +1,5 @@
 package com.yapp.plus.feature.attendance.component
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,35 +8,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.component.button.YappButton
 import com.yapp.plus.core.designsystem.component.button.YappButtonSize
 import com.yapp.plus.core.designsystem.component.button.YappButtonVariant
-import com.yapp.plus.core.designsystem.component.chip.YappChip
-import com.yapp.plus.core.designsystem.component.chip.YappChipColor
-import com.yapp.plus.core.designsystem.component.chip.YappChipSize
-import com.yapp.plus.core.designsystem.component.chip.YappChipStyle
+import com.yapp.plus.core.designsystem.component.main.YappIconLabel
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.attendance.R
-import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
-import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
-import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.attendance.model.AttendanceUiState
 import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
@@ -136,18 +122,18 @@ private fun HomeSessionContent(
             YappText(session.name, YappTypography.heading1Bold, YappMainColor.surface)
         }
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            AttendanceDetail(
+            YappIconLabel(
                 text = session.dateLabel,
                 iconResource = DesignSystemR.drawable.ic_navigation_calendar,
                 tint = YappMainColor.surface,
             )
-            AttendanceDetail(
+            YappIconLabel(
                 text = session.startTimeLabel,
                 iconResource = DesignSystemR.drawable.ic_clock,
                 tint = YappMainColor.surface,
             )
             session.location?.let { location ->
-                AttendanceDetail(
+                YappIconLabel(
                     text = location,
                     iconResource = DesignSystemR.drawable.ic_map_pin,
                     tint = YappMainColor.surface,
@@ -197,128 +183,3 @@ private val AttendanceStatusUiModel.messageResource: Int
             AttendanceStatusUiModel.NotOpen -> R.string.attendance_status_not_open
             AttendanceStatusUiModel.Available -> R.string.attendance_status_available
         }
-
-@Composable
-fun AttendanceDetail(
-    text: String,
-    @DrawableRes iconResource: Int,
-    modifier: Modifier = Modifier,
-    tint: Color? = null,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painter = painterResource(iconResource),
-            contentDescription = null,
-            modifier = Modifier.size(12.dp),
-            tint = tint ?: YappMainColor.textFaint,
-        )
-        YappText(
-            text,
-            YappTypography.caption1Bold,
-            tint ?: YappMainColor.textSecondary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Composable
-fun AttendanceScheduleItem(
-    session: AttendanceScheduleSessionUiModel,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp)
-                    .background(
-                        color =
-                            if (session.status == AttendanceScheduleStatusUiModel.Today) {
-                                YappMainColor.background
-                            } else {
-                                YappMainColor.surface
-                            },
-                        shape = RoundedCornerShape(8.dp),
-                    ).padding(horizontal = 8.dp, vertical = 8.dp)
-                    .alpha(
-                        if (session.status == AttendanceScheduleStatusUiModel.Past) {
-                            0.5f
-                        } else {
-                            1f
-                        },
-                    ),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            YappText(
-                session.dateLabel,
-                YappTypography.label1NormalBold,
-                YappMainColor.textPrimary,
-                modifier = Modifier.width(70.dp),
-            )
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    YappText(
-                        session.name,
-                        YappTypography.label1NormalBold,
-                        YappMainColor.textPrimary,
-                        modifier = Modifier.weight(1f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    if (session.status != AttendanceScheduleStatusUiModel.Past) {
-                        YappChip(
-                            text =
-                                stringResource(
-                                    if (session.status == AttendanceScheduleStatusUiModel.Today) {
-                                        R.string.attendance_schedule_today
-                                    } else {
-                                        R.string.attendance_schedule_upcoming
-                                    },
-                                ),
-                            color = YappChipColor.CoolNeutral,
-                            size = YappChipSize.Small,
-                            style = YappChipStyle.Weak,
-                        )
-                    }
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    YappText(
-                        text =
-                            stringResource(
-                                if (session.type == AttendanceScheduleTypeUiModel.Regular) {
-                                    R.string.attendance_schedule_regular
-                                } else {
-                                    R.string.attendance_schedule_team
-                                },
-                            ),
-                        style = YappTypography.caption1Bold,
-                        color = YappMainColor.textSecondary,
-                    )
-                    session.location?.let { location ->
-                        AttendanceDetail(
-                            text = location,
-                            iconResource = DesignSystemR.drawable.ic_map_pin,
-                        )
-                    }
-                    AttendanceDetail(
-                        text = session.timeLabel,
-                        iconResource = DesignSystemR.drawable.ic_clock,
-                    )
-                }
-            }
-        }
-        HorizontalDivider(color = YappMainColor.divider)
-    }
-}

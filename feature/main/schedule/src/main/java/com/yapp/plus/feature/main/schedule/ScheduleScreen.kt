@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.main.schedule
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,25 +27,25 @@ import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
-import com.yapp.plus.feature.attendance.component.AttendanceScheduleItem
-import com.yapp.plus.feature.attendance.model.AttendanceScheduleSessionUiModel
-import com.yapp.plus.feature.attendance.model.AttendanceScheduleStatusUiModel
-import com.yapp.plus.feature.attendance.model.AttendanceScheduleTypeUiModel
-import com.yapp.plus.feature.attendance.model.AttendanceUiState
+import com.yapp.plus.feature.main.schedule.component.ScheduleItem
+import com.yapp.plus.feature.main.schedule.model.ScheduleSessionUiModel
+import com.yapp.plus.feature.main.schedule.model.ScheduleStatusUiModel
+import com.yapp.plus.feature.main.schedule.model.ScheduleTypeUiModel
+import com.yapp.plus.feature.main.schedule.model.ScheduleUiState
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
-fun AttendanceScheduleScreen(modifier: Modifier = Modifier) {
-    AttendanceScheduleScreen(
-        state = demoAttendanceScheduleUiState(),
+fun ScheduleScreen(modifier: Modifier = Modifier) {
+    ScheduleScreen(
+        state = demoScheduleUiState(),
         modifier = modifier,
         showDemoDataLabel = true,
     )
 }
 
 @Composable
-fun AttendanceScheduleScreen(
-    state: AttendanceUiState<List<AttendanceScheduleSessionUiModel>>,
+fun ScheduleScreen(
+    state: ScheduleUiState<List<ScheduleSessionUiModel>>,
     modifier: Modifier = Modifier,
     onRetry: () -> Unit = {},
     showDemoDataLabel: Boolean = false,
@@ -56,26 +56,26 @@ fun AttendanceScheduleScreen(
                 .fillMaxSize()
                 .background(YappMainColor.surface),
     ) {
-        YappMainHeader(title = stringResource(R.string.attendance_schedule_title))
+        YappMainHeader(title = stringResource(R.string.schedule_title))
         when (state) {
-            AttendanceUiState.Loading -> ScheduleLoading(modifier = Modifier.weight(1f))
-            AttendanceUiState.Empty ->
+            ScheduleUiState.Loading -> ScheduleLoading(modifier = Modifier.weight(1f))
+            ScheduleUiState.Empty ->
                 SchedulePlaceholder(
-                    messageResource = R.string.attendance_schedule_empty,
+                    messageResource = R.string.schedule_empty,
                     modifier = Modifier.weight(1f),
                 )
 
-            AttendanceUiState.Error ->
+            ScheduleUiState.Error ->
                 SchedulePlaceholder(
-                    messageResource = R.string.attendance_schedule_error,
+                    messageResource = R.string.schedule_error,
                     onRetry = onRetry,
                     modifier = Modifier.weight(1f),
                 )
 
-            is AttendanceUiState.Content -> {
+            is ScheduleUiState.Content -> {
                 if (state.value.isEmpty()) {
                     SchedulePlaceholder(
-                        messageResource = R.string.attendance_schedule_empty,
+                        messageResource = R.string.schedule_empty,
                         modifier = Modifier.weight(1f),
                     )
                 } else {
@@ -126,7 +126,7 @@ private fun SchedulePlaceholder(
         onRetry?.let { retry ->
             Spacer(Modifier.height(16.dp))
             YappButton(
-                text = stringResource(R.string.attendance_retry),
+                text = stringResource(R.string.schedule_retry),
                 onClick = retry,
                 variant = YappButtonVariant.OutlinedPrimary,
                 size = YappButtonSize.Medium,
@@ -137,7 +137,7 @@ private fun SchedulePlaceholder(
 
 @Composable
 private fun ScheduleSessionsList(
-    sessions: List<AttendanceScheduleSessionUiModel>,
+    sessions: List<ScheduleSessionUiModel>,
     showDemoDataLabel: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -148,11 +148,11 @@ private fun ScheduleSessionsList(
                 .padding(horizontal = 20.dp, vertical = 10.dp),
     ) {
         sessions.forEach { session ->
-            AttendanceScheduleItem(session = session)
+            ScheduleItem(session = session)
         }
         if (showDemoDataLabel) {
             YappDemoDataLabel(
-                text = stringResource(R.string.attendance_demo_data),
+                text = stringResource(R.string.schedule_demo_data),
                 modifier = Modifier.padding(vertical = 16.dp),
             )
         }
@@ -160,57 +160,56 @@ private fun ScheduleSessionsList(
 }
 
 @Composable
-private fun demoAttendanceScheduleUiState():
-    AttendanceUiState<List<AttendanceScheduleSessionUiModel>> =
-    AttendanceUiState.Content(
+private fun demoScheduleUiState(): ScheduleUiState<List<ScheduleSessionUiModel>> =
+    ScheduleUiState.Content(
         listOf(
             demoScheduleSession(
-                dateResource = R.string.attendance_schedule_date_first,
-                nameResource = R.string.attendance_schedule_team,
+                dateResource = R.string.schedule_date_first,
+                nameResource = R.string.schedule_team,
                 locationResource = null,
-                timeResource = R.string.attendance_schedule_time,
-                type = AttendanceScheduleTypeUiModel.Team,
-                status = AttendanceScheduleStatusUiModel.Past,
+                timeResource = R.string.schedule_time,
+                type = ScheduleTypeUiModel.Team,
+                status = ScheduleStatusUiModel.Past,
             ),
             demoScheduleSession(
-                dateResource = R.string.attendance_schedule_date_second,
-                nameResource = R.string.attendance_schedule_planning,
-                locationResource = R.string.attendance_schedule_place_second,
-                timeResource = R.string.attendance_schedule_time_second,
-                type = AttendanceScheduleTypeUiModel.Regular,
-                status = AttendanceScheduleStatusUiModel.Past,
+                dateResource = R.string.schedule_date_second,
+                nameResource = R.string.schedule_planning,
+                locationResource = R.string.schedule_place_second,
+                timeResource = R.string.schedule_time_second,
+                type = ScheduleTypeUiModel.Regular,
+                status = ScheduleStatusUiModel.Past,
             ),
             demoScheduleSession(
-                dateResource = R.string.attendance_schedule_date_third,
-                nameResource = R.string.attendance_schedule_team,
+                dateResource = R.string.schedule_date_third,
+                nameResource = R.string.schedule_team,
                 locationResource = null,
-                timeResource = R.string.attendance_schedule_time,
-                type = AttendanceScheduleTypeUiModel.Team,
-                status = AttendanceScheduleStatusUiModel.Today,
+                timeResource = R.string.schedule_time,
+                type = ScheduleTypeUiModel.Team,
+                status = ScheduleStatusUiModel.Today,
             ),
             demoScheduleSession(
-                dateResource = R.string.attendance_schedule_date_fourth,
-                nameResource = R.string.attendance_schedule_team,
+                dateResource = R.string.schedule_date_fourth,
+                nameResource = R.string.schedule_team,
                 locationResource = null,
-                timeResource = R.string.attendance_schedule_time,
-                type = AttendanceScheduleTypeUiModel.Team,
-                status = AttendanceScheduleStatusUiModel.Upcoming,
+                timeResource = R.string.schedule_time,
+                type = ScheduleTypeUiModel.Team,
+                status = ScheduleStatusUiModel.Upcoming,
             ),
             demoScheduleSession(
-                dateResource = R.string.attendance_schedule_date_fifth,
-                nameResource = R.string.attendance_schedule_user_test,
-                locationResource = R.string.attendance_schedule_place_fifth,
-                timeResource = R.string.attendance_schedule_time_fifth,
-                type = AttendanceScheduleTypeUiModel.Regular,
-                status = AttendanceScheduleStatusUiModel.Upcoming,
+                dateResource = R.string.schedule_date_fifth,
+                nameResource = R.string.schedule_user_test,
+                locationResource = R.string.schedule_place_fifth,
+                timeResource = R.string.schedule_time_fifth,
+                type = ScheduleTypeUiModel.Regular,
+                status = ScheduleStatusUiModel.Upcoming,
             ),
             demoScheduleSession(
-                dateResource = R.string.attendance_schedule_date_sixth,
-                nameResource = R.string.attendance_schedule_team,
+                dateResource = R.string.schedule_date_sixth,
+                nameResource = R.string.schedule_team,
                 locationResource = null,
-                timeResource = R.string.attendance_schedule_time,
-                type = AttendanceScheduleTypeUiModel.Team,
-                status = AttendanceScheduleStatusUiModel.Upcoming,
+                timeResource = R.string.schedule_time,
+                type = ScheduleTypeUiModel.Team,
+                status = ScheduleStatusUiModel.Upcoming,
             ),
         ),
     )
@@ -221,9 +220,9 @@ private fun demoScheduleSession(
     nameResource: Int,
     locationResource: Int?,
     timeResource: Int,
-    type: AttendanceScheduleTypeUiModel,
-    status: AttendanceScheduleStatusUiModel,
-) = AttendanceScheduleSessionUiModel(
+    type: ScheduleTypeUiModel,
+    status: ScheduleStatusUiModel,
+) = ScheduleSessionUiModel(
     dateLabel = stringResource(dateResource),
     name = stringResource(nameResource),
     location = locationResource?.let { resource -> stringResource(resource) },

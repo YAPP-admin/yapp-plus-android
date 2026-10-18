@@ -16,7 +16,7 @@ last_verified: 2026-10-18
 | `:feature:attendance` | `com.yapp.plus.feature.attendance` | 홈·일정·게시판·My 데모 화면·Figma 아이콘·공통 하단 탭·App 진입 연결 구현됨 |
 | `:feature:login` | `com.yapp.plus.feature.login` | 카카오 로그인·오류 UI 구현됨; 앱 초기 화면 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM 기본 설정됨 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 이번 주 세션·현재 기수 일정 모델과 Repository 계약 구현됨 |
 | `:data` | `com.yapp.plus.data` | Android Library 기본 설정됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 개발 Bearer token 공급 구현; API별 DataSource는 계약 확정 후 추가 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |

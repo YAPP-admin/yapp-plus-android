@@ -1,11 +1,8 @@
 package com.yapp.plus.feature.attendance
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.feature.attendance.component.AttendanceHeader
-import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Preview(name = "Home", widthDp = 393, heightDp = 692)
 @Preview(name = "Tall home", widthDp = 393, heightDp = 852)
@@ -13,31 +10,4 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 @Composable
 private fun AttendanceHomeScreenPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) { AttendanceHomeScreen() }
-}
-
-@Preview(name = "Board", widthDp = 393, heightDp = 692)
-@Preview(name = "Tall board", widthDp = 393, heightDp = 852)
-@Composable
-private fun AttendanceBoardScreenPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) { AttendanceBoardScreen() }
-}
-
-@Preview(name = "Header title", widthDp = 393, heightDp = 80)
-@Composable
-private fun AttendanceHeaderTitlePreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        AttendanceHeader(title = stringResource(R.string.attendance_my_title))
-    }
-}
-
-@Preview(name = "Header", widthDp = 393, showBackground = true)
-@Composable
-private fun AttendanceHeaderPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) {
-        AttendanceHeader(
-            title = stringResource(R.string.attendance_my_title),
-            iconResource = DesignSystemR.drawable.ic_settings,
-            iconDescription = stringResource(R.string.attendance_my_settings),
-        )
-    }
 }

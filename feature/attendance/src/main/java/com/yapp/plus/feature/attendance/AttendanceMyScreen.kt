@@ -13,8 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.component.AttendanceHeader
 import com.yapp.plus.feature.attendance.component.AttendanceMenuItem
 import com.yapp.plus.feature.attendance.component.AttendanceProfileCard
 import com.yapp.plus.feature.attendance.component.AttendanceSummaryCard
@@ -34,7 +34,7 @@ fun AttendanceMyScreen(
                 .fillMaxSize()
                 .background(YappMainColor.surface),
     ) {
-        AttendanceHeader(
+        YappMainHeader(
             title = stringResource(R.string.attendance_my_title),
             iconResource = DesignSystemR.drawable.ic_settings,
             iconDescription = stringResource(R.string.attendance_my_settings),

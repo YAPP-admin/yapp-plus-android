@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance.component
+package com.yapp.plus.core.designsystem.component.main
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
 @Composable
-fun AttendanceHeader(
+fun YappMainHeader(
     title: String,
     modifier: Modifier = Modifier,
     @DrawableRes iconResource: Int? = null,

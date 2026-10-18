@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.component.AttendanceHeader
 import com.yapp.plus.feature.attendance.component.AttendanceHistoryCard
 import com.yapp.plus.feature.attendance.component.DemoDataLabel
 import com.yapp.plus.feature.attendance.component.HomeSessionCard
@@ -52,7 +52,7 @@ fun AttendanceHomeScreen(
                 .background(YappMainColor.surface)
                 .verticalScroll(rememberScrollState()),
     ) {
-        AttendanceHeader(
+        YappMainHeader(
             title = stringResource(R.string.attendance_home_title),
             iconResource = DesignSystemR.drawable.ic_notification,
             iconDescription = stringResource(R.string.attendance_home_notifications),

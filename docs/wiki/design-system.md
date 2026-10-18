@@ -53,7 +53,7 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 
 ## 하단 내비게이션
 
-`:core:designsystem/component/navigation/`의 `YappBottomNavigation`은 탭 배치·상단 구분선을, `YappBottomNavigationItem`은 아이콘·라벨·선택 상태와 탭 semantics를 담당합니다. 호출자가 아이콘 리소스, 표시 라벨, 선택 상태와 클릭 콜백을 전달하며, Feature 상태나 App Navigation에는 의존하지 않습니다. 컴포넌트 Preview는 `:core:preview`의 재사용 enum parameter provider를 사용합니다.
+`:core:designsystem/component/navigation/`의 `YappBottomNavigation`은 탭 배치·상단 구분선을, `YappBottomNavigationItem`은 아이콘·라벨·선택 상태와 탭 semantics를 담당합니다. App이 아이콘 리소스, 표시 라벨, 선택 상태와 클릭 콜백을 전달하고 탭 선택 상태와 화면 연결도 App에서 소유합니다. 공통 컴포넌트는 앱 Navigation에 의존하지 않습니다. 컴포넌트 Preview는 `:core:preview`의 재사용 enum parameter provider를 사용합니다.
 
 ## 타이포그래피
 

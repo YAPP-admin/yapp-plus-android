@@ -1,8 +1,4 @@
 <resources>
-    <string name="attendance_tab_home">홈</string>
-    <string name="attendance_tab_schedule">일정</string>
-    <string name="attendance_tab_board">게시판</string>
-    <string name="attendance_tab_my">My</string>
     <string name="attendance_demo_data">화면 확인용 데모 데이터</string>
     <string name="attendance_demo_status">데모</string>
     <string name="attendance_home_title">YAPP</string>

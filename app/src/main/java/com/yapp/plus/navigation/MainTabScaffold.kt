@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,13 +13,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.component.AttendanceBottomNavigation
-import com.yapp.plus.feature.attendance.model.AttendanceTab
+import com.yapp.plus.feature.attendance.AttendanceBoardScreen
+import com.yapp.plus.feature.attendance.AttendanceHomeScreen
+import com.yapp.plus.feature.attendance.AttendanceMyScreen
+import com.yapp.plus.feature.attendance.AttendanceScheduleScreen
 
 @Composable
-fun AttendanceContent(
+internal fun MainTabScaffold(
     modifier: Modifier = Modifier,
-    initialTab: AttendanceTab = AttendanceTab.Home,
+    initialTab: MainTab = MainTab.Home,
 ) {
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
     Scaffold(
@@ -27,7 +29,7 @@ fun AttendanceContent(
         containerColor = YappMainColor.surface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            AttendanceBottomNavigation(
+            MainTabNavigation(
                 selectedTab = selectedTab,
                 onTabSelected = { selectedTab = it },
             )
@@ -41,10 +43,10 @@ fun AttendanceContent(
                     .consumeWindowInsets(contentPadding),
         ) {
             when (selectedTab) {
-                AttendanceTab.Home -> AttendanceHomeScreen()
-                AttendanceTab.Schedule -> AttendanceScheduleScreen()
-                AttendanceTab.Board -> AttendanceBoardScreen()
-                AttendanceTab.My -> AttendanceMyScreen()
+                MainTab.Home -> AttendanceHomeScreen()
+                MainTab.Schedule -> AttendanceScheduleScreen()
+                MainTab.Board -> AttendanceBoardScreen()
+                MainTab.My -> AttendanceMyScreen()
             }
         }
     }

@@ -1,11 +1,11 @@
-package com.yapp.plus.feature.attendance.model
+package com.yapp.plus.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.yapp.plus.feature.attendance.R
+import com.yapp.plus.R
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
-enum class AttendanceTab(
+internal enum class MainTab(
     @param:StringRes val labelResource: Int,
     @param:DrawableRes val iconResource: Int,
 ) {

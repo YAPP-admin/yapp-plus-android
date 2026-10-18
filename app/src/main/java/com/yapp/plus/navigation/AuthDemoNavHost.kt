@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.yapp.plus.feature.attendance.AttendanceContent
 import com.yapp.plus.feature.login.LoginContent
 import com.yapp.plus.feature.signup.AuthStatus
 import com.yapp.plus.feature.signup.AuthStatusContent
@@ -77,7 +76,7 @@ internal fun AuthDemoNavHost(
             )
         }
         composable<AuthDemoDestination.Main> {
-            AttendanceContent(modifier = Modifier.fillMaxSize())
+            MainTabScaffold(modifier = Modifier.fillMaxSize())
         }
     }
 }

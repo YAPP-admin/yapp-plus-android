@@ -142,3 +142,13 @@ last_verified: 2026-10-18
 - 반영: [회원·역할 정책](membership-policy.md), [제품 정책](product-policy.md), [Wiki 목차](README.md).
 - 적용 상태: 앱 화면은 기존 UI 데모 상태입니다. 출석·회원 자격 판정이나 인증·가입 API는 연결하지 않았으며, 출석 경계와 서버 계약을 제품 정책의 미확정 항목으로 유지합니다.
 - 대체한 결정: 없음.
+
+## DEC-0015 · 메인 하단 탭을 독립 Feature 모듈로 분리
+
+- 기록일: 2026-10-18
+- 결정: BottomNavigation의 홈·일정·게시판·My 탭을 각각 `:feature:home`, `:feature:schedule`, `:feature:board`, `:feature:my` 모듈로 분리합니다. App은 네 Feature를 조립하고 메인 내비게이션과 탭 선택 상태를 소유하며, 공통 하단 탭 시각 컴포넌트는 `:core:designsystem`에 둡니다. Feature끼리 직접 의존하지 않습니다.
+- 이유: 메인 화면의 네 기능을 독립된 Feature 경계로 관리하면서 기존 App 중심 화면 이동과 공통 디자인시스템 책임을 유지합니다.
+- 근거: 사용자 명시 결정, [이슈 #62](https://github.com/YAPP-admin/yapp-plus-android/issues/62). App의 전체 내비게이션 소유와 Feature 간 비의존 원칙은 기존 [아키텍처](architecture.md)를 적용했습니다.
+- 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), [디자인시스템](design-system.md), `AGENTS.md`, `README.md`, App 및 Feature 모듈.
+- 적용 상태: 첫 단계로 탭 내비게이션과 선택 상태를 App으로 옮겼습니다. 네 화면은 아직 `:feature:attendance`에 있으며, 독립 Feature 모듈로 옮기는 후속 작업이 남았습니다.
+- 대체한 결정: 없음.

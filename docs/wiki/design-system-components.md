@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-07
+last_verified: 2026-10-18
 ---
 
 # 디자인시스템 공통 컴포넌트
@@ -28,6 +28,10 @@ YappText(
 ## 메인 헤더
 
 메인 탭에서 재사용하는 제목·선택 아이콘 표현은 `component/main/YappMainHeader.kt`에서 제공합니다. 제목, 선택 아이콘, leading 슬롯과 클릭 콜백을 받아 표시하며 App이나 Feature의 내비게이션 상태를 소유하지 않습니다. 개별 Preview는 `src/debug`에 둡니다.
+
+## 메인 아이콘 라벨
+
+`component/main/YappIconLabel.kt`의 `YappIconLabel`은 공통 아이콘과 한 줄 텍스트를 가로로 표시합니다. 아이콘 리소스와 텍스트를 받고 선택적으로 tint를 적용합니다. 아이콘 크기·간격·텍스트 스타일은 디자인시스템 토큰으로 고정하며, 화면별 문구와 아이콘 선택은 호출부가 소유합니다. 홈 세션과 일정 항목에서 함께 사용합니다.
 
 ## Chip·Dropdown 표현 인자
 

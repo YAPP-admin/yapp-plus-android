@@ -7,7 +7,7 @@
 - GitHub 저장소는 `YAPP-admin/yapp-plus-android`다. 브랜치·제목·라벨·변경량 정책의 기준은 [CONTRIBUTING.md](CONTRIBUTING.md)다.
 - 공통 Gradle convention plugin은 `build-logic/` included build에서 관리하고, 라이브러리 버전은 `gradle/libs.versions.toml`에 둔다.
 - 세션 일정 조회는 Domain 계약과 Data 요청·DTO 매핑·Repository 구현까지 완료됐고, 앱 조립과 화면 연결은 후속 작업이다.
-- 게시판과 My 탭은 `:feature:main:board`, `:feature:main:my`로 분리됐고 홈·일정은 아직 `:feature:attendance`에 있다. 탭 내비게이션·선택 상태는 App이 소유한다. 남은 화면의 목표 경로는 `:feature:main:home`, `:feature:main:schedule`이며 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
+- 게시판, My, 일정 탭은 각각 `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리됐고 홈은 아직 `:feature:attendance`에 있다. 탭 내비게이션·선택 상태는 App이 소유한다. 남은 홈 화면의 목표 경로는 `:feature:main:home`이며 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.
 - 구현 요청은 필요한 이슈 작성, 구현, 검증, 커밋, 푸시와 PR 생성까지 진행한다. 사용자가 범위를 제한하면 그 범위를 따른다. 이미 승인된 작업을 다시 승인받지 않는다.
 - 요청이 설계 논의나 조사에 한정되면 먼저 결과를 정리한다. 제품 정책·API 계약 등 구현에 필요한 정보가 없으면 해당 정보만 질문한다.

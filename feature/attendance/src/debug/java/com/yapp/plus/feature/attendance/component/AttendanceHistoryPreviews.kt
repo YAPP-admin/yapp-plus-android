@@ -11,7 +11,7 @@ import com.yapp.plus.feature.attendance.R
 @Composable
 private fun DemoDataLabelPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        YappDemoDataLabel(text = stringResource(R.string.attendance_demo_data))
+        YappDemoDataLabel(text = stringResource(R.string.attendance_home_history_demo_data))
     }
 }
 

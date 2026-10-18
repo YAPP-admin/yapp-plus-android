@@ -4,18 +4,21 @@ plugins {
     id("yapp.android.library")
 }
 
-val localProperties = Properties().apply {
-    val localPropertiesFile = rootProject.file("local.properties")
-    if (localPropertiesFile.exists()) {
-        localPropertiesFile.inputStream().use { load(it) }
+val localProperties =
+    Properties().apply {
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { load(it) }
+        }
     }
-}
 
 fun apiBaseUrl(environment: String): String {
-    val apiHost = localProperties.getProperty("yapp.api.$environment.host")
-        ?.trimEnd('/')
-        ?.takeIf(String::isNotBlank)
-        ?: return ""
+    val apiHost =
+        localProperties
+            .getProperty("yapp.api.$environment.host")
+            ?.trimEnd('/')
+            ?.takeIf(String::isNotBlank)
+            ?: return ""
 
     return "$apiHost/api/"
 }

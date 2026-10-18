@@ -150,7 +150,7 @@ last_verified: 2026-10-18
 - 이유: 메인 화면의 네 기능을 독립된 Feature 경계로 관리하면서 기존 App 중심 화면 이동과 공통 디자인시스템 책임을 유지합니다.
 - 근거: 사용자 명시 결정, [이슈 #62](https://github.com/YAPP-admin/yapp-plus-android/issues/62). App의 전체 내비게이션 소유와 Feature 간 비의존 원칙은 기존 [아키텍처](architecture.md)를 적용했습니다.
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), [디자인시스템](design-system.md), `AGENTS.md`, `README.md`, App 및 Feature 모듈.
-- 적용 상태: 탭 내비게이션과 선택 상태는 App으로 이동했습니다. 화면 분리 경로는 DEC-0016에서 `:feature:main` 아래로 재정의했으며, 현재 게시판·My·일정은 해당 독립 모듈에 있고 홈 분리가 남았습니다.
+- 적용 상태: 탭 내비게이션과 선택 상태는 App으로 이동했습니다. 화면 분리 경로는 DEC-0016에서 `:feature:main` 아래로 재정의했으며, 네 탭을 독립 모듈로 옮기고 기존 `:feature:attendance`를 제거했습니다.
 - 대체한 결정: 없음.
 
 ## DEC-0016 · 메인 탭 Feature 모듈 경로를 `feature:main` 아래로 구성
@@ -160,5 +160,5 @@ last_verified: 2026-10-18
 - 이유: 네 탭의 독립 Feature 경계를 `:feature:main` 아래에 모아 표현하고 공통 UI와 App 조립 책임을 명확히 합니다.
 - 근거: 사용자의 명시 요청, [이슈 #62](https://github.com/YAPP-admin/yapp-plus-android/issues/62), App으로 탭 셸을 이동한 [PR #64](https://github.com/YAPP-admin/yapp-plus-android/pull/64).
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `:feature:main:board`, `:core:designsystem`.
-- 적용 상태: 게시판 화면과 분류 상태를 `:feature:main:board`에, My 화면과 컴포넌트를 `:feature:main:my`에, 일정 화면·상태·모델·리소스를 `:feature:main:schedule`에 분리했습니다. 홈은 아직 `:feature:attendance`에 있으며 다음 단계에서 분리합니다. 공통 헤더·데모 안내·아이콘 라벨은 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 Designsystem에 둡니다.
+- 적용 상태: 게시판 화면과 분류 상태를 `:feature:main:board`에, My 화면과 컴포넌트를 `:feature:main:my`에, 일정 화면·상태·모델·리소스를 `:feature:main:schedule`에, 홈 화면·상태·모델·컴포넌트·리소스를 `:feature:main:home`에 분리했습니다. App이 네 화면과 탭 선택을 조립하고 기존 `:feature:attendance`는 제거했습니다. 공통 헤더·데모 안내·아이콘 라벨은 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 Designsystem에 둡니다.
 - 대체한 결정: DEC-0015의 개별 탭 모듈 경로만 대체합니다. App 소유의 메인 내비게이션과 선택 상태, 공통 하단 탭 표현, Feature 간 비의존 원칙은 유지합니다.

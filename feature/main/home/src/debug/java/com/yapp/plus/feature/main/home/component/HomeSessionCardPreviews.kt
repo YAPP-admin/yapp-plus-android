@@ -1,14 +1,14 @@
-package com.yapp.plus.feature.attendance.component
+package com.yapp.plus.feature.main.home.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.feature.attendance.R
-import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.attendance.model.AttendanceUiState
-import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
+import com.yapp.plus.feature.main.home.R
+import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.main.home.model.AttendanceUiState
+import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 
 @Preview(name = "Home session card", widthDp = 361)
 @Composable

@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.attendance
+package com.yapp.plus.feature.main.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,20 +16,20 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.component.main.YappDemoDataLabel
 import com.yapp.plus.core.designsystem.component.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.component.AttendanceHistoryCard
-import com.yapp.plus.feature.attendance.component.HomeSessionCard
-import com.yapp.plus.feature.attendance.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.attendance.model.AttendanceUiState
-import com.yapp.plus.feature.attendance.model.CurrentWeekSessionUiModel
+import com.yapp.plus.feature.main.home.component.AttendanceHistoryCard
+import com.yapp.plus.feature.main.home.component.HomeSessionCard
+import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.main.home.model.AttendanceUiState
+import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
-fun AttendanceHomeScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier,
     onNotificationsClick: () -> Unit = {},
     onAttendanceClick: () -> Unit = {},
 ) {
-    AttendanceHomeScreen(
+    HomeScreen(
         state = demoCurrentWeekSessionUiState(),
         modifier = modifier,
         onNotificationsClick = onNotificationsClick,
@@ -38,7 +38,7 @@ fun AttendanceHomeScreen(
 }
 
 @Composable
-fun AttendanceHomeScreen(
+fun HomeScreen(
     state: AttendanceUiState<CurrentWeekSessionUiModel>,
     modifier: Modifier = Modifier,
     onNotificationsClick: () -> Unit = {},

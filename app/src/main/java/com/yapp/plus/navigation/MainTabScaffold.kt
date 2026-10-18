@@ -13,8 +13,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.attendance.AttendanceHomeScreen
 import com.yapp.plus.feature.main.board.BoardScreen
+import com.yapp.plus.feature.main.home.HomeScreen
 import com.yapp.plus.feature.main.my.MyScreen
 import com.yapp.plus.feature.main.schedule.ScheduleScreen
 
@@ -43,7 +43,7 @@ internal fun MainTabScaffold(
                     .consumeWindowInsets(contentPadding),
         ) {
             when (selectedTab) {
-                MainTab.Home -> AttendanceHomeScreen()
+                MainTab.Home -> HomeScreen()
                 MainTab.Schedule -> ScheduleScreen()
                 MainTab.Board -> BoardScreen()
                 MainTab.My -> MyScreen()

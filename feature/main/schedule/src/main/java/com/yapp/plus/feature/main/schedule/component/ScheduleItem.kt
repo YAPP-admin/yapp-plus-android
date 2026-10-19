@@ -23,10 +23,7 @@ import com.yapp.plus.core.designsystem.component.main.YappIconLabel
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
-import com.yapp.plus.feature.main.schedule.R
 import com.yapp.plus.feature.main.schedule.model.ScheduleSessionUiModel
-import com.yapp.plus.feature.main.schedule.model.ScheduleStatusUiModel
-import com.yapp.plus.feature.main.schedule.model.ScheduleTypeUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -42,7 +39,7 @@ fun ScheduleItem(
                     .padding(vertical = 12.dp)
                     .background(
                         color =
-                            if (session.status == ScheduleStatusUiModel.Today) {
+                            if (session.status.isToday) {
                                 YappMainColor.background
                             } else {
                                 YappMainColor.surface
@@ -50,7 +47,7 @@ fun ScheduleItem(
                         shape = RoundedCornerShape(8.dp),
                     ).padding(horizontal = 8.dp, vertical = 8.dp)
                     .alpha(
-                        if (session.status == ScheduleStatusUiModel.Past) {
+                        if (session.status.isPast) {
                             0.5f
                         } else {
                             1f
@@ -80,16 +77,9 @@ fun ScheduleItem(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    if (session.status != ScheduleStatusUiModel.Past) {
+                    session.status.labelResource?.let { labelRes ->
                         YappChip(
-                            text =
-                                stringResource(
-                                    if (session.status == ScheduleStatusUiModel.Today) {
-                                        R.string.schedule_today
-                                    } else {
-                                        R.string.schedule_upcoming
-                                    },
-                                ),
+                            text = stringResource(labelRes),
                             color = YappChipColor.CoolNeutral,
                             size = YappChipSize.Small,
                             style = YappChipStyle.Weak,
@@ -98,14 +88,7 @@ fun ScheduleItem(
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     YappText(
-                        text =
-                            stringResource(
-                                if (session.type == ScheduleTypeUiModel.Regular) {
-                                    R.string.schedule_regular
-                                } else {
-                                    R.string.schedule_team
-                                },
-                            ),
+                        text = stringResource(session.type.labelResource),
                         style = YappTypography.caption1Bold,
                         color = YappMainColor.textSecondary,
                     )

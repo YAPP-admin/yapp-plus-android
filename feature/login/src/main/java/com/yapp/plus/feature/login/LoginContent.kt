@@ -26,7 +26,7 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 @Composable
 fun LoginContent(
     onBack: () -> Unit,
-    onKakaoLogin: () -> Unit,
+    onGoogleLogin: () -> Unit,
     modifier: Modifier = Modifier,
     isLoginEnabled: Boolean = true,
 ) {
@@ -47,17 +47,17 @@ fun LoginContent(
             )
             Spacer(Modifier.height(64.dp))
             YappButton(
-                text = stringResource(R.string.auth_kakao_continue),
-                onClick = onKakaoLogin,
+                text = stringResource(R.string.auth_google_continue),
+                onClick = onGoogleLogin,
                 modifier = Modifier.fillMaxWidth(),
-                variant = YappButtonVariant.Kakao,
+                variant = YappButtonVariant.OutlinedAssistive,
                 size = YappButtonSize.Social,
                 enabled = isLoginEnabled,
                 leadingIcon = {
                     Image(
-                        painter = painterResource(R.drawable.ic_auth_kakao),
+                        painter = painterResource(R.drawable.ic_auth_google),
                         contentDescription = null,
-                        modifier = Modifier.size(36.dp),
+                        modifier = Modifier.size(18.dp),
                     )
                 },
             )

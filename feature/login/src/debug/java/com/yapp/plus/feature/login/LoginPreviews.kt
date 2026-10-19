@@ -8,8 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.login.components.LoginErrorDialog
 
-@Preview(name = "Kakao login", widthDp = 393, heightDp = 756)
+@Preview(name = "Google login", widthDp = 393, heightDp = 756)
 @Preview(name = "Compact login", widthDp = 320, heightDp = 480)
 @Composable
 private fun LoginContentPreview() {
@@ -17,7 +18,7 @@ private fun LoginContentPreview() {
         Scaffold(containerColor = YappAuthColor.background) { padding ->
             LoginContent(
                 onBack = {},
-                onKakaoLogin = {},
+                onGoogleLogin = {},
                 modifier =
                     Modifier
                         .padding(padding)
@@ -34,7 +35,7 @@ private fun LoginErrorDialogPreview() {
         Scaffold(containerColor = YappAuthColor.background) { padding ->
             LoginContent(
                 onBack = {},
-                onKakaoLogin = {},
+                onGoogleLogin = {},
                 modifier =
                     Modifier
                         .padding(padding)

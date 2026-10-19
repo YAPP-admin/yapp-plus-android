@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0017`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0018`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -162,3 +162,13 @@ last_verified: 2026-10-18
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `:feature:main:board`, `:core:designsystem`.
 - 적용 상태: 게시판 화면과 분류 상태를 `:feature:main:board`에, My 화면과 컴포넌트를 `:feature:main:my`에, 일정 화면·상태·모델·리소스를 `:feature:main:schedule`에, 홈 화면·상태·모델·컴포넌트·리소스를 `:feature:main:home`에 분리했습니다. App이 네 화면과 탭 선택을 조립하고 기존 `:feature:attendance`는 제거했습니다. 공통 헤더·데모 안내·아이콘 라벨은 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 Designsystem에 둡니다.
 - 대체한 결정: DEC-0015의 개별 탭 모듈 경로만 대체합니다. App 소유의 메인 내비게이션과 선택 상태, 공통 하단 탭 표현, Feature 간 비의존 원칙은 유지합니다.
+
+## DEC-0017 · Google 로그인으로 ID 토큰 발급
+
+- 기록일: 2026-10-19
+- 결정: 로그인 화면에는 Google 로그인 버튼만 표시합니다. 버튼은 Credential Manager로 Google ID 토큰과 임의 nonce를 받아 메모리 콜백으로 App에 전달합니다. 서버 검증과 YAPP 세션 발급 계약이 없으므로 ID 토큰을 발급해도 로그인 완료나 가입 데모 진입으로 처리하지 않습니다. 로그·영구 저장은 하지 않습니다.
+- 이유: 사용자가 카카오 버튼을 Google 로그인으로 교체한 뒤 Cloud OAuth 클라이언트 설정과 Android ID 토큰 발급까지 요청했고, 서버 연결은 ID 토큰 발급까지만으로 범위를 확정했습니다.
+- 근거: 사용자 요청 및 범위 확인, [이슈 #79](https://github.com/YAPP-admin/yapp-plus-android/issues/79), [Figma 로그인](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487), Google Cloud `yapp-plus` 프로젝트 External/Testing 설정.
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:login`, App 인증 콜백.
+- 적용 상태: `com.yapp.plus`와 debug SHA-1 Android OAuth 클라이언트, ID 토큰 audience Web OAuth 클라이언트를 구성했습니다. 현재 release 서명 지문은 없어 등록하지 않았습니다. 앱은 기본 Google 프로필 범위의 ID 토큰과 nonce를 획득하지만 서버 검증·YAPP 세션 발급은 미구현입니다. Testing 상태이므로 등록된 테스트 사용자만 로그인할 수 있습니다.
+- 대체한 결정: DEC-0010의 로그인 제공자와 DEC-0011의 데모 진입 제공자만 대체합니다. 가입 UI 요소 제거와 가입 화면의 표시·입력 상태는 유지하되 Google ID 토큰만으로 진입하지 않습니다.

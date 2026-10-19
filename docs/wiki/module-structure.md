@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 ---
 
 # 모듈 구조
@@ -10,14 +10,14 @@ last_verified: 2026-10-18
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·Navigation 2 가입 UI 데모·메인 탭 내비게이션 및 선택 상태 구현됨; debug는 홈 시작, release는 로그인 시작 |
+| `:app` | `com.yapp.plus` | 앱 진입점·Google ID 토큰 콜백 조립·Navigation 2 가입 UI·메인 탭 내비게이션 및 선택 상태 구현됨; debug는 홈 시작, release는 로그인 시작 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | 이번 주 세션 API Route·ViewModel·UI 모델 및 홈 화면·컴포넌트 구현됨; App에서 연결 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 게시판 화면·분류 상태·빈 상태 구현됨; App에서 연결 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | My 화면·컴포넌트·리소스 구현됨; App에서 연결 |
-| `:feature:login` | `com.yapp.plus.feature.login` | 카카오 로그인·오류 UI 구현됨; 앱 초기 화면 |
+| `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰 발급, 로그인 상태·오류 조정은 ViewModel에서 처리; 오류·미완료 안내 UI 구현됨; 앱 초기 화면 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 이번 주 세션·현재 기수 일정 모델과 Repository 계약 구현됨 |
 | `:data` | `com.yapp.plus.data` | Android Library; 세션 일정 Ktor DataSource·DTO·Domain 매핑·Repository 구현됨 |
@@ -27,7 +27,7 @@ last_verified: 2026-10-18
 
 12개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL, debug 로컬 Bearer token 공급을 제공합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
-`:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지로 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모 경로를 연결합니다. App의 공통 ViewModel과 `SavedStateHandle`이 데모 입력값을 유지·복원하며 Feature에는 표시값과 콜백만 전달합니다. 전체 뒤로 가기와 시스템 inset 적용·소비도 App이 소유합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. 입력 검증·실제 인증·가입 서버 처리는 포함하지 않습니다.
+`:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. Login Feature는 Credential Manager에서 Google ID 토큰과 nonce를 받아 App 콜백으로 전달합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지와 인증 토큰 콜백을 조립하며, 토큰 발급만으로 가입 UI 데모에 진입하지 않습니다. App의 공통 ViewModel과 `SavedStateHandle`이 가입 데모 입력값을 유지·복원하고, 전체 뒤로 가기와 시스템 inset 적용·소비도 App이 소유합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. ID 토큰 서버 검증·YAPP 세션 발급·가입 처리는 아직 포함하지 않습니다.
 
 현재 `:feature:main:home`, `:feature:main:schedule`, `:feature:main:board`, `:feature:main:my`가 각각 홈·일정·게시판·My 화면을 제공합니다. 기존 `:feature:attendance` 모듈은 제거했습니다. App이 `YappBottomNavigation`과 `YappBottomNavigationItem`을 조합해 메인 탭 선택을 저장·복원하고, 네 Feature 화면과 Domain 계약에 대한 Data 구현을 조립합니다. Feature 간 직접 의존성은 없습니다. 공통 헤더와 데모 데이터 안내 표시는 `:core:designsystem`의 `YappMainHeader`, `YappDemoDataLabel`을 사용합니다. `:feature:signup`의 승인 대기 상태에는 하단 액션을 제공하지 않으며, App의 가입 UI 데모는 승인 대기에서 끝납니다. debug 빌드는 캡처 편의를 위해 홈 탭으로 바로 시작하며, release 빌드는 기존 로그인에서 시작합니다. 최근 출석 이력·게시판·My의 데모 표시는 실제 출석 기록이나 서버 확정 상태를 의미하지 않습니다.
 
@@ -40,7 +40,7 @@ last_verified: 2026-10-18
 - App에는 Android 진입점·전체 내비게이션·객체 조립을, Feature에는 화면·ViewModel·UiState와 기능별 UI 변환을 둡니다.
 - Domain에는 모델·정책·Repository 계약·필요한 UseCase를, Data에는 Repository 구현·DataSource·DTO·Domain 변환을 둡니다.
 - Designsystem의 테마는 `core/designsystem/src/main/java/com/yapp/plus/core/designsystem/theme/`에 있습니다. 공통 컴포넌트도 이 모듈에서 관리합니다.
-- 인증의 공통 표현은 Designsystem의 `component/auth/`에 둡니다. 표시값과 콜백만 받고 Feature 상태·목적지·인증 정책을 알지 못합니다. 기능별 문구·카카오 로고·상태 변환은 Feature가 소유합니다.
+- 인증의 공통 표현은 Designsystem의 `component/auth/`에 둡니다. 표시값과 콜백만 받고 Feature 상태·목적지·인증 정책을 알지 못합니다. 기능별 문구·제공자 로고·상태 변환은 Feature가 소유합니다.
 - Preview 전용 소스·리소스는 각 모듈의 `src/debug/`에 둡니다. `:core:preview`도 debug 소스에만 provider·fixture를 제공하며 Designsystem·Feature·Domain·Data·Navigation에 의존하지 않습니다. 소비 모듈은 필요한 경우에만 `debugImplementation(project(":core:preview"))`으로 연결합니다. `src/main`은 debug 타입을 참조하지 않고 앱 release 의존성 그래프에 Preview 모듈을 포함하지 않습니다.
 - 사용자 문구는 해당 Android 모듈의 `src/main/res/values/strings.xml`에 둡니다.
 - 범용 파일·모듈을 미리 만들지 않습니다. 여러 사용처의 실제 공통 책임이 확인되면 공통화합니다.

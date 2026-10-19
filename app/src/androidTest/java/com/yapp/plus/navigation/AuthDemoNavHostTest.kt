@@ -102,7 +102,7 @@ class AuthDemoNavHostTest {
 
     @Test
     fun authDemoEndsAtPendingAndBackReturnsThroughTheAuthDemo() {
-        composeRule.onNodeWithText("구글로 계속하기").performClick()
+        navigateRepeatedly(AuthDemoDestination.Name)
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
         assertCurrentRoute<AuthDemoDestination.Pending>()
@@ -120,7 +120,7 @@ class AuthDemoNavHostTest {
 
     @Test
     fun preservesInputsAcrossRestorationAndNavigationBack() {
-        composeRule.onNodeWithText("구글로 계속하기").performClick()
+        navigateRepeatedly(AuthDemoDestination.Name)
         updateInput("이름")
         composeRule.onNodeWithText("다음").performClick()
         updateInput("01012345678")
@@ -134,7 +134,8 @@ class AuthDemoNavHostTest {
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("이름")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
-        composeRule.onNodeWithText("구글로 계속하기").performClick()
+        composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()
+        navigateRepeatedly(AuthDemoDestination.Name)
         composeRule.onNode(hasSetTextAction()).assertTextContains("이름")
     }
 

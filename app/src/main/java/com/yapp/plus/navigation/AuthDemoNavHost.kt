@@ -12,7 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.yapp.plus.feature.login.LoginContent
+import com.yapp.plus.feature.login.GoogleLoginCredential
+import com.yapp.plus.feature.login.LoginRoute
 import com.yapp.plus.feature.signup.AuthStatus
 import com.yapp.plus.feature.signup.AuthStatusContent
 import com.yapp.plus.feature.signup.SignUpContent
@@ -27,6 +28,7 @@ internal fun AuthDemoNavHost(
     modifier: Modifier = Modifier,
     startDestination: AuthDemoDestination = AuthDemoDestination.Login,
     navController: NavHostController = rememberNavController(),
+    onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit = {},
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     BackHandler(
@@ -39,9 +41,9 @@ internal fun AuthDemoNavHost(
         modifier = modifier.fillMaxSize(),
     ) {
         composable<AuthDemoDestination.Login> { entry ->
-            LoginContent(
+            LoginRoute(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
-                onGoogleLogin = { navController.navigateFrom(entry, AuthDemoDestination.Name) },
+                onGoogleCredentialReceived = onGoogleCredentialReceived,
                 modifier = Modifier.fillMaxSize(),
             )
         }

@@ -25,8 +25,6 @@ import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
-private const val DISABLED_BRAND_ALPHA = 0.5f
-
 @Composable
 fun YappButton(
     text: String,
@@ -38,8 +36,8 @@ fun YappButton(
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
 ) {
-    val metrics = buttonMetrics(size)
-    val colors = buttonColors(variant, enabled)
+    val metrics = ButtonMetrics.from(size)
+    val colors = ButtonColors.from(variant, enabled)
 
     Surface(
         onClick = onClick,
@@ -131,92 +129,6 @@ private fun buttonTextStyle(size: YappButtonSize) =
                 fontWeight = FontWeight.SemiBold,
             )
     }
-
-private fun buttonMetrics(size: YappButtonSize) =
-    when (size) {
-        YappButtonSize.CallToAction ->
-            ButtonMetrics(
-                horizontalPadding = 20.dp,
-                verticalPadding = 16.dp,
-                cornerRadius = 12.dp,
-                iconSpacing = 8.dp,
-                iconSize = 24.dp,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            )
-
-        YappButtonSize.Social ->
-            ButtonMetrics(
-                horizontalPadding = 20.dp,
-                verticalPadding = 9.dp,
-                cornerRadius = 12.dp,
-                iconSpacing = 0.dp,
-                iconSize = 36.dp,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                minimumHeight = 54.dp,
-            )
-
-        YappButtonSize.XLarge -> ButtonMetrics(36.dp, 16.dp, 12.dp, 6.dp, 20.dp)
-        YappButtonSize.Large -> ButtonMetrics(28.dp, 12.dp, 10.dp, 6.dp, 20.dp)
-        YappButtonSize.Medium -> ButtonMetrics(20.dp, 9.dp, 8.dp, 5.dp, 18.dp)
-        YappButtonSize.Small -> ButtonMetrics(14.dp, 7.dp, 6.dp, 4.dp, 16.dp)
-        YappButtonSize.XSmall -> ButtonMetrics(12.dp, 5.dp, 4.dp, 4.dp, 16.dp)
-    }
-
-private fun buttonColors(
-    variant: YappButtonVariant,
-    enabled: Boolean,
-) = when (variant) {
-    YappButtonVariant.SolidBrand ->
-        ButtonColors(
-            container = YappColor.brand,
-            content = YappColor.white,
-            border = null,
-            alpha = if (enabled) 1f else DISABLED_BRAND_ALPHA,
-        )
-
-    YappButtonVariant.Kakao ->
-        ButtonColors(
-            container = YappColor.kakaoContainer,
-            content = YappColor.foregroundNeutral,
-            border = null,
-            alpha = if (enabled) 1f else DISABLED_BRAND_ALPHA,
-        )
-
-    YappButtonVariant.SolidPrimary ->
-        ButtonColors(
-            container = if (enabled) YappColor.primary else YappColor.coolNeutralWeak,
-            content = if (enabled) YappColor.white else YappColor.contentDisabled,
-            border = null,
-        )
-
-    YappButtonVariant.SolidSecondary ->
-        ButtonColors(
-            container = if (enabled) YappColor.orangeWeak else YappColor.disabledSecondaryContainer,
-            content = if (enabled) YappColor.primary else YappColor.disabledSecondaryContent,
-            border = null,
-        )
-
-    YappButtonVariant.OutlinedPrimary ->
-        ButtonColors(
-            container = YappColor.transparent,
-            content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
-            border = YappColor.border,
-        )
-
-    YappButtonVariant.OutlinedSecondary ->
-        ButtonColors(
-            container = YappColor.transparent,
-            content = if (enabled) YappColor.primary else YappColor.disabledOutlineContent,
-            border = if (enabled) YappColor.border else YappColor.border,
-        )
-
-    YappButtonVariant.OutlinedAssistive ->
-        ButtonColors(
-            container = YappColor.transparent,
-            content = if (enabled) YappColor.textPrimary else YappColor.disabledOutlineContent,
-            border = if (enabled) YappColor.border else YappColor.border,
-        )
-}
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable

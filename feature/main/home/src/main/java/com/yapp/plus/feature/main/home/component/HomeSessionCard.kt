@@ -175,11 +175,3 @@ private fun HomeSessionContent(
         }
     }
 }
-
-private val AttendanceStatusUiModel.messageResource: Int
-    get() =
-        when (this) {
-            AttendanceStatusUiModel.NotEligible -> R.string.attendance_status_not_eligible
-            AttendanceStatusUiModel.NotOpen -> R.string.attendance_status_not_open
-            AttendanceStatusUiModel.Available -> R.string.attendance_status_available
-        }

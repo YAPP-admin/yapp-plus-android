@@ -26,7 +26,6 @@ import com.yapp.plus.core.designsystem.component.auth.AuthPrimaryAction
 import com.yapp.plus.core.designsystem.component.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
-import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
 fun AuthStatusContent(
@@ -36,24 +35,6 @@ fun AuthStatusContent(
     modifier: Modifier = Modifier,
     isActionEnabled: Boolean = true,
 ) {
-    val title =
-        when (status) {
-            AuthStatus.Pending -> R.string.auth_pending_title
-            AuthStatus.Complete -> R.string.auth_complete_title
-            AuthStatus.Problem -> R.string.auth_problem_title
-        }
-    val description =
-        when (status) {
-            AuthStatus.Pending -> R.string.auth_pending_description
-            AuthStatus.Complete -> R.string.auth_complete_description
-            AuthStatus.Problem -> R.string.auth_problem_description
-        }
-    val graphic =
-        when (status) {
-            AuthStatus.Pending -> DesignSystemR.drawable.graphic_point_construction
-            AuthStatus.Complete -> DesignSystemR.drawable.graphic_point_happy
-            AuthStatus.Problem -> DesignSystemR.drawable.graphic_point_disabled
-        }
     AuthLayout(
         onBack = onBack,
         modifier = modifier,
@@ -69,10 +50,10 @@ fun AuthStatusContent(
                         .padding(horizontal = 20.dp)
                         .padding(top = 20.dp, bottom = 24.dp),
             ) {
-                AuthHeading(stringResource(title))
+                AuthHeading(stringResource(status.titleResource))
                 Spacer(Modifier.height(10.dp))
                 YappText(
-                    text = stringResource(description),
+                    text = stringResource(status.descriptionResource),
                     style = YappTypography.body1NormalRegular.copy(letterSpacing = 0.sp),
                     color = YappAuthColor.textSecondary,
                 )
@@ -84,12 +65,12 @@ fun AuthStatusContent(
                                 .fillMaxWidth(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        AuthGraphic(resource = graphic)
+                        AuthGraphic(resource = status.graphicResource)
                     }
                 } else {
                     Spacer(Modifier.height(160.dp))
                     AuthGraphic(
-                        resource = graphic,
+                        resource = status.graphicResource,
                         height = if (status == AuthStatus.Problem) 170.dp else 180.dp,
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                     )

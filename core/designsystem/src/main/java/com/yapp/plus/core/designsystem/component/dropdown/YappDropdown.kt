@@ -47,7 +47,7 @@ fun YappDropdown(
     enabled: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val metrics = dropdownMetrics(size)
+    val metrics = DropdownMetrics.from(size)
     Column(modifier = modifier) {
         YappText(
             title,
@@ -144,12 +144,6 @@ fun YappDropdown(
         }
     }
 }
-
-private fun dropdownMetrics(size: YappDropdownSize) =
-    when (size) {
-        YappDropdownSize.Large -> DropdownMetrics(48.dp, 16.dp, 10.dp, 24.dp, 48.dp)
-        YappDropdownSize.Medium -> DropdownMetrics(40.dp, 10.dp, 8.dp, 20.dp, 40.dp)
-    }
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable

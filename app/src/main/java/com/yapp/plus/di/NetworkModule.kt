@@ -17,13 +17,11 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideMutableAccessTokenProvider(): MutableAccessTokenProvider =
-        MutableAccessTokenProvider()
+    fun provideMutableAccessTokenProvider(): MutableAccessTokenProvider = MutableAccessTokenProvider()
 
     @Provides
     @Singleton
-    fun provideAccessTokenProvider(provider: MutableAccessTokenProvider): AccessTokenProvider =
-        provider
+    fun provideAccessTokenProvider(provider: MutableAccessTokenProvider): AccessTokenProvider = provider
 
     @Provides
     @Singleton

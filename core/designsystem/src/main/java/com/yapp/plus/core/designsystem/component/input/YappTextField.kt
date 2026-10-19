@@ -55,7 +55,7 @@ fun YappTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
-    val metrics = inputMetrics(size, variant)
+    val metrics = InputMetrics.from(size, variant)
     val isAuth = variant == YappTextFieldVariant.Auth
     val textColor = if (isAuth) YappColor.foregroundNeutral else YappColor.textPrimary
     val cursorColor = if (isAuth) YappColor.foregroundMuted else YappColor.primary
@@ -152,7 +152,7 @@ fun YappTextArea(
         } else {
             YappInputSize.Medium
         }
-    val metrics = inputMetrics(inputSize)
+    val metrics = InputMetrics.from(inputSize)
     val borderColor = inputBorderColor(state)
     val inputShape = RoundedCornerShape(metrics.cornerRadius)
     Box(modifier = modifier) {
@@ -225,24 +225,6 @@ private fun inputTextStyle(
             YappInputSize.Small -> YappTypography.label2Regular
         }
     }
-
-private fun inputMetrics(
-    size: YappInputSize,
-    variant: YappTextFieldVariant = YappTextFieldVariant.Default,
-) = if (variant == YappTextFieldVariant.Auth) {
-    InputMetrics(
-        height = 54.dp,
-        horizontalPadding = 16.dp,
-        cornerRadius = 12.dp,
-        iconSpacing = 12.dp,
-    )
-} else {
-    when (size) {
-        YappInputSize.Large -> InputMetrics(48.dp, 16.dp, 10.dp, 12.dp)
-        YappInputSize.Medium -> InputMetrics(40.dp, 10.dp, 8.dp, 12.dp)
-        YappInputSize.Small -> InputMetrics(32.dp, 8.dp, 6.dp, 8.dp)
-    }
-}
 
 private fun inputBorderColor(
     state: YappInputState,

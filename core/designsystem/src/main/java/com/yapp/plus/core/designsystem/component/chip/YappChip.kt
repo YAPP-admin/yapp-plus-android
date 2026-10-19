@@ -25,9 +25,9 @@ fun YappChip(
     style: YappChipStyle,
     modifier: Modifier = Modifier,
 ) {
-    val palette = chipPalette(color)
-    val colors = chipColors(palette, style)
-    val metrics = chipMetrics(size)
+    val palette = ChipPalette.from(color)
+    val colors = ChipColors.from(palette, style)
+    val metrics = ChipMetrics.from(size)
 
     Surface(
         modifier = modifier,
@@ -68,93 +68,6 @@ private fun chipTextStyle(size: YappChipSize) =
                 fontWeight = FontWeight.Medium,
             )
     }
-
-private fun chipMetrics(size: YappChipSize) =
-    when (size) {
-        YappChipSize.Large -> ChipMetrics(10.dp, 3.dp, 8.dp)
-        YappChipSize.Small -> ChipMetrics(8.dp, 2.dp, 6.dp)
-    }
-
-private fun chipPalette(color: YappChipColor) =
-    when (color) {
-        YappChipColor.Red ->
-            ChipPalette(
-                YappColor.red,
-                YappColor.redWeak,
-                YappColor.red,
-            )
-
-        YappChipColor.Orange ->
-            ChipPalette(
-                YappColor.orange,
-                YappColor.orangeWeak,
-                YappColor.orange,
-            )
-
-        YappChipColor.Yellow ->
-            ChipPalette(
-                YappColor.yellow,
-                YappColor.yellowWeak,
-                YappColor.yellow,
-            )
-
-        YappChipColor.Neutral ->
-            ChipPalette(
-                YappColor.neutral,
-                YappColor.neutralWeak,
-                YappColor.neutralText,
-            )
-
-        YappChipColor.CoolNeutral ->
-            ChipPalette(
-                YappColor.coolNeutral,
-                YappColor.coolNeutralWeak,
-                YappColor.coolNeutral,
-            )
-
-        YappChipColor.Lime ->
-            ChipPalette(
-                YappColor.lime,
-                YappColor.limeWeak,
-                YappColor.lime,
-            )
-
-        YappChipColor.Violet ->
-            ChipPalette(
-                YappColor.violet,
-                YappColor.violetWeak,
-                YappColor.violet,
-            )
-
-        YappChipColor.Blue ->
-            ChipPalette(
-                YappColor.blue,
-                YappColor.blueWeak,
-                YappColor.blue,
-            )
-
-        YappChipColor.LightBlue ->
-            ChipPalette(
-                YappColor.lightBlue,
-                YappColor.lightBlueWeak,
-                YappColor.lightBlue,
-            )
-
-        YappChipColor.Pink ->
-            ChipPalette(
-                YappColor.pink,
-                YappColor.pinkWeak,
-                YappColor.pink,
-            )
-    }
-
-private fun chipColors(
-    palette: ChipPalette,
-    style: YappChipStyle,
-) = when (style) {
-    YappChipStyle.Fill -> ChipColors(palette.fill, YappColor.white)
-    YappChipStyle.Weak -> ChipColors(palette.weak, palette.weakText)
-}
 
 @Preview(showBackground = true, widthDp = 390)
 @Composable

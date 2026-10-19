@@ -17,6 +17,7 @@ internal object YappColor {
 
     val primary = Color(0xFFFA6027)
     val brand = Color(0xFFFF6600)
+    val splashGradientEnd = Color(0xFFFF8500)
     val foregroundNeutral = Color(0xFF1A1C20)
     val foregroundMuted = Color(0xFF555D6D)
     val foregroundSubtle = Color(0xFF868B94)

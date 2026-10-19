@@ -19,6 +19,7 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
 | `brand` | `#FF6600` | CTA·Compact 팝업의 주요 버튼 |
+| `splashGradientEnd` | `#FF8500` | 스플래시 화면의 브랜드 세로 그라데이션 끝 색상 |
 | `foregroundNeutral` | `#1A1C20` | Auth 입력·Compact 제목·카카오 버튼 글자 |
 | `foregroundMuted` | `#555D6D` | Auth 포커스 테두리·커서·Compact 본문 |
 | `foregroundSubtle` | `#868B94` | Compact 보조 버튼 글자 |
@@ -50,6 +51,8 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 ## YAPP 로고
 
 홈의 `graphic_yapp_logo`는 [Figma YAPP-logo](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=142-23072) 자체를 SVG로 내보내 변환한 `res/drawable/graphic_yapp_logo.xml`입니다. 원본의 80×30 영역, 내부 여백, 네 개의 경로, `#1A1C20` 색상과 투명 배경을 보존합니다. 홈은 기존 `R.drawable.graphic_yapp_logo`와 80dp×30dp 크기로 표시합니다.
+
+스플래시 화면의 흰색 Y 심볼은 [Figma splash](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-14582)의 벡터 경로를 `:app`의 `drawable/ic_yapp_splash_symbol.xml`로 변환해 사용합니다. 리소스의 50dp×70dp 영역과 원본 경로의 내부 여백을 유지합니다.
 
 ## 그래픽과 UI 에셋
 

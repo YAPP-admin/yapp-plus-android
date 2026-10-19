@@ -7,7 +7,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class GoogleLoginCredentialProviderModule {
+internal abstract class LoginCredentialBindingModule {
     @Binds
     abstract fun bindGoogleLoginCredentialProvider(
         googleCredentialManager: GoogleCredentialManager,

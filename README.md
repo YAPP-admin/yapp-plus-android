@@ -4,7 +4,7 @@
 
 ## 현재 상태
 
-12개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor 공통 API 클라이언트, JSON 직렬화, debug 로컬 Bearer 토큰 공급 경로가 준비되어 있고, 이번 주 세션·현재 기수 일정 조회를 Domain·Data·홈/일정 Feature·App까지 연결했습니다. 로그인·회원가입 UI는 별도 모듈로 구현했고, 카카오 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모를 Navigation 2로 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리했고, App이 네 화면과 메인 탭 내비게이션·선택 상태를 관리합니다. 가입 UI 데모는 승인 대기에서 끝나며, 승인 대기 화면에는 하단 액션을 제공하지 않습니다. 홈의 최근 출석 현황과 My 화면은 데모 데이터를 표시합니다. debug 빌드는 화면 캡처 편의를 위해 홈 탭으로 시작하고, release 빌드는 기존 카카오 로그인으로 시작합니다. 실제 로그인·회원 정보·출석 기록 API와 게시판·My API 연결은 아직 구현되지 않았습니다.
+12개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor 공통 API 클라이언트, JSON 직렬화, debug 로컬 Bearer 토큰 공급 경로가 준비되어 있고, 이번 주 세션·현재 기수 일정 조회를 Domain·Data·홈/일정 Feature·App까지 연결했습니다. 로그인·회원가입 UI는 별도 모듈로 구현했고, Google 버튼 → 이름 → 휴대폰 번호 → 운영진 승인 대기의 UI 데모를 Navigation 2로 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리했고, App이 네 화면과 메인 탭 내비게이션·선택 상태를 관리합니다. 가입 UI 데모는 승인 대기에서 끝나며, 승인 대기 화면에는 하단 액션을 제공하지 않습니다. 홈의 최근 출석 현황과 My 화면은 데모 데이터를 표시합니다. debug 빌드는 화면 캡처 편의를 위해 홈 탭으로 시작하고, release 빌드는 기존 Google 로그인으로 시작합니다. 실제 로그인·회원 정보·출석 기록 API와 게시판·My API 연결은 아직 구현되지 않았습니다.
 
 ## 아키텍처와 모듈
 

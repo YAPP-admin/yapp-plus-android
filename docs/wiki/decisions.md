@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0017`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0018`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -162,3 +162,13 @@ last_verified: 2026-10-18
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `:feature:main:board`, `:core:designsystem`.
 - 적용 상태: 게시판 화면과 분류 상태를 `:feature:main:board`에, My 화면과 컴포넌트를 `:feature:main:my`에, 일정 화면·상태·모델·리소스를 `:feature:main:schedule`에, 홈 화면·상태·모델·컴포넌트·리소스를 `:feature:main:home`에 분리했습니다. App이 네 화면과 탭 선택을 조립하고 기존 `:feature:attendance`는 제거했습니다. 공통 헤더·데모 안내·아이콘 라벨은 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 Designsystem에 둡니다.
 - 대체한 결정: DEC-0015의 개별 탭 모듈 경로만 대체합니다. App 소유의 메인 내비게이션과 선택 상태, 공통 하단 탭 표현, Feature 간 비의존 원칙은 유지합니다.
+
+## DEC-0017 · 로그인 제공자를 Google로 변경
+
+- 기록일: 2026-10-19
+- 결정: 앱 초기 화면에는 Google 로그인 버튼만 표시하고, 클릭 시 기존 이름 입력 → 휴대폰 번호 입력 → 운영진 승인 대기의 UI 데모 경로로 이동합니다. 실제 Google SDK·OAuth·API·토큰 처리는 서버 계약이 정해진 뒤 연결합니다.
+- 이유: 사용자가 카카오 로그인 버튼을 Google 로그인으로 교체하도록 요청했고, 버튼 하나만 표시하도록 선택했습니다.
+- 근거: 사용자 요청 및 버튼 범위 확인, [이슈 #79](https://github.com/YAPP-admin/yapp-plus-android/issues/79), [Figma 로그인](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487).
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), [디자인시스템 공통 컴포넌트](design-system-components.md), `README.md`, `:feature:login`, App의 인증 데모 내비게이션.
+- 적용 상태: 로그인 UI와 데모 콜백을 Google로 변경했습니다. OAuth·API·토큰은 연결하지 않았습니다.
+- 대체한 결정: DEC-0010의 로그인 제공자와 DEC-0011의 데모 진입 제공자만 대체합니다. 가입 UI 요소 제거와 데모 화면·상태 전이는 유지합니다.

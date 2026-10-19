@@ -41,7 +41,7 @@ internal fun AuthDemoNavHost(
         composable<AuthDemoDestination.Login> { entry ->
             LoginContent(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
-                onKakaoLogin = { navController.navigateFrom(entry, AuthDemoDestination.Name) },
+                onGoogleLogin = { navController.navigateFrom(entry, AuthDemoDestination.Name) },
                 modifier = Modifier.fillMaxSize(),
             )
         }

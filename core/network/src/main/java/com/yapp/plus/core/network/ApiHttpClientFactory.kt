@@ -4,6 +4,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.URLBuilder
@@ -17,6 +19,14 @@ object ApiHttpClientFactory {
 
         return HttpClient(Android) {
             expectSuccess = true
+
+            if (BuildConfig.DEBUG) {
+                install(Logging) {
+                    logger = AndroidNetworkLogger
+                    level = LogLevel.HEADERS
+                    sanitizeHeader { header -> isSensitiveHeader(header) }
+                }
+            }
 
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
@@ -56,4 +66,10 @@ object ApiHttpClientFactory {
             "http" -> 80
             else -> -1
         }
+
+    private fun isSensitiveHeader(header: String): Boolean =
+        sensitiveHeaderMarkers.any { marker -> header.contains(marker, ignoreCase = true) }
+
+    private val sensitiveHeaderMarkers =
+        setOf("authorization", "cookie", "token", "api-key", "secret")
 }

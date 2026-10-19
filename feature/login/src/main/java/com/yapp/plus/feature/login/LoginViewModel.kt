@@ -4,6 +4,8 @@ import android.app.Activity
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.feature.login.model.GoogleLoginCredential
+import com.yapp.plus.feature.login.model.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel

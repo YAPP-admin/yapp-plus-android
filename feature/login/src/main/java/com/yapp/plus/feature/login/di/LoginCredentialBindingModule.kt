@@ -1,5 +1,7 @@
-package com.yapp.plus.feature.login
+package com.yapp.plus.feature.login.di
 
+import com.yapp.plus.feature.login.GoogleCredentialManager
+import com.yapp.plus.feature.login.GoogleLoginCredentialProvider
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

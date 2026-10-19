@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.yapp.plus.feature.login.GoogleLoginCredential
+import com.yapp.plus.feature.login.model.GoogleLoginCredential
 import kotlinx.coroutines.delay
 
 private const val SPLASH_DURATION_MILLIS = 1_000L

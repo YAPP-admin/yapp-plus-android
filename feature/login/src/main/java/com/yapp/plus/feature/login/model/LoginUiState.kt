@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.login
+package com.yapp.plus.feature.login.model
 
 internal data class LoginUiState(
     val isLoginInProgress: Boolean = false,

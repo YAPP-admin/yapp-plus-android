@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
-import com.yapp.plus.feature.login.GoogleLoginCredential
+import com.yapp.plus.feature.login.model.GoogleLoginCredential
 
 @Composable
 internal fun AuthDemoRoute(

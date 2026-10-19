@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.login.components.LoginErrorDialog
 
 @Preview(name = "Google login", widthDp = 393, heightDp = 756)
 @Preview(name = "Compact login", widthDp = 320, heightDp = 480)

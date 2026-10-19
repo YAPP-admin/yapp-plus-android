@@ -12,8 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.yapp.plus.feature.login.GoogleLoginCredential
 import com.yapp.plus.feature.login.LoginRoute
+import com.yapp.plus.feature.login.model.GoogleLoginCredential
 import com.yapp.plus.feature.signup.AuthStatus
 import com.yapp.plus.feature.signup.AuthStatusContent
 import com.yapp.plus.feature.signup.SignUpContent

@@ -3,12 +3,14 @@ package com.yapp.plus.feature.login
 import android.app.Activity
 import android.content.MutableContextWrapper
 import android.util.Base64
+import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.yapp.plus.feature.login.model.GoogleLoginCredential
 import java.security.SecureRandom
 import javax.inject.Inject
 
@@ -22,41 +24,59 @@ internal class GoogleCredentialManager
             serverClientId: String,
         ): GoogleLoginCredential {
             val nonce = generateNonce()
+            val request = createGoogleCredentialRequest(serverClientId, nonce)
+            val credential = requestCredential(activity, request)
+            return GoogleLoginCredential(
+                idToken = parseGoogleIdToken(credential),
+                nonce = nonce,
+            )
+        }
+
+        private fun createGoogleCredentialRequest(
+            serverClientId: String,
+            nonce: String,
+        ): GetCredentialRequest {
             val googleOption =
                 GetSignInWithGoogleOption
                     .Builder(serverClientId)
                     .setNonce(nonce)
                     .build()
-            val request =
-                GetCredentialRequest
-                    .Builder()
-                    .addCredentialOption(googleOption)
-                    .build()
-            val response =
-                credentialManager.getCredential(
+            return GetCredentialRequest
+                .Builder()
+                .addCredentialOption(googleOption)
+                .build()
+        }
+
+        private suspend fun requestCredential(
+            activity: Activity,
+            request: GetCredentialRequest,
+        ): Credential =
+            credentialManager
+                .getCredential(
                     context = MutableContextWrapper(activity),
                     request = request,
+                ).credential
+
+        private fun parseGoogleIdToken(credential: Credential): String {
+            val googleCredential = credential.requireGoogleIdTokenCredential()
+            return try {
+                GoogleIdTokenCredential.createFrom(googleCredential.data).idToken
+            } catch (exception: GoogleIdTokenParsingException) {
+                throw IllegalStateException(
+                    "Google ID token response could not be parsed.",
+                    exception,
                 )
-            val credential = response.credential
+            }
+        }
+
+        private fun Credential.requireGoogleIdTokenCredential(): CustomCredential {
             check(
-                credential is CustomCredential &&
-                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL,
+                this is CustomCredential &&
+                    type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL,
             ) {
                 "Credential Manager returned an unsupported credential type."
             }
-            val googleCredential =
-                try {
-                    GoogleIdTokenCredential.createFrom(credential.data)
-                } catch (exception: GoogleIdTokenParsingException) {
-                    throw IllegalStateException(
-                        "Google ID token response could not be parsed.",
-                        exception,
-                    )
-                }
-            return GoogleLoginCredential(
-                idToken = googleCredential.idToken,
-                nonce = nonce,
-            )
+            return this
         }
 
         private fun generateNonce(): String {

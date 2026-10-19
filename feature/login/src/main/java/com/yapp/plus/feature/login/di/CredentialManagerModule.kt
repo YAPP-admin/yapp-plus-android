@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.login
+package com.yapp.plus.feature.login.di
 
 import android.content.Context
 import androidx.credentials.CredentialManager

@@ -9,6 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yapp.plus.core.designsystem.component.popup.YappAlertDialog
+import com.yapp.plus.feature.login.components.LoginErrorDialog
+import com.yapp.plus.feature.login.model.GoogleLoginCredential
+import com.yapp.plus.feature.login.model.LoginUiState
 
 @Composable
 fun LoginRoute(
@@ -48,7 +52,15 @@ fun LoginRoute(
             )
         }
         LoginUiState.Dialog.GoogleIdTokenIssued -> {
-            GoogleIdTokenIssuedDialog(onDismiss = viewModel::dismissDialog)
+            YappAlertDialog(
+                onDismissRequest = viewModel::dismissDialog,
+                title = stringResource(R.string.auth_google_token_title),
+                body = stringResource(R.string.auth_google_token_description),
+                confirmText = stringResource(R.string.auth_close),
+                dismissText = null,
+                onConfirm = viewModel::dismissDialog,
+                onDismiss = viewModel::dismissDialog,
+            )
         }
         null -> Unit
     }

@@ -1,6 +1,5 @@
-package com.yapp.plus.feature.login
+package com.yapp.plus.feature.login.model
 
-/** Google ID token and its matching nonce, kept in memory for server-side verification. */
 class GoogleLoginCredential internal constructor(
     val idToken: String,
     val nonce: String,

@@ -49,10 +49,10 @@ last_verified: 2026-10-20
 
 ## MVP 인증·공지 계약
 
-- `AuthRepository`는 Google credential 교환, 현재 세션 조회·복원, 로그아웃을 제공합니다. `GoogleLoginCredential`은 ID 토큰과 원본 nonce만 전달하며 영구 저장·로그 출력을 금지합니다. `AuthSession.userId`는 형식을 해석하지 않는 사용자 식별자이며 Supabase 사용자 ID와 미래 YAPP 회원 ID의 대응은 후속 계약입니다.
+- `AuthRepository`는 Google credential 교환, 현재 세션 조회·복원, 로그아웃을 제공합니다. `GoogleLoginCredential`은 ID 토큰과 원본 nonce만 전달하며 영구 저장·로그 출력을 금지합니다. Google 요청에는 nonce의 SHA-256 hex를 보내고 Domain에는 원본을 전달합니다. `AuthSession.userId`는 형식을 해석하지 않는 사용자 식별자이며 Supabase 사용자 ID와 미래 YAPP 회원 ID의 대응은 후속 계약입니다.
 - 인증 세션이 없는 조회는 `null`, 인증·복원 요청 자체의 실패는 예외로 구분합니다. Google 토큰 발급만으로 인증 성공 UiState를 만들지 않습니다. Data가 인증 제공자의 교환을 완료한 뒤 반환한 세션으로 App이 인증 흐름을 조율합니다.
 - `NoticeRepository`는 운영·세션 공지를 유형별 또는 전체 목록과 상세로 조회합니다. 목록은 게시 시각 내림차순이며, 상세에서 조회할 수 있는 공지가 없으면 `null`을 반환합니다. 공통 `Notice`는 홈의 `Long` 식별자, 제목, 본문, 유형과 게시 시각을 제공합니다. 날짜·유형 문구와 홈·게시판 UI 모델 변환은 각 Feature 책임입니다.
-- 인증·공지 Data 구현과 App Hilt 연결은 완료했고 Feature 연결은 후속입니다. 기존 Login Feature의 credential 타입을 Domain 타입으로 옮기는 작업과 게시판 UI 분류의 정책 대응도 아직 적용하지 않았습니다. 공지의 전송 DTO·본문 표현 형식·페이지 처리 같은 서버 세부 계약은 Domain 모델만으로 확정하지 않습니다.
+- 인증·공지 Data 구현과 App Hilt 연결은 완료했습니다. Login Feature는 Domain credential을 App에 전달하고 App ViewModel이 인증 교환·시작 시 세션 복원을 조율합니다. 복원 중에는 Splash를 표시하고 실패에는 재시도를 제공합니다. 인증 성공은 상태로 유지하며 로그인 기록을 제거한 메인 그래프를 구성합니다. 공지 Feature 연결과 게시판 UI 분류의 정책 대응은 후속입니다. 공지의 전송 DTO·본문 표현 형식·페이지 처리 같은 서버 세부 계약은 Domain 모델만으로 확정하지 않습니다.
 
 Supabase 출석 검증은 기존 `AttendanceDataSource` 계약의 정수 코드를 네 자리 ASCII 숫자 문자열로 왼쪽 0 채움한 뒤 인증된 `POST /rest/v1/rpc/mvp_verify_attendance`에 `p_session_id`·`p_code`만 보냅니다. 성공은 요청 세션과 일치하는 단일 행의 `verified=true`와 유효한 `checked_in_at`으로 확인하며 시각·사용자는 DB가 정합니다. REST helper는 조회와 POST 모두 Supabase 세션의 401 복원·갱신 뒤 원래 요청을 한 번 재시도합니다. PostgREST 오류의 정확한 `INVALID_ATTENDANCE_CODE` marker만 코드 오류로 매핑하고 다른 오류·응답 검증 실패는 일반 `AttendanceException`으로 정제하며 취소는 전파합니다. MVP migration에 보고 backend가 없어 `submitReport`는 요청 없이 일반 실패를 반환하고 YAPP 보고 어댑터는 보존합니다. 보고 UI의 MVP 흐름 정리는 후속입니다.
 

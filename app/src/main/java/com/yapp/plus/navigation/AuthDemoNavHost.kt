@@ -12,8 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.yapp.plus.feature.login.LoginRoute
-import com.yapp.plus.feature.login.model.GoogleLoginCredential
+import com.yapp.plus.feature.login.LoginContent
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.signup.AuthStatus
 import com.yapp.plus.feature.signup.AuthStatusContent
@@ -29,7 +28,12 @@ internal fun AuthDemoNavHost(
     modifier: Modifier = Modifier,
     startDestination: AuthDemoDestination = AuthDemoDestination.Login,
     navController: NavHostController = rememberNavController(),
-    onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit = {},
+    loginContent: @Composable (() -> Unit) -> Unit = { onBack ->
+        LoginContent(onBack = onBack, onGoogleLogin = {})
+    },
+    mainContent: @Composable (() -> Unit) -> Unit = { onAttendanceComplete ->
+        MainTabScaffold(onAttendanceComplete = onAttendanceComplete)
+    },
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     BackHandler(
@@ -42,11 +46,7 @@ internal fun AuthDemoNavHost(
         modifier = modifier.fillMaxSize(),
     ) {
         composable<AuthDemoDestination.Login> { entry ->
-            LoginRoute(
-                onBack = { navController.navigateBackFrom(entry, onExit) },
-                onGoogleCredentialReceived = onGoogleCredentialReceived,
-                modifier = Modifier.fillMaxSize(),
-            )
+            loginContent { navController.navigateBackFrom(entry, onExit) }
         }
         composable<AuthDemoDestination.Name> { entry ->
             SignUpContent(
@@ -79,12 +79,9 @@ internal fun AuthDemoNavHost(
             )
         }
         composable<AuthDemoDestination.Main> { entry ->
-            MainTabScaffold(
-                modifier = Modifier.fillMaxSize(),
-                onAttendanceComplete = {
-                    navController.navigateFrom(entry, AuthDemoDestination.AttendanceComplete)
-                },
-            )
+            mainContent {
+                navController.navigateFrom(entry, AuthDemoDestination.AttendanceComplete)
+            }
         }
         composable<AuthDemoDestination.AttendanceComplete> { entry ->
             HomeAttendanceCompleteScreen(

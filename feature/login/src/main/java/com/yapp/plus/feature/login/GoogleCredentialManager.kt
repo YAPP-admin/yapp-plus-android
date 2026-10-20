@@ -2,7 +2,6 @@ package com.yapp.plus.feature.login
 
 import android.app.Activity
 import android.content.MutableContextWrapper
-import android.util.Base64
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -10,7 +9,8 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.yapp.plus.feature.login.model.GoogleLoginCredential
+import com.yapp.plus.domain.auth.GoogleLoginCredential
+import java.security.MessageDigest
 import java.security.SecureRandom
 import javax.inject.Inject
 
@@ -20,15 +20,15 @@ internal class GoogleCredentialManager
         private val credentialManager: CredentialManager,
     ) : GoogleLoginCredentialProvider {
         override suspend fun getGoogleLoginCredential(
-            activity: Activity,
+            activity: Activity?,
             serverClientId: String,
         ): GoogleLoginCredential {
             val nonce = generateNonce()
-            val request = createGoogleCredentialRequest(serverClientId, nonce)
-            val credential = requestCredential(activity, request)
+            val request = createGoogleCredentialRequest(serverClientId, hashNonce(nonce))
+            val credential = requestCredential(checkNotNull(activity), request)
             return GoogleLoginCredential(
                 idToken = parseGoogleIdToken(credential),
-                nonce = nonce,
+                rawNonce = nonce,
             )
         }
 
@@ -79,17 +79,19 @@ internal class GoogleCredentialManager
             return this
         }
 
-        private fun generateNonce(): String {
-            val bytes = ByteArray(NONCE_BYTE_LENGTH)
-            secureRandom.nextBytes(bytes)
-            return Base64.encodeToString(
-                bytes,
-                Base64.NO_WRAP or Base64.URL_SAFE or Base64.NO_PADDING,
-            )
-        }
+        internal companion object {
+            private const val NONCE_BYTE_LENGTH = 32
+            private val secureRandom = SecureRandom()
 
-        private companion object {
-            const val NONCE_BYTE_LENGTH = 32
-            val secureRandom = SecureRandom()
+            fun generateNonce(): String {
+                val bytes = ByteArray(NONCE_BYTE_LENGTH)
+                secureRandom.nextBytes(bytes)
+                return bytes.toHex()
+            }
+
+            fun hashNonce(rawNonce: String): String =
+                MessageDigest.getInstance("SHA-256").digest(rawNonce.toByteArray()).toHex()
+
+            private fun ByteArray.toHex(): String = joinToString("") { "%02x".format(it) }
         }
     }

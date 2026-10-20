@@ -8,6 +8,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
     implementation(project(":core:designsystem"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.credentials)
@@ -26,4 +27,6 @@ dependencies {
     debugImplementation(project(":core:preview"))
     debugImplementation(libs.androidx.compose.ui.tooling)
     ksp(libs.hilt.compiler)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

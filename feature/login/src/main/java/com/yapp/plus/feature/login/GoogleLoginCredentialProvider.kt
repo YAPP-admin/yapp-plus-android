@@ -1,11 +1,11 @@
 package com.yapp.plus.feature.login
 
 import android.app.Activity
-import com.yapp.plus.feature.login.model.GoogleLoginCredential
+import com.yapp.plus.domain.auth.GoogleLoginCredential
 
 internal interface GoogleLoginCredentialProvider {
     suspend fun getGoogleLoginCredential(
-        activity: Activity,
+        activity: Activity?,
         serverClientId: String,
     ): GoogleLoginCredential
 }

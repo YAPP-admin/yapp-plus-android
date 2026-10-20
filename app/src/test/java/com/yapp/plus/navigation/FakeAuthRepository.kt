@@ -1,0 +1,22 @@
+package com.yapp.plus.navigation
+
+import com.yapp.plus.domain.auth.AuthRepository
+import com.yapp.plus.domain.auth.AuthSession
+import com.yapp.plus.domain.auth.GoogleLoginCredential
+
+internal class FakeAuthRepository : AuthRepository {
+    var restore: suspend () -> AuthSession? = { null }
+    var login: suspend () -> AuthSession = { AuthSession("test-user") }
+    var loginCount = 0
+    var credential: GoogleLoginCredential? = null
+
+    override suspend fun fetchSession(): AuthSession? = restore()
+
+    override suspend fun signInWithGoogle(credential: GoogleLoginCredential): AuthSession {
+        loginCount += 1
+        this.credential = credential
+        return login()
+    }
+
+    override suspend fun signOut() = Unit
+}

@@ -6,6 +6,5 @@ internal data class LoginUiState(
 ) {
     enum class Dialog {
         Error,
-        GoogleIdTokenIssued,
     }
 }

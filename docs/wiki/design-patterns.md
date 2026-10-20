@@ -35,7 +35,7 @@ last_verified: 2026-10-20
 
 - Repository 계약은 Domain, 구현은 Data에 둡니다. 사용하는 책임을 기준으로 계약을 나누고 관련 없는 기능을 거대한 인터페이스에 모으지 않습니다.
 - 원격·로컬 데이터 접근은 DataSource 경계로 분리합니다.
-- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 일정·공지는 Supabase 어댑터, 출석은 YAPP HTTP 어댑터를 사용하며 전환 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
+- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 일정·공지·출석 검증은 Supabase 어댑터를 사용하며 전환 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
 - DTO는 Data 내부에 두고 Domain 변환도 Data에서 처리합니다.
 - Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
@@ -53,6 +53,8 @@ last_verified: 2026-10-20
 - 인증 세션이 없는 조회는 `null`, 인증·복원 요청 자체의 실패는 예외로 구분합니다. Google 토큰 발급만으로 인증 성공 UiState를 만들지 않습니다. Data가 인증 제공자의 교환을 완료한 뒤 반환한 세션으로 App이 인증 흐름을 조율합니다.
 - `NoticeRepository`는 운영·세션 공지를 유형별 또는 전체 목록과 상세로 조회합니다. 목록은 게시 시각 내림차순이며, 상세에서 조회할 수 있는 공지가 없으면 `null`을 반환합니다. 공통 `Notice`는 홈의 `Long` 식별자, 제목, 본문, 유형과 게시 시각을 제공합니다. 날짜·유형 문구와 홈·게시판 UI 모델 변환은 각 Feature 책임입니다.
 - 인증·공지 Data 구현과 App Hilt 연결은 완료했고 Feature 연결은 후속입니다. 기존 Login Feature의 credential 타입을 Domain 타입으로 옮기는 작업과 게시판 UI 분류의 정책 대응도 아직 적용하지 않았습니다. 공지의 전송 DTO·본문 표현 형식·페이지 처리 같은 서버 세부 계약은 Domain 모델만으로 확정하지 않습니다.
+
+Supabase 출석 검증은 기존 `AttendanceDataSource` 계약의 정수 코드를 네 자리 ASCII 숫자 문자열로 왼쪽 0 채움한 뒤 인증된 `POST /rest/v1/rpc/mvp_verify_attendance`에 `p_session_id`·`p_code`만 보냅니다. 성공은 요청 세션과 일치하는 단일 행의 `verified=true`와 유효한 `checked_in_at`으로 확인하며 시각·사용자는 DB가 정합니다. REST helper는 조회와 POST 모두 Supabase 세션의 401 복원·갱신 뒤 원래 요청을 한 번 재시도합니다. PostgREST 오류의 정확한 `INVALID_ATTENDANCE_CODE` marker만 코드 오류로 매핑하고 다른 오류·응답 검증 실패는 일반 `AttendanceException`으로 정제하며 취소는 전파합니다. MVP migration에 보고 backend가 없어 `submitReport`는 요청 없이 일반 실패를 반환하고 YAPP 보고 어댑터는 보존합니다. 보고 UI의 MVP 흐름 정리는 후속입니다.
 
 ## HTTP 인증 세션 갱신
 

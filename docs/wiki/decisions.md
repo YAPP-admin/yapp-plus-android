@@ -6,7 +6,7 @@ last_verified: 2026-10-20
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0026`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0028`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -252,3 +252,23 @@ last_verified: 2026-10-20
 - 반영: `:data`, `:core:network`, `:app`, [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`.
 - 적용 상태: DataStore 토큰 복원, 갱신 API 호출, App singleton 조립과 401 재시도를 연결했습니다. 초기 Google ID 토큰 검증·YAPP 세션 발급은 후속입니다.
 - 대체한 결정: DEC-0019의 Data API·App 조립 후속 부분과 DEC-0024의 App DI·401 연결 후속 부분만 완료합니다. 기존 갱신·동시 요청 공유 정책과 토큰 저장 정책은 유지합니다.
+
+## DEC-0026 · MVP 데이터 공급자를 기능별 DataSource 주입으로 교체
+
+- 기록일: 2026-10-20
+- 결정: Domain Repository 계약 아래 Data의 `RepositoryImpl`이 기능별 DataSource 인터페이스를 생성자로 주입받습니다. 현재 Supabase, 향후 YAPP 원본 서버 어댑터를 App에서 선택하고 Fake는 같은 DataSource 계약의 테스트 대역으로 사용합니다. 공급자 교체 때문에 Domain·Feature를 수정하지 않습니다.
+- 이유: Repository 내부의 구체 DataSource 생성과 SDK·HTTP 의존을 제거해 테스트 MVP와 이후 원본 서버가 같은 기능 계약을 구현하도록 합니다.
+- 근거: 사용자의 명시 요청과 승인된 MVP 계획, [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
+- 반영: [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), 인증·공지 Domain 계약.
+- 적용 상태: `AuthRepository`와 credential·사용자 식별 세션 모델, `NoticeRepository`와 공지 모델·유형을 추가했습니다. 기존 일정·출석 Domain 계약을 재사용합니다. Data 인터페이스·어댑터·Repository 전환과 App 조립은 후속입니다. YAPP 초기 로그인·회원 식별자 대응 같은 미확정 계약은 정의하지 않습니다.
+- 대체한 결정: 없음. 기존 계층 경계 안에서 DataSource 주입 방식을 명시합니다.
+
+## DEC-0027 · Supabase 인증과 테스트 데이터로 비공개 MVP 구성
+
+- 기록일: 2026-10-20
+- 결정: Google Credential Manager의 ID 토큰·원본 nonce를 Supabase Auth에 교환하고 세션 복원·로그아웃을 제공합니다. 세션·공지 테스트 데이터를 조회하며 출석 기록은 테스트용 세션에 한정합니다. 테스트 종료 뒤 자동 삭제 없이 수동으로 운영 데이터로 전환합니다. Supabase Google provider는 사용자가 연 Dashboard에서 컴퓨터 사용으로 설정합니다.
+- 이유: YAPP 초기 로그인과 공지 조회 계약이 준비되기 전에 비공개 테스트의 핵심 기능을 실제 인증·데이터로 확인합니다.
+- 근거: 사용자 확정 및 승인된 MVP 계획, [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
+- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md).
+- 적용 상태: Domain 계약과 정책 기록까지 반영했습니다. Supabase 설정·Data/DB·Feature 연결은 후속입니다. 테스트 출석 코드·시간·대상 계정·실제 날짜·중복 제출/재조회 서버 계약과 운영 데이터 전환 절차는 미확정 목록에 남깁니다. 기존 확정 YAPP 출석 정책을 임의로 변경하지 않습니다.
+- 대체한 결정: DEC-0017의 ID 토큰 발급까지만 수행하는 범위를 MVP의 Supabase 교환으로 확장합니다. Google 단일 로그인 UI와 토큰 발급만으로 로그인 완료하지 않는 원칙은 유지합니다. DEC-0024·DEC-0025의 YAPP 세션 저장·갱신 경로는 Supabase 세션과 구분해 유지합니다.

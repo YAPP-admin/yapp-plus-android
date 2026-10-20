@@ -19,13 +19,15 @@ last_verified: 2026-10-20
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | My 화면·컴포넌트·리소스 구현됨; App에서 연결 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰 발급, 로그인 상태·오류 조정은 ViewModel에서 처리; 오류·미완료 안내 UI 구현됨; 앱 초기 화면 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 세션 일정과 출석 인증·사전 보고의 Repository 계약 구현됨 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·공지·세션 일정·출석 인증·사전 보고의 Repository 계약 구현됨; 인증·공지 Data/Feature 연결은 후속 |
 | `:data` | `com.yapp.plus.data` | Android Library; 세션 일정·출석 인증·사전 보고 DataSource·내부 DTO·Repository와 토큰 갱신/로컬 저장 DataSource 구현됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·토큰 복원/교체 조율·401 갱신 및 중복 방지 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | DataStore 세션 레코드·Keystore 암호화·백업 제외 파일 저장 구현됨; Data에서 사용 |
 
 13개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+
+비공개 테스트 MVP는 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90)에서 순차 구현합니다. `:domain`의 `auth/`에는 `AuthRepository`·`GoogleLoginCredential`·`AuthSession`, `notice/`에는 `NoticeRepository`·`Notice`·`NoticeType`을 둡니다. 기존 `session/`·`attendance/` 계약을 재사용하며 새 모듈을 만들지 않습니다. `:data`의 기능별 DataSource 인터페이스와 Supabase 구현, Repository 생성자 주입 전환 및 App의 공급자 선택은 후속입니다. 현재 YAPP API 구현과 Google 토큰 발급 UI의 동작은 이 Domain 계약 추가만으로 바뀌지 않습니다.
 
 `:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. Login Feature는 Credential Manager에서 Google ID 토큰과 nonce를 받아 App 콜백으로 전달합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지와 인증 토큰 콜백을 조립하며, 토큰 발급만으로 가입 UI 데모에 진입하지 않습니다. App의 공통 ViewModel과 `SavedStateHandle`이 가입 데모 입력값을 유지·복원하고, 전체 뒤로 가기와 시스템 inset 적용·소비도 App이 소유합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. ID 토큰 서버 검증·YAPP 세션 발급·가입 처리는 아직 포함하지 않습니다.
 

@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-18
+last_verified: 2026-10-20
 ---
 
 # 아키텍처
@@ -33,6 +33,18 @@ Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유�
 - Domain은 Android, Compose, HTTP 클라이언트, DB 구현에 의존하지 않습니다. 업무 정책과 UseCase를 Data 구현으로 옮기지 않습니다.
 - Designsystem은 App, Feature, Domain, Data를 알지 못합니다. Network와 Datastore는 Feature의 화면·상태를 알지 못합니다. 순환 의존성을 만들지 않습니다.
 - DTO는 Data 내부에 두고 Domain 모델로 변환합니다. Domain에서 UI 모델·리소스로 바꾸는 책임은 해당 Feature에 둡니다. 여러 Feature가 실제로 공유할 때 의존성 방향을 유지하며 공통화합니다.
+
+## 데이터 공급자 교체 경계
+
+[비공개 테스트 MVP](product-policy.md#supabase-기반-비공개-테스트-mvp)의 데이터 공급자는 Supabase로 두고, 이후 YAPP 원본 서버로 교체할 수 있게 합니다. 호출 경계는 `Feature → Domain Repository 계약 → Data RepositoryImpl → 생성자 주입한 기능별 DataSource 인터페이스 → 공급자별 구현`입니다.
+
+- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 받습니다. 구체 DataSource를 내부에서 생성하거나 Supabase SDK·HTTP client를 직접 받아 공급자를 선택하지 않습니다.
+- DataSource 인터페이스와 공급자에 독립적인 공통 입출력·오류 계약은 Data에 둡니다. Supabase·YAPP의 SDK 타입, HTTP 응답과 공급자별 DTO는 각 어댑터 내부에 둡니다. Domain에는 Repository 계약과 업무 모델만 노출합니다.
+- App의 Hilt 조립에서 현재 Supabase 어댑터를 선택하고, 향후 확인된 YAPP 서버 계약의 어댑터로 바꿉니다. Feature와 Domain 계약은 공급자 교체를 위해 수정하지 않습니다. Fake는 같은 DataSource 계약을 구현하는 테스트 대역으로 사용합니다.
+- Google ID 토큰과 원본 nonce는 Domain의 로그인 입력 모델로 전달하지만 인증 제공자의 access/refresh token은 Data에서 관리합니다. `AuthSession`은 토큰·프로필·제공자 SDK 타입 없이 불투명한 사용자 식별자만 노출합니다.
+- YAPP 세션 토큰 저장·401 갱신과 Supabase 인증 세션은 공급자가 다른 별도 세션입니다. Supabase 토큰을 기존 YAPP API나 YAPP 세션 갱신 경로에 전달하지 않습니다.
+
+적용 상태: 인증·공지 Domain 계약을 추가했습니다. 기존 세션 일정·출석 `RepositoryImpl`은 HTTP client로 구체 DataSource를 생성하는 상태이며, 인터페이스 주입 전환과 Supabase 어댑터·App 조립은 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90)의 후속 Data·Feature 작업입니다. YAPP 초기 로그인·회원 식별자 대응처럼 미확정인 서버 계약을 이 경계만을 위해 만들지 않습니다.
 
 ## 정책과 표현
 

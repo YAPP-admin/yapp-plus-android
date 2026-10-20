@@ -1,6 +1,7 @@
 package com.yapp.plus.data.attendance
 
 import com.yapp.plus.domain.attendance.AttendanceException
+import com.yapp.plus.domain.attendance.AttendanceReportType
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.expectSuccess
@@ -11,10 +12,10 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import java.time.Instant
 
-internal class AttendanceRemoteDataSource(
+class AttendanceRemoteDataSource(
     private val httpClient: HttpClient,
-) {
-    suspend fun verifyAttendance(
+) : AttendanceDataSource {
+    override suspend fun verifyAttendance(
         sessionId: Long,
         code: Int,
     ) {
@@ -24,11 +25,12 @@ internal class AttendanceRemoteDataSource(
         Instant.parse(result.checkedInAt)
     }
 
-    suspend fun submitReport(
-        type: String,
+    override suspend fun submitReport(
+        type: AttendanceReportType,
         reason: String,
     ): Long {
-        val response = post("attendance-reports", SubmitAttendanceReportRequest(type, reason))
+        val request = SubmitAttendanceReportRequest(type = type.name, reason = reason)
+        val response = post("attendance-reports", request)
         val result = response.body<AttendanceReportResponse>()
         check(result.sessionId > 0) { "Missing attendance report confirmation" }
         Instant.parse(result.submittedAt)

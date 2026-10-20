@@ -8,15 +8,22 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 internal object CurrentGenerationScheduleMapper {
-    fun toDomain(response: CurrentGenerationScheduleResponse): CurrentGenerationSchedule =
-        CurrentGenerationSchedule(
+    fun toData(response: CurrentGenerationScheduleResponse): CurrentGenerationScheduleData =
+        CurrentGenerationScheduleData(
             generationId = response.generationId,
             generationNumber = response.generationNumber,
-            sessions = response.sessions.map(::toDomain),
+            sessions = response.sessions.map(::toData),
         )
 
-    private fun toDomain(response: ScheduledSessionResponse): ScheduledSession =
-        ScheduledSession(
+    fun toDomain(data: CurrentGenerationScheduleData): CurrentGenerationSchedule =
+        CurrentGenerationSchedule(
+            generationId = data.generationId,
+            generationNumber = data.generationNumber,
+            sessions = data.sessions.map(::toDomain),
+        )
+
+    private fun toData(response: ScheduledSessionResponse): ScheduledSessionData =
+        ScheduledSessionData(
             sessionId = response.sessionId,
             name = response.name,
             date = LocalDate.parse(response.date),
@@ -25,5 +32,17 @@ internal object CurrentGenerationScheduleMapper {
             startTime = LocalTime.parse(response.startTime),
             endTime = LocalTime.parse(response.endTime),
             type = SessionType.valueOf(response.type),
+        )
+
+    private fun toDomain(data: ScheduledSessionData): ScheduledSession =
+        ScheduledSession(
+            sessionId = data.sessionId,
+            name = data.name,
+            date = data.date,
+            dayOfWeek = data.dayOfWeek,
+            location = data.location,
+            startTime = data.startTime,
+            endTime = data.endTime,
+            type = data.type,
         )
 }

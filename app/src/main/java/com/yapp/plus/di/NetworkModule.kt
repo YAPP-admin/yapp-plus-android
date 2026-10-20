@@ -5,9 +5,13 @@ import com.yapp.plus.core.network.ApiHttpClientFactory
 import com.yapp.plus.core.network.auth.TokenPersistence
 import com.yapp.plus.core.network.auth.TokenRefresher
 import com.yapp.plus.core.network.auth.TokenStore
+import com.yapp.plus.data.attendance.AttendanceDataSource
+import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
 import com.yapp.plus.data.auth.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.SessionTokenRemoteDataSource
+import com.yapp.plus.data.session.SessionScheduleDataSource
+import com.yapp.plus.data.session.SessionScheduleRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
@@ -35,7 +39,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSessionTokenStore(persistence: TokenPersistence): TokenStore = TokenStore(persistence = persistence)
+    fun provideSessionTokenStore(persistence: TokenPersistence): TokenStore =
+        TokenStore(persistence = persistence)
 
     @Provides
     @Singleton
@@ -51,10 +56,23 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSessionScheduleRepository(httpClient: HttpClient): SessionScheduleRepository =
-        SessionScheduleRepositoryImpl(httpClient)
+    fun provideSessionScheduleDataSource(httpClient: HttpClient): SessionScheduleDataSource =
+        SessionScheduleRemoteDataSource(httpClient)
 
     @Provides
     @Singleton
-    fun provideAttendance(http: HttpClient): AttendanceRepository = AttendanceRepositoryImpl(http)
+    fun provideSessionScheduleRepository(
+        dataSource: SessionScheduleDataSource,
+    ): SessionScheduleRepository =
+        SessionScheduleRepositoryImpl(dataSource)
+
+    @Provides
+    @Singleton
+    fun provideAttendanceDataSource(httpClient: HttpClient): AttendanceDataSource =
+        AttendanceRemoteDataSource(httpClient)
+
+    @Provides
+    @Singleton
+    fun provideAttendance(dataSource: AttendanceDataSource): AttendanceRepository =
+        AttendanceRepositoryImpl(dataSource)
 }

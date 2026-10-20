@@ -8,20 +8,26 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 
-internal class SessionScheduleRemoteDataSource(
+class SessionScheduleRemoteDataSource(
     private val httpClient: HttpClient,
-) {
-    suspend fun fetchCurrentWeekSchedule(): CurrentWeekScheduleResponse =
-        httpClient
-            .get(CURRENT_WEEK_SESSIONS_PATH) {
-                addMockExample(BuildConfig.CURRENT_WEEK_MOCK_EXAMPLE)
-            }.body()
+) : SessionScheduleDataSource {
+    override suspend fun fetchCurrentWeekSchedule(): CurrentWeekScheduleData {
+        val response =
+            httpClient
+                .get(CURRENT_WEEK_SESSIONS_PATH) {
+                    addMockExample(BuildConfig.CURRENT_WEEK_MOCK_EXAMPLE)
+                }.body<CurrentWeekScheduleResponse>()
+        return CurrentWeekScheduleMapper.toData(response)
+    }
 
-    suspend fun fetchCurrentGenerationSchedule(): CurrentGenerationScheduleResponse =
-        httpClient
-            .get(CURRENT_GENERATION_SESSIONS_PATH) {
-                addMockExample(BuildConfig.CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE)
-            }.body()
+    override suspend fun fetchCurrentGenerationSchedule(): CurrentGenerationScheduleData {
+        val response =
+            httpClient
+                .get(CURRENT_GENERATION_SESSIONS_PATH) {
+                    addMockExample(BuildConfig.CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE)
+                }.body<CurrentGenerationScheduleResponse>()
+        return CurrentGenerationScheduleMapper.toData(response)
+    }
 
     private fun HttpRequestBuilder.addMockExample(exampleName: String) {
         if (BuildConfig.MOCK_API_ENABLED && exampleName.isNotBlank()) {

@@ -193,6 +193,15 @@ last_verified: 2026-10-20
 - 적용 상태: Network의 세션별 갱신 공유와 401 재시도 기반을 구현했습니다. Data 갱신 API 연결과 App DI는 후속 PR입니다.
 - 대체한 결정: 없음.
 
+## DEC-0023 · 수정된 홈 디자인과 출석·출결 보고 흐름
+
+- 기록일: 2026-10-19
+- 결정: 수정된 Figma 홈 메인과 알림·출석 입력/완료·사전 보고 화면을 반영하고, 확인된 출석 인증·보고 API를 연결합니다. 서버 성공 뒤에만 완료 UI를 표시하며 조회 계약이 없는 공지·알림 예시는 debug Preview에만 둡니다.
+- 이유: 홈에서 이어지는 전체 화면을 반영하라는 사용자 요청과 실제 API의 상태·일회성 변경 결과를 일치시키기 위함입니다.
+- 근거: 사용자 확정, [Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284), [이슈 #82](https://github.com/YAPP-admin/yapp-plus-android/issues/82), 개발 서버 OpenAPI와 backend dev의 출석 검증·보고 계약.
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), [공통 컴포넌트](design-system-components.md), [디자인시스템](design-system.md).
+- 적용 상태: Domain 출석 인증·사전 보고 계약을 정의했습니다. Data API 구현과 홈 UI·ViewModel·App 연결은 이슈 #82의 후속 PR로 나눠 진행합니다.
+- 대체한 결정: DEC-0020의 출석 이력 데모 제거를 유지하면서 홈 레이아웃과 연결 흐름만 확장합니다. 출석 판정·점수 정책을 새로 확정하지 않습니다.
 
 ## DEC-0024 · DataStore 기반 YAPP 세션 저장과 복원
 

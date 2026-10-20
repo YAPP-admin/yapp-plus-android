@@ -19,7 +19,7 @@ last_verified: 2026-10-20
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | My 화면·컴포넌트·리소스 구현됨; App에서 연결 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰 발급, 로그인 상태·오류 조정은 ViewModel에서 처리; 오류·미완료 안내 UI 구현됨; 앱 초기 화면 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 이번 주 세션·현재 기수 일정 모델과 Repository 계약 구현됨 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 세션 모델·계약과 출석 인증·사전 보고 Repository 계약, 보고 종류·오류 모델 구현됨; Data 구현은 후속 |
 | `:data` | `com.yapp.plus.data` | Android Library; 세션 일정 Ktor DataSource·DTO·Domain 매핑·Repository, DataStore 토큰 로컬 DataSource와 `POST /api/auth/session-renewals` API 구현됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그; 토큰 저장 계약, 401 갱신 조율과 재시도 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |

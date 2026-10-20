@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
-import com.yapp.plus.feature.login.model.GoogleLoginCredential
+import com.yapp.plus.feature.login.LoginContent
 
 @Composable
 internal fun AuthDemoRoute(
@@ -18,7 +18,9 @@ internal fun AuthDemoRoute(
     modifier: Modifier = Modifier,
     startDestination: AuthDemoDestination = AuthDemoDestination.Login,
     viewModel: AuthDemoViewModel = viewModel(),
-    onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit = {},
+    loginContent: @Composable (() -> Unit) -> Unit = { onBack ->
+        LoginContent(onBack = onBack, onGoogleLogin = {})
+    },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
@@ -31,7 +33,7 @@ internal fun AuthDemoRoute(
             onPhoneNumberChange = viewModel::updatePhoneNumber,
             onExit = onExit,
             startDestination = startDestination,
-            onGoogleCredentialReceived = onGoogleCredentialReceived,
+            loginContent = loginContent,
             modifier =
                 Modifier
                     .padding(innerPadding)

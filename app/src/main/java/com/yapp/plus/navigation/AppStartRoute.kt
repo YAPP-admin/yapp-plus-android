@@ -1,40 +1,59 @@
 package com.yapp.plus.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
-import com.yapp.plus.feature.login.model.GoogleLoginCredential
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
-
-private const val SPLASH_DURATION_MILLIS = 1_000L
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yapp.plus.feature.login.LoginRoute
 
 @Composable
 internal fun AppStartRoute(
     onExit: () -> Unit,
-    startDestination: AuthDemoDestination,
     modifier: Modifier = Modifier,
-    onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit = {},
+    viewModel: AppAuthViewModel = hiltViewModel(),
 ) {
-    var isSplashVisible by rememberSaveable { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) {
-        delay(SPLASH_DURATION_MILLIS.milliseconds)
-        isSplashVisible = false
-    }
-
-    if (isSplashVisible) {
-        YappSplashScreen(modifier = modifier)
-    } else {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val loginState = uiState as? AppAuthUiState.Login
+    AppStartContent(uiState = uiState, modifier = modifier) { startDestination ->
         AuthDemoRoute(
             onExit = onExit,
             startDestination = startDestination,
             modifier = modifier,
-            onGoogleCredentialReceived = onGoogleCredentialReceived,
+            loginContent = { onBack ->
+                LoginRoute(
+                    onBack = onBack,
+                    onGoogleCredentialReceived = viewModel::signInWithGoogle,
+                    isSessionInProgress = loginState?.isSigningIn == true,
+                    hasSessionError =
+                        loginState?.hasError == true ||
+                            uiState == AppAuthUiState.RestoreError,
+                    onSessionErrorDismissed = viewModel::dismissError,
+                    onSessionRetry =
+                        if (uiState == AppAuthUiState.RestoreError) {
+                            viewModel::retrySessionRestore
+                        } else {
+                            null
+                        },
+                )
+            },
         )
+    }
+}
+
+@Composable
+internal fun AppStartContent(
+    uiState: AppAuthUiState,
+    modifier: Modifier = Modifier,
+    content: @Composable (AuthDemoDestination) -> Unit,
+) {
+    if (uiState == AppAuthUiState.Restoring) {
+        YappSplashScreen(modifier = modifier)
+    } else {
+        val session = (uiState as? AppAuthUiState.Authenticated)?.session
+        key(session?.userId) {
+            content(if (session == null) AuthDemoDestination.Login else AuthDemoDestination.Main)
+        }
     }
 }

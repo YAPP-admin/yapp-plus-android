@@ -9,6 +9,14 @@ import androidx.navigation.compose.rememberNavController
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.preview.TextInputPreviewParameterProvider
 
+@Preview(name = "Session restoration", widthDp = 393, heightDp = 756)
+@Composable
+private fun AppStartContentPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        AppStartContent(uiState = AppAuthUiState.Restoring) {}
+    }
+}
+
 @Preview(name = "Auth demo app", widthDp = 393, heightDp = 756)
 @Composable
 private fun AuthDemoRoutePreview() {

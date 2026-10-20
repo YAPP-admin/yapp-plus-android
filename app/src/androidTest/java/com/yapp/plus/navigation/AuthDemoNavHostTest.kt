@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.domain.auth.AuthSession
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -35,24 +36,56 @@ class AuthDemoNavHostTest {
     private lateinit var navController: NavHostController
     private lateinit var restorationTester: StateRestorationTester
     private var uiState by mutableStateOf(AuthDemoUiState())
+    private var authState by mutableStateOf<AppAuthUiState>(AppAuthUiState.Login())
     private var hasExited = false
 
     @Before
     fun setUp() {
         restorationTester = StateRestorationTester(composeRule)
         restorationTester.setContent {
-            navController = rememberNavController()
             YappTheme(darkTheme = false, dynamicColor = false) {
-                AuthDemoNavHost(
-                    uiState = uiState,
-                    onNameChange = { uiState = uiState.copy(name = it) },
-                    onPhoneNumberChange = { uiState = uiState.copy(phoneNumber = it) },
-                    onExit = { hasExited = true },
-                    startDestination = AuthDemoDestination.Login,
-                    navController = navController,
-                )
+                AppStartContent(uiState = authState) { startDestination ->
+                    navController = rememberNavController()
+                    AuthDemoNavHost(
+                        uiState = uiState,
+                        onNameChange = { uiState = uiState.copy(name = it) },
+                        onPhoneNumberChange = { uiState = uiState.copy(phoneNumber = it) },
+                        onExit = { hasExited = true },
+                        startDestination = startDestination,
+                        navController = navController,
+                        mainContent = {},
+                    )
+                }
             }
         }
+    }
+
+    @Test
+    fun authenticatedSessionStartsMainWithoutLoginHistoryAndSurvivesRotation() {
+        composeRule.runOnIdle {
+            authState = AppAuthUiState.Authenticated(AuthSession("test-user"))
+        }
+        assertCurrentRoute<AuthDemoDestination.Main>()
+        restorationTester.emulateSavedInstanceStateRestore()
+        assertCurrentRoute<AuthDemoDestination.Main>()
+        composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
+        Espresso.pressBack()
+        composeRule.runOnIdle { assertTrue(hasExited) }
+    }
+
+    @Test
+    fun missingSessionCannotRestoreASavedMainDestination() {
+        composeRule.runOnIdle {
+            authState = AppAuthUiState.Authenticated(AuthSession("test-user"))
+        }
+        assertCurrentRoute<AuthDemoDestination.Main>()
+        composeRule.runOnIdle { authState = AppAuthUiState.Restoring }
+        composeRule.onNodeWithText("구글로 계속하기").assertDoesNotExist()
+        restorationTester.emulateSavedInstanceStateRestore()
+        composeRule.runOnIdle { authState = AppAuthUiState.Login() }
+        assertCurrentRoute<AuthDemoDestination.Login>()
+        composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()
+        composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
     }
 
     @Test

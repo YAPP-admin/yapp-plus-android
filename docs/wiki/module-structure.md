@@ -10,7 +10,7 @@ last_verified: 2026-10-20
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·Google ID 토큰 콜백 조립·Navigation 2 가입 UI·메인 탭 내비게이션 및 선택 상태 구현됨; debug는 홈 시작, release는 로그인 시작 |
+| `:app` | `com.yapp.plus` | 앱 진입점·Google ID 토큰 콜백·DataStore 기반 인증 세션과 갱신 API 조립·Navigation 2 가입 UI·메인 탭 내비게이션 및 선택 상태 구현됨; debug는 홈 시작, release는 로그인 시작 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | 이번 주 세션 API Route·ViewModel·UI 모델 및 홈 화면·컴포넌트 구현됨; App에서 연결 |
@@ -20,8 +20,8 @@ last_verified: 2026-10-20
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰 발급, 로그인 상태·오류 조정은 ViewModel에서 처리; 오류·미완료 안내 UI 구현됨; 앱 초기 화면 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 세션 모델·계약과 출석 인증·사전 보고 Repository 계약, 보고 종류·오류 모델 구현됨; Data 구현은 후속 |
-| `:data` | `com.yapp.plus.data` | Android Library; 세션 일정 Ktor DataSource·DTO·Domain 매핑·Repository 및 토큰 로컬 DataSource 구현됨 |
-| `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·기존 Bearer 토큰 공급; 401 갱신 조율과 재시도 기반 구현, Data API·App DI는 후속; API DTO는 `:data` 소유 |
+| `:data` | `com.yapp.plus.data` | Android Library; 세션 일정 Ktor DataSource·DTO·Domain 매핑·Repository, DataStore 토큰 로컬 DataSource와 `POST /api/auth/session-renewals` API 구현됨 |
+| `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그; 토큰 저장 계약, 401 갱신 조율과 재시도 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 암호화 세션 레코드 저장·복원 구현됨; Data에서 사용 |
 
@@ -51,7 +51,7 @@ last_verified: 2026-10-20
 
 ## 인증 저장소 자동 검증
 
-Network의 `TokenPersistence`·`TokenStore`는 토큰 쌍의 최초 복원·조건부 교체·삭제를 직렬화합니다. Data의 `SessionTokenLocalDataSource`가 `:core:datastore`에 연결합니다. App DI와 401 갱신·재시도 연결은 후속입니다.
+Network의 `TokenPersistence`·`TokenStore`는 토큰 쌍의 최초 복원·조건부 교체·삭제를 직렬화합니다. Data의 `SessionTokenLocalDataSource`가 `:core:datastore`에 연결하고 App singleton이 저장소와 갱신 API를 Network에 조립합니다. `SessionTokenRemoteDataSourceTest`는 갱신 요청·회전된 토큰·401·오류 응답을 검증합니다.
 
 ```bash
 ./gradlew :core:network:testDebugUnitTest :data:installDebugAndroidTest

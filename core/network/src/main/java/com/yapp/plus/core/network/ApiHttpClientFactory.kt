@@ -13,7 +13,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
-import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
@@ -37,14 +36,6 @@ object ApiHttpClientFactory {
             tokenStore,
             tokenRefresher,
             isLoggingEnabled = BuildConfig.DEBUG,
-        )
-
-    fun create(accessTokenProvider: AccessTokenProvider): HttpClient =
-        createBaseClient(
-            Android.create(),
-            BuildConfig.API_BASE_URL,
-            BuildConfig.DEBUG,
-            accessTokenProvider,
         )
 
     fun createUnauthenticated(): HttpClient =
@@ -86,24 +77,13 @@ object ApiHttpClientFactory {
         engine: HttpClientEngine,
         baseUrl: String,
         isLoggingEnabled: Boolean,
-        accessTokenProvider: AccessTokenProvider? = null,
-    ): HttpClient {
-        val apiOrigin = URI.create(baseUrl)
-        return HttpClient(engine) {
+    ): HttpClient =
+        HttpClient(engine) {
             expectSuccess = true
             installLogging(isLoggingEnabled)
             install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
-            install(DefaultRequest) {
-                val isApiRequest = shouldAttachAuthorization(url, apiOrigin)
-                url(baseUrl)
-                if (isApiRequest) {
-                    accessTokenProvider?.currentAccessToken()?.let { token ->
-                        header(HttpHeaders.Authorization, "Bearer $token")
-                    }
-                }
-            }
+            install(DefaultRequest) { url(baseUrl) }
         }
-    }
 
     private fun HttpClientConfig<*>.installLogging(isEnabled: Boolean) {
         if (!isEnabled) return

@@ -6,7 +6,7 @@ last_verified: 2026-10-20
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0025`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0026`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -173,6 +173,16 @@ last_verified: 2026-10-20
 - 적용 상태: `com.yapp.plus`와 debug SHA-1 Android OAuth 클라이언트, ID 토큰 audience Web OAuth 클라이언트를 구성했습니다. 현재 release 서명 지문은 없어 등록하지 않았습니다. 앱은 기본 Google 프로필 범위의 ID 토큰과 nonce를 획득하지만 서버 검증·YAPP 세션 발급은 미구현입니다. Testing 상태이므로 등록된 테스트 사용자만 로그인할 수 있습니다.
 - 대체한 결정: DEC-0010의 로그인 제공자와 DEC-0011의 데모 진입 제공자만 대체합니다. 가입 UI 요소 제거와 가입 화면의 표시·입력 상태는 유지하되 Google ID 토큰만으로 진입하지 않습니다.
 
+## DEC-0018 · 커밋과 PR 작업은 명시 요청이 있을 때만 수행
+
+- 기록일: 2026-10-19
+- 결정: 구현 요청은 필요한 이슈 작성, 구현, 검증과 리뷰까지 진행합니다. 커밋과 PR 생성·갱신은 사용자가 해당 작업을 명시적으로 요청한 경우에만 수행합니다. 푸시는 PR 생성·갱신에 필요한 경우에만 합니다.
+- 이유: 구현 완료를 커밋이나 PR로 공유하라는 요청으로 간주하지 않도록 합니다.
+- 근거: 사용자의 명시 요청, [이슈 #88](https://github.com/YAPP-admin/yapp-plus-android/issues/88).
+- 반영: `AGENTS.md`, `.codex/prompts/yapp-work.md`.
+- 적용 상태: 두 작업 지침의 실행 범위, 조율자 책임과 완료 절차에 반영했습니다.
+- 대체한 결정: 없음. 기존 에이전트 작업 지침을 변경합니다.
+
 ## DEC-0019 · 401 세션 갱신과 동시 갱신 중복 방지
 
 - 기록일: 2026-10-19
@@ -202,3 +212,13 @@ last_verified: 2026-10-20
 - 반영: [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `:core:datastore`, Data 로컬 DataSource, Network 저장 계약, `README.md`, `AGENTS.md`.
 - 적용 상태: DataStore 1.2.1·Keystore AES-256-GCM·백업 제외 경로와 namespace별 파일 분리를 구현합니다. 저장·복원 기반 및 재시작 검증을 먼저 반영하며, App DI와 401 갱신·재시도 연결은 후속입니다.
 - 대체한 결정: 없음.
+
+## DEC-0025 · 저장된 YAPP 세션과 401 갱신 연결
+
+- 기록일: 2026-10-20
+- 결정: App은 DataStore 기반 토큰 저장소와 Network 세션 조율자를 singleton으로 연결합니다. Data는 인증되지 않은 HTTP client로 `POST /api/auth/session-renewals`를 호출해 회전된 access/refresh token 쌍을 반환합니다. 인증된 API의 401은 갱신 결과를 동시 요청과 공유하고 원래 요청을 한 번 재시도합니다.
+- 이유: 저장·복원된 세션이 실제 API 요청의 만료 처리와 연결돼야 프로세스 재시작 뒤에도 회전형 refresh token을 사용할 수 있습니다.
+- 근거: 사용자 요청과 [이슈 #76](https://github.com/YAPP-admin/yapp-plus-android/issues/76), DataStore 도입 [이슈 #83](https://github.com/YAPP-admin/yapp-plus-android/issues/83), 서버 OpenAPI의 갱신 계약.
+- 반영: `:data`, `:core:network`, `:app`, [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`.
+- 적용 상태: DataStore 토큰 복원, 갱신 API 호출, App singleton 조립과 401 재시도를 연결했습니다. 초기 Google ID 토큰 검증·YAPP 세션 발급은 후속입니다.
+- 대체한 결정: DEC-0019의 Data API·App 조립 후속 부분과 DEC-0024의 App DI·401 연결 후속 부분만 완료합니다. 기존 갱신·동시 요청 공유 정책과 토큰 저장 정책은 유지합니다.

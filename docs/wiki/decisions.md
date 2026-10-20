@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-19
+last_verified: 2026-10-20
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0018`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0025`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -172,3 +172,13 @@ last_verified: 2026-10-19
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:login`, App 인증 콜백.
 - 적용 상태: `com.yapp.plus`와 debug SHA-1 Android OAuth 클라이언트, ID 토큰 audience Web OAuth 클라이언트를 구성했습니다. 현재 release 서명 지문은 없어 등록하지 않았습니다. 앱은 기본 Google 프로필 범위의 ID 토큰과 nonce를 획득하지만 서버 검증·YAPP 세션 발급은 미구현입니다. Testing 상태이므로 등록된 테스트 사용자만 로그인할 수 있습니다.
 - 대체한 결정: DEC-0010의 로그인 제공자와 DEC-0011의 데모 진입 제공자만 대체합니다. 가입 UI 요소 제거와 가입 화면의 표시·입력 상태는 유지하되 Google ID 토큰만으로 진입하지 않습니다.
+
+## DEC-0024 · DataStore 기반 YAPP 세션 저장과 복원
+
+- 기록일: 2026-10-20
+- 결정: 서버가 발급·회전한 YAPP access/refresh token 쌍을 DataStore에 함께 저장·복원하고 교체·삭제도 저장에 반영합니다. Google ID 토큰과 nonce는 저장하지 않습니다.
+- 이유: 앱 프로세스 재시작 후 최신 토큰 쌍을 복원하고 일회용 refresh token의 회전 결과가 메모리와 디스크에서 일치하도록 합니다.
+- 근거: 사용자 명시 요청 “DataStore쓰자” 및 자동 검증 요청, [이슈 #83](https://github.com/YAPP-admin/yapp-plus-android/issues/83).
+- 반영: [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `:core:datastore`, Data 로컬 DataSource, Network 저장 계약, `README.md`, `AGENTS.md`.
+- 적용 상태: DataStore 1.2.1·Keystore AES-256-GCM·백업 제외 경로와 namespace별 파일 분리를 구현합니다. 저장·복원 기반 및 재시작 검증을 먼저 반영하며, App DI와 401 갱신·재시도 연결은 후속입니다.
+- 대체한 결정: 없음.

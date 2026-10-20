@@ -7,8 +7,8 @@ import com.yapp.plus.core.network.auth.TokenPersistence
 import com.yapp.plus.core.network.auth.TokenRefresher
 import com.yapp.plus.core.network.auth.TokenStore
 import com.yapp.plus.data.attendance.AttendanceDataSource
-import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
+import com.yapp.plus.data.attendance.SupabaseAttendanceDataSource
 import com.yapp.plus.data.auth.AuthDataSource
 import com.yapp.plus.data.auth.AuthTokenLocalDataSource
 import com.yapp.plus.data.auth.SessionTokenLocalDataSource
@@ -73,8 +73,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAttendanceDataSource(httpClient: HttpClient): AttendanceDataSource =
-        AttendanceRemoteDataSource(httpClient)
+    fun provideAttendanceDataSource(client: SupabaseRestClient): AttendanceDataSource =
+        SupabaseAttendanceDataSource(client)
 
     @Provides
     @Singleton

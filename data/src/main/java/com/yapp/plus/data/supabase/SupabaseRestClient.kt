@@ -4,15 +4,22 @@ import com.yapp.plus.data.auth.AuthDataSource
 import com.yapp.plus.data.auth.AuthTokenLocalDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.expectSuccess
-import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 class SupabaseRestClient(
     private val httpClient: HttpClient,
@@ -25,11 +32,25 @@ class SupabaseRestClient(
         path: String,
         parameters: List<Pair<String, String>> = emptyList(),
         transform: (String) -> T,
+    ): T = execute(path, HttpMethod.Get, parameters, body = null, transform)
+
+    suspend fun <T> post(
+        path: String,
+        body: JsonObject,
+        transform: (String) -> T,
+    ): T = execute(path, HttpMethod.Post, emptyList(), body, transform)
+
+    private suspend fun <T> execute(
+        path: String,
+        method: HttpMethod,
+        parameters: List<Pair<String, String>>,
+        body: JsonObject?,
+        transform: (String) -> T,
     ): T =
         try {
-            val response = authenticatedRequest(path, parameters)
+            val response = authenticatedRequest(path, method, parameters, body)
             if (response.status.value !in 200..299) {
-                throw SupabaseDataSourceException("Data request failed (${response.status.value})")
+                throw requestFailure(response, method)
             }
             transform(response.bodyAsText())
         } catch (exception: CancellationException) {
@@ -45,14 +66,16 @@ class SupabaseRestClient(
 
     private suspend fun authenticatedRequest(
         path: String,
+        method: HttpMethod,
         parameters: List<Pair<String, String>>,
+        body: JsonObject?,
     ): HttpResponse {
-        val response = request(path, parameters, fetchAccessToken())
+        val response = request(path, method, parameters, body, fetchAccessToken())
         if (response.status != HttpStatusCode.Unauthorized) return response
         if (authDataSource.fetchSession() == null) {
             throw SupabaseDataSourceException("Authentication required")
         }
-        return request(path, parameters, fetchAccessToken())
+        return request(path, method, parameters, body, fetchAccessToken())
     }
 
     private suspend fun fetchAccessToken(): String =
@@ -61,17 +84,49 @@ class SupabaseRestClient(
 
     private suspend fun request(
         path: String,
+        method: HttpMethod,
         parameters: List<Pair<String, String>>,
+        body: JsonObject?,
         accessToken: String,
     ): HttpResponse {
         if (!publishableKey.startsWith("sb_publishable_")) {
             throw SupabaseDataSourceException("Configure supabase.publishableKey for data requests")
         }
-        return httpClient.get("${projectUrl.trimEnd('/')}/rest/v1/$path") {
+        return httpClient.request("${projectUrl.trimEnd('/')}/rest/v1/$path") {
+            this.method = method
             expectSuccess = false
             header("apikey", publishableKey)
             header(HttpHeaders.Authorization, "Bearer $accessToken")
             for ((name, value) in parameters) url.parameters.append(name, value)
+            if (body != null) {
+                contentType(ContentType.Application.Json)
+                setBody(body.toString())
+            }
         }
+    }
+
+    private suspend fun requestFailure(
+        response: HttpResponse,
+        method: HttpMethod,
+    ): SupabaseDataSourceException {
+        val code =
+            if (method == HttpMethod.Post) readErrorCode(response.bodyAsText()) else null
+        return SupabaseDataSourceException(
+            message = "Data request failed (${response.status.value})",
+            code = code,
+        )
+    }
+
+    private fun readErrorCode(body: String): String? {
+        val error = runCatching { Json.decodeFromString<JsonObject>(body) }.getOrNull()
+        return INVALID_ATTENDANCE_CODE.takeIf { marker ->
+            listOf("code", "message").any {
+                (error?.get(it) as? JsonPrimitive)?.content == marker
+            }
+        }
+    }
+
+    private companion object {
+        const val INVALID_ATTENDANCE_CODE = "INVALID_ATTENDANCE_CODE"
     }
 }

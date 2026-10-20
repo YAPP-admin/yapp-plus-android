@@ -14,6 +14,23 @@ import org.junit.Test
 
 class SupabaseRestClientTest {
     @Test
+    fun `GET failures retain generic status without interpreting the response body`() =
+        runTest {
+            SupabaseTestFixture(handler = {
+                respond(
+                    """{"message":"INVALID_ATTENDANCE_CODE","details":"access-secret"}""",
+                    HttpStatusCode.BadRequest,
+                )
+            }).use { fixture ->
+                val failure =
+                    runCatching { fixture.client.fetch("mvp_notices") { it } }.exceptionOrNull()
+                assertSanitized(failure)
+                assertEquals("Data request failed (400)", failure?.message)
+                assertNull((failure as SupabaseDataSourceException).code)
+            }
+        }
+
+    @Test
     fun `REST 401 restores and refreshes Auth then retries with persisted rotated token`() =
         runTest {
             val paths = mutableListOf<String>()

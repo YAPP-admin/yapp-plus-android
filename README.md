@@ -8,7 +8,7 @@
 
 인증 세션이 공급된 뒤의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 갱신 API·DTO·로컬 저장 연결을, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다. 초기 로그인 API 연동은 후속이며 저장된 세션이 없으면 별도의 유효한 YAPP 토큰 쌍 공급이 필요합니다.
 
-비공개 MVP의 일정·공지 Data는 Supabase 인증 REST와 App Hilt에 연결했습니다. 일정은 테스트 세션만 조회하고 공식 기수가 비어 있으면 테스트 전용 0으로 매핑합니다. Login·공지 Feature 연결과 Supabase 출석 어댑터는 후속이며 DB migration은 실제 프로젝트에 아직 적용하지 않았습니다.
+비공개 MVP의 Supabase Auth 어댑터·암호화 세션 저장과 일정·공지·출석 검증 Data를 App Hilt에 연결했습니다. 일정은 테스트 세션만 조회하고 공식 기수가 비어 있으면 테스트 전용 0으로 매핑합니다. 출석은 인증된 RPC로 네 자리 코드를 보내고 서버가 확정한 결과를 검증합니다. MVP migration에는 보고 backend가 없어 해당 호출은 일반 실패로 끝납니다. Login·공지 Feature 연결과 보고 UI 정리는 후속이며 DB migration은 실제 프로젝트에 아직 적용하지 않았습니다.
 
 ## 아키텍처와 모듈
 
@@ -93,4 +93,4 @@ OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지�
 
 ### 수정된 홈 화면
 
-홈의 주간 세션·달력·빠른 메뉴, 알림 UI, 출석 코드 입력/완료와 출결 보고 흐름을 수정된 Figma에 맞춰 연결합니다. 출석 검증·보고는 실제 API 계약을 사용하며 공지·알림·출석 기록 조회는 후속입니다. 지각 시간의 추가 선택은 디자이너 확인 전 임시 적용입니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.
+홈의 주간 세션·달력·빠른 메뉴, 알림 UI, 출석 코드 입력/완료와 출결 보고 흐름을 수정된 Figma에 맞춰 연결합니다. 출석 검증은 Supabase RPC를 사용하고 기존 YAPP 검증·보고 어댑터는 향후 전환을 위해 보존합니다. 현재 Supabase 경로에서 보고는 지원하지 않으며 공지·알림·출석 기록의 Feature 연결은 후속입니다. 지각 시간의 추가 선택은 디자이너 확인 전 임시 적용입니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.

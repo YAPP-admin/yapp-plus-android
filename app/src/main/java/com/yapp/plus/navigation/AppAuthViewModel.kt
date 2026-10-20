@@ -83,13 +83,15 @@ internal class AppAuthViewModel
                 } else {
                     AppAuthUiState.Login(hasError = true)
                 }
+            var requestCompleted = false
             try {
                 val session =
                     withTimeoutOrNull(SESSION_REQUEST_TIMEOUT_MILLIS) {
-                        request()
+                        request().also { requestCompleted = true }
                     }
                 mutableUiState.value =
                     when {
+                        !requestCompleted -> failureState
                         session == null -> AppAuthUiState.Login()
                         requiresSignUp -> {
                             savedStateHandle[REQUIRES_SIGN_UP_KEY] = true

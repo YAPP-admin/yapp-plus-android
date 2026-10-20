@@ -193,3 +193,13 @@ last_verified: 2026-10-20
 - 반영: [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `:core:datastore`, Data 로컬 DataSource, Network 저장 계약, `README.md`, `AGENTS.md`.
 - 적용 상태: DataStore 1.2.1·Keystore AES-256-GCM·백업 제외 경로와 namespace별 파일 분리를 구현합니다. 저장·복원 기반 및 재시작 검증을 먼저 반영하며, App DI와 401 갱신·재시도 연결은 후속입니다.
 - 대체한 결정: 없음.
+
+## DEC-0025 · 저장된 YAPP 세션과 401 갱신 연결
+
+- 기록일: 2026-10-20
+- 결정: App은 DataStore 기반 토큰 저장소와 Network 세션 조율자를 singleton으로 연결합니다. Data는 인증되지 않은 HTTP client로 `POST /api/auth/session-renewals`를 호출해 회전된 access/refresh token 쌍을 반환합니다. 인증된 API의 401은 갱신 결과를 동시 요청과 공유하고 원래 요청을 한 번 재시도합니다.
+- 이유: 저장·복원된 세션이 실제 API 요청의 만료 처리와 연결돼야 프로세스 재시작 뒤에도 회전형 refresh token을 사용할 수 있습니다.
+- 근거: 사용자 요청과 [이슈 #76](https://github.com/YAPP-admin/yapp-plus-android/issues/76), DataStore 도입 [이슈 #83](https://github.com/YAPP-admin/yapp-plus-android/issues/83), 서버 OpenAPI의 갱신 계약.
+- 반영: `:data`, `:core:network`, `:app`, [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`.
+- 적용 상태: DataStore 토큰 복원, 갱신 API 호출, App singleton 조립과 401 재시도를 연결했습니다. 초기 Google ID 토큰 검증·YAPP 세션 발급은 후속입니다.
+- 대체한 결정: DEC-0019의 Data API·App 조립 후속 부분과 DEC-0024의 App DI·401 연결 후속 부분만 완료합니다. 기존 갱신·동시 요청 공유 정책과 토큰 저장 정책은 유지합니다.

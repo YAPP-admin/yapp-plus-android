@@ -81,11 +81,6 @@ android {
                 "CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE",
                 buildConfigString(mockApiExample("yapp.api.mock.example.generation-sessions")),
             )
-            buildConfigField(
-                "String",
-                "DEBUG_ACCESS_TOKEN",
-                buildConfigString(localProperties.getProperty("yapp.api.debug.token", "").trim()),
-            )
         }
 
         getByName("release") {
@@ -93,7 +88,6 @@ android {
             buildConfigField("Boolean", "MOCK_API_ENABLED", "false")
             buildConfigField("String", "CURRENT_WEEK_MOCK_EXAMPLE", "\"\"")
             buildConfigField("String", "CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE", "\"\"")
-            buildConfigField("String", "DEBUG_ACCESS_TOKEN", "\"\"")
         }
     }
 }

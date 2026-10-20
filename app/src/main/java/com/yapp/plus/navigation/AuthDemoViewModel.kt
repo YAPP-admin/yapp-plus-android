@@ -34,6 +34,12 @@ internal class AuthDemoViewModel
             mutableUiState.update { it.copy(phoneNumber = value) }
         }
 
+        fun clearSignUpInputs() {
+            savedStateHandle.remove<String>(NAME_KEY)
+            savedStateHandle.remove<String>(PHONE_NUMBER_KEY)
+            mutableUiState.value = AuthDemoUiState()
+        }
+
         internal companion object {
             const val NAME_KEY = "authDemoName"
             const val PHONE_NUMBER_KEY = "authDemoPhoneNumber"

@@ -15,6 +15,7 @@ import com.yapp.plus.feature.login.LoginContent
 @Composable
 internal fun AuthDemoRoute(
     onExit: () -> Unit,
+    onSignUpComplete: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     startDestination: AuthDemoDestination = AuthDemoDestination.Login,
     viewModel: AuthDemoViewModel = viewModel(),
@@ -23,6 +24,13 @@ internal fun AuthDemoRoute(
     },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val signUpComplete =
+        onSignUpComplete?.let { callback ->
+            {
+                viewModel.clearSignUpInputs()
+                callback()
+            }
+        }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = YappAuthColor.background,
@@ -32,6 +40,7 @@ internal fun AuthDemoRoute(
             onNameChange = viewModel::updateName,
             onPhoneNumberChange = viewModel::updatePhoneNumber,
             onExit = onExit,
+            onSignUpComplete = signUpComplete,
             startDestination = startDestination,
             loginContent = loginContent,
             modifier =

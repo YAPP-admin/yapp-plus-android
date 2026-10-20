@@ -51,6 +51,9 @@ class AuthDemoNavHostTest {
                         onNameChange = { uiState = uiState.copy(name = it) },
                         onPhoneNumberChange = { uiState = uiState.copy(phoneNumber = it) },
                         onExit = { hasExited = true },
+                        onSignUpComplete = {
+                            authState = AppAuthUiState.Authenticated(AuthSession("test-user"))
+                        },
                         startDestination = startDestination,
                         navController = navController,
                         mainContent = {},
@@ -93,10 +96,10 @@ class AuthDemoNavHostTest {
         assertCurrentRoute<AuthDemoDestination.Login>()
         navigateRepeatedly(AuthDemoDestination.Name)
         navigateRepeatedly(AuthDemoDestination.Phone)
-        navigateRepeatedly(AuthDemoDestination.Pending)
+        navigateRepeatedly(AuthDemoDestination.SignUpComplete)
         navigateRepeatedly(AuthDemoDestination.Main)
 
-        popAndAssert<AuthDemoDestination.Pending>()
+        popAndAssert<AuthDemoDestination.SignUpComplete>()
         popAndAssert<AuthDemoDestination.Phone>()
         popAndAssert<AuthDemoDestination.Name>()
         popAndAssert<AuthDemoDestination.Login>()
@@ -107,7 +110,7 @@ class AuthDemoNavHostTest {
     fun repeatedBackCallbacksPopOnlyTheirOwnEntry() {
         navigateRepeatedly(AuthDemoDestination.Name)
         navigateRepeatedly(AuthDemoDestination.Phone)
-        navigateRepeatedly(AuthDemoDestination.Pending)
+        navigateRepeatedly(AuthDemoDestination.SignUpComplete)
 
         composeRule.runOnIdle {
             val pendingEntry = checkNotNull(navController.currentBackStackEntry)
@@ -121,32 +124,33 @@ class AuthDemoNavHostTest {
     fun restoresTheDestinationAndCompleteBackStack() {
         navigateRepeatedly(AuthDemoDestination.Name)
         navigateRepeatedly(AuthDemoDestination.Phone)
-        navigateRepeatedly(AuthDemoDestination.Pending)
+        navigateRepeatedly(AuthDemoDestination.SignUpComplete)
         navigateRepeatedly(AuthDemoDestination.Main)
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         assertCurrentRoute<AuthDemoDestination.Main>()
-        popAndAssert<AuthDemoDestination.Pending>()
+        popAndAssert<AuthDemoDestination.SignUpComplete>()
         popAndAssert<AuthDemoDestination.Phone>()
         popAndAssert<AuthDemoDestination.Name>()
         popAndAssert<AuthDemoDestination.Login>()
     }
 
     @Test
-    fun authDemoEndsAtPendingAndBackReturnsThroughTheAuthDemo() {
-        navigateRepeatedly(AuthDemoDestination.Name)
+    fun authDemoCompletesImmediatelyAndStartsTheApp() {
+        composeRule.runOnIdle {
+            authState = AppAuthUiState.SignUpRequired(AuthSession("test-user"))
+        }
+        assertCurrentRoute<AuthDemoDestination.Name>()
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
-        assertCurrentRoute<AuthDemoDestination.Pending>()
-        composeRule.onNodeWithText("운영진 승인을 기다리고 있어요...").assertIsDisplayed()
+        assertCurrentRoute<AuthDemoDestination.SignUpComplete>()
+        composeRule.onNodeWithText("회원가입을 완료했어요!").assertIsDisplayed()
+        composeRule.onNodeWithText("운영진 승인을 기다리고 있어요...").assertDoesNotExist()
         composeRule.onNodeWithText("앱 둘러보기").assertDoesNotExist()
-        Espresso.pressBack()
-        composeRule.onAllNodesWithText("휴대폰 번호를 입력해 주세요")[0].assertIsDisplayed()
-        Espresso.pressBack()
-        composeRule.onNodeWithText("이름을 입력해 주세요").assertIsDisplayed()
-        Espresso.pressBack()
-        composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()
+        composeRule.onNodeWithText("시작하기").performClick()
+        assertCurrentRoute<AuthDemoDestination.Main>()
+        composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
         Espresso.pressBack()
         composeRule.runOnIdle { assertTrue(hasExited) }
     }
@@ -161,7 +165,7 @@ class AuthDemoNavHostTest {
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertCurrentRoute<AuthDemoDestination.Pending>()
+        assertCurrentRoute<AuthDemoDestination.SignUpComplete>()
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("01012345678")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()

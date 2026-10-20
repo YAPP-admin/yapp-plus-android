@@ -1,5 +1,6 @@
 package com.yapp.plus.navigation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.auth.AuthRepository
@@ -20,25 +21,47 @@ internal class AppAuthViewModel
     @Inject
     constructor(
         private val authRepository: AuthRepository,
+        private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         private val mutableUiState = MutableStateFlow<AppAuthUiState>(AppAuthUiState.Restoring)
         val uiState = mutableUiState.asStateFlow()
 
         init {
-            viewModelScope.launch { resolveSession(authRepository::fetchSession) }
+            viewModelScope.launch {
+                resolveSession(
+                    request = authRepository::fetchSession,
+                    requiresSignUp = savedStateHandle[REQUIRES_SIGN_UP_KEY] ?: false,
+                )
+            }
         }
 
         fun retrySessionRestore() {
             if (mutableUiState.value != AppAuthUiState.RestoreError) return
             mutableUiState.value = AppAuthUiState.Restoring
-            viewModelScope.launch { resolveSession(authRepository::fetchSession) }
+            viewModelScope.launch {
+                resolveSession(
+                    request = authRepository::fetchSession,
+                    requiresSignUp = savedStateHandle[REQUIRES_SIGN_UP_KEY] ?: false,
+                )
+            }
         }
 
         fun signInWithGoogle(credential: GoogleLoginCredential) {
             val state = mutableUiState.value as? AppAuthUiState.Login ?: return
             if (state.isSigningIn) return
             mutableUiState.value = AppAuthUiState.Login(isSigningIn = true)
-            viewModelScope.launch { resolveSession { authRepository.signInWithGoogle(credential) } }
+            viewModelScope.launch {
+                resolveSession(
+                    request = { authRepository.signInWithGoogle(credential) },
+                    requiresSignUp = true,
+                )
+            }
+        }
+
+        fun completeSignUp() {
+            val state = mutableUiState.value as? AppAuthUiState.SignUpRequired ?: return
+            savedStateHandle.remove<Boolean>(REQUIRES_SIGN_UP_KEY)
+            mutableUiState.value = AppAuthUiState.Authenticated(state.session)
         }
 
         fun dismissError() {
@@ -50,18 +73,32 @@ internal class AppAuthViewModel
             mutableUiState.value = state.copy(hasError = false)
         }
 
-        private suspend fun resolveSession(request: suspend () -> AuthSession?) {
+        private suspend fun resolveSession(
+            request: suspend () -> AuthSession?,
+            requiresSignUp: Boolean = false,
+        ) {
             val failureState =
                 if (mutableUiState.value == AppAuthUiState.Restoring) {
                     AppAuthUiState.RestoreError
                 } else {
                     AppAuthUiState.Login(hasError = true)
                 }
+            var requestCompleted = false
             try {
-                mutableUiState.value =
+                val session =
                     withTimeoutOrNull(SESSION_REQUEST_TIMEOUT_MILLIS) {
-                        request()?.let(AppAuthUiState::Authenticated) ?: AppAuthUiState.Login()
-                    } ?: failureState
+                        request().also { requestCompleted = true }
+                    }
+                mutableUiState.value =
+                    when {
+                        !requestCompleted -> failureState
+                        session == null -> AppAuthUiState.Login()
+                        requiresSignUp -> {
+                            savedStateHandle[REQUIRES_SIGN_UP_KEY] = true
+                            AppAuthUiState.SignUpRequired(session)
+                        }
+                        else -> AppAuthUiState.Authenticated(session)
+                    }
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
@@ -79,5 +116,9 @@ internal class AppAuthViewModel
             ) {
                 mutableUiState.value = AppAuthUiState.Login()
             }
+        }
+
+        private companion object {
+            const val REQUIRES_SIGN_UP_KEY = "requiresSignUp"
         }
     }

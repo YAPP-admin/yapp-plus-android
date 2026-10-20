@@ -25,6 +25,7 @@ internal fun AuthDemoNavHost(
     onNameChange: (String) -> Unit,
     onPhoneNumberChange: (String) -> Unit,
     onExit: () -> Unit,
+    onSignUpComplete: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     startDestination: AuthDemoDestination = AuthDemoDestination.Login,
     navController: NavHostController = rememberNavController(),
@@ -65,16 +66,16 @@ internal fun AuthDemoNavHost(
                 value = uiState.phoneNumber,
                 onValueChange = onPhoneNumberChange,
                 isNextEnabled = true,
-                onNext = { navController.navigateFrom(entry, AuthDemoDestination.Pending) },
+                onNext = { navController.navigateFrom(entry, AuthDemoDestination.SignUpComplete) },
                 onBack = { navController.navigateBackFrom(entry, onExit) },
                 modifier = Modifier.fillMaxSize(),
             )
         }
-        composable<AuthDemoDestination.Pending> { entry ->
+        composable<AuthDemoDestination.SignUpComplete> { entry ->
             AuthStatusContent(
-                status = AuthStatus.Pending,
+                status = AuthStatus.Complete,
                 onBack = { navController.navigateBackFrom(entry, onExit) },
-                onAction = {},
+                onAction = { navController.completeSignUpFrom(entry, onSignUpComplete) },
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -108,6 +109,18 @@ internal fun NavHostController.navigateBackFrom(
         onExit()
     } else {
         popBackStack()
+    }
+}
+
+internal fun NavHostController.completeSignUpFrom(
+    entry: NavBackStackEntry,
+    onSignUpComplete: (() -> Unit)?,
+) {
+    if (!canNavigateFrom(entry)) return
+    if (onSignUpComplete == null) {
+        navigateFrom(entry, AuthDemoDestination.Main)
+    } else {
+        onSignUpComplete()
     }
 }
 

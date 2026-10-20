@@ -1,5 +1,6 @@
 package com.yapp.plus.navigation
 
+import androidx.lifecycle.SavedStateHandle
 import com.yapp.plus.domain.auth.AuthSession
 import com.yapp.plus.domain.auth.GoogleLoginCredential
 import kotlinx.coroutines.CancellationException
@@ -34,7 +35,7 @@ class AppAuthViewModelTest {
         runTest(dispatcher) {
             val result = CompletableDeferred<AuthSession?>()
             val repository = FakeAuthRepository().apply { restore = { result.await() } }
-            val viewModel = AppAuthViewModel(repository)
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
             assertEquals(AppAuthUiState.Restoring, viewModel.uiState.value)
             result.complete(session)
             advanceUntilIdle()
@@ -46,7 +47,7 @@ class AppAuthViewModelTest {
         runTest(dispatcher) {
             val result = CompletableDeferred<AuthSession>()
             val repository = FakeAuthRepository().apply { login = { result.await() } }
-            val viewModel = AppAuthViewModel(repository)
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
             advanceUntilIdle()
             val credential = GoogleLoginCredential("fake-id-token", "raw-nonce")
             repeat(5) { viewModel.signInWithGoogle(credential) }
@@ -55,6 +56,8 @@ class AppAuthViewModelTest {
             advanceUntilIdle()
             assertSame(credential, repository.credential)
             assertEquals(1, repository.loginCount)
+            assertEquals(AppAuthUiState.SignUpRequired(session), viewModel.uiState.value)
+            viewModel.completeSignUp()
             assertEquals(AppAuthUiState.Authenticated(session), viewModel.uiState.value)
         }
 
@@ -66,7 +69,7 @@ class AppAuthViewModelTest {
                     restore = { error("invalid stored session") }
                     login = { error("sensitive provider response") }
                 }
-            val viewModel = AppAuthViewModel(repository)
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
             advanceUntilIdle()
             assertEquals(AppAuthUiState.RestoreError, viewModel.uiState.value)
             repository.restore = { null }
@@ -82,7 +85,7 @@ class AppAuthViewModelTest {
             viewModel.signInWithGoogle(credential)
             advanceUntilIdle()
             assertEquals(2, repository.loginCount)
-            assertEquals(AppAuthUiState.Authenticated(session), viewModel.uiState.value)
+            assertEquals(AppAuthUiState.SignUpRequired(session), viewModel.uiState.value)
         }
 
     @Test
@@ -90,7 +93,7 @@ class AppAuthViewModelTest {
         runTest(dispatcher) {
             val repository =
                 FakeAuthRepository().apply { login = { throw CancellationException() } }
-            val viewModel = AppAuthViewModel(repository)
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
             advanceUntilIdle()
             assertEquals(AppAuthUiState.Login(), viewModel.uiState.value)
             viewModel.signInWithGoogle(GoogleLoginCredential("fake-id-token", "raw-nonce"))
@@ -106,7 +109,7 @@ class AppAuthViewModelTest {
                     restore = { awaitCancellation() }
                     login = { awaitCancellation() }
                 }
-            val viewModel = AppAuthViewModel(repository)
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
             advanceUntilIdle()
             assertEquals(AppAuthUiState.RestoreError, viewModel.uiState.value)
             repository.restore = { null }

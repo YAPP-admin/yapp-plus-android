@@ -8,6 +8,8 @@
 
 인증 세션이 공급된 뒤의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 갱신 API·DTO·로컬 저장 연결을, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다. 초기 로그인 API 연동은 후속이며 저장된 세션이 없으면 별도의 유효한 YAPP 토큰 쌍 공급이 필요합니다.
 
+비공개 MVP의 일정·공지 Data는 Supabase 인증 REST와 App Hilt에 연결했습니다. 일정은 테스트 세션만 조회하고 공식 기수가 비어 있으면 테스트 전용 0으로 매핑합니다. Login·공지 Feature 연결과 Supabase 출석 어댑터는 후속이며 DB migration은 실제 프로젝트에 아직 적용하지 않았습니다.
+
 ## 아키텍처와 모듈
 
 인증된 API의 401 갱신과 원래 요청 1회 재시도, 동시 갱신 공유를 구현했습니다. Data의 갱신 API와 DTO, DataStore 토큰 저장소를 App singleton으로 조립하며, `:core:datastore`는 토큰 쌍을 암호화해 저장·복원합니다. 초기 로그인 세션 발급은 후속입니다. 저장소 프로세스 재시작 검증 방법은 [모듈 구조](docs/wiki/module-structure.md#인증-저장소-자동-검증)에 있습니다.

@@ -6,7 +6,7 @@
 - 승인된 아키텍처는 [Wiki의 아키텍처 문서](docs/wiki/architecture.md)에 기록된 MVVM + 단방향 상태 흐름(UDF) + 필요한 범위의 Clean Architecture다.
 - GitHub 저장소는 `YAPP-admin/yapp-plus-android`다. 브랜치·제목·라벨·변경량 정책의 기준은 [CONTRIBUTING.md](CONTRIBUTING.md)다.
 - 공통 Gradle convention plugin은 `build-logic/` included build에서 관리하고, 라이브러리 버전은 `gradle/libs.versions.toml`에 둔다.
-- 이번 주 세션·현재 기수 일정 API는 Domain·Data를 거쳐 홈·일정 Feature의 ViewModel과 App 화면까지 연결되어 있다. 로그인·회원 정보·출석 기록 API는 후속 작업이다.
+- 이번 주 세션·현재 기수 일정 API는 Domain·Data를 거쳐 홈·일정 Feature의 ViewModel과 App 화면까지 연결되어 있다. 일정·공지 Data는 Supabase 인증 REST를 사용하며 공지 Feature와 출석 어댑터 전환은 후속이다. 로그인 Feature 연결, YAPP 회원 정보·출석 기록 API는 후속 작업이다.
 - YAPP access/refresh token 쌍은 Data와 `:core:datastore`를 통해 암호화 저장·복원한다. App singleton이 Data 저장소와 갱신 API를 Network에 연결하며, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도한다. 초기 YAPP 세션 발급은 후속 작업이다.
 - 홈, 게시판, My, 일정 탭은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있다. 탭 내비게이션·선택 상태는 App이 소유하며 실제 모듈 현황은 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.

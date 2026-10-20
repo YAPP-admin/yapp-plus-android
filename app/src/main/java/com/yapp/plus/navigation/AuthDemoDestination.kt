@@ -14,7 +14,7 @@ internal sealed interface AuthDemoDestination {
     data object Phone : AuthDemoDestination
 
     @Serializable
-    data object Pending : AuthDemoDestination
+    data object SignUpComplete : AuthDemoDestination
 
     @Serializable
     data object Main : AuthDemoDestination

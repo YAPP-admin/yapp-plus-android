@@ -19,6 +19,7 @@ internal fun AppStartRoute(
     AppStartContent(uiState = uiState, modifier = modifier) { startDestination ->
         AuthDemoRoute(
             onExit = onExit,
+            onSignUpComplete = viewModel::completeSignUp,
             startDestination = startDestination,
             modifier = modifier,
             loginContent = { onBack ->
@@ -51,9 +52,20 @@ internal fun AppStartContent(
     if (uiState == AppAuthUiState.Restoring) {
         YappSplashScreen(modifier = modifier)
     } else {
-        val session = (uiState as? AppAuthUiState.Authenticated)?.session
-        key(session?.userId) {
-            content(if (session == null) AuthDemoDestination.Login else AuthDemoDestination.Main)
+        val session =
+            when (uiState) {
+                is AppAuthUiState.Authenticated -> uiState.session
+                is AppAuthUiState.SignUpRequired -> uiState.session
+                else -> null
+            }
+        val startDestination =
+            when {
+                session == null -> AuthDemoDestination.Login
+                uiState is AppAuthUiState.SignUpRequired -> AuthDemoDestination.Name
+                else -> AuthDemoDestination.Main
+            }
+        key(session?.userId, uiState is AppAuthUiState.SignUpRequired) {
+            content(startDestination)
         }
     }
 }

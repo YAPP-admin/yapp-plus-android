@@ -110,8 +110,8 @@ last_verified: 2026-10-20
 - 이유: 화면 표현을 독립 모듈로 분리한 뒤 App에서 승인된 데모 흐름을 연결하기 위해 단계별 PR로 진행합니다.
 - 근거: 이번 세션의 사용자 승인, [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`.
-- 적용 상태: 모듈 분리 PR #29 병합 후 [이슈 #35](https://github.com/YAPP-admin/yapp-plus-android/issues/35)에서 Navigation Compose 2.10.2의 타입 기반 목적지와 App의 공통 ViewModel·`SavedStateHandle`로 데모 흐름을 구현했습니다. 뒤로 가기·반복 탭·입력값 유지·복원을 연결하고 입력 검증 없이 다음 버튼을 활성화합니다. 완료·문제 상태는 Preview 전용이며 실제 인증·가입 서버 처리는 후속입니다.
-- 대체한 결정: 없음.
+- 적용 상태: 모듈 분리 PR #29 병합 후 [이슈 #35](https://github.com/YAPP-admin/yapp-plus-android/issues/35)에서 Navigation Compose 2.10.2의 타입 기반 목적지와 App의 공통 ViewModel·`SavedStateHandle`로 데모 흐름을 구현했습니다. 뒤로 가기·반복 탭·입력값 유지·복원을 연결하고 입력 검증 없이 다음 버튼을 활성화합니다. 후속 [DEC-0028](#dec-0028--신규-google-인증-뒤-임시-가입-완료-흐름)에서 신규 Google 인증 뒤 완료 화면으로 이동하도록 바꿨으며 실제 YAPP 가입 서버 처리는 계속 미연동입니다.
+- 대체한 결정: 신규 Google 인증의 다음 화면에 관한 기존 데모 상태를 DEC-0028로 대체합니다.
 
 ## DEC-0012 · 승인 대기 화면에서 메인 탭 UI 데모로 진입
 
@@ -131,7 +131,7 @@ last_verified: 2026-10-20
 - 근거: 이번 세션의 사용자 명시 요청, [이슈 #44](https://github.com/YAPP-admin/yapp-plus-android/issues/44), [Figma 승인 대기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40229).
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:signup`, `:app`.
 - 적용 상태: 승인 대기 액션·문자열과 App의 메인 이동 콜백을 제거하고 가입 흐름·입력 복원 기기 테스트를 갱신했습니다. 완료·문제 상태의 액션은 제공합니다.
-- 대체한 결정: DEC-0012의 승인 대기에서 메인 탭으로 진입하는 결정. 정적 탭 데모와 debug 홈 시작 경로는 유지합니다.
+- 대체한 결정: DEC-0012의 승인 대기에서 메인 탭으로 진입하는 결정. 정적 탭 데모와 debug 홈 시작 경로는 유지합니다. 가입 흐름의 승인 대기 종료점은 DEC-0028에서 대체합니다.
 
 ## DEC-0014 · 2026 Notion 기반 회원·출석 정책을 Wiki에 반영
 
@@ -272,3 +272,13 @@ last_verified: 2026-10-20
 - 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md).
 - 적용 상태: Domain 계약·DataSource 주입, [DB migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql)의 2주 더미 데이터·RLS·본인 기록 조회·서버 검증 RPC, Supabase Auth DataSource·Repository와 분리 암호화 세션 저장을 구현했습니다. 기수 정보·코드·허용 목록은 비워 둡니다. 로컬 PostgreSQL에서 스키마 계약을 검증했고 Auth 어댑터는 MockEngine 테스트를 통과했으며 실제 프로젝트에는 migration을 적용하지 않았습니다. 일정·공지·출석 검증 어댑터와 인증 REST helper를 연결해 Supabase 세션의 401 복원·갱신 후 원래 GET·POST를 한 번 재시도합니다. 출석 검증은 네 자리 ASCII 코드와 세션만 보내고 서버의 단일 확인 행·처리 시각을 검증하며 migration에 보고 backend는 포함하지 않습니다. 일정은 서버 주간 범위·정렬을 사용하며 테스트 세션의 미설정 기수만 0으로 매핑합니다. Google 요청에는 nonce SHA-256 hex를 보내고 원본은 Domain credential로 교환합니다. App은 시작 시 세션 복원·실패 재시도를 제공하며 모든 빌드가 인증된 세션으로 메인에 진입합니다. 홈의 주간 공지와 게시판 목록·상세·유형 필터를 Repository에 연결했습니다. Supabase MVP의 홈에서 보고 진입·시트·완료 안내와 보고 전용 상태를 제거했으며 Domain 보고 계약과 Data/YAPP 어댑터는 보존합니다. 실제 테스트 계정·코드 설정과 운영 데이터 전환은 후속입니다. 기존 확정 YAPP 출석 정책을 임의로 변경하지 않습니다.
 - 대체한 결정: DEC-0017의 ID 토큰 발급까지만 수행하는 범위를 MVP의 Supabase 교환으로 확장합니다. Google 단일 로그인 UI와 토큰 발급만으로 로그인 완료하지 않는 원칙은 유지합니다. 기존 debug 홈 시작 경로는 인증 세션 기반 시작으로 대체합니다. DEC-0024·DEC-0025의 YAPP 세션 저장·갱신 경로는 Supabase 세션과 구분해 유지합니다.
+
+## DEC-0028 · 신규 Google 인증 뒤 임시 가입 완료 흐름
+
+- 기록일: 2026-10-20
+- 결정: 새 Google 인증을 Supabase 세션으로 교환한 뒤 이름 입력 → 휴대폰 번호 입력 → 가입 완료 화면을 표시합니다. 제출용 임시 흐름에서는 실제 운영진 인증·가입 API를 기다리지 않으며, 완료 액션으로 메인 화면에 진입합니다. 이름·휴대폰 번호는 서버에 전송하지 않습니다. 저장된 Supabase 세션 복원은 가입 단계를 건너뜁니다.
+- 이유: 제출용 앱에서 회원 입력 과정을 보여 주면서 미확정된 YAPP 가입·운영진 인증 계약을 추측해 구현하지 않기 위해서입니다.
+- 근거: 사용자 명시 요청 및 [이슈 #100](https://github.com/YAPP-admin/yapp-plus-android/issues/100).
+- 반영: [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, App 인증·Navigation 조립.
+- 적용 상태: App 인증 상태가 신규 Google 인증과 세션 복원을 구분해 시작 목적지를 선택하고, 기존 `:feature:signup` 입력·완료 화면을 조립합니다. 가입 완료 시 입력값을 지우고 인증 상태를 확정해 메인 그래프로 전환합니다. 실제 YAPP 회원 등록은 수행하지 않습니다.
+- 대체한 결정: DEC-0011·DEC-0013의 가입 흐름이 승인 대기에서 끝난다는 동작을 신규 Google 인증의 임시 제출 흐름에 한해 대체합니다. 실제 가입 승인 정책은 미정으로 유지합니다.

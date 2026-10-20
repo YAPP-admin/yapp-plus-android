@@ -1,6 +1,7 @@
 package com.yapp.plus.di
 
 import android.content.Context
+import com.yapp.plus.BuildConfig
 import com.yapp.plus.core.network.ApiHttpClientFactory
 import com.yapp.plus.core.network.auth.TokenPersistence
 import com.yapp.plus.core.network.auth.TokenRefresher
@@ -8,12 +9,19 @@ import com.yapp.plus.core.network.auth.TokenStore
 import com.yapp.plus.data.attendance.AttendanceDataSource
 import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
+import com.yapp.plus.data.auth.AuthDataSource
+import com.yapp.plus.data.auth.AuthTokenLocalDataSource
 import com.yapp.plus.data.auth.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.SessionTokenRemoteDataSource
+import com.yapp.plus.data.notice.NoticeDataSource
+import com.yapp.plus.data.notice.NoticeRepositoryImpl
+import com.yapp.plus.data.notice.SupabaseNoticeDataSource
 import com.yapp.plus.data.session.SessionScheduleDataSource
-import com.yapp.plus.data.session.SessionScheduleRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
+import com.yapp.plus.data.session.SupabaseSessionScheduleDataSource
+import com.yapp.plus.data.supabase.SupabaseRestClient
 import com.yapp.plus.domain.attendance.AttendanceRepository
+import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
 import dagger.Provides
@@ -55,8 +63,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSessionScheduleDataSource(httpClient: HttpClient): SessionScheduleDataSource =
-        SessionScheduleRemoteDataSource(httpClient)
+    fun provideSessionScheduleDataSource(client: SupabaseRestClient): SessionScheduleDataSource =
+        SupabaseSessionScheduleDataSource(client)
 
     @Provides
     @Singleton
@@ -71,4 +79,28 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAttendance(dataSource: AttendanceDataSource): AttendanceRepository = AttendanceRepositoryImpl(dataSource)
+
+    @Provides
+    @Singleton
+    fun provideSupabaseRestClient(
+        @SupabaseAuthClient httpClient: HttpClient,
+        tokens: AuthTokenLocalDataSource,
+        authDataSource: AuthDataSource,
+    ): SupabaseRestClient =
+        SupabaseRestClient(
+            httpClient = httpClient,
+            projectUrl = BuildConfig.SUPABASE_URL,
+            publishableKey = BuildConfig.SUPABASE_PUBLISHABLE_KEY,
+            tokenLocalDataSource = tokens,
+            authDataSource = authDataSource,
+        )
+
+    @Provides
+    @Singleton
+    fun provideNoticeDataSource(client: SupabaseRestClient): NoticeDataSource =
+        SupabaseNoticeDataSource(client = client)
+
+    @Provides
+    @Singleton
+    fun provideNotices(dataSource: NoticeDataSource): NoticeRepository = NoticeRepositoryImpl(dataSource)
 }

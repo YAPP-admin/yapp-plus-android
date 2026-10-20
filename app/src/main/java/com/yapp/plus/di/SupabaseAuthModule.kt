@@ -4,6 +4,7 @@ import android.content.Context
 import com.yapp.plus.BuildConfig
 import com.yapp.plus.data.auth.AuthDataSource
 import com.yapp.plus.data.auth.AuthRepositoryImpl
+import com.yapp.plus.data.auth.AuthTokenLocalDataSource
 import com.yapp.plus.data.auth.SupabaseAuthDataSource
 import com.yapp.plus.data.auth.SupabaseTokenLocalDataSource
 import com.yapp.plus.domain.auth.AuthRepository
@@ -35,15 +36,21 @@ object SupabaseAuthModule {
 
     @Provides
     @Singleton
+    fun provideSupabaseTokens(
+        @ApplicationContext context: Context,
+    ): AuthTokenLocalDataSource = SupabaseTokenLocalDataSource(context, BuildConfig.SUPABASE_URL)
+
+    @Provides
+    @Singleton
     fun provideAuthDataSource(
         @SupabaseAuthClient httpClient: HttpClient,
-        @ApplicationContext context: Context,
+        tokens: AuthTokenLocalDataSource,
     ): AuthDataSource =
         SupabaseAuthDataSource(
             httpClient = httpClient,
             projectUrl = BuildConfig.SUPABASE_URL,
             publishableKey = BuildConfig.SUPABASE_PUBLISHABLE_KEY,
-            tokenLocalDataSource = SupabaseTokenLocalDataSource(context, BuildConfig.SUPABASE_URL),
+            tokenLocalDataSource = tokens,
         )
 
     @Provides

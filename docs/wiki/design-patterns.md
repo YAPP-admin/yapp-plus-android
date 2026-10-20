@@ -35,7 +35,7 @@ last_verified: 2026-10-20
 
 - Repository 계약은 Domain, 구현은 Data에 둡니다. 사용하는 책임을 기준으로 계약을 나누고 관련 없는 기능을 거대한 인터페이스에 모으지 않습니다.
 - 원격·로컬 데이터 접근은 DataSource 경계로 분리합니다.
-- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 세션 일정·출석은 YAPP HTTP 어댑터를 사용하며 전환 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
+- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 일정·공지는 Supabase 어댑터, 출석은 YAPP HTTP 어댑터를 사용하며 전환 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
 - DTO는 Data 내부에 두고 Domain 변환도 Data에서 처리합니다.
 - Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
@@ -52,7 +52,7 @@ last_verified: 2026-10-20
 - `AuthRepository`는 Google credential 교환, 현재 세션 조회·복원, 로그아웃을 제공합니다. `GoogleLoginCredential`은 ID 토큰과 원본 nonce만 전달하며 영구 저장·로그 출력을 금지합니다. `AuthSession.userId`는 형식을 해석하지 않는 사용자 식별자이며 Supabase 사용자 ID와 미래 YAPP 회원 ID의 대응은 후속 계약입니다.
 - 인증 세션이 없는 조회는 `null`, 인증·복원 요청 자체의 실패는 예외로 구분합니다. Google 토큰 발급만으로 인증 성공 UiState를 만들지 않습니다. Data가 인증 제공자의 교환을 완료한 뒤 반환한 세션으로 App이 인증 흐름을 조율합니다.
 - `NoticeRepository`는 운영·세션 공지를 유형별 또는 전체 목록과 상세로 조회합니다. 목록은 게시 시각 내림차순이며, 상세에서 조회할 수 있는 공지가 없으면 `null`을 반환합니다. 공통 `Notice`는 홈의 `Long` 식별자, 제목, 본문, 유형과 게시 시각을 제공합니다. 날짜·유형 문구와 홈·게시판 UI 모델 변환은 각 Feature 책임입니다.
-- Data 구현과 Feature 연결은 후속입니다. 기존 Login Feature의 credential 타입을 Domain 타입으로 옮기는 작업과 게시판 UI 분류의 정책 대응도 아직 적용하지 않았습니다. 공지의 전송 DTO·본문 표현 형식·페이지 처리 같은 서버 세부 계약은 Domain 모델만으로 확정하지 않습니다.
+- 인증·공지 Data 구현과 App Hilt 연결은 완료했고 Feature 연결은 후속입니다. 기존 Login Feature의 credential 타입을 Domain 타입으로 옮기는 작업과 게시판 UI 분류의 정책 대응도 아직 적용하지 않았습니다. 공지의 전송 DTO·본문 표현 형식·페이지 처리 같은 서버 세부 계약은 Domain 모델만으로 확정하지 않습니다.
 
 ## HTTP 인증 세션 갱신
 

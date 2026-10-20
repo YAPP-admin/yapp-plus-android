@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:datastore"))
     implementation(libs.ktor.client.core)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.junit)
     testImplementation(libs.ktor.client.mock)

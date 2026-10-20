@@ -24,7 +24,7 @@ last_verified: 2026-10-20
 - Supabase 인증 세션과 YAPP API 세션을 분리합니다. Google ID 토큰·원본 nonce는 교환 중 메모리에서만 사용하고 로그·영구 저장소에 남기지 않습니다. 앱에 Supabase secret/service-role 키를 포함하지 않으며 노출 데이터는 RLS와 최소 권한으로 제한합니다.
 - Supabase Google provider 설정은 사용자가 열어 둔 Supabase Dashboard에서 컴퓨터 사용으로 적용합니다.
 
-적용 상태: 인증·공지 Domain 계약과 공급자 교체 경계, [세션·공지·테스트 출석 migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql), Supabase Auth DataSource·Repository의 암호화 세션 저장·복원 기반을 추가했습니다. migration은 실행 시점의 한국 시간 기준 이번 주·다음 주 토요일에 가상 세션과 공지를 만들며 모든 제목에 `[더미]`를 표시합니다. 표본 시각은 14:00–16:00, 장소와 공식 기수 정보는 비워 둡니다. 코드·허용 목록도 빈 상태라 관리자 설정 전에는 출석이 거절됩니다. 일정·공지·출석 검증 Supabase DataSource와 공지 Repository·App Hilt는 연결했습니다. 출석 성공은 RPC의 단일 확인 행과 처리 시각으로 검증하며 MVP migration에 보고 backend가 없어 보고 호출은 일반 실패로 끝납니다. 주간 일정은 서버의 일요일~토요일 범위에서 시작·종료 시각과 ID 순 첫 테스트 세션을 반환하고, 미설정 기수는 공식 기수가 아닌 테스트 전용 0으로 둡니다. Login Feature의 Supabase 인증 교환과 App 시작 시 세션 복원을 연결했습니다. 홈의 주간 공지와 게시판의 유형별 목록·상세를 Repository에 연결했습니다. 실제 Supabase 프로젝트 적용·테스터별 허용 등록·코드 설정과 보고 UI 정리는 후속입니다. 표본 일정은 공식 YAPP 일정이 아니며 관리자가 조정할 수 있습니다.
+적용 상태: 인증·공지 Domain 계약과 공급자 교체 경계, [세션·공지·테스트 출석 migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql), Supabase Auth DataSource·Repository의 암호화 세션 저장·복원 기반을 추가했습니다. migration은 실행 시점의 한국 시간 기준 이번 주·다음 주 토요일에 가상 세션과 공지를 만들며 모든 제목에 `[더미]`를 표시합니다. 표본 시각은 14:00–16:00, 장소와 공식 기수 정보는 비워 둡니다. 코드·허용 목록도 빈 상태라 관리자 설정 전에는 출석이 거절됩니다. 일정·공지·출석 검증 Supabase DataSource와 공지 Repository·App Hilt는 연결했습니다. 출석 성공은 RPC의 단일 확인 행과 처리 시각으로 검증하며 MVP migration에 보고 backend가 없어 보고 호출은 일반 실패로 끝납니다. 주간 일정은 서버의 일요일~토요일 범위에서 시작·종료 시각과 ID 순 첫 테스트 세션을 반환하고, 미설정 기수는 공식 기수가 아닌 테스트 전용 0으로 둡니다. Login Feature의 Supabase 인증 교환과 App 시작 시 세션 복원을 연결했습니다. 홈의 주간 공지와 게시판의 유형별 목록·상세를 Repository에 연결했습니다. Supabase MVP의 홈에서 보고 진입·시트·완료 안내를 숨겼으며 Domain 보고 계약과 Data/YAPP 어댑터는 향후 서버 지원을 위해 보존합니다. 실제 Supabase 프로젝트 적용·테스터별 허용 등록·코드 설정은 후속입니다. 표본 일정은 공식 YAPP 일정이 아니며 관리자가 조정할 수 있습니다.
 
 ## 인증 화면 결정
 
@@ -43,6 +43,8 @@ Notion의 가입 정책은 가입 코드가 있으면 코드에 연결된 역할
 출석 기록 API가 준비될 때까지 홈에는 정적 출석 이력이나 데모 안내를 표시하지 않습니다. 홈 세션의 Preview 예시 값은 debug 전용 리소스에 둡니다. My의 기존 콘텐츠에는 데모 안내를 표시하고, 일정 화면의 고정 데모 데이터 안내는 상태 없는 Preview 경로에서만 표시합니다.
 
 ## 수정된 홈 화면과 연결 흐름
+
+아래의 보고 사양과 YAPP API 계약은 향후 서버 지원을 위해 보존합니다. 현재 Supabase MVP에는 보고 진입·시트·완료 안내를 노출하지 않습니다.
 
 - 기준은 사용자가 변경을 확정한 [Figma 홈 섹션](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284)과 [이슈 #82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)입니다. 홈 메인·알림·출석 코드 입력/완료·출결 보고 화면까지 적용합니다.
 - 홈은 이번 주 세션의 장소·제목, 일요일부터 토요일까지의 달력, 출석 상태와 빠른 메뉴, 이번 주 공지를 표시합니다. 오늘은 원형으로, 세션 날짜는 브랜드 색상으로 구분합니다. 서버의 `AVAILABLE` 상태에서만 출석 버튼을 활성화합니다.

@@ -3,11 +3,9 @@ package com.yapp.plus.feature.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.attendance.AttendanceException
-import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
-import com.yapp.plus.feature.main.home.model.ReportChoice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,15 +23,12 @@ internal class HomeInteractionViewModel
         private val mutableUiState = MutableStateFlow(HomeInteractionUiState())
         val uiState = mutableUiState.asStateFlow()
 
-        fun openSheet(sheet: HomeSheet) {
+        fun openAttendanceCode() {
             if (mutableUiState.value.isSubmitting) return
             mutableUiState.update {
                 it.copy(
-                    sheet = sheet,
+                    sheet = HomeSheet.AttendanceCode,
                     code = "",
-                    reason = "",
-                    reportChoice = null,
-                    reportType = null,
                     errorResource = null,
                     isInvalidCode = false,
                 )
@@ -50,48 +45,6 @@ internal class HomeInteractionViewModel
             val digits = code.filter { it in '0'..'9' }.take(CODE_LENGTH)
             mutableUiState.update {
                 it.copy(code = digits, errorResource = null, isInvalidCode = false)
-            }
-        }
-
-        fun updateReason(reason: String) {
-            if (mutableUiState.value.isSubmitting || reason.length > MAX_REASON_LENGTH) return
-            mutableUiState.update { it.copy(reason = reason, errorResource = null) }
-        }
-
-        fun selectReport(choice: ReportChoice) {
-            if (mutableUiState.value.isSubmitting) return
-            mutableUiState.update { it.copy(reportChoice = choice) }
-        }
-
-        fun selectLateDuration(type: AttendanceReportType) {
-            if (type !in LATE_TYPES || mutableUiState.value.isSubmitting) return
-            mutableUiState.update { it.copy(reportType = type) }
-        }
-
-        fun advanceReport() {
-            val state = mutableUiState.value
-            if (state.isSubmitting) return
-            if (state.sheet == HomeSheet.LateDuration) {
-                if (state.reportType in LATE_TYPES) {
-                    mutableUiState.update { it.copy(sheet = HomeSheet.ReportReason) }
-                }
-                return
-            }
-            advanceReportChoice(state.reportChoice ?: return)
-        }
-
-        private fun advanceReportChoice(choice: ReportChoice) {
-            val type =
-                when (choice) {
-                    ReportChoice.Late -> null
-                    ReportChoice.EarlyLeave -> AttendanceReportType.EARLY_LEAVE
-                    ReportChoice.Absent -> AttendanceReportType.ABSENT
-                }
-            mutableUiState.update {
-                it.copy(
-                    sheet = if (type == null) HomeSheet.LateDuration else HomeSheet.ReportReason,
-                    reportType = type,
-                )
             }
         }
 
@@ -116,22 +69,6 @@ internal class HomeInteractionViewModel
                         sheet = HomeSheet.None,
                         attendedSessionId = sessionId,
                         isAttendanceComplete = true,
-                    )
-                },
-            )
-        }
-
-        fun submitReport() {
-            val state = mutableUiState.value
-            val type = state.reportType ?: return
-            if (state.isSubmitting || state.reason.isBlank()) return
-            submit(
-                operation = { attendanceRepository.submitReport(type, state.reason.trim()) },
-                onSuccess = { state, sessionId ->
-                    state.copy(
-                        sheet = HomeSheet.None,
-                        isReportComplete = true,
-                        reportedSessionId = sessionId,
                     )
                 },
             )
@@ -173,17 +110,7 @@ internal class HomeInteractionViewModel
             mutableUiState.update { it.copy(isAttendanceComplete = false) }
         }
 
-        fun acknowledgeReportComplete() {
-            mutableUiState.update { it.copy(isReportComplete = false) }
-        }
-
         private companion object {
             const val CODE_LENGTH = 4
-            const val MAX_REASON_LENGTH = 30
-            val LATE_TYPES =
-                setOf(
-                    AttendanceReportType.ONE_HOUR_LATE,
-                    AttendanceReportType.THREE_HOUR_LATE,
-                )
         }
     }

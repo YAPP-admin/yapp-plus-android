@@ -40,7 +40,6 @@ fun HomeSessionCard(
     onAttendanceClick: () -> Unit = {},
     onRetry: () -> Unit = {},
     hasAttended: Boolean = false,
-    hasReported: Boolean = false,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
 ) {
     Surface(
@@ -70,7 +69,6 @@ fun HomeSessionCard(
                     HomeSessionContent(
                         session = state.value,
                         hasAttended = hasAttended,
-                        hasReported = hasReported,
                         now = now,
                         onAttendanceClick = onAttendanceClick,
                     )
@@ -99,7 +97,6 @@ internal fun HomeSessionError(onRetry: () -> Unit) {
 internal fun HomeSessionContent(
     session: CurrentWeekSessionUiModel,
     hasAttended: Boolean,
-    hasReported: Boolean,
     now: LocalDateTime,
     onAttendanceClick: () -> Unit,
 ) {
@@ -128,18 +125,8 @@ internal fun HomeSessionContent(
             } else {
                 R.string.home_week_title
             }
-        val title =
-            if (hasReported && session.sessionDate?.isAfter(now.toLocalDate()) == true) {
-                stringResource(
-                    R.string.home_next_session,
-                    java.time.temporal.ChronoUnit.DAYS
-                        .between(now.toLocalDate(), session.sessionDate),
-                )
-            } else {
-                stringResource(titleResource, session.name.removeSuffix("세션").trim())
-            }
         YappText(
-            title,
+            stringResource(titleResource, session.name.removeSuffix("세션").trim()),
             YappHomeTypography.title,
             YappHomeColor.text,
         )

@@ -11,14 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,9 +26,7 @@ import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.feature.main.home.components.HomeNoticeContent
 import com.yapp.plus.feature.main.home.components.HomeQuickActions
-import com.yapp.plus.feature.main.home.components.HomeReportTip
 import com.yapp.plus.feature.main.home.components.HomeSessionCard
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
@@ -47,13 +42,11 @@ fun HomeScreen(
     onAttendanceClick: () -> Unit = {},
     onRetry: () -> Unit = {},
     onSessionsClick: () -> Unit = {},
-    onReportClick: () -> Unit = {},
     onScoreClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
     noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
     onNoticeRetry: () -> Unit = {},
     hasAttended: Boolean = false,
-    hasReported: Boolean = false,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
 ) {
     Column(modifier.fillMaxSize().background(YappHomeColor.background)) {
@@ -84,21 +77,13 @@ fun HomeScreen(
                 HomeSessionCard(
                     state = state,
                     hasAttended = hasAttended,
-                    hasReported = hasReported,
                     now = now,
                     onAttendanceClick = onAttendanceClick,
                     onRetry = onRetry,
                 )
                 Spacer(Modifier.height(10.dp))
-                val session = (state as? AttendanceUiState.Content)?.value
-                val canReport =
-                    session != null &&
-                        session.attendanceStatus != AttendanceStatusUiModel.NotEligible
                 HomeQuickActions(
-                    hasAttended = hasAttended,
-                    canReport = canReport,
                     onSessionsClick = onSessionsClick,
-                    onReportClick = onReportClick,
                     onScoreClick = onScoreClick,
                 )
                 Spacer(Modifier.height(40.dp))
@@ -117,15 +102,6 @@ fun HomeScreen(
                             onNoticeClick,
                             onNoticeRetry,
                             Modifier.weight(1f).fillMaxWidth(),
-                        )
-                    }
-                    if (!hasAttended &&
-                        !hasReported &&
-                        canReport &&
-                        session?.sessionDate?.isAfter(now.toLocalDate()) == true
-                    ) {
-                        HomeReportTip(
-                            Modifier.align(Alignment.TopEnd).offset(x = (-32).dp, y = (-31).dp),
                         )
                     }
                 }

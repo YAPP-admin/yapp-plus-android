@@ -18,9 +18,6 @@
     <string name="home_all_sessions">전체 세션</string>
     <string name="home_attendance_score">출석 점수</string>
     <string name="home_check">확인하기</string>
-    <string name="home_report">출결 보고</string>
-    <string name="home_report_ahead">미리하기</string>
-    <string name="home_report_tip">세션 시작 전에\n미리 보고해 주세요</string>
     <string name="home_week_notices">이번 주 공지</string>
     <string name="home_notices_empty">아직 공지사항이 없어요</string>
     <string name="home_notice_session">세션</string>
@@ -38,19 +35,4 @@
     <string name="home_submit_error">요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="home_code_complete">출석을 완료했어요!</string>
     <string name="home_code_complete_description">출석 내역은 마이페이지에서 확인할 수 있어요</string>
-    <string name="home_report_title">출결을 보고해 주세요</string>
-    <string name="home_report_description">미리 알려주시면 점수 차감이 줄어들어요</string>
-    <string name="home_report_late">지각</string>
-    <string name="home_report_early_leave">조퇴</string>
-    <string name="home_report_absent">결석</string>
-    <string name="home_late_duration_title">지각 시간을 선택해 주세요</string>
-    <string name="home_late_one_hour">1시간 지각</string>
-    <string name="home_late_three_hours">3시간 지각</string>
-    <string name="home_reason_late">지각 사유를 입력해 주세요</string>
-    <string name="home_reason_early_leave">조퇴 사유를 입력해 주세요</string>
-    <string name="home_reason_absent">결석 사유를 입력해 주세요</string>
-    <string name="home_reason_placeholder">사유를 입력해 주세요</string>
-    <string name="home_reason_count">%1$d/30</string>
-    <string name="home_report_complete">출결 보고를 완료했어요</string>
-    <string name="home_next_session">다음 세션까지 D-%1$d일 남았어요</string>
 </resources>

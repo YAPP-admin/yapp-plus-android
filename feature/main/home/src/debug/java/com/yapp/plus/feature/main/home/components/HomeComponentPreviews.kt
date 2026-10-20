@@ -8,13 +8,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.feature.main.home.HomePreviewData
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
-import com.yapp.plus.feature.main.home.model.ReportChoice
 import java.time.LocalDate
 
 @Preview(widthDp = 321)
@@ -38,7 +36,7 @@ fun HomeCalendarDayPreview() {
 @Preview(widthDp = 361)
 @Composable
 fun HomeQuickActionsPreview() {
-    YappTheme { HomeQuickActions(hasAttended = false, canReport = true, {}, {}, {}) }
+    YappTheme { HomeQuickActions({}, {}) }
 }
 
 @Preview(widthDp = 176)
@@ -78,12 +76,6 @@ fun HomeNoticeCardPreview() {
     YappTheme { HomeNoticeCard(HomePreviewData.notices().first(), {}) }
 }
 
-@Preview
-@Composable
-fun HomeReportTipPreview() {
-    YappTheme { HomeReportTip() }
-}
-
 @Preview(widthDp = 393)
 @Composable
 fun HomeTopBarPreview() {
@@ -102,49 +94,19 @@ fun HomeCodeDigitPreview() {
     YappTheme { HomeCodeDigit('1', isActive = false, isError = true) }
 }
 
-@Preview(widthDp = 337)
-@Composable
-fun HomeReportOptionPreview() {
-    YappTheme {
-        HomeReportOption(
-            stringResource(R.string.home_report_absent),
-            isSelected = true,
-            enabled = true,
-            onClick = {},
-        )
-    }
-}
-
 @Preview(widthDp = 373)
 @Composable
 fun HomeSheetPreview(
     @PreviewParameter(HomeSheetPreviewParameterProvider::class) sheet: HomeSheet,
 ) {
-    val state = HomeInteractionUiState(sheet = sheet, reportChoice = ReportChoice.Absent)
-    YappTheme { HomeSheetContent(state, {}, {}, {}, {}, {}, Modifier.padding(18.dp)) }
+    val state = HomeInteractionUiState(sheet = sheet)
+    YappTheme { HomeSheetContent(state, {}, {}, Modifier.padding(18.dp)) }
 }
 
 @Preview(widthDp = 337)
 @Composable
 fun HomeSheetHeadingPreview() {
-    YappTheme { HomeSheetHeading(HomeInteractionUiState(sheet = HomeSheet.AttendanceCode)) }
-}
-
-@Preview(widthDp = 337)
-@Composable
-fun HomeReportChoicesPreview() {
-    YappTheme { ReportChoices(HomeInteractionUiState(reportChoice = ReportChoice.Absent), {}) }
-}
-
-@Preview(widthDp = 337)
-@Composable
-fun HomeLateDurationChoicesPreview() {
-    YappTheme {
-        LateDurationChoices(
-            HomeInteractionUiState(reportType = AttendanceReportType.ONE_HOUR_LATE),
-            {},
-        )
-    }
+    YappTheme { HomeSheetHeading() }
 }
 
 @Preview
@@ -160,7 +122,6 @@ fun HomeSessionContentPreview() {
         HomeSessionContent(
             HomePreviewData.session(),
             hasAttended = false,
-            hasReported = false,
             now = HomePreviewData.now,
             onAttendanceClick = {},
         )

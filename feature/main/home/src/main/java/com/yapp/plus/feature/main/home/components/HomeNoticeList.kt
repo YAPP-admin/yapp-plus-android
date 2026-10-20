@@ -1,12 +1,14 @@
 package com.yapp.plus.feature.main.home.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -16,12 +18,50 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.components.button.YappButton
+import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiModel
+import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.core.designsystem.R as DesignSystemR
+
+@Composable
+internal fun HomeNoticeContent(
+    state: HomeNoticeUiState,
+    onNoticeClick: (Long) -> Unit,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (state) {
+        HomeNoticeUiState.Loading ->
+            Box(modifier, Alignment.Center) {
+                CircularProgressIndicator(color = YappHomeColor.session)
+            }
+        HomeNoticeUiState.Empty ->
+            HomeEmptyState(
+                stringResource(R.string.home_notices_empty),
+                modifier,
+            )
+        HomeNoticeUiState.Error ->
+            Column(
+                modifier,
+                Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+                Alignment.CenterHorizontally,
+            ) {
+                YappText(
+                    stringResource(R.string.home_notices_error),
+                    YappHomeTypography.body,
+                    YappHomeColor.text,
+                )
+                val retryLabel = stringResource(R.string.attendance_retry)
+                YappButton(retryLabel, onRetry, size = YappButtonSize.Medium)
+            }
+        is HomeNoticeUiState.Content -> HomeNoticeList(state.notices, onNoticeClick)
+    }
+}
 
 @Composable
 internal fun HomeNoticeList(
@@ -49,7 +89,7 @@ internal fun HomeNoticeCard(
         if (notice.isSessionNotice) {
             R.string.home_notice_session
         } else {
-            R.string.home_notice_other
+            R.string.home_notice_operation
         }
     Surface(
         onClick = onClick,

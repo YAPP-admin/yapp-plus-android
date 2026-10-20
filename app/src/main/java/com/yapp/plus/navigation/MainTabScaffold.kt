@@ -14,7 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.main.board.BoardScreen
+import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.home.HomeNotificationsScreen
 import com.yapp.plus.feature.main.home.HomeRoute
 import com.yapp.plus.feature.main.my.MyScreen
@@ -28,6 +28,10 @@ internal fun MainTabScaffold(
 ) {
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
     var areNotificationsVisible by rememberSaveable { mutableStateOf(false) }
+    var selectedNoticeId by rememberSaveable { mutableStateOf<Long?>(null) }
+    BackHandler(enabled = selectedTab == MainTab.Board && selectedNoticeId != null) {
+        selectedNoticeId = null
+    }
     BackHandler(enabled = selectedTab == MainTab.Home && areNotificationsVisible) {
         areNotificationsVisible = false
     }
@@ -41,6 +45,7 @@ internal fun MainTabScaffold(
                 onTabSelected = {
                     selectedTab = it
                     areNotificationsVisible = false
+                    selectedNoticeId = null
                 },
             )
         },
@@ -61,12 +66,20 @@ internal fun MainTabScaffold(
                             onNotificationsClick = { areNotificationsVisible = true },
                             onSessionsClick = { selectedTab = MainTab.Schedule },
                             onScoreClick = { selectedTab = MainTab.My },
-                            onNoticeClick = { selectedTab = MainTab.Board },
+                            onNoticeClick = {
+                                selectedNoticeId = it
+                                selectedTab = MainTab.Board
+                            },
                             onAttendanceComplete = onAttendanceComplete,
                         )
                     }
                 MainTab.Schedule -> ScheduleRoute()
-                MainTab.Board -> BoardScreen()
+                MainTab.Board ->
+                    BoardRoute(
+                        noticeId = selectedNoticeId,
+                        onNoticeClick = { selectedNoticeId = it },
+                        onBack = { selectedNoticeId = null },
+                    )
                 MainTab.My -> MyScreen()
             }
         }

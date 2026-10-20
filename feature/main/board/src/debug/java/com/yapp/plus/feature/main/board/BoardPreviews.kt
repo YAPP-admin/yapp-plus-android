@@ -9,7 +9,12 @@ import com.yapp.plus.core.preview.EnumPreviewParameterProvider
 import com.yapp.plus.feature.main.board.components.BoardCategoryChip
 import com.yapp.plus.feature.main.board.components.BoardCategorySelector
 import com.yapp.plus.feature.main.board.components.BoardEmptyState
+import com.yapp.plus.feature.main.board.components.BoardNoticeCard
+import com.yapp.plus.feature.main.board.components.BoardNoticeDetail
+import com.yapp.plus.feature.main.board.components.BoardNoticeState
 import com.yapp.plus.feature.main.board.model.BoardCategory
+import com.yapp.plus.feature.main.board.model.BoardNoticeUiModel
+import com.yapp.plus.feature.main.board.model.NoticeUiState
 
 @Preview(name = "Board", widthDp = 393, heightDp = 692)
 @Preview(name = "Tall board", widthDp = 393, heightDp = 852)
@@ -46,6 +51,33 @@ private fun BoardCategoryChipPreview(
 private fun BoardEmptyStatePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) { BoardEmptyState() }
 }
+
+@Preview(widthDp = 353, showBackground = true)
+@Composable
+private fun BoardNoticeCardPreview() {
+    YappTheme { BoardNoticeCard(previewNotice(), {}) }
+}
+
+@Preview(widthDp = 353, showBackground = true)
+@Composable
+private fun BoardNoticeDetailPreview() {
+    YappTheme { BoardNoticeDetail(previewNotice()) }
+}
+
+@Preview(widthDp = 353, heightDp = 240, showBackground = true)
+@Composable
+private fun BoardNoticeStatePreview() {
+    YappTheme { BoardNoticeState<Nothing>(NoticeUiState.Error, {}, R.string.board_empty) {} }
+}
+
+private fun previewNotice() =
+    BoardNoticeUiModel(
+        1,
+        "공지 제목",
+        "공지 본문을 확인해 주세요.",
+        BoardCategory.Operation,
+        "2026.10.20",
+    )
 
 private class BoardCategoryPreviewParameterProvider :
     EnumPreviewParameterProvider<BoardCategory>(BoardCategory.entries)

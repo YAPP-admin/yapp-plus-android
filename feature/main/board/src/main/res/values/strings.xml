@@ -2,7 +2,11 @@
     <string name="board_title">게시판</string>
     <string name="board_category_all">전체</string>
     <string name="board_category_session">세션</string>
-    <string name="board_category_assignment">과제</string>
-    <string name="board_category_other">기타</string>
+    <string name="board_category_operation">운영</string>
+    <string name="board_back">뒤로</string>
+    <string name="board_error">공지를 불러오지 못했어요</string>
+    <string name="board_retry">다시 시도</string>
+    <string name="board_missing">공지를 찾을 수 없어요</string>
+    <string name="board_metadata">%1$s · %2$s</string>
     <string name="board_empty">아직 작성된 공지사항이 없어요</string>
 </resources>

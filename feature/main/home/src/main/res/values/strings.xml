@@ -24,7 +24,8 @@
     <string name="home_week_notices">이번 주 공지</string>
     <string name="home_notices_empty">아직 공지사항이 없어요</string>
     <string name="home_notice_session">세션</string>
-    <string name="home_notice_other">기타</string>
+    <string name="home_notice_operation">운영</string>
+    <string name="home_notices_error">공지를 불러오지 못했어요</string>
     <string name="home_notifications_empty">아직 알림이 없어요</string>
     <string name="home_back">뒤로</string>
     <string name="home_confirm">확인</string>

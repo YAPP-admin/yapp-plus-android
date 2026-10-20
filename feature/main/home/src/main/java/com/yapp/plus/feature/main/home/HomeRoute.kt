@@ -36,6 +36,7 @@ fun HomeRoute(
     val viewModel: HomeViewModel = hiltViewModel()
     val interactionViewModel: HomeInteractionViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val notices by viewModel.notices.collectAsStateWithLifecycle()
     val interaction by interactionViewModel.uiState.collectAsStateWithLifecycle()
     val session = (state as? AttendanceUiState.Content)?.value
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -54,6 +55,8 @@ fun HomeRoute(
             state = state,
             modifier = Modifier.fillMaxSize(),
             onRetry = viewModel::retry,
+            noticeState = notices,
+            onNoticeRetry = viewModel::retryNotices,
             onNotificationsClick = onNotificationsClick,
             onAttendanceClick = { interactionViewModel.openSheet(HomeSheet.AttendanceCode) },
             onSessionsClick = onSessionsClick,

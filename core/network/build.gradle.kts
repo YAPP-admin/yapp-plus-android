@@ -106,5 +106,6 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.junit)
+    testImplementation(libs.ktor.client.mock)
     testImplementation(libs.kotlinx.coroutines.test)
 }

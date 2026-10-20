@@ -173,6 +173,16 @@ last_verified: 2026-10-20
 - 적용 상태: `com.yapp.plus`와 debug SHA-1 Android OAuth 클라이언트, ID 토큰 audience Web OAuth 클라이언트를 구성했습니다. 현재 release 서명 지문은 없어 등록하지 않았습니다. 앱은 기본 Google 프로필 범위의 ID 토큰과 nonce를 획득하지만 서버 검증·YAPP 세션 발급은 미구현입니다. Testing 상태이므로 등록된 테스트 사용자만 로그인할 수 있습니다.
 - 대체한 결정: DEC-0010의 로그인 제공자와 DEC-0011의 데모 진입 제공자만 대체합니다. 가입 UI 요소 제거와 가입 화면의 표시·입력 상태는 유지하되 Google ID 토큰만으로 진입하지 않습니다.
 
+## DEC-0019 · 401 세션 갱신과 동시 갱신 중복 방지
+
+- 기록일: 2026-10-19
+- 결정: 인증된 API 요청의 401은 refresh token으로 갱신하고 원래 요청을 한 번 재시도합니다. 동시에 전송된 요청은 갱신의 성공·실패를 공유해 refresh token 회전 API의 중복 호출을 막습니다.
+- 이유: 여러 화면의 API가 같은 만료 토큰으로 요청해도 동일한 refresh token을 반복 사용하지 않도록 합니다.
+- 근거: 이번 세션의 사용자 명시 요청, [이슈 #76](https://github.com/YAPP-admin/yapp-plus-android/issues/76), 개발 서버 OpenAPI의 `POST /api/auth/session-renewals` 계약.
+- 반영: [설계 패턴](design-patterns.md), [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, Network·Data 및 App 조립.
+- 적용 상태: Network의 세션별 갱신 공유와 401 재시도 기반을 구현했습니다. Data 갱신 API 연결과 App DI는 후속 PR입니다.
+- 대체한 결정: 없음.
+
 ## DEC-0023 · 수정된 홈 디자인과 출석·출결 보고 흐름
 
 - 기록일: 2026-10-19
@@ -182,7 +192,6 @@ last_verified: 2026-10-20
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), [공통 컴포넌트](design-system-components.md), [디자인시스템](design-system.md).
 - 적용 상태: Domain 출석 인증·사전 보고 계약을 정의했습니다. Data API 구현과 홈 UI·ViewModel·App 연결은 이슈 #82의 후속 PR로 나눠 진행합니다.
 - 대체한 결정: DEC-0020의 출석 이력 데모 제거를 유지하면서 홈 레이아웃과 연결 흐름만 확장합니다. 출석 판정·점수 정책을 새로 확정하지 않습니다.
-
 
 ## DEC-0024 · DataStore 기반 YAPP 세션 저장과 복원
 

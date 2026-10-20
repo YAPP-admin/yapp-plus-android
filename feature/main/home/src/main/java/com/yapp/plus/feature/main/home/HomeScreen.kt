@@ -27,15 +27,14 @@ import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
-import com.yapp.plus.feature.main.home.components.HomeEmptyState
-import com.yapp.plus.feature.main.home.components.HomeNoticeList
+import com.yapp.plus.feature.main.home.components.HomeNoticeContent
 import com.yapp.plus.feature.main.home.components.HomeQuickActions
 import com.yapp.plus.feature.main.home.components.HomeReportTip
 import com.yapp.plus.feature.main.home.components.HomeSessionCard
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
-import com.yapp.plus.feature.main.home.model.HomeNoticeUiModel
+import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import java.time.LocalDateTime
 import java.time.ZoneId
 import com.yapp.plus.core.designsystem.R as DesignSystemR
@@ -51,7 +50,8 @@ fun HomeScreen(
     onReportClick: () -> Unit = {},
     onScoreClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
-    notices: List<HomeNoticeUiModel> = emptyList(),
+    noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
+    onNoticeRetry: () -> Unit = {},
     hasAttended: Boolean = false,
     hasReported: Boolean = false,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
@@ -79,7 +79,7 @@ fun HomeScreen(
                     .verticalScroll(rememberScrollState())
                     .heightIn(min = minHeight)
                     .padding(horizontal = 16.dp)
-                    .padding(top = 14.dp, bottom = if (notices.isEmpty()) 0.dp else 14.dp),
+                    .padding(top = 14.dp, bottom = 14.dp),
             ) {
                 HomeSessionCard(
                     state = state,
@@ -112,14 +112,12 @@ fun HomeScreen(
                             YappHomeTypography.heading,
                             YappHomeColor.text,
                         )
-                        if (notices.isEmpty()) {
-                            HomeEmptyState(
-                                message = stringResource(R.string.home_notices_empty),
-                                modifier = Modifier.weight(1f).fillMaxWidth(),
-                            )
-                        } else {
-                            HomeNoticeList(notices, onNoticeClick)
-                        }
+                        HomeNoticeContent(
+                            noticeState,
+                            onNoticeClick,
+                            onNoticeRetry,
+                            Modifier.weight(1f).fillMaxWidth(),
+                        )
                     }
                     if (!hasAttended &&
                         !hasReported &&

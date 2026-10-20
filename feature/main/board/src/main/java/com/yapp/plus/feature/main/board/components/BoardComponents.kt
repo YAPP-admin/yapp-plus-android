@@ -1,5 +1,6 @@
 package com.yapp.plus.feature.main.board.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -88,7 +89,10 @@ fun BoardCategoryChip(
 }
 
 @Composable
-fun BoardEmptyState(modifier: Modifier = Modifier) {
+fun BoardEmptyState(
+    modifier: Modifier = Modifier,
+    @StringRes message: Int = R.string.board_empty,
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,7 +104,7 @@ fun BoardEmptyState(modifier: Modifier = Modifier) {
             modifier = Modifier.size(width = 90.dp, height = 74.dp),
         )
         YappText(
-            stringResource(R.string.board_empty),
+            stringResource(message),
             YappTypography.body1NormalRegular,
             YappMainColor.textSecondary,
             textAlign = TextAlign.Center,

@@ -4,11 +4,11 @@
 
 ## 현재 상태
 
-13개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor 공통 API 클라이언트, JSON 직렬화와 DataStore 기반 YAPP 세션 저장·복원이 준비되어 있고, 이번 주 세션·현재 기수 일정 조회를 Domain·Data·홈/일정 Feature·App까지 연결했습니다. 로그인·회원가입 UI는 별도 모듈이며, Google Credential Manager에서 ID 토큰과 nonce를 발급해 App 콜백에 전달합니다. App이 ID 토큰·원본 nonce를 Supabase Auth에 교환한 뒤에만 로그인 완료로 처리합니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리했고, App이 네 화면과 메인 탭 내비게이션·선택 상태를 관리합니다. 가입 UI 데모는 승인 대기에서 끝나며, 승인 대기 화면에는 하단 액션을 제공하지 않습니다. 홈은 이번 주 세션 API를 표시하고 출석 기록 API 연동 전까지 최근 출석 이력을 표시하지 않으며, My 화면은 데모 데이터를 표시합니다. debug·release 모두 시작 시 Supabase 세션 복원을 기다리고 인증 여부에 따라 메인 또는 Google 로그인 화면을 표시합니다. 게시판·My API, YAPP 초기 로그인 세션 발급과 회원 정보·출석 기록 API는 아직 연동되지 않았습니다.
+13개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor 공통 API 클라이언트, JSON 직렬화와 DataStore 기반 YAPP 세션 저장·복원이 준비되어 있고, 이번 주 세션·현재 기수 일정 조회를 Domain·Data·홈/일정 Feature·App까지 연결했습니다. 로그인·회원가입 UI는 별도 모듈이며, Google Credential Manager에서 ID 토큰과 nonce를 발급해 App 콜백에 전달합니다. App이 ID 토큰·원본 nonce를 Supabase Auth에 교환한 뒤에만 로그인 완료로 처리합니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리했고, App이 네 화면과 메인 탭 내비게이션·선택 상태를 관리합니다. 가입 UI 데모는 승인 대기에서 끝나며, 승인 대기 화면에는 하단 액션을 제공하지 않습니다. 홈은 이번 주 세션 API를 표시하고 출석 기록 API 연동 전까지 최근 출석 이력을 표시하지 않으며, My 화면은 데모 데이터를 표시합니다. debug·release 모두 시작 시 Supabase 세션 복원을 기다리고 인증 여부에 따라 메인 또는 Google 로그인 화면을 표시합니다. My API, YAPP 초기 로그인 세션 발급과 회원 정보·출석 기록 API는 아직 연동되지 않았습니다.
 
 인증 세션이 공급된 뒤의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 갱신 API·DTO·로컬 저장 연결을, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다. 초기 YAPP 로그인 API 연동은 후속이며 저장된 세션이 없으면 별도의 유효한 YAPP 토큰 쌍 공급이 필요합니다.
 
-비공개 MVP의 Supabase Auth 어댑터·암호화 세션 저장과 일정·공지·출석 검증 Data를 App Hilt에 연결했습니다. 일정은 테스트 세션만 조회하고 공식 기수가 비어 있으면 테스트 전용 0으로 매핑합니다. 출석은 인증된 RPC로 네 자리 코드를 보내고 서버가 확정한 결과를 검증합니다. MVP migration에는 보고 backend가 없어 해당 호출은 일반 실패로 끝납니다. Login Feature의 Supabase 교환·시작 시 세션 복원·오류 재시도를 연결했습니다. 공지 Feature 연결과 보고 UI 정리는 후속이며 DB migration은 실제 프로젝트에 아직 적용하지 않았습니다.
+비공개 MVP의 Supabase Auth 어댑터·암호화 세션 저장과 일정·공지·출석 검증 Data를 App Hilt에 연결했습니다. 일정은 테스트 세션만 조회하고 공식 기수가 비어 있으면 테스트 전용 0으로 매핑합니다. 출석은 인증된 RPC로 네 자리 코드를 보내고 서버가 확정한 결과를 검증합니다. MVP migration에는 보고 backend가 없어 해당 호출은 일반 실패로 끝납니다. Login Feature의 Supabase 교환·시작 시 세션 복원·오류 재시도를 연결했습니다. 홈의 주간 공지와 게시판의 유형별 목록·상세를 Repository에 연결했습니다. 보고 UI 정리는 후속이며 DB migration은 실제 프로젝트에 아직 적용하지 않았습니다.
 
 ## 아키텍처와 모듈
 
@@ -93,4 +93,4 @@ OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지�
 
 ### 수정된 홈 화면
 
-홈의 주간 세션·달력·빠른 메뉴, 알림 UI, 출석 코드 입력/완료와 출결 보고 흐름을 수정된 Figma에 맞춰 연결합니다. 출석 검증은 Supabase RPC를 사용하고 기존 YAPP 검증·보고 어댑터는 향후 전환을 위해 보존합니다. 현재 Supabase 경로에서 보고는 지원하지 않으며 공지·알림·출석 기록의 Feature 연결은 후속입니다. 지각 시간의 추가 선택은 디자이너 확인 전 임시 적용입니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.
+홈의 주간 세션·달력·빠른 메뉴, 알림 UI, 출석 코드 입력/완료와 출결 보고 흐름을 수정된 Figma에 맞춰 연결합니다. 출석 검증은 Supabase RPC를 사용하고 기존 YAPP 검증·보고 어댑터는 향후 전환을 위해 보존합니다. 현재 Supabase 경로에서 보고는 지원하지 않으며 홈의 주간 공지와 게시판 목록·상세는 Repository에 연결했으며 알림·출석 기록 조회는 후속입니다. 지각 시간의 추가 선택은 디자이너 확인 전 임시 적용입니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.

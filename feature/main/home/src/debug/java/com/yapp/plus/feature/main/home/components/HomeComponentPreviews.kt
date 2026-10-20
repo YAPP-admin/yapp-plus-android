@@ -12,6 +12,7 @@ import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.feature.main.home.HomePreviewData
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
+import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.ReportChoice
 import java.time.LocalDate
@@ -63,6 +64,12 @@ fun HomeEmptyStatePreview() {
 @Composable
 fun HomeNoticeListPreview() {
     YappTheme { HomeNoticeList(HomePreviewData.notices(), {}) }
+}
+
+@Preview(widthDp = 361, heightDp = 160)
+@Composable
+fun HomeNoticeContentPreview() {
+    YappTheme { HomeNoticeContent(HomeNoticeUiState.Error, {}, {}) }
 }
 
 @Preview(widthDp = 361)

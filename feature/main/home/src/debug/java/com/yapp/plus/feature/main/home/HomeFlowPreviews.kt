@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 
 @Preview(name = "Home updated", widthDp = 393, heightDp = 692)
 @Composable
@@ -22,7 +23,7 @@ fun AvailableHomePreview() {
         HomeScreen(
             HomePreviewData.state(AttendanceStatusUiModel.Available),
             now = HomePreviewData.now.withDayOfMonth(7),
-            notices = HomePreviewData.notices(),
+            noticeState = HomeNoticeUiState.Content(HomePreviewData.notices()),
         )
     }
 }
@@ -35,7 +36,7 @@ fun AttendedHomePreview() {
             HomePreviewData.state(),
             hasAttended = true,
             now = HomePreviewData.now.withDayOfMonth(7),
-            notices = HomePreviewData.notices(),
+            noticeState = HomeNoticeUiState.Content(HomePreviewData.notices()),
         )
     }
 }

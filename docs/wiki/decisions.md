@@ -266,9 +266,9 @@ last_verified: 2026-10-20
 ## DEC-0027 · Supabase 인증과 테스트 데이터로 비공개 MVP 구성
 
 - 기록일: 2026-10-20
-- 결정: Google Credential Manager의 ID 토큰·원본 nonce를 Supabase Auth에 교환하고 세션 복원·로그아웃을 제공합니다. 세션·공지 테스트 데이터를 조회하며 출석 기록은 테스트용 세션에 한정합니다. 테스트 종료 뒤 자동 삭제 없이 수동으로 운영 데이터로 전환합니다. Supabase Google provider는 사용자가 연 Dashboard에서 컴퓨터 사용으로 설정합니다.
+- 결정: Google Credential Manager의 ID 토큰·원본 nonce를 Supabase Auth에 교환하고 세션 복원·로그아웃을 제공합니다. 세션·공지 테스트 데이터를 조회하며 새 출석은 테스트 세션별로 직접 허용한 인증 사용자와 4자리 코드에 한정합니다. 시작 20분 전부터 종료 시각까지 DB가 판정하고 중복 제출은 원래 기록을 반환하며 본인만 재조회합니다. 테스트 종료 뒤 자동 삭제 없이 수동으로 운영 데이터로 전환합니다. Supabase Google provider는 사용자가 연 Dashboard에서 컴퓨터 사용으로 설정합니다.
 - 이유: YAPP 초기 로그인과 공지 조회 계약이 준비되기 전에 비공개 테스트의 핵심 기능을 실제 인증·데이터로 확인합니다.
 - 근거: 사용자 확정 및 승인된 MVP 계획, [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
 - 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md).
-- 적용 상태: Domain 계약과 정책 기록까지 반영했습니다. Supabase 설정·Data/DB·Feature 연결은 후속입니다. 테스트 출석 코드·시간·대상 계정·실제 날짜·중복 제출/재조회 서버 계약과 운영 데이터 전환 절차는 미확정 목록에 남깁니다. 기존 확정 YAPP 출석 정책을 임의로 변경하지 않습니다.
+- 적용 상태: Domain 계약과 DataSource 주입, [DB migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql)에 2주 더미 데이터·RLS·본인 기록 조회·서버 검증 RPC를 추가했습니다. 기수 정보·코드·허용 목록은 비워 둡니다. 로컬 PostgreSQL에서 계약을 검증했으며 실제 프로젝트에는 아직 적용하지 않았습니다. 실제 테스트 계정·코드 설정, Supabase 설정·Data/Feature 연결과 운영 데이터 전환 절차는 후속입니다. 기존 확정 YAPP 출석 정책을 임의로 변경하지 않습니다.
 - 대체한 결정: DEC-0017의 ID 토큰 발급까지만 수행하는 범위를 MVP의 Supabase 교환으로 확장합니다. Google 단일 로그인 UI와 토큰 발급만으로 로그인 완료하지 않는 원칙은 유지합니다. DEC-0024·DEC-0025의 YAPP 세션 저장·갱신 경로는 Supabase 세션과 구분해 유지합니다.

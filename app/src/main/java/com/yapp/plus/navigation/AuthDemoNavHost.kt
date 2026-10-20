@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.yapp.plus.feature.login.LoginRoute
 import com.yapp.plus.feature.login.model.GoogleLoginCredential
+import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.signup.AuthStatus
 import com.yapp.plus.feature.signup.AuthStatusContent
 import com.yapp.plus.feature.signup.SignUpContent
@@ -77,8 +78,18 @@ internal fun AuthDemoNavHost(
                 modifier = Modifier.fillMaxSize(),
             )
         }
-        composable<AuthDemoDestination.Main> {
-            MainTabScaffold(modifier = Modifier.fillMaxSize())
+        composable<AuthDemoDestination.Main> { entry ->
+            MainTabScaffold(
+                modifier = Modifier.fillMaxSize(),
+                onAttendanceComplete = {
+                    navController.navigateFrom(entry, AuthDemoDestination.AttendanceComplete)
+                },
+            )
+        }
+        composable<AuthDemoDestination.AttendanceComplete> { entry ->
+            HomeAttendanceCompleteScreen(
+                onConfirm = { navController.navigateBackFrom(entry, onExit) },
+            )
         }
     }
 }

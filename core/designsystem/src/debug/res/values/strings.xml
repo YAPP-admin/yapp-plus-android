@@ -7,4 +7,10 @@
     <string name="yapp_preview_auth_error_body">계속해서 같은 문제가 발생한다면\n운영팀에 제보해주세요!</string>
     <string name="yapp_preview_auth_report">제보하기</string>
     <string name="yapp_preview_auth_close">닫기</string>
+    <string name="yapp_preview_home_title">YAPP</string>
+    <string name="yapp_preview_home_confirm">확인</string>
+    <string name="yapp_preview_home_check_in">출석하기</string>
+    <string name="yapp_preview_home_attended">출석했어요!</string>
+    <string name="yapp_preview_home_report_complete">출결 보고를 완료했어요</string>
+    <string name="yapp_preview_home_reason_hint">사유를 입력해 주세요</string>
 </resources>

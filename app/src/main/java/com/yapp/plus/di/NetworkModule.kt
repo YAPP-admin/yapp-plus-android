@@ -5,9 +5,11 @@ import com.yapp.plus.core.network.ApiHttpClientFactory
 import com.yapp.plus.core.network.auth.TokenPersistence
 import com.yapp.plus.core.network.auth.TokenRefresher
 import com.yapp.plus.core.network.auth.TokenStore
+import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
 import com.yapp.plus.data.auth.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.SessionTokenRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
+import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
 import dagger.Provides
@@ -51,4 +53,8 @@ object NetworkModule {
     @Singleton
     fun provideSessionScheduleRepository(httpClient: HttpClient): SessionScheduleRepository =
         SessionScheduleRepositoryImpl(httpClient)
+
+    @Provides
+    @Singleton
+    fun provideAttendance(http: HttpClient): AttendanceRepository = AttendanceRepositoryImpl(http)
 }

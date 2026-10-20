@@ -13,12 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.component.main.YappDemoDataLabel
-import com.yapp.plus.core.designsystem.component.main.YappMainHeader
+import com.yapp.plus.core.designsystem.components.main.YappDemoDataLabel
+import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.main.my.component.MyMenuItem
-import com.yapp.plus.feature.main.my.component.MyProfileCard
-import com.yapp.plus.feature.main.my.component.MySummaryCard
+import com.yapp.plus.feature.main.my.components.MyMenuItem
+import com.yapp.plus.feature.main.my.components.MyProfileCard
+import com.yapp.plus.feature.main.my.components.MySummaryCard
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable

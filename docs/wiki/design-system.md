@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 ---
 
 # 디자인시스템
@@ -14,7 +14,7 @@ last_verified: 2026-10-18
 
 Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand`, `textPrimary`, `textSecondary`, `textSubtle`, `textFaint`, `background`를 사용합니다. 나머지 공용 색상과 컴포넌트 내부 색상은 `YappColor`에서 관리합니다.
 
-메인 탭 데모의 배경·표면·본문·구분선 색상은 `:core:designsystem/theme/YappMainColor.kt`에서 관리합니다. 공통 헤더·데모 안내·아이콘과 텍스트 행은 `component/main/`의 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 제공합니다. 안내 문구와 화면 동작은 Feature가 소유합니다. 인증 화면에서 사용하는 기존 색상 토큰은 변경하지 않습니다.
+메인 탭 데모의 배경·표면·본문·구분선 색상은 `:core:designsystem/theme/YappMainColor.kt`에서 관리합니다. 공통 헤더·데모 안내·아이콘과 텍스트 행은 `components/main/`의 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 제공합니다. 안내 문구와 화면 동작은 Feature가 소유합니다. 인증 화면에서 사용하는 기존 색상 토큰은 변경하지 않습니다.
 
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |
@@ -62,7 +62,7 @@ Figma의 알파 마스크는 VectorDrawable의 클리핑 경로로 옮겼습니�
 
 ## 하단 내비게이션
 
-`:core:designsystem/component/navigation/`의 `YappBottomNavigation`은 탭 배치·상단 구분선을, `YappBottomNavigationItem`은 아이콘·라벨·선택 상태와 탭 semantics를 담당합니다. App이 아이콘 리소스, 표시 라벨, 선택 상태와 클릭 콜백을 전달하고 탭 선택 상태와 화면 연결도 App에서 소유합니다. 공통 컴포넌트는 앱 Navigation에 의존하지 않습니다. 컴포넌트 Preview는 `:core:preview`의 재사용 enum parameter provider를 사용합니다.
+`:core:designsystem/components/navigation/`의 `YappBottomNavigation`은 탭 배치·상단 구분선을, `YappBottomNavigationItem`은 아이콘·라벨·선택 상태와 탭 semantics를 담당합니다. App이 아이콘 리소스, 표시 라벨, 선택 상태와 클릭 콜백을 전달하고 탭 선택 상태와 화면 연결도 App에서 소유합니다. 공통 컴포넌트는 앱 Navigation에 의존하지 않습니다. 컴포넌트 Preview는 `:core:preview`의 재사용 enum parameter provider를 사용합니다.
 
 ## 타이포그래피
 
@@ -103,3 +103,9 @@ Figma의 Bold 표기는 해당 스타일의 실제 글꼴 굵기를 따릅니다
 앱에서 Figma 스타일을 직접 쓸 때는 `YappTypography`의 대응 속성을 사용합니다. `MaterialTheme.typography` 소비자를 위해 Material 3 15개 슬롯은 이 토큰들에 연결됩니다. 새 색상·컴포넌트 토큰은 해당 Figma 기준이 확인될 때 별도 결정으로 추가합니다.
 
 글꼴은 공식 [Pretendard 저장소 v1.3.9](https://github.com/orioncactus/pretendard/tree/v1.3.9)에서 가져오며, 재배포를 위해 `:core:designsystem/src/main/assets/fonts/OFL-1.1.txt`를 함께 둡니다.
+
+## 수정된 홈 디자인 토큰
+
+[Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284)은 `YappHomeColor`와 `YappHomeTypography`로 표현합니다. 배경 `#F3F4F5`, 검정 액션 `#2A3038`, 비활성 액션 `#555D6D`의 50% 투명도, 오류 `#FA342C`와 원본의 11–26sp·15–35sp 스타일을 사용합니다. 공통 기본값과 다른 탭의 표현은 유지합니다.
+
+홈 빠른 메뉴의 두 그래픽과 출석 완료의 캐릭터·좌우 장식, tooltip 화살표·코드 오류 아이콘은 해당 Figma 레이어를 PNG로 직접 내보낸 `:feature:main:home`의 `drawable-nodpi/home_*.png`입니다. 빠른 메뉴는 원본 카드에서 실제 보이는 101.5×70dp 영역을 유지합니다. 기존 YAPP 로고와 빈 상태 벡터도 재사용하며, 작은 빈 상태는 원본의 50% 투명도를 적용합니다. 완료 그래픽의 원형 배경은 Figma Frame의 채움·반경으로 구성하고, 세 레이어는 Motion context의 공통 2초 타임라인을 Compose에서 재생합니다. 시스템 애니메이션이 꺼져 있으면 정적인 완료 그래픽을 표시합니다.

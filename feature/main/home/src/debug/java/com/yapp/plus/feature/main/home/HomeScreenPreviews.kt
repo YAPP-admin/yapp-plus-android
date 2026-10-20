@@ -1,13 +1,33 @@
 package com.yapp.plus.feature.main.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.main.home.model.AttendanceUiState
+import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 
 @Preview(name = "Home", widthDp = 393, heightDp = 692)
 @Preview(name = "Tall home", widthDp = 393, heightDp = 852)
 @Preview(name = "Compact home", widthDp = 320, heightDp = 560)
 @Composable
 private fun HomeScreenPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) { HomeScreen() }
+    val state =
+        AttendanceUiState.Content(
+            CurrentWeekSessionUiModel(
+                weekStartDateLabel = stringResource(R.string.attendance_home_demo_week_start),
+                weekEndDateLabel = stringResource(R.string.attendance_home_demo_week_end),
+                dateLabel = stringResource(R.string.attendance_home_demo_session_date),
+                name = stringResource(R.string.attendance_home_demo_session_name),
+                startTimeLabel = stringResource(R.string.attendance_home_demo_session_time),
+                location = stringResource(R.string.attendance_home_demo_session_location),
+                attendanceStatus = AttendanceStatusUiModel.Available,
+                sessionId = 42,
+                weekStartDate = java.time.LocalDate.of(2026, 10, 18),
+                sessionDate = java.time.LocalDate.of(2026, 10, 24),
+                startTime = java.time.LocalTime.of(14, 0),
+            ),
+        )
+    YappTheme(darkTheme = false, dynamicColor = false) { HomeScreen(state = state) }
 }

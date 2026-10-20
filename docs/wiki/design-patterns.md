@@ -46,19 +46,16 @@ last_verified: 2026-10-20
 - 하위 UI 컴포넌트는 콜백으로 이동을 요청하며, 다른 화면의 구현 대신 필요한 식별자와 입력을 전달합니다.
 - 시스템 뒤로 가기와 전체 내비게이션은 App이 소유합니다. 공통 레이아웃은 뒤로 버튼의 콜백만 전달하고 `BackHandler`나 목적지 선택을 포함하지 않습니다. 시스템 바 inset도 App에서 공급합니다.
 
-업무 정책·상태 전이·매핑·오류 처리의 경계 조건을 기존 테스트 도구로 검증합니다. Repository 테스트 대역은 가능한 경우 Fake를 사용합니다. 여러 모듈에서 재사용할 Fake·테스트 도구가 생기면 테스트 의존성으로만 연결합니다. 변경 모듈과 영향받는 호출부부터 검증하고 실제 결과를 기록합니다.
-
 ## HTTP 인증 세션 갱신
 
-- 인증된 API 요청이 401을 받으면 refresh token으로 갱신하고 원래 요청을 한 번만 재시도합니다. method·body·query·기존 헤더를 유지하고 Authorization을 새 access token으로 바꿉니다.
-- 동시에 발생한 요청은 같은 갱신 결과를 공유합니다. 갱신이 끝난 뒤 이전 토큰으로 도착한 401도 새 결과를 사용해 중복 갱신을 막습니다.
-- 갱신 API의 401은 해당 세션을 거절하고, 일시적인 네트워크·서버 실패는 기존 세션을 보존합니다. 재시도 요청은 다시 갱신하지 않습니다.
-- 요청 취소는 호출자에게 전파하되 다른 요청의 갱신은 취소하지 않습니다. 다른 세션으로 바뀌면 이전 결과로 토큰을 덮어쓰거나 요청을 재시도하지 않습니다.
-- Network의 `RefreshCoordinator`가 동시 갱신과 재시도를 조율합니다. Data의 `SessionTokenRemoteDataSource`는 인증 헤더가 없는 client로 갱신 API를 호출하고, App singleton은 DataStore 기반 `TokenStore`와 갱신 API를 연결합니다. 첫 인증 요청은 저장된 토큰 복원을 기다립니다. 초기 YAPP 세션 발급은 후속입니다.
+- API 서버의 인증된 요청이 401을 받으면 refresh token으로 `POST /api/auth/session-renewals`를 호출하고, 성공한 경우 원래 요청을 한 번만 재시도합니다. method·body·query·기존 헤더를 유지하고 Authorization을 새 access token으로 교체합니다. 재시도도 401이면 추가 갱신하지 않습니다.
+- 동시에 전송한 요청은 같은 갱신 작업과 결과를 공유합니다. 갱신 완료 뒤 늦게 도착하는 이전 토큰의 401도 그 결과를 사용합니다. 일시적인 실패도 같은 요청 집합에서 공유하고, 이후 새 요청은 다시 갱신을 시도할 수 있습니다.
+- access/refresh token은 하나의 불변 토큰 쌍으로 교체합니다. 갱신 API의 401은 해당 토큰 쌍을 제거하고, 네트워크·서버 오류나 올바르지 않은 성공 응답은 기존 세션을 보존하며 호출자에게 실패를 전달합니다.
+- 개별 요청의 취소는 호출자에게 전파하되 다른 요청이 기다리는 갱신을 취소하지 않습니다. 로그아웃·새 로그인으로 바뀐 세션을 이전 갱신 결과로 덮어쓰거나 다른 계정의 토큰으로 원래 요청을 재시도하지 않습니다.
+- Network가 HTTP 인증과 갱신 조율을, Data가 갱신 API 호출과 내부 DTO를 소유합니다. App은 토큰 저장소와 인증 client를 singleton으로 조립하고, 갱신에는 인증 인터셉터가 없는 별도 client를 사용합니다. 다른 origin에는 토큰을 붙이거나 갱신하지 않습니다.
+- YAPP access/refresh token 쌍은 DataStore에 함께 저장합니다. Network의 `TokenPersistence` 계약을 Data의 `SessionTokenLocalDataSource`가 구현하고, 실제 직렬화·암호화·파일 관리는 `:core:datastore`가 담당합니다. App이 저장소와 client를 singleton으로 조립합니다. 첫 인증 요청은 저장된 세션의 비동기 복원을 기다립니다.
+- 로그인 결과는 suspend `TokenStore.updateTokens`로 공급합니다. 갱신 결과의 조건부 교체와 세션 삭제는 같은 Mutex로 직렬화하고, 저장이 끝난 뒤 메모리 상태를 갱신합니다. 저장 도중 호출자가 취소돼도 디스크·메모리 반영 구간은 끝까지 완료합니다. 저장 실패는 호출자에게 전파하며 성공으로 처리하지 않습니다.
+- `:core:datastore`는 DataStore 1.2.1의 단일 불변 레코드와 `updateData`를 사용합니다. Android Keystore의 AES-256-GCM 키로 암호화하고 `noBackupFilesDir`에 저장합니다. API base URL별 파일을 분리해 개발·운영·모킹 환경의 세션을 섞지 않습니다. 파일 손상·복호화 불가는 빈 세션으로 복구하고 일반 I/O 실패는 전파합니다. 토큰과 직렬화 원문은 로그에 남기지 않습니다.
+- 저장된 세션이 없으면 인증 토큰을 공급하지 않습니다. `local.properties` access-token 주입 경로는 제거했습니다. Google ID 토큰·nonce는 이 저장소에 넣지 않습니다. 서버의 초기 YAPP 로그인 세션 발급 API 연결과 인증 만료 시 화면 이동은 후속입니다.
 
-## 인증 세션 저장
-
-- YAPP access/refresh token 쌍은 DataStore의 불변 레코드와 `updateData`로 함께 저장합니다. Network의 `TokenPersistence` 계약을 Data의 로컬 DataSource가 구현하며, 직렬화·파일·암호화는 `:core:datastore`가 담당합니다.
-- Keystore AES-256-GCM 암호화와 `noBackupFilesDir`를 사용하고 API base URL을 namespace로 파일을 분리합니다. 파일 손상·복호화 불가는 빈 세션으로 복구하고 일반 I/O 실패는 전파합니다. 토큰 원문은 로그에 남기지 않습니다. Google ID 토큰·nonce는 저장하지 않습니다.
-- `TokenStore`는 첫 조회의 복원을 기다리고 교체·삭제를 같은 Mutex로 직렬화합니다. 저장 완료 후 메모리를 갱신하고 저장 실패는 전파합니다. 저장 도중 호출자가 취소돼도 디스크·메모리 반영 구간은 완료합니다. 늦은 갱신 결과는 조건부 교체로 다른 세션을 덮어쓰지 못하게 합니다.
-- App singleton이 DataStore 저장소를 Network의 `TokenStore`에 연결하며, 첫 인증 요청은 저장된 토큰 쌍 복원을 기다립니다. 같은 namespace의 DataStore 인스턴스는 프로세스 내 하나로 유지해야 합니다.
+업무 정책·상태 전이·매핑·오류 처리의 경계 조건을 기존 테스트 도구로 검증합니다. Repository 테스트 대역은 가능한 경우 Fake를 사용합니다. 여러 모듈에서 재사용할 Fake·테스트 도구가 생기면 테스트 의존성으로만 연결합니다. 변경 모듈과 영향받는 호출부부터 검증하고 실제 결과를 기록합니다.

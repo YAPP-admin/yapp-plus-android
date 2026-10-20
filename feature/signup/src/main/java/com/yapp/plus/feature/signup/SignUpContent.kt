@@ -26,12 +26,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.component.auth.AuthHeading
-import com.yapp.plus.core.designsystem.component.auth.AuthLayout
-import com.yapp.plus.core.designsystem.component.auth.AuthPrimaryAction
-import com.yapp.plus.core.designsystem.component.input.YappInputState
-import com.yapp.plus.core.designsystem.component.input.YappTextField
-import com.yapp.plus.core.designsystem.component.input.YappTextFieldVariant
+import com.yapp.plus.core.designsystem.components.auth.AuthHeading
+import com.yapp.plus.core.designsystem.components.auth.AuthLayout
+import com.yapp.plus.core.designsystem.components.auth.AuthPrimaryAction
+import com.yapp.plus.core.designsystem.components.input.YappInputState
+import com.yapp.plus.core.designsystem.components.input.YappTextField
+import com.yapp.plus.core.designsystem.components.input.YappTextFieldVariant
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

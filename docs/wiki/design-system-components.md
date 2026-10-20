@@ -6,9 +6,11 @@ last_verified: 2026-10-19
 
 # 디자인시스템 공통 컴포넌트
 
+공통 Compose 컴포넌트는 `:core:designsystem`의 `components/` 패키지에 둡니다. 자세한 배치 규칙은 [모듈 구조](module-structure.md)를 따릅니다.
+
 ## YappText
 
-공통 Compose 텍스트는 `:core:designsystem`의 `component/text/YappText.kt`에서 제공합니다. `YappText`는 Material 3 `Text`를 감싸며 `TextStyle`을 그대로 받습니다. 디자인 토큰이나 화면별 스타일을 `style`로 전달할 수 있습니다.
+공통 Compose 텍스트는 `:core:designsystem`의 `components/text/YappText.kt`에서 제공합니다. `YappText`는 Material 3 `Text`를 감싸며 `TextStyle`을 그대로 받습니다. 디자인 토큰이나 화면별 스타일을 `style`로 전달할 수 있습니다.
 
 호출부에서 `style`과 `color`를 명시합니다. 정렬, 장식, 최소·최대 줄 수, 줄바꿈, overflow, 레이아웃 콜백을 지원합니다. 시스템 글꼴 크기 설정을 적용하기 위해 `LocalDensity`를 변경하지 않습니다.
 
@@ -27,11 +29,11 @@ YappText(
 
 ## 메인 헤더
 
-메인 탭에서 재사용하는 제목·선택 아이콘 표현은 `component/main/YappMainHeader.kt`에서 제공합니다. 제목, 선택 아이콘, leading 슬롯과 클릭 콜백을 받아 표시하며 App이나 Feature의 내비게이션 상태를 소유하지 않습니다. 개별 Preview는 `src/debug`에 둡니다.
+메인 탭에서 재사용하는 제목·선택 아이콘 표현은 `components/main/YappMainHeader.kt`에서 제공합니다. 제목, 선택 아이콘, leading 슬롯과 클릭 콜백을 받아 표시하며 App이나 Feature의 내비게이션 상태를 소유하지 않습니다. 개별 Preview는 `src/debug`에 둡니다.
 
 ## 메인 아이콘 라벨
 
-`component/main/YappIconLabel.kt`의 `YappIconLabel`은 공통 아이콘과 한 줄 텍스트를 가로로 표시합니다. 아이콘 리소스와 텍스트를 받고 선택적으로 tint를 적용합니다. 아이콘 크기·간격·텍스트 스타일은 디자인시스템 토큰으로 고정하며, 화면별 문구와 아이콘 선택은 호출부가 소유합니다. 홈 세션과 일정 항목에서 함께 사용합니다.
+`components/main/YappIconLabel.kt`의 `YappIconLabel`은 공통 아이콘과 한 줄 텍스트를 가로로 표시합니다. 아이콘 리소스와 텍스트를 받고 선택적으로 tint를 적용합니다. 아이콘 크기·간격·텍스트 스타일은 디자인시스템 토큰으로 고정하며, 화면별 문구와 아이콘 선택은 호출부가 소유합니다. 홈 세션과 일정 항목에서 함께 사용합니다.
 
 ## Chip·Dropdown 표현 인자
 
@@ -50,6 +52,14 @@ YappText(
 
 ## 인증 공통 표현
 
-`component/auth/`의 `AuthLayout`, `AuthHeading`, `AuthGraphic`, `AuthPrimaryAction`, `AuthErrorDialog`는 표시값과 콜백으로 인증 UI 표현을 재사용합니다. `AuthLayout`은 뒤로 버튼과 content·bottom 슬롯을 제공하고 시스템 뒤로 가기·inset은 App에서 공급합니다. 오류 문구와 닫기·제보 행동도 호출부에서 전달합니다.
+`components/auth/`의 `AuthLayout`, `AuthHeading`, `AuthGraphic`, `AuthPrimaryAction`, `AuthErrorDialog`는 표시값과 콜백으로 인증 UI 표현을 재사용합니다. `AuthLayout`은 뒤로 버튼과 content·bottom 슬롯을 제공하고 시스템 뒤로 가기·inset은 App에서 공급합니다. 오류 문구와 닫기·제보 행동도 호출부에서 전달합니다.
 
-각 컴포넌트는 `src/debug`의 `component/auth/AuthPreviews.kt`에 개별 Preview를 갖습니다. 화면·목적지·검증 규칙·인증 연동은 이 공통 표현의 책임에 포함하지 않습니다.
+각 컴포넌트는 `src/debug`의 `components/auth/AuthPreviews.kt`에 개별 Preview를 갖습니다. 화면·목적지·검증 규칙·인증 연동은 이 공통 표현의 책임에 포함하지 않습니다.
+
+## 홈 Figma 변형
+
+- `YappButtonSize.HomePrimary`는 54dp·16sp/22sp·12dp 모서리, `HomeSecondary`는 44dp·14sp/19sp·8dp 모서리입니다. `SolidNeutral`은 홈의 검정 출석 버튼과 비활성 회색 표현을 제공합니다.
+- `YappBottomSheetVariant.Home`은 가로 바깥 여백 10dp, 모서리 16dp, 52×4dp 핸들을 포함한 32dp 상단 영역, 본문 가로/하단 여백 18dp와 46% dim을 제공합니다. 기존 기본 변형은 유지합니다.
+- `YappToastVariant.Home`은 가로 전체 너비, 46dp 최소 높이, 8dp 모서리와 확인 액션을 제공합니다. 메시지·닫기 상태는 Feature에서 전달합니다.
+- `YappTextField.textStyle`은 선택적으로 홈 사유 입력의 서체를 전달합니다. `Auth` 변형의 54dp·12dp 입력 외곽과 포커스 동작을 재사용합니다. `YappMainHeader.iconTint`는 홈의 알림 색상을 선택하며 기본 호출부 표현은 유지합니다.
+- 새로운 변형의 개별 Preview는 `src/debug`의 `components/HomeControlsPreviews.kt`에 둡니다.

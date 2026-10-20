@@ -19,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yapp.plus.core.designsystem.component.auth.AuthGraphic
-import com.yapp.plus.core.designsystem.component.auth.AuthHeading
-import com.yapp.plus.core.designsystem.component.auth.AuthLayout
-import com.yapp.plus.core.designsystem.component.auth.AuthPrimaryAction
-import com.yapp.plus.core.designsystem.component.text.YappText
+import com.yapp.plus.core.designsystem.components.auth.AuthGraphic
+import com.yapp.plus.core.designsystem.components.auth.AuthHeading
+import com.yapp.plus.core.designsystem.components.auth.AuthLayout
+import com.yapp.plus.core.designsystem.components.auth.AuthPrimaryAction
+import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 

@@ -6,9 +6,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.preview.EnumPreviewParameterProvider
-import com.yapp.plus.feature.main.board.component.BoardCategoryChip
-import com.yapp.plus.feature.main.board.component.BoardCategorySelector
-import com.yapp.plus.feature.main.board.component.BoardEmptyState
+import com.yapp.plus.feature.main.board.components.BoardCategoryChip
+import com.yapp.plus.feature.main.board.components.BoardCategorySelector
+import com.yapp.plus.feature.main.board.components.BoardEmptyState
 import com.yapp.plus.feature.main.board.model.BoardCategory
 
 @Preview(name = "Board", widthDp = 393, heightDp = 692)

@@ -3,8 +3,8 @@ package com.yapp.plus.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.yapp.plus.core.designsystem.component.navigation.YappBottomNavigation
-import com.yapp.plus.core.designsystem.component.navigation.YappBottomNavigationItem
+import com.yapp.plus.core.designsystem.components.navigation.YappBottomNavigation
+import com.yapp.plus.core.designsystem.components.navigation.YappBottomNavigationItem
 
 @Composable
 internal fun MainTabNavigation(

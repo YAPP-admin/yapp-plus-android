@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.component.auth.AuthGraphic
-import com.yapp.plus.core.designsystem.component.auth.AuthHeading
-import com.yapp.plus.core.designsystem.component.auth.AuthLayout
-import com.yapp.plus.core.designsystem.component.button.YappButton
-import com.yapp.plus.core.designsystem.component.button.YappButtonSize
-import com.yapp.plus.core.designsystem.component.button.YappButtonVariant
+import com.yapp.plus.core.designsystem.components.auth.AuthGraphic
+import com.yapp.plus.core.designsystem.components.auth.AuthHeading
+import com.yapp.plus.core.designsystem.components.auth.AuthLayout
+import com.yapp.plus.core.designsystem.components.button.YappButton
+import com.yapp.plus.core.designsystem.components.button.YappButtonSize
+import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable

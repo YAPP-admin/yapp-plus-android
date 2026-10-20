@@ -18,4 +18,7 @@ internal sealed interface AuthDemoDestination {
 
     @Serializable
     data object Main : AuthDemoDestination
+
+    @Serializable
+    data object AttendanceComplete : AuthDemoDestination
 }

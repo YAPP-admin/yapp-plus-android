@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yapp.plus.feature.login.model.GoogleLoginCredential
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val SPLASH_DURATION_MILLIS = 1_000L
 
@@ -22,7 +23,7 @@ internal fun AppStartRoute(
     var isSplashVisible by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        delay(SPLASH_DURATION_MILLIS)
+        delay(SPLASH_DURATION_MILLIS.milliseconds)
         isSplashVisible = false
     }
 

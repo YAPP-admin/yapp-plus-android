@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.yapp.plus.core.designsystem.component.popup.YappAlertDialog
+import com.yapp.plus.core.designsystem.components.popup.YappAlertDialog
 import com.yapp.plus.feature.login.components.LoginErrorDialog
 import com.yapp.plus.feature.login.model.GoogleLoginCredential
 import com.yapp.plus.feature.login.model.LoginUiState

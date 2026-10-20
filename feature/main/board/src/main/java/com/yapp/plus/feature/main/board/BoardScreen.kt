@@ -12,10 +12,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.component.main.YappMainHeader
+import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.feature.main.board.component.BoardCategorySelector
-import com.yapp.plus.feature.main.board.component.BoardEmptyState
+import com.yapp.plus.feature.main.board.components.BoardCategorySelector
+import com.yapp.plus.feature.main.board.components.BoardEmptyState
 import com.yapp.plus.feature.main.board.model.BoardCategory
 
 @Composable

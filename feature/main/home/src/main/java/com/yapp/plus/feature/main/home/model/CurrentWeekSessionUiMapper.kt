@@ -18,6 +18,10 @@ internal object CurrentWeekSessionUiMapper {
                 startTimeLabel = session.startTime.format(timeFormatter),
                 location = session.location,
                 attendanceStatus = session.attendanceStatus.toUiModel(),
+                sessionId = session.sessionId,
+                weekStartDate = schedule.weekStartDate,
+                sessionDate = session.date,
+                startTime = session.startTime,
             ),
         )
     }

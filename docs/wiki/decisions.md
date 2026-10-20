@@ -193,6 +193,36 @@ last_verified: 2026-10-20
 - 적용 상태: Network의 세션별 갱신 공유와 401 재시도 기반을 구현했습니다. Data 갱신 API 연결과 App DI는 후속 PR입니다.
 - 대체한 결정: 없음.
 
+## DEC-0020 · 홈 화면 정적 출석 이력 데모 제거
+
+- 기록일: 2026-10-19
+- 결정: 홈 화면에 고정된 최근 출석 이력, 데모 배지와 데모 데이터 안내를 표시하지 않습니다. 출석 기록 API가 연동되기 전까지 홈은 이번 주 세션 조회 API의 상태만 표시합니다. 세션의 예시 값은 debug 전용 Preview에서만 사용합니다.
+- 이유: 홈의 데모 코드를 제거해 실제 출석 기록이 없는 상태에서 정적 이력이 사용자 화면에 나타나지 않게 합니다.
+- 근거: 이번 세션의 사용자 명시 요청과 현재 홈의 API 연결 상태.
+- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:main:home`.
+- 적용 상태: 정적 이력 카드와 데모 안내를 제거하고, 무상태 화면의 데모 세션 대체값과 Preview 전용 값을 분리했습니다.
+- 대체한 결정: DEC-0012의 홈 데모 출석 이력·안내 부분만 대체합니다. debug 홈 시작 경로와 다른 화면의 데모 UI는 유지합니다.
+
+## DEC-0021 · 의존성 주입과 UI 컴포넌트 패키지 분리
+
+- 기록일: 2026-10-19
+- 결정: Android 모듈의 Hilt 의존성 주입 선언은 모듈 루트의 `di/` 패키지에 둡니다. 독립 UI 컴포넌트는 `components/` 패키지에 두고 Route·Screen과 분리합니다. 새 컴포넌트 Preview도 `src/debug`에서 같은 `components/` 패키지 경로를 사용합니다.
+- 이유: 의존성 조립과 UI 컴포넌트의 위치를 모듈마다 일관되게 찾아 관리합니다.
+- 근거: 사용자의 명시 요청.
+- 반영: [모듈 구조](module-structure.md), [디자인시스템 공통 컴포넌트](design-system-components.md).
+- 적용 상태: Designsystem과 메인 Feature의 기존 컴포넌트 패키지 및 debug Preview를 `components/`로 옮기고 참조를 갱신했습니다. 로그인 오류 다이얼로그도 Feature의 `components/`로 분리했습니다. 기존 Hilt 의존성 주입 파일은 이미 `di/`에 있어 그대로 유지합니다.
+- 대체한 결정: 없음.
+
+## DEC-0022 · 함수는 단일 책임을 갖도록 분리
+
+- 기록일: 2026-10-19
+- 결정: 함수는 단일 책임 원칙을 따릅니다. 요청 구성, 외부 호출, 응답 검증·변환처럼 변경 이유가 다른 작업을 책임별 함수로 분리하고, 상위 함수는 흐름을 조립합니다.
+- 이유: 함수가 변경되는 이유와 실패 지점을 좁혀 구현·리뷰·검증을 쉽게 합니다.
+- 근거: 사용자의 명시 요청과 `getGoogleLoginCredential`의 책임 혼합 지적.
+- 반영: [코딩 컨벤션](coding-conventions.md), `:feature:login`의 Google Credential Manager 구현.
+- 적용 상태: `getGoogleLoginCredential`은 nonce와 로그인 결과를 조립하고, Credential Manager 요청 구성·실행, credential 검증과 ID 토큰 파싱은 각각 별도 함수가 담당합니다.
+- 대체한 결정: 없음.
+
 ## DEC-0023 · 수정된 홈 디자인과 출석·출결 보고 흐름
 
 - 기록일: 2026-10-19
@@ -200,7 +230,7 @@ last_verified: 2026-10-20
 - 이유: 홈에서 이어지는 전체 화면을 반영하라는 사용자 요청과 실제 API의 상태·일회성 변경 결과를 일치시키기 위함입니다.
 - 근거: 사용자 확정, [Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284), [이슈 #82](https://github.com/YAPP-admin/yapp-plus-android/issues/82), 개발 서버 OpenAPI와 backend dev의 출석 검증·보고 계약.
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), [공통 컴포넌트](design-system-components.md), [디자인시스템](design-system.md).
-- 적용 상태: Domain 출석 인증·사전 보고 계약을 정의했습니다. Data API 구현과 홈 UI·ViewModel·App 연결은 이슈 #82의 후속 PR로 나눠 진행합니다.
+- 적용 상태: 홈·연결 화면 UI와 API 호출·입력·제출 상태를 구현합니다. 지각은 사용자 지시에 따라 1시간/3시간 선택 단계를 우선 적용하며 디자이너 확인 뒤 조정합니다. 알림·공지·출석 기록 조회와 프로세스 종료 뒤 완료 상태 복원은 후속입니다.
 - 대체한 결정: DEC-0020의 출석 이력 데모 제거를 유지하면서 홈 레이아웃과 연결 흐름만 확장합니다. 출석 판정·점수 정책을 새로 확정하지 않습니다.
 
 ## DEC-0024 · DataStore 기반 YAPP 세션 저장과 복원

@@ -1,32 +1,51 @@
 package com.yapp.plus.di
 
-import com.yapp.plus.core.network.AccessTokenProvider
+import android.content.Context
 import com.yapp.plus.core.network.ApiHttpClientFactory
-import com.yapp.plus.core.network.MutableAccessTokenProvider
+import com.yapp.plus.core.network.auth.TokenPersistence
+import com.yapp.plus.core.network.auth.TokenRefresher
+import com.yapp.plus.core.network.auth.TokenStore
+import com.yapp.plus.data.auth.SessionTokenLocalDataSource
+import com.yapp.plus.data.auth.SessionTokenRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import javax.inject.Singleton
+import com.yapp.plus.core.network.BuildConfig as NetworkBuildConfig
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideMutableAccessTokenProvider(): MutableAccessTokenProvider = MutableAccessTokenProvider()
+    fun provideSessionPersistence(
+        @ApplicationContext context: Context,
+    ): TokenPersistence =
+        SessionTokenLocalDataSource(
+            context = context,
+            namespace = NetworkBuildConfig.API_BASE_URL,
+        )
 
     @Provides
     @Singleton
-    fun provideAccessTokenProvider(provider: MutableAccessTokenProvider): AccessTokenProvider = provider
+    fun provideSessionTokenStore(persistence: TokenPersistence): TokenStore = TokenStore(persistence = persistence)
 
     @Provides
     @Singleton
-    fun provideApiHttpClient(accessTokenProvider: AccessTokenProvider): HttpClient =
-        ApiHttpClientFactory.create(accessTokenProvider)
+    fun provideSessionTokenRefresher(): TokenRefresher =
+        SessionTokenRemoteDataSource(ApiHttpClientFactory.createUnauthenticated())
+
+    @Provides
+    @Singleton
+    fun provideApiHttpClient(
+        tokenStore: TokenStore,
+        tokenRefresher: TokenRefresher,
+    ): HttpClient = ApiHttpClientFactory.create(tokenStore, tokenRefresher)
 
     @Provides
     @Singleton

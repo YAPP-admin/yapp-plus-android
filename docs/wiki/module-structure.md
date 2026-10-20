@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-19
+last_verified: 2026-10-20
 ---
 
 # 모듈 구조
@@ -20,12 +20,12 @@ last_verified: 2026-10-19
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰 발급, 로그인 상태·오류 조정은 ViewModel에서 처리; 오류·미완료 안내 UI 구현됨; 앱 초기 화면 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 이번 주 세션·현재 기수 일정 모델과 Repository 계약 구현됨 |
-| `:data` | `com.yapp.plus.data` | Android Library; 세션 일정 Ktor DataSource·DTO·Domain 매핑·Repository 구현됨 |
+| `:data` | `com.yapp.plus.data` | Android Library; 세션 일정 Ktor DataSource·DTO·Domain 매핑·Repository 및 토큰 로컬 DataSource 구현됨 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 개발 Bearer token 공급 구현; 세션 조회 DataSource는 `:data`에 구현됨 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
-| `:core:datastore` | `com.yapp.plus.core.datastore` | 로컬 저장 필요 시 추가 |
+| `:core:datastore` | `com.yapp.plus.core.datastore` | 암호화 세션 레코드 저장·복원 구현됨; Data에서 사용 |
 
-12개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL, debug 로컬 Bearer token 공급을 제공합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+13개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL, debug 로컬 Bearer token 공급을 제공합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
 `:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. Login Feature는 Credential Manager에서 Google ID 토큰과 nonce를 받아 App 콜백으로 전달합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지와 인증 토큰 콜백을 조립하며, 토큰 발급만으로 가입 UI 데모에 진입하지 않습니다. App의 공통 ViewModel과 `SavedStateHandle`이 가입 데모 입력값을 유지·복원하고, 전체 뒤로 가기와 시스템 inset 적용·소비도 App이 소유합니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다. ID 토큰 서버 검증·YAPP 세션 발급·가입 처리는 아직 포함하지 않습니다.
 
@@ -48,3 +48,14 @@ last_verified: 2026-10-19
 ## 모듈 변경 절차
 
 모듈을 추가하거나 옮길 때 실제 책임·사용처·계약·호출부를 확인합니다. 파일·패키지를 배치하고 `settings.gradle.kts`에 등록한 뒤 [아키텍처의 의존성 방향](architecture.md)과 App의 객체 조립을 확인합니다. 재사용할 Fake·테스트 도구는 필요할 때 테스트 의존성으로만 연결합니다. 영향받는 모듈과 호출부를 검증하고 이 문서, `AGENTS.md`, `README.md`의 상태를 함께 갱신합니다. 없는 모듈이나 검사 도구의 명령을 실행했다고 보고하지 않습니다.
+
+## 인증 저장소 자동 검증
+
+Network의 `TokenPersistence`·`TokenStore`는 토큰 쌍의 최초 복원·조건부 교체·삭제를 직렬화합니다. Data의 `SessionTokenLocalDataSource`가 `:core:datastore`에 연결합니다. App DI와 401 갱신·재시도 연결은 후속입니다.
+
+```bash
+./gradlew :core:network:testDebugUnitTest :data:installDebugAndroidTest
+python3 scripts/verify_session_restart.py --serial emulator-5554
+```
+
+실행 중인 기기 serial을 사용합니다. 스크립트는 테스트 APK만 종료하며, 가짜 토큰 회전 저장 → 별도 프로세스 복원·삭제 → 다시 별도 프로세스에서 빈 세션 복원을 검증합니다. 실제 DataStore·Keystore를 사용하고 PID 3개가 다른지 확인합니다. 단계 인자가 없는 일반 instrumentation 실행은 이 세 테스트를 생략합니다. `adb` 경로는 `--adb`로 지정할 수 있습니다.

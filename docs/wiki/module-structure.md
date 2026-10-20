@@ -21,7 +21,7 @@ last_verified: 2026-10-20
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·가입 상태 UI 구현됨; 승인 대기에 하단 액션 없음 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 이번 주 세션·현재 기수 일정 모델과 Repository 계약 구현됨 |
 | `:data` | `com.yapp.plus.data` | Android Library; 세션 일정 Ktor DataSource·DTO·Domain 매핑·Repository 및 토큰 로컬 DataSource 구현됨 |
-| `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 개발 Bearer token 공급 구현; 세션 조회 DataSource는 `:data`에 구현됨 |
+| `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·기존 Bearer 토큰 공급; 401 갱신 조율과 재시도 기반 구현, Data API·App DI는 후속; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | 암호화 세션 레코드 저장·복원 구현됨; Data에서 사용 |
 

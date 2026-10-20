@@ -48,6 +48,14 @@ last_verified: 2026-10-20
 
 업무 정책·상태 전이·매핑·오류 처리의 경계 조건을 기존 테스트 도구로 검증합니다. Repository 테스트 대역은 가능한 경우 Fake를 사용합니다. 여러 모듈에서 재사용할 Fake·테스트 도구가 생기면 테스트 의존성으로만 연결합니다. 변경 모듈과 영향받는 호출부부터 검증하고 실제 결과를 기록합니다.
 
+## HTTP 인증 세션 갱신
+
+- 인증된 API 요청이 401을 받으면 refresh token으로 갱신하고 원래 요청을 한 번만 재시도합니다. method·body·query·기존 헤더를 유지하고 Authorization을 새 access token으로 바꿉니다.
+- 동시에 발생한 요청은 같은 갱신 결과를 공유합니다. 갱신이 끝난 뒤 이전 토큰으로 도착한 401도 새 결과를 사용해 중복 갱신을 막습니다.
+- 갱신 API의 401은 해당 세션을 거절하고, 일시적인 네트워크·서버 실패는 기존 세션을 보존합니다. 재시도 요청은 다시 갱신하지 않습니다.
+- 요청 취소는 호출자에게 전파하되 다른 요청의 갱신은 취소하지 않습니다. 다른 세션으로 바뀌면 이전 결과로 토큰을 덮어쓰거나 요청을 재시도하지 않습니다.
+- Network의 `RefreshCoordinator`가 동시 갱신과 재시도를 조율합니다. Data의 갱신 API 구현과 App의 singleton 조립은 후속 PR입니다.
+
 ## 인증 세션 저장
 
 - YAPP access/refresh token 쌍은 DataStore의 불변 레코드와 `updateData`로 함께 저장합니다. Network의 `TokenPersistence` 계약을 Data의 로컬 DataSource가 구현하며, 직렬화·파일·암호화는 `:core:datastore`가 담당합니다.

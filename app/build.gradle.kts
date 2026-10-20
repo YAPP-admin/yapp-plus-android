@@ -1,7 +1,29 @@
+import java.util.Properties
+
 plugins {
     id("yapp.android.application")
     id("yapp.hilt")
     id("yapp.kotlin.serialization")
+}
+
+val localProperties =
+    Properties().apply {
+        val file = rootProject.file("local.properties")
+        if (file.exists()) file.inputStream().use { load(it) }
+    }
+
+val supabasePublishableKey =
+    providers
+        .gradleProperty("supabase.publishableKey")
+        .orElse(providers.environmentVariable("SUPABASE_PUBLISHABLE_KEY"))
+        .orElse(localProperties.getProperty("supabase.publishableKey", ""))
+        .orElse("")
+        .get()
+        .trim()
+
+val isPublicKey = supabasePublishableKey.matches(Regex("sb_publishable_[A-Za-z0-9_-]+"))
+check(supabasePublishableKey.isEmpty() || isPublicKey) {
+    "supabase.publishableKey must be a Supabase publishable client key"
 }
 
 android {
@@ -14,6 +36,8 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+        buildConfigField("String", "SUPABASE_URL", "\"https://wksafpohbpzszskhchxq.supabase.co\"")
+        buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", "\"$supabasePublishableKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -54,6 +78,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)

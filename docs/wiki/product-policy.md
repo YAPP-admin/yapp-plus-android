@@ -24,7 +24,7 @@ last_verified: 2026-10-20
 - Supabase 인증 세션과 YAPP API 세션을 분리합니다. Google ID 토큰·원본 nonce는 교환 중 메모리에서만 사용하고 로그·영구 저장소에 남기지 않습니다. 앱에 Supabase secret/service-role 키를 포함하지 않으며 노출 데이터는 RLS와 최소 권한으로 제한합니다.
 - Supabase Google provider 설정은 사용자가 열어 둔 Supabase Dashboard에서 컴퓨터 사용으로 적용합니다.
 
-적용 상태: 인증·공지 Domain 계약과 데이터 공급자 교체 경계, [세션·공지·테스트 출석 migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql)을 추가했습니다. migration은 실행 시점의 한국 시간 기준 이번 주·다음 주 토요일에 가상 세션과 공지를 만들며 모든 제목에 `[더미]`를 표시합니다. 표본 시각은 14:00–16:00, 장소와 공식 기수 정보는 비워 둡니다. 코드·허용 목록도 빈 상태라 관리자 설정 전에는 출석이 거절됩니다. 실제 Supabase 프로젝트 적용·테스터별 허용 등록·코드 설정, 인증 교환·세션 복원과 Data/Feature 연결은 후속입니다. 표본 일정은 공식 YAPP 일정이 아니며 관리자가 조정할 수 있습니다.
+적용 상태: 인증·공지 Domain 계약과 공급자 교체 경계, [세션·공지·테스트 출석 migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql), Supabase Auth DataSource·Repository의 암호화 세션 저장·복원 기반을 추가했습니다. migration은 실행 시점의 한국 시간 기준 이번 주·다음 주 토요일에 가상 세션과 공지를 만들며 모든 제목에 `[더미]`를 표시합니다. 표본 시각은 14:00–16:00, 장소와 공식 기수 정보는 비워 둡니다. 코드·허용 목록도 빈 상태라 관리자 설정 전에는 출석이 거절됩니다. 실제 Supabase 프로젝트 적용·테스터별 허용 등록·코드 설정, Login Feature 연결과 세션·공지·출석 DataSource 연결은 후속입니다. 표본 일정은 공식 YAPP 일정이 아니며 관리자가 조정할 수 있습니다.
 
 ## 인증 화면 결정
 

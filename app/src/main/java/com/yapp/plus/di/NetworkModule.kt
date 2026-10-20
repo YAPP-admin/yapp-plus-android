@@ -39,8 +39,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSessionTokenStore(persistence: TokenPersistence): TokenStore =
-        TokenStore(persistence = persistence)
+    fun provideSessionTokenStore(persistence: TokenPersistence): TokenStore = TokenStore(persistence = persistence)
 
     @Provides
     @Singleton
@@ -61,9 +60,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSessionScheduleRepository(
-        dataSource: SessionScheduleDataSource,
-    ): SessionScheduleRepository =
+    fun provideSessionScheduleRepository(dataSource: SessionScheduleDataSource): SessionScheduleRepository =
         SessionScheduleRepositoryImpl(dataSource)
 
     @Provides
@@ -73,6 +70,5 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAttendance(dataSource: AttendanceDataSource): AttendanceRepository =
-        AttendanceRepositoryImpl(dataSource)
+    fun provideAttendance(dataSource: AttendanceDataSource): AttendanceRepository = AttendanceRepositoryImpl(dataSource)
 }

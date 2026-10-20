@@ -44,7 +44,7 @@ Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유�
 - Google ID 토큰과 원본 nonce는 Domain의 로그인 입력 모델로 전달하지만 인증 제공자의 access/refresh token은 Data에서 관리합니다. `AuthSession`은 토큰·프로필·제공자 SDK 타입 없이 불투명한 사용자 식별자만 노출합니다.
 - YAPP 세션 토큰 저장·401 갱신과 Supabase 인증 세션은 공급자가 다른 별도 세션입니다. Supabase 토큰을 기존 YAPP API나 YAPP 세션 갱신 경로에 전달하지 않습니다.
 
-적용 상태: 인증·공지 Domain 계약을 추가했습니다. 기존 세션 일정·출석 `RepositoryImpl`은 HTTP client로 구체 DataSource를 생성하는 상태이며, 인터페이스 주입 전환과 Supabase 어댑터·App 조립은 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90)의 후속 Data·Feature 작업입니다. YAPP 초기 로그인·회원 식별자 대응처럼 미확정인 서버 계약을 이 경계만을 위해 만들지 않습니다.
+적용 상태: 인증·공지 Domain 계약과 기존 세션 일정·출석 `RepositoryImpl`의 DataSource 인터페이스 주입을 구현했습니다. 세션 DataSource는 Data 소유의 날짜·시간·상태가 명시된 공통 모델을 반환하며 공급자 응답 DTO를 노출하지 않습니다. App은 현재 YAPP HTTP 어댑터를 인터페이스에 연결합니다. Supabase 어댑터·공급자 전환과 인증·공지 Data/Feature 연결은 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90)의 후속 작업입니다. YAPP 초기 로그인·회원 식별자 대응처럼 미확정인 서버 계약을 이 경계만을 위해 만들지 않습니다.
 
 ## 정책과 표현
 

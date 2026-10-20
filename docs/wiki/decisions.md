@@ -260,7 +260,7 @@ last_verified: 2026-10-20
 - 이유: Repository 내부의 구체 DataSource 생성과 SDK·HTTP 의존을 제거해 테스트 MVP와 이후 원본 서버가 같은 기능 계약을 구현하도록 합니다.
 - 근거: 사용자의 명시 요청과 승인된 MVP 계획, [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
 - 반영: [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), 인증·공지 Domain 계약.
-- 적용 상태: `AuthRepository`와 credential·사용자 식별 세션 모델, `NoticeRepository`와 공지 모델·유형을 추가했습니다. 기존 일정·출석 Domain 계약을 재사용합니다. Data 인터페이스·어댑터·Repository 전환과 App 조립은 후속입니다. YAPP 초기 로그인·회원 식별자 대응 같은 미확정 계약은 정의하지 않습니다.
+- 적용 상태: `AuthRepository`와 credential·사용자 식별 세션 모델, `NoticeRepository`와 공지 모델·유형을 추가했습니다. 기존 일정·출석 Domain 계약을 재사용하고 DataSource 인터페이스 주입·공통 세션 모델·현재 YAPP HTTP 어댑터의 App 조립을 구현했습니다. Supabase 어댑터와 인증·공지 Data/Feature 연결은 후속입니다. YAPP 초기 로그인·회원 식별자 대응 같은 미확정 계약은 정의하지 않습니다.
 - 대체한 결정: 없음. 기존 계층 경계 안에서 DataSource 주입 방식을 명시합니다.
 
 ## DEC-0027 · Supabase 인증과 테스트 데이터로 비공개 MVP 구성

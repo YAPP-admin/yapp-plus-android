@@ -13,6 +13,9 @@ import com.yapp.plus.data.auth.AuthDataSource
 import com.yapp.plus.data.auth.AuthTokenLocalDataSource
 import com.yapp.plus.data.auth.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.SessionTokenRemoteDataSource
+import com.yapp.plus.data.my.MyDataSource
+import com.yapp.plus.data.my.MyRepositoryImpl
+import com.yapp.plus.data.my.SupabaseMyDataSource
 import com.yapp.plus.data.notice.NoticeDataSource
 import com.yapp.plus.data.notice.NoticeRepositoryImpl
 import com.yapp.plus.data.notice.SupabaseNoticeDataSource
@@ -24,6 +27,7 @@ import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
 import com.yapp.plus.data.session.SupabaseSessionScheduleDataSource
 import com.yapp.plus.data.supabase.SupabaseRestClient
 import com.yapp.plus.domain.attendance.AttendanceRepository
+import com.yapp.plus.domain.my.MyRepository
 import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.profile.ProfileRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
@@ -115,4 +119,12 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideProfile(dataSource: ProfileDataSource): ProfileRepository = ProfileRepositoryImpl(dataSource)
+
+    @Provides
+    @Singleton
+    fun provideMyDataSource(client: SupabaseRestClient): MyDataSource = SupabaseMyDataSource(client)
+
+    @Provides
+    @Singleton
+    fun provideMyRepository(dataSource: MyDataSource): MyRepository = MyRepositoryImpl(dataSource)
 }

@@ -6,7 +6,7 @@ last_verified: 2026-10-21
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0032`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0033`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -322,3 +322,13 @@ last_verified: 2026-10-21
 - 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `:domain`·`:data`·`:feature:signup`·`:feature:main:my`·App, [제출 프로필 migration](../../supabase/migrations/20261021080517_submission_profiles.sql).
 - 적용 상태: `Profile`은 `Name`·`PhoneNumber` value class를 사용합니다. DataSource는 `user_id` 기본값을 DB의 `auth.uid()`에 맡기고 upsert는 재시도 가능하게 처리합니다. RLS와 권한은 인증 사용자가 자기 프로필만 읽고 삽입·갱신하도록 제한하며 삭제 권한은 부여하지 않습니다. 이 행은 앱 제출용 프로필이며 YAPP 회원·역할·가입 승인을 생성하지 않습니다. migration은 YAPP Supabase 프로젝트 main 브랜치에 적용·이력 등록했습니다.
 - 대체한 결정: DEC-0028과 DEC-0029의 이름·휴대폰 입력을 서버에 보내지 않는 부분 및 My 회원 정보 미연동 상태만 대체합니다. 실제 YAPP 가입 API·운영진 인증·회원 권한은 계속 미연동이며 출석 기록은 표시하지 않습니다.
+
+## DEC-0033 · 설정 화면과 계정 탈퇴 안내
+
+- 기록일: 2026-10-21
+- 결정: 설정 화면은 `:feature:setting`에 두고 My 탭에서 진입하며 이동 상태는 App이 소유합니다. 알림 토글, 약관 링크, 앱 버전, 로그아웃 확인을 제공합니다. 알림 토글은 현재 화면 상태로만 유지하며 푸시 전달·설정 저장 연동은 후속입니다. 앱 계정 삭제는 YAPP 동아리 탈퇴와 별개로 안내하고, 서버 탈퇴 API가 없으면 삭제 요청을 보내지 않습니다.
+- 이유: 확인된 설정 화면을 제공하면서 미구현 계정 삭제·푸시 연동을 완료된 기능처럼 오인하게 하지 않기 위해서입니다.
+- 근거: 사용자 요청과 [이슈 #104](https://github.com/YAPP-admin/yapp-plus-android/issues/104).
+- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`, `:feature:setting`, App, My Feature.
+- 적용 상태: 설정 화면과 App의 진입·뒤로 이동을 구현했습니다. 알림 토글은 App 화면 상태로 동작하고, 로그아웃은 기존 Supabase Auth 로그아웃을 호출합니다. 계정 탈퇴는 안내만 표시하며 삭제 요청은 보내지 않습니다.
+- 대체한 결정: 없음.

@@ -13,21 +13,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.yapp.plus.BuildConfig
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.home.HomeNotificationsScreen
 import com.yapp.plus.feature.main.home.HomeRoute
 import com.yapp.plus.feature.main.my.MyRoute
 import com.yapp.plus.feature.main.schedule.ScheduleRoute
+import com.yapp.plus.feature.setting.SettingsScreen
 
 @Composable
 internal fun MainTabScaffold(
     modifier: Modifier = Modifier,
     initialTab: MainTab = MainTab.Home,
     onAttendanceComplete: () -> Unit = {},
+    onLogout: () -> Unit = {},
+    isLoggingOut: Boolean = false,
+    hasLogoutError: Boolean = false,
+    onLogoutErrorDismissed: () -> Unit = {},
 ) {
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
     var areNotificationsVisible by rememberSaveable { mutableStateOf(false) }
+    var isSettingsVisible by rememberSaveable { mutableStateOf(false) }
+    var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
     var selectedNoticeId by rememberSaveable { mutableStateOf<Long?>(null) }
     BackHandler(enabled = selectedTab == MainTab.Board && selectedNoticeId != null) {
         selectedNoticeId = null
@@ -35,19 +43,25 @@ internal fun MainTabScaffold(
     BackHandler(enabled = selectedTab == MainTab.Home && areNotificationsVisible) {
         areNotificationsVisible = false
     }
+    BackHandler(enabled = selectedTab == MainTab.My && isSettingsVisible) {
+        isSettingsVisible = false
+    }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = YappMainColor.surface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            MainTabNavigation(
-                selectedTab = selectedTab,
-                onTabSelected = {
-                    selectedTab = it
-                    areNotificationsVisible = false
-                    selectedNoticeId = null
-                },
-            )
+            if (!isSettingsVisible) {
+                MainTabNavigation(
+                    selectedTab = selectedTab,
+                    onTabSelected = {
+                        selectedTab = it
+                        areNotificationsVisible = false
+                        isSettingsVisible = false
+                        selectedNoticeId = null
+                    },
+                )
+            }
         },
     ) { contentPadding ->
         Box(
@@ -80,7 +94,21 @@ internal fun MainTabScaffold(
                         onNoticeClick = { selectedNoticeId = it },
                         onBack = { selectedNoticeId = null },
                     )
-                MainTab.My -> MyRoute()
+                MainTab.My ->
+                    if (isSettingsVisible) {
+                        SettingsScreen(
+                            appVersion = BuildConfig.VERSION_NAME,
+                            notificationsEnabled = notificationsEnabled,
+                            onNotificationEnabledChange = { notificationsEnabled = it },
+                            onBack = { isSettingsVisible = false },
+                            onLogout = onLogout,
+                            isLoggingOut = isLoggingOut,
+                            hasLogoutError = hasLogoutError,
+                            onLogoutErrorDismissed = onLogoutErrorDismissed,
+                        )
+                    } else {
+                        MyRoute(onSettingsClick = { isSettingsVisible = true })
+                    }
             }
         }
     }

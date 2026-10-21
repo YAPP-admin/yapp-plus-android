@@ -26,6 +26,10 @@ internal fun AppNavHost(
     onSessionErrorDismissed: () -> Unit = {},
     onSessionRetry: (() -> Unit)? = null,
     onSignUpComplete: (() -> Unit)? = null,
+    onLogout: () -> Unit = {},
+    isLoggingOut: Boolean = false,
+    hasLogoutError: Boolean = false,
+    onLogoutErrorDismissed: () -> Unit = {},
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
     navController: NavHostController = rememberNavController(),
@@ -61,6 +65,10 @@ internal fun AppNavHost(
         }
         composable<AppNavigationDestination.Main> { entry ->
             MainTabScaffold(
+                onLogout = onLogout,
+                isLoggingOut = isLoggingOut,
+                hasLogoutError = hasLogoutError,
+                onLogoutErrorDismissed = onLogoutErrorDismissed,
                 onAttendanceComplete = {
                     navController.navigateFrom(entry, AppNavigationDestination.AttendanceComplete)
                 },

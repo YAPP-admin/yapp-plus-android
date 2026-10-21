@@ -15,6 +15,7 @@ internal fun AppStartRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val loginState = uiState as? AppAuthUiState.Login
+    val authenticatedState = uiState as? AppAuthUiState.Authenticated
     AppStartContent(uiState = uiState, modifier = modifier) { startDestination ->
         AppNavigationRoute(
             onExit = onExit,
@@ -31,6 +32,10 @@ internal fun AppStartRoute(
                     null
                 },
             onSignUpComplete = viewModel::completeSignUp,
+            onLogout = viewModel::signOut,
+            isLoggingOut = authenticatedState?.isSigningOut == true,
+            hasLogoutError = authenticatedState?.hasSignOutError == true,
+            onLogoutErrorDismissed = viewModel::dismissSignOutError,
             startDestination = startDestination,
             modifier = modifier,
         )

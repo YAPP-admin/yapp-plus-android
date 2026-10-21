@@ -65,6 +65,48 @@ internal class AppAuthViewModel
             mutableUiState.value = AppAuthUiState.Authenticated(state.session)
         }
 
+        fun signOut() {
+            val state = mutableUiState.value as? AppAuthUiState.Authenticated ?: return
+            if (state.isSigningOut) return
+            mutableUiState.value = state.copy(isSigningOut = true, hasSignOutError = false)
+            viewModelScope.launch {
+                try {
+                    authRepository.signOut()
+                    mutableUiState.value = AppAuthUiState.Login()
+                } catch (exception: CancellationException) {
+                    throw exception
+                } catch (_: Exception) {
+                    val currentState =
+                        mutableUiState.value as? AppAuthUiState.Authenticated ?: return@launch
+                    val currentSession =
+                        try {
+                            authRepository.fetchSession()
+                        } catch (exception: CancellationException) {
+                            throw exception
+                        } catch (_: Exception) {
+                            mutableUiState.value =
+                                currentState.copy(isSigningOut = false, hasSignOutError = true)
+                            return@launch
+                        }
+                    mutableUiState.value =
+                        if (currentSession == null) {
+                            AppAuthUiState.Login()
+                        } else {
+                            AppAuthUiState.Authenticated(
+                                session = currentSession,
+                                hasSignOutError = true,
+                            )
+                        }
+                }
+            }
+        }
+
+        fun dismissSignOutError() {
+            val state = mutableUiState.value as? AppAuthUiState.Authenticated ?: return
+            if (!state.hasSignOutError) return
+            mutableUiState.value = state.copy(hasSignOutError = false)
+        }
+
         fun dismissError() {
             if (mutableUiState.value == AppAuthUiState.RestoreError) {
                 mutableUiState.value = AppAuthUiState.Login()

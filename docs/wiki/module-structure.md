@@ -17,6 +17,7 @@ last_verified: 2026-10-21
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 전체·운영·세션 공지 목록·상세·조회 상태·재시도·필터 복원 구현됨; App에서 연결 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | 프로필 조회 ViewModel·로딩/빈/오류/콘텐츠 상태·이름/휴대폰 UI 구현; App에서 연결 |
+| `:feature:setting` | `com.yapp.plus.feature.setting` | 알림 설정, 약관 링크, 앱 버전, 로그아웃·회원 탈퇴 안내 화면 구현; My 탭에서 App이 연결 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce를 Domain credential로 App에 전달; nonce 해시·취소·중복 요청·재시도 오류 UI 구현 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력과 임시 가입 완료를 한 Route·ViewModel 흐름으로 구현; App 연결은 단일 가입 목적지·완료 콜백 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·공지·세션 일정·출석 인증·사전 보고의 Repository 계약 구현됨; 인증·공지 Data와 로그인·홈/게시판 Feature 연결 완료 |
@@ -25,7 +26,7 @@ last_verified: 2026-10-21
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | DataStore 세션 레코드·Keystore 암호화·백업 제외 파일 저장 구현됨; Data에서 사용 |
 
-13개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
 비공개 테스트 MVP는 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90)에서 순차 구현합니다. `:domain`의 `auth/`에는 `AuthRepository`·`GoogleLoginCredential`·`AuthSession`, `notice/`에는 `NoticeRepository`·`Notice`·`NoticeType`, `profile/`에는 제출용 `ProfileRepository`·`Profile`을 둡니다. 기존 `session/`·`attendance/` 계약을 재사용하며 새 모듈을 만들지 않습니다. `:data`의 `session/`·`attendance/`에 기능별 DataSource 인터페이스를 두고 Repository가 생성자로 받습니다. 세션 공통 입출력은 Data 모델, 공급자 응답은 내부 DTO로 구분합니다. Supabase Auth DataSource·Repository와 App Hilt 연결을 구현했으며 토큰은 YAPP 세션과 별도 namespace의 암호화 저장소에 둡니다. App은 일정·공지·출석 검증·제출 프로필 Supabase 어댑터와 Repository를 연결합니다. YAPP HTTP 출석·보고 어댑터는 보존하지만 현재 Supabase 경로에는 보고 backend가 없어 요청 없이 일반 실패로 끝납니다. Login Feature와 App의 Supabase 인증 교환·시작 시 세션 복원을 연결했습니다. 홈의 주간 공지와 게시판의 유형별 목록·상세를 Repository에 연결했습니다. Supabase MVP의 홈에서 보고 진입·시트·완료 안내를 숨겼으며 Domain 보고 계약과 Data/YAPP 어댑터는 보존합니다. MVP·프로필 DB migration은 YAPP Supabase 프로젝트 main 브랜치에 적용·이력 등록했습니다.
 

@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":feature:main:home"))
     implementation(project(":feature:main:board"))
     implementation(project(":feature:main:my"))
+    implementation(project(":feature:setting"))
     implementation(project(":feature:main:schedule"))
     implementation(project(":feature:login"))
     implementation(project(":feature:signup"))

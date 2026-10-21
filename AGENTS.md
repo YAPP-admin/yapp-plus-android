@@ -8,7 +8,7 @@
 - 공통 Gradle convention plugin은 `build-logic/` included build에서 관리하고, 라이브러리 버전은 `gradle/libs.versions.toml`에 둔다.
 - 이번 주 세션·현재 기수 일정 API는 Domain·Data를 거쳐 홈·일정 Feature의 ViewModel과 App 화면까지 연결되어 있다. 인증·일정·공지·출석 검증의 Supabase Data와 App Hilt, Login Feature의 인증 교환·시작 시 세션 복원을 연결했으며 홈의 주간 공지와 게시판의 유형별 목록·상세도 Repository에 연결했다. debug·release 모두 인증된 Supabase 세션으로 메인에 진입한다. Supabase MVP에는 보고 backend가 없어 홈의 보고 진입·화면을 숨겼으며 Domain 계약과 Data/YAPP 보고 어댑터는 향후 지원을 위해 보존한다. 실제 DB 적용, YAPP 회원 정보·출석 기록 API는 후속 작업이다.
 - YAPP access/refresh token 쌍은 Data와 `:core:datastore`를 통해 암호화 저장·복원한다. App singleton이 Data 저장소와 갱신 API를 Network에 연결하며, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도한다. 초기 YAPP 세션 발급은 후속 작업이다.
-- 홈, 게시판, My, 일정 탭은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있다. 탭 내비게이션·선택 상태는 App이 소유하며 실제 모듈 현황은 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
+- 홈, 게시판, My, 일정 탭은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리하고 설정 화면은 `:feature:setting`으로 분리한다. 탭·설정 화면 이동 상태는 App이 소유하며 실제 모듈 현황은 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.
 - 구현 요청은 필요한 이슈 작성, 구현, 검증과 리뷰까지 진행한다. 커밋과 PR 생성·갱신은 사용자가 해당 작업을 명시적으로 요청한 경우에만 수행한다. 푸시는 PR 생성·갱신 요청에 필요한 경우에만 한다. 사용자가 범위를 제한하면 그 범위를 따른다. 이미 승인된 작업을 다시 승인받지 않는다.
 - 요청이 설계 논의나 조사에 한정되면 먼저 결과를 정리한다. 제품 정책·API 계약 등 구현에 필요한 정보가 없으면 해당 정보만 질문한다.

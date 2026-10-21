@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_title">설정</string>
+    <string name="settings_back">설정 화면 닫기</string>
+    <string name="settings_notifications">알림</string>
+    <string name="settings_privacy_policy">개인정보 처리 방침</string>
+    <string name="settings_terms">이용 약관</string>
+    <string name="settings_account_withdrawal">회원 탈퇴</string>
+    <string name="settings_account_withdrawal_notice">앱 계정 삭제는 YAPP 동아리 탈퇴와 별도로 진행돼요. 계정 삭제 기능은 아직 준비 중이에요.</string>
+    <string name="settings_logout">로그아웃</string>
+    <string name="settings_logging_out">로그아웃 중</string>
+    <string name="settings_logout_confirmation">로그아웃할까요?</string>
+    <string name="settings_logout_error_title">로그아웃 실패</string>
+    <string name="settings_logout_error_body">로그아웃하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="settings_cancel">취소</string>
+    <string name="settings_confirm">확인</string>
+    <string name="settings_app_version">앱 버전 %1$s</string>
+    <string name="settings_privacy_policy_url">https://app.notion.com/p/yapp-workspace/3db2106a0e8480899e28c3788ebeaa6f</string>
+    <string name="settings_terms_url">https://app.notion.com/p/yapp-workspace/3db2106a0e84806f91f8d6c4ac97af5f</string>
+</resources>

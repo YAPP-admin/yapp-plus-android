@@ -18,6 +18,10 @@ internal fun AppNavigationRoute(
     onSessionErrorDismissed: () -> Unit = {},
     onSessionRetry: (() -> Unit)? = null,
     onSignUpComplete: (() -> Unit)? = null,
+    onLogout: () -> Unit = {},
+    isLoggingOut: Boolean = false,
+    hasLogoutError: Boolean = false,
+    onLogoutErrorDismissed: () -> Unit = {},
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
 ) {
@@ -33,6 +37,10 @@ internal fun AppNavigationRoute(
             onSessionErrorDismissed = onSessionErrorDismissed,
             onSessionRetry = onSessionRetry,
             onSignUpComplete = onSignUpComplete,
+            onLogout = onLogout,
+            isLoggingOut = isLoggingOut,
+            hasLogoutError = hasLogoutError,
+            onLogoutErrorDismissed = onLogoutErrorDismissed,
             startDestination = startDestination,
             modifier =
                 Modifier

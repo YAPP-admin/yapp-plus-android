@@ -38,11 +38,17 @@ fun MyScreen(
     state: MyProfileUiState = MyProfileUiState.Empty,
     modifier: Modifier = Modifier,
     onRetry: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
 ) {
     Column(
         modifier = modifier.fillMaxSize().background(YappMainColor.background),
     ) {
-        YappMainHeader(title = stringResource(R.string.my_title))
+        YappMainHeader(
+            title = stringResource(R.string.my_title),
+            iconResource = DesignSystemR.drawable.ic_settings,
+            iconDescription = stringResource(R.string.my_settings),
+            onIconClick = onSettingsClick,
+        )
         when (state) {
             MyProfileUiState.Loading ->
                 Box(

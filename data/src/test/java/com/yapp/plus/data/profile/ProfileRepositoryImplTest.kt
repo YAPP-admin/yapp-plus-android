@@ -34,8 +34,7 @@ class ProfileRepositoryImplTest {
 private class FakeProfileDataSource : ProfileDataSource {
     var savedProfile: ProfileData? = null
 
-    override suspend fun fetchProfile(): ProfileData? =
-        savedProfile ?: ProfileData("홍길동", "01012345678")
+    override suspend fun fetchProfile(): ProfileData? = savedProfile ?: ProfileData("홍길동", "01012345678")
 
     override suspend fun saveProfile(profile: ProfileData) {
         savedProfile = profile

@@ -26,6 +26,7 @@ import com.yapp.plus.core.designsystem.components.auth.AuthPrimaryAction
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.signup.model.AuthStatus
 
 @Composable
 fun AuthStatusContent(

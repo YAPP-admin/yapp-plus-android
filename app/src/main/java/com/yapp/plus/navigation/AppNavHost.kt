@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -16,10 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.yapp.plus.domain.auth.GoogleLoginCredential
 import com.yapp.plus.feature.login.LoginRoute
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
-import com.yapp.plus.feature.signup.SignUpCompleteRoute
-import com.yapp.plus.feature.signup.SignUpNameRoute
-import com.yapp.plus.feature.signup.SignUpPhoneRoute
-import com.yapp.plus.feature.signup.SignUpViewModel
+import com.yapp.plus.feature.signup.SignUpRoute
 
 @Composable
 internal fun AppNavHost(
@@ -33,7 +29,6 @@ internal fun AppNavHost(
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
     navController: NavHostController = rememberNavController(),
-    signUpViewModel: SignUpViewModel = hiltViewModel(),
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     BackHandler(
@@ -55,28 +50,13 @@ internal fun AppNavHost(
                 onSessionRetry = onSessionRetry,
             )
         }
-        composable<AppNavigationDestination.Name> { entry ->
-            SignUpNameRoute(
-                onNext = { navController.navigateFrom(entry, AppNavigationDestination.Phone) },
-                onBack = { navController.navigateBackFrom(entry, onExit) },
+        composable<AppNavigationDestination.SignUp> { entry ->
+            SignUpRoute(
+                onBack = { navController.navigateBackFromSignUp(entry, onExit) },
+                onSignUpComplete = {
+                    navController.completeSignUpFrom(entry, onSignUpComplete)
+                },
                 modifier = Modifier.fillMaxSize(),
-                viewModel = signUpViewModel,
-            )
-        }
-        composable<AppNavigationDestination.Phone> { entry ->
-            SignUpPhoneRoute(
-                onNext = { navController.navigateFrom(entry, AppNavigationDestination.SignUpComplete) },
-                onBack = { navController.navigateBackFrom(entry, onExit) },
-                modifier = Modifier.fillMaxSize(),
-                viewModel = signUpViewModel,
-            )
-        }
-        composable<AppNavigationDestination.SignUpComplete> { entry ->
-            SignUpCompleteRoute(
-                onBack = { navController.navigateBackFrom(entry, onExit) },
-                onAction = { navController.completeSignUpFrom(entry, onSignUpComplete) },
-                modifier = Modifier.fillMaxSize(),
-                viewModel = signUpViewModel,
             )
         }
         composable<AppNavigationDestination.Main> { entry ->
@@ -99,7 +79,22 @@ internal fun NavHostController.navigateFrom(
     destination: AppNavigationDestination,
 ) {
     if (!canNavigateFrom(entry)) return
-    navigate(destination) { launchSingleTop = true }
+    navigate(destination) {
+        launchSingleTop = true
+        restoreState = destination == AppNavigationDestination.SignUp
+    }
+}
+
+internal fun NavHostController.navigateBackFromSignUp(
+    entry: NavBackStackEntry,
+    onExit: () -> Unit,
+) {
+    if (!canNavigateFrom(entry)) return
+    if (previousBackStackEntry == null) {
+        onExit()
+    } else {
+        popBackStack<AppNavigationDestination.SignUp>(inclusive = true, saveState = true)
+    }
 }
 
 internal fun NavHostController.navigateBackFrom(

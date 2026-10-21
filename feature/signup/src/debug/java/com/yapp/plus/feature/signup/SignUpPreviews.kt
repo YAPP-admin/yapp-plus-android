@@ -16,6 +16,8 @@ import com.yapp.plus.core.designsystem.components.input.YappInputState
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.preview.TextInputPreviewFixture
+import com.yapp.plus.feature.signup.model.AuthStatus
+import com.yapp.plus.feature.signup.model.SignUpStep
 
 @Preview(name = "Signup input", widthDp = 393, heightDp = 756)
 @Composable

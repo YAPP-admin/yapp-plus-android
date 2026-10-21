@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 10648)
+Total output lines: 314
+
 ---
 authority: canonical
 status: active
@@ -6,7 +9,7 @@ last_verified: 2026-10-21
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0030`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0032`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -160,25 +163,7 @@ last_verified: 2026-10-21
 - 이유: 네 탭의 독립 Feature 경계를 `:feature:main` 아래에 모아 표현하고 공통 UI와 App 조립 책임을 명확히 합니다.
 - 근거: 사용자의 명시 요청, [이슈 #62](https://github.com/YAPP-admin/yapp-plus-android/issues/62), App으로 탭 셸을 이동한 [PR #64](https://github.com/YAPP-admin/yapp-plus-android/pull/64).
 - 반영: [아키텍처](architecture.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, `:feature:main:board`, `:core:designsystem`.
-- 적용 상태: 게시판 화면과 분류 상태를 `:feature:main:board`에, My 화면과 컴포넌트를 `:feature:main:my`에, 일정 화면·상태·모델·리소스를 `:feature:main:schedule`에, 홈 화면·상태·모델·컴포넌트·리소스를 `:feature:main:home`에 분리했습니다. App이 네 화면과 탭 선택을 조립하고 기존 `:feature:attendance`는 제거했습니다. 공통 헤더·데모 안내·아이콘 라벨은 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 Designsystem에 둡니다.
-- 대체한 결정: DEC-0015의 개별 탭 모듈 경로만 대체합니다. App 소유의 메인 내비게이션과 선택 상태, 공통 하단 탭 표현, Feature 간 비의존 원칙은 유지합니다.
-
-## DEC-0017 · Google 로그인으로 ID 토큰 발급
-
-- 기록일: 2026-10-19
-- 결정: 로그인 화면에는 Google 로그인 버튼만 표시합니다. 버튼은 Credential Manager로 Google ID 토큰과 임의 nonce를 받아 메모리 콜백으로 App에 전달합니다. 서버 검증과 YAPP 세션 발급 계약이 없으므로 ID 토큰을 발급해도 로그인 완료나 가입 데모 진입으로 처리하지 않습니다. 로그·영구 저장은 하지 않습니다.
-- 이유: 사용자가 카카오 버튼을 Google 로그인으로 교체한 뒤 Cloud OAuth 클라이언트 설정과 Android ID 토큰 발급까지 요청했고, 서버 연결은 ID 토큰 발급까지만으로 범위를 확정했습니다.
-- 근거: 사용자 요청 및 범위 확인, [이슈 #79](https://github.com/YAPP-admin/yapp-plus-android/issues/79), [Figma 로그인](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487), Google Cloud `yapp-plus` 프로젝트 External/Testing 설정.
-- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:login`, App 인증 콜백.
-- 적용 상태: `com.yapp.plus`와 debug SHA-1 Android OAuth 클라이언트, ID 토큰 audience Web OAuth 클라이언트를 구성했습니다. 현재 release 서명 지문은 없어 등록하지 않았습니다. 앱은 기본 Google 프로필 범위의 ID 토큰과 nonce를 획득하지만 서버 검증·YAPP 세션 발급은 미구현입니다. Testing 상태이므로 등록된 테스트 사용자만 로그인할 수 있습니다.
-- 대체한 결정: DEC-0010의 로그인 제공자와 DEC-0011의 데모 진입 제공자만 대체합니다. 가입 UI 요소 제거와 가입 화면의 표시·입력 상태는 유지하되 Google ID 토큰만으로 진입하지 않습니다.
-
-## DEC-0018 · 커밋과 PR 작업은 명시 요청이 있을 때만 수행
-
-- 기록일: 2026-10-19
-- 결정: 구현 요청은 필요한 이슈 작성, 구현, 검증과 리뷰까지 진행합니다. 커밋과 PR 생성·갱신은 사용자가 해당 작업을 명시적으로 요청한 경우에만 수행합니다. 푸시는 PR 생성·갱신에 필요한 경우에만 합니다.
-- 이유: 구현 완료를 커밋이나 PR로 공유하라는 요청으로 간주하지 않도록 합니다.
-- 근거: 사용자의 명시 요청, [이슈 #88](https://github.com/YAPP-admin/yapp-plus-android/issues/88).
+- 적용 상태: 게시판 화면과 분류 상태를 `:feature:main:board`에, My 화면과 컴포넌트를 `:feature:main:my`에, 일정 화면·상태·모델·리소스를 `:feature:main:schedule`에, 홈 화면·상태·모델·컴포넌트·리소스를 `:feature:main:home`에 분리했습니다. App이 네 화면과 탭 선택을 조립하고 기존 `:feature:attendance`는 제거했습니다. 공통 헤더·데모 안내·아이콘 라벨은 `YappMainHeader`, `YappDemoDataLabel`…648 tokens truncated… 명시 요청, [이슈 #88](https://github.com/YAPP-admin/yapp-plus-android/issues/88).
 - 반영: `AGENTS.md`, `.codex/prompts/yapp-work.md`.
 - 적용 상태: 두 작업 지침의 실행 범위, 조율자 책임과 완료 절차에 반영했습니다.
 - 대체한 결정: 없음. 기존 에이전트 작업 지침을 변경합니다.
@@ -302,3 +287,13 @@ last_verified: 2026-10-21
 - 반영: [코딩 컨벤션](coding-conventions.md), `:domain:signup`의 `Name`·`PhoneNumber`.
 - 적용 상태: `Name`과 `PhoneNumber`를 각각 `@JvmInline value class`로 구현하고, 비어 있지 않은 값인지 판단하는 규칙을 각 타입에 둡니다.
 - 대체한 결정: 없음.
+
+## DEC-0031 · Signup Feature가 가입 흐름 전체를 소유
+
+- 기록일: 2026-10-21
+- 결정: 이름 입력·휴대폰 입력·임시 가입 완료는 `:feature:signup`의 단일 `SignUpRoute`와 ViewModel이 한 화면 흐름으로 관리합니다. 현재 단계와 입력값은 Feature가 소유하고, App Navigation은 가입 목적지 하나와 완료 콜백만 연결합니다. AppNavHost는 Signup ViewModel을 가져오거나 Feature Route에 전달하지 않습니다.
+- 이유: 연속된 가입 단계의 상태·검증·내부 이동 책임을 하나의 Feature에 두고, App이 화면별 ViewModel 조립에 관여하지 않도록 합니다.
+- 근거: 사용자의 명시 요청 및 [이슈 #102](https://github.com/YAPP-admin/yapp-plus-android/issues/102).
+- 반영: [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `:feature:signup`, App Navigation.
+- 적용 상태: `SignUpRoute`가 Feature 내부에서 `SignUpViewModel`을 가져오며 Name → Phone → Complete 전환과 단계 내부 뒤로 가기를 처리합니다. `AppNavigationDestination.SignUp` 하나를 등록하고 ViewModel 주입을 제거했습니다. `SavedStateHandle`은 입력값과 현재 단계를 보존합니다.
+- 대체한 결정: DEC-0029의 App Navigation이 같은 Signup ViewModel을 가입 화면들에 전달한다는 구현 방식을 대체합니다. 이름·휴대폰 필수 조건과 서버에 입력값을 보내지 않는 제품 정책은 유지합니다.

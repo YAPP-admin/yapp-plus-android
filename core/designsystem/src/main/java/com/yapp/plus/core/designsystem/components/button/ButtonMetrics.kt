@@ -58,7 +58,15 @@ internal data class ButtonMetrics(
                     )
 
                 YappButtonSize.XLarge -> ButtonMetrics(36.dp, 16.dp, 12.dp, 6.dp, 20.dp)
-                YappButtonSize.Large -> ButtonMetrics(28.dp, 12.dp, 10.dp, 6.dp, 20.dp)
+                YappButtonSize.Large ->
+                    ButtonMetrics(
+                        horizontalPadding = 28.dp,
+                        verticalPadding = 12.dp,
+                        cornerRadius = 10.dp,
+                        iconSpacing = 6.dp,
+                        iconSize = 20.dp,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    )
                 YappButtonSize.Medium -> ButtonMetrics(20.dp, 9.dp, 8.dp, 5.dp, 18.dp)
                 YappButtonSize.Small -> ButtonMetrics(14.dp, 7.dp, 6.dp, 4.dp, 16.dp)
                 YappButtonSize.XSmall -> ButtonMetrics(12.dp, 5.dp, 4.dp, 4.dp, 16.dp)

@@ -17,7 +17,7 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.home.HomeNotificationsScreen
 import com.yapp.plus.feature.main.home.HomeRoute
-import com.yapp.plus.feature.main.my.MyScreen
+import com.yapp.plus.feature.main.my.MyRoute
 import com.yapp.plus.feature.main.schedule.ScheduleRoute
 
 @Composable
@@ -80,7 +80,7 @@ internal fun MainTabScaffold(
                         onNoticeClick = { selectedNoticeId = it },
                         onBack = { selectedNoticeId = null },
                     )
-                MainTab.My -> MyScreen()
+                MainTab.My -> MyRoute()
             }
         }
     }

@@ -1,4 +1,9 @@
 <resources>
     <string name="my_title">마이페이지</string>
-    <string name="my_information_unavailable">회원 정보와 출석 기록은 아직 준비 중이에요</string>
+    <string name="my_information_title">회원 정보</string>
+    <string name="my_name_label">이름</string>
+    <string name="my_phone_number_label">휴대폰 번호</string>
+    <string name="my_profile_empty">저장된 회원 정보가 없어요</string>
+    <string name="my_profile_error">회원 정보를 불러오지 못했어요</string>
+    <string name="my_retry">다시 시도</string>
 </resources>

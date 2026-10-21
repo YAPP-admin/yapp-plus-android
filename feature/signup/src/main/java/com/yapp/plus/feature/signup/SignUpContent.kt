@@ -32,6 +32,9 @@ import com.yapp.plus.core.designsystem.components.auth.AuthPrimaryAction
 import com.yapp.plus.core.designsystem.components.input.YappInputState
 import com.yapp.plus.core.designsystem.components.input.YappTextField
 import com.yapp.plus.core.designsystem.components.input.YappTextFieldVariant
+import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.signup.model.SignUpStep
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -46,6 +49,8 @@ fun SignUpContent(
     modifier: Modifier = Modifier,
     inputState: YappInputState = YappInputState.Default,
     isInputEnabled: Boolean = true,
+    isSaving: Boolean = false,
+    showProfileSaveError: Boolean = false,
 ) {
     check(step != SignUpStep.Complete)
     val isName = step == SignUpStep.Name
@@ -60,7 +65,7 @@ fun SignUpContent(
         bottom = {
             if (!isImeVisible) {
                 AuthPrimaryAction(
-                    text = stringResource(R.string.auth_next),
+                    text = stringResource(if (isSaving) R.string.auth_saving else R.string.auth_next),
                     onClick = onNext,
                     isEnabled = isNextEnabled,
                 )
@@ -97,6 +102,14 @@ fun SignUpContent(
                     ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             )
+            if (showProfileSaveError) {
+                Spacer(Modifier.height(8.dp))
+                YappText(
+                    text = stringResource(R.string.auth_profile_save_error),
+                    style = YappTypography.body2NormalRegular,
+                    color = YappAuthColor.textSecondary,
+                )
+            }
         }
     }
 }

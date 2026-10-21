@@ -40,15 +40,31 @@ class SupabaseRestClient(
         transform: (String) -> T,
     ): T = execute(path, HttpMethod.Post, emptyList(), body, transform)
 
+    suspend fun <T> upsert(
+        path: String,
+        conflictColumns: String,
+        body: JsonObject,
+        transform: (String) -> T,
+    ): T =
+        execute(
+            path = path,
+            method = HttpMethod.Post,
+            parameters = listOf("on_conflict" to conflictColumns),
+            body = body,
+            transform = transform,
+            prefer = "resolution=merge-duplicates,return=minimal",
+        )
+
     private suspend fun <T> execute(
         path: String,
         method: HttpMethod,
         parameters: List<Pair<String, String>>,
         body: JsonObject?,
         transform: (String) -> T,
+        prefer: String? = null,
     ): T =
         try {
-            val response = authenticatedRequest(path, method, parameters, body)
+            val response = authenticatedRequest(path, method, parameters, body, prefer)
             if (response.status.value !in 200..299) {
                 throw requestFailure(response, method)
             }
@@ -69,13 +85,14 @@ class SupabaseRestClient(
         method: HttpMethod,
         parameters: List<Pair<String, String>>,
         body: JsonObject?,
+        prefer: String?,
     ): HttpResponse {
-        val response = request(path, method, parameters, body, fetchAccessToken())
+        val response = request(path, method, parameters, body, fetchAccessToken(), prefer)
         if (response.status != HttpStatusCode.Unauthorized) return response
         if (authDataSource.fetchSession() == null) {
             throw SupabaseDataSourceException("Authentication required")
         }
-        return request(path, method, parameters, body, fetchAccessToken())
+        return request(path, method, parameters, body, fetchAccessToken(), prefer)
     }
 
     private suspend fun fetchAccessToken(): String =
@@ -88,6 +105,7 @@ class SupabaseRestClient(
         parameters: List<Pair<String, String>>,
         body: JsonObject?,
         accessToken: String,
+        prefer: String?,
     ): HttpResponse {
         if (!publishableKey.startsWith("sb_publishable_")) {
             throw SupabaseDataSourceException("Configure supabase.publishableKey for data requests")
@@ -97,6 +115,7 @@ class SupabaseRestClient(
             expectSuccess = false
             header("apikey", publishableKey)
             header(HttpHeaders.Authorization, "Bearer $accessToken")
+            if (prefer != null) header("Prefer", prefer)
             for ((name, value) in parameters) url.parameters.append(name, value)
             if (body != null) {
                 contentType(ContentType.Application.Json)

@@ -11,8 +11,3 @@ sealed interface MyProfileUiState {
         val profile: MyProfileUiModel,
     ) : MyProfileUiState
 }
-
-data class MyProfileUiModel(
-    val name: String,
-    val phoneNumber: String,
-)

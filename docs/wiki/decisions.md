@@ -6,7 +6,7 @@ last_verified: 2026-10-21
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0030`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0032`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -302,3 +302,13 @@ last_verified: 2026-10-21
 - 반영: [코딩 컨벤션](coding-conventions.md), `:domain:signup`의 `Name`·`PhoneNumber`.
 - 적용 상태: `Name`과 `PhoneNumber`를 각각 `@JvmInline value class`로 구현하고, 비어 있지 않은 값인지 판단하는 규칙을 각 타입에 둡니다.
 - 대체한 결정: 없음.
+
+## DEC-0031 · Signup Feature가 가입 흐름 전체를 소유
+
+- 기록일: 2026-10-21
+- 결정: 이름 입력·휴대폰 입력·임시 가입 완료는 `:feature:signup`의 단일 `SignUpRoute`와 ViewModel이 한 화면 흐름으로 관리합니다. 현재 단계와 입력값은 Feature가 소유하고, App Navigation은 가입 목적지 하나와 완료 콜백만 연결합니다. AppNavHost는 Signup ViewModel을 가져오거나 Feature Route에 전달하지 않습니다.
+- 이유: 연속된 가입 단계의 상태·검증·내부 이동 책임을 하나의 Feature에 두고, App이 화면별 ViewModel 조립에 관여하지 않도록 합니다.
+- 근거: 사용자의 명시 요청 및 [이슈 #102](https://github.com/YAPP-admin/yapp-plus-android/issues/102).
+- 반영: [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `:feature:signup`, App Navigation.
+- 적용 상태: `SignUpRoute`가 Feature 내부에서 `SignUpViewModel`을 가져오며 Name → Phone → Complete 전환과 단계 내부 뒤로 가기를 처리합니다. `AppNavigationDestination.SignUp` 하나를 등록하고 ViewModel 주입을 제거했습니다. `SavedStateHandle`은 입력값과 현재 단계를 보존합니다.
+- 대체한 결정: DEC-0029의 App Navigation이 같은 Signup ViewModel을 가입 화면들에 전달한다는 구현 방식을 대체합니다. 이름·휴대폰 필수 조건과 서버에 입력값을 보내지 않는 제품 정책은 유지합니다.

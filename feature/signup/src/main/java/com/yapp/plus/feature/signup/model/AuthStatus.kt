@@ -1,7 +1,8 @@
-package com.yapp.plus.feature.signup
+package com.yapp.plus.feature.signup.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.yapp.plus.feature.signup.R
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 enum class AuthStatus(

@@ -90,45 +90,36 @@ class AppNavHostTest {
     @Test
     fun repeatedForwardCallbacksDoNotDuplicateDestinations() {
         assertCurrentRoute<AppNavigationDestination.Login>()
-        navigateRepeatedly(AppNavigationDestination.Name)
-        navigateRepeatedly(AppNavigationDestination.Phone)
-        navigateRepeatedly(AppNavigationDestination.SignUpComplete)
+        navigateRepeatedly(AppNavigationDestination.SignUp)
         navigateRepeatedly(AppNavigationDestination.Main)
 
-        popAndAssert<AppNavigationDestination.SignUpComplete>()
-        popAndAssert<AppNavigationDestination.Phone>()
-        popAndAssert<AppNavigationDestination.Name>()
+        popAndAssert<AppNavigationDestination.SignUp>()
         popAndAssert<AppNavigationDestination.Login>()
         composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
     }
 
     @Test
     fun repeatedBackCallbacksPopOnlyTheirOwnEntry() {
-        navigateRepeatedly(AppNavigationDestination.Name)
-        navigateRepeatedly(AppNavigationDestination.Phone)
-        navigateRepeatedly(AppNavigationDestination.SignUpComplete)
+        navigateRepeatedly(AppNavigationDestination.SignUp)
+        navigateRepeatedly(AppNavigationDestination.Main)
 
         composeRule.runOnIdle {
             val pendingEntry = checkNotNull(navController.currentBackStackEntry)
             repeat(5) { navController.navigateBackFrom(pendingEntry, onExit = {}) }
         }
 
-        assertCurrentRoute<AppNavigationDestination.Phone>()
+        assertCurrentRoute<AppNavigationDestination.SignUp>()
     }
 
     @Test
     fun restoresTheDestinationAndCompleteBackStack() {
-        navigateRepeatedly(AppNavigationDestination.Name)
-        navigateRepeatedly(AppNavigationDestination.Phone)
-        navigateRepeatedly(AppNavigationDestination.SignUpComplete)
+        navigateRepeatedly(AppNavigationDestination.SignUp)
         navigateRepeatedly(AppNavigationDestination.Main)
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         assertCurrentRoute<AppNavigationDestination.Main>()
-        popAndAssert<AppNavigationDestination.SignUpComplete>()
-        popAndAssert<AppNavigationDestination.Phone>()
-        popAndAssert<AppNavigationDestination.Name>()
+        popAndAssert<AppNavigationDestination.SignUp>()
         popAndAssert<AppNavigationDestination.Login>()
     }
 
@@ -137,15 +128,14 @@ class AppNavHostTest {
         composeRule.runOnIdle {
             authState = AppAuthUiState.SignUpRequired(AuthSession("test-user"))
         }
-        assertCurrentRoute<AppNavigationDestination.Name>()
+        assertCurrentRoute<AppNavigationDestination.SignUp>()
         composeRule.onNodeWithText("다음").assertIsNotEnabled()
         updateInput("이름")
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
-        assertCurrentRoute<AppNavigationDestination.Phone>()
         composeRule.onNodeWithText("다음").assertIsNotEnabled()
         updateInput("임시 번호")
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
-        assertCurrentRoute<AppNavigationDestination.SignUpComplete>()
+        assertCurrentRoute<AppNavigationDestination.SignUp>()
         composeRule.onNodeWithText("회원가입을 완료했어요!").assertIsDisplayed()
         composeRule.onNodeWithText("운영진 승인을 기다리고 있어요...").assertDoesNotExist()
         composeRule.onNodeWithText("앱 둘러보기").assertDoesNotExist()
@@ -158,7 +148,7 @@ class AppNavHostTest {
 
     @Test
     fun preservesInputsAcrossRestorationAndNavigationBack() {
-        navigateRepeatedly(AppNavigationDestination.Name)
+        navigateRepeatedly(AppNavigationDestination.SignUp)
         updateInput("이름")
         composeRule.onNodeWithText("다음").performClick()
         updateInput("01012345678")
@@ -166,14 +156,14 @@ class AppNavHostTest {
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertCurrentRoute<AppNavigationDestination.SignUpComplete>()
+        assertCurrentRoute<AppNavigationDestination.SignUp>()
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("01012345678")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("이름")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()
-        navigateRepeatedly(AppNavigationDestination.Name)
+        navigateRepeatedly(AppNavigationDestination.SignUp)
         composeRule.onNode(hasSetTextAction()).assertTextContains("이름")
     }
 

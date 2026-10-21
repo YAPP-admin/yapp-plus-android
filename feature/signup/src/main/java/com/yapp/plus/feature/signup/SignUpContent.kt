@@ -32,6 +32,7 @@ import com.yapp.plus.core.designsystem.components.auth.AuthPrimaryAction
 import com.yapp.plus.core.designsystem.components.input.YappInputState
 import com.yapp.plus.core.designsystem.components.input.YappTextField
 import com.yapp.plus.core.designsystem.components.input.YappTextFieldVariant
+import com.yapp.plus.feature.signup.model.SignUpStep
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -46,6 +47,7 @@ fun SignUpContent(
     inputState: YappInputState = YappInputState.Default,
     isInputEnabled: Boolean = true,
 ) {
+    check(step != SignUpStep.Complete)
     val isName = step == SignUpStep.Name
     val title = if (isName) R.string.auth_name_title else R.string.auth_phone_title
     val hint = if (isName) R.string.auth_name_hint else R.string.auth_phone_hint

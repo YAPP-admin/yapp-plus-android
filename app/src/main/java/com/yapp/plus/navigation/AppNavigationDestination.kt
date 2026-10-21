@@ -8,13 +8,7 @@ internal sealed interface AppNavigationDestination {
     data object Login : AppNavigationDestination
 
     @Serializable
-    data object Name : AppNavigationDestination
-
-    @Serializable
-    data object Phone : AppNavigationDestination
-
-    @Serializable
-    data object SignUpComplete : AppNavigationDestination
+    data object SignUp : AppNavigationDestination
 
     @Serializable
     data object Main : AppNavigationDestination

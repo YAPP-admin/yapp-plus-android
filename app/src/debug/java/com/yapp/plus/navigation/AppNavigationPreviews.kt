@@ -43,5 +43,5 @@ private fun AppNavHostPreview() {
             navController = navController,
         )
     }
-    LaunchedEffect(navController) { navController.navigate(AppNavigationDestination.Name) }
+    LaunchedEffect(navController) { navController.navigate(AppNavigationDestination.SignUp) }
 }

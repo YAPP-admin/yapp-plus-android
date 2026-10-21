@@ -55,7 +55,7 @@ internal fun AppStartContent(
         val startDestination =
             when {
                 session == null -> AppNavigationDestination.Login
-                uiState is AppAuthUiState.SignUpRequired -> AppNavigationDestination.Name
+                uiState is AppAuthUiState.SignUpRequired -> AppNavigationDestination.SignUp
                 else -> AppNavigationDestination.Main
             }
         key(session?.userId, uiState is AppAuthUiState.SignUpRequired) {

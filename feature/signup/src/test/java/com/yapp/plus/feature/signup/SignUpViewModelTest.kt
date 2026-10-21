@@ -1,6 +1,7 @@
 package com.yapp.plus.feature.signup
 
 import androidx.lifecycle.SavedStateHandle
+import com.yapp.plus.feature.signup.model.SignUpUiState
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

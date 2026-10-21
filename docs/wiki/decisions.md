@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-20
+last_verified: 2026-10-21
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0028`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0030`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -282,3 +282,23 @@ last_verified: 2026-10-20
 - 반영: [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, App 인증·Navigation 조립.
 - 적용 상태: App 인증 상태가 신규 Google 인증과 세션 복원을 구분해 시작 목적지를 선택하고, 기존 `:feature:signup` 입력·완료 화면을 조립합니다. 가입 완료 시 입력값을 지우고 인증 상태를 확정해 메인 그래프로 전환합니다. 실제 YAPP 회원 등록은 수행하지 않습니다.
 - 대체한 결정: DEC-0011·DEC-0013의 가입 흐름이 승인 대기에서 끝난다는 동작을 신규 Google 인증의 임시 제출 흐름에 한해 대체합니다. 실제 가입 승인 정책은 미정으로 유지합니다.
+
+## DEC-0029 · 가입 입력 필수화와 사용자 화면의 정적 데모 제거
+
+- 기록일: 2026-10-21
+- 결정: 가입 이름과 휴대폰 번호는 공백이 아닌 값이어야 다음 단계로 진행합니다. 전화번호 형식은 검증하지 않으며 입력값도 서버에 보내지 않습니다. 출시 화면에서 가짜 회원 프로필·출석 수치, 고정 일정 목록과 데모 안내를 제거합니다. 회원 정보 API가 연결되지 않은 My 화면은 준비 중 안내만 표시합니다. 비공개 테스트에 승인한 Supabase 세션·공지 데이터는 유지합니다.
+- 이유: 빈 가입 정보와 정적 예시값이 실제 회원·출석·일정 정보처럼 보이는 것을 막고, 제출용 MVP의 실제 조회 흐름을 그대로 보여 주기 위해서입니다.
+- 근거: 사용자 명시 요청, [이슈 #102](https://github.com/YAPP-admin/yapp-plus-android/issues/102).
+- 반영: [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md), [모듈 구조](module-structure.md), [디자인시스템](design-system.md), `README.md`, `:domain:signup`, App Navigation, My·일정 화면.
+- 적용 상태: Domain의 `Name`과 `PhoneNumber`가 각각 공백 여부를 판단하고, `:feature:signup`의 각 Route가 입력 상태를 조합해 다음 버튼 활성화와 이동 콜백을 제어합니다. App Navigation은 같은 `SignUpViewModel`을 가입 화면에 전달해 입력값을 유지하며 SavedStateHandle의 기존 키 값을 새 키로 옮깁니다. 일정 화면의 하드코딩 예시 경로와 My의 프로필·점수 샘플을 제거했습니다. My는 미연동 안내를 표시하고 세션·공지 테스트 데이터는 Supabase Repository를 통해 조회합니다.
+- 대체한 결정: DEC-0012의 My·일정 정적 데이터 표시와 DEC-0020의 다른 화면 데모 UI를 유지하던 부분만 대체합니다. 화면별 debug Preview와 비공개 테스트용 Supabase 샘플 데이터는 유지합니다.
+
+## DEC-0030 · 단일 값을 value class로 표현
+
+- 기록일: 2026-10-21
+- 결정: 이름·전화번호처럼 하나의 값을 별도 타입으로 표현할 때 Kotlin `@JvmInline value class`를 사용합니다. 값 자체에 속하는 규칙도 해당 타입이 소유합니다. 여러 값이나 상태를 함께 표현하는 객체에는 일반 `class` 또는 `data class`를 사용하며 모든 원시 값에 래퍼를 일괄 적용하지 않습니다.
+- 이유: 하나의 의미를 나타내는 타입이 자체 값을 소유하도록 하여 호출부에서 서로 다른 원시 값을 혼용하는 일을 줄이고 단일 책임을 유지합니다.
+- 근거: 사용자 명시 요청 및 [이슈 #102](https://github.com/YAPP-admin/yapp-plus-android/issues/102).
+- 반영: [코딩 컨벤션](coding-conventions.md), `:domain:signup`의 `Name`·`PhoneNumber`.
+- 적용 상태: `Name`과 `PhoneNumber`를 각각 `@JvmInline value class`로 구현하고, 비어 있지 않은 값인지 판단하는 규칙을 각 타입에 둡니다.
+- 대체한 결정: 없음.

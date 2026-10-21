@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-19
+last_verified: 2026-10-21
 ---
 
 # 코딩 컨벤션
@@ -37,7 +37,7 @@ Kotlin·Gradle Kotlin 코드에 적용합니다. 기계가 읽는 서식은 [.ed
 - Boolean 이름은 `is`·`has`·`can`·`should`를 사용합니다.
 - 수치는 `elapsedMs`, `remainingRatio`, `retryCount`처럼 의미와 단위를 드러냅니다.
 - 의미 있는 고정 숫자와 반복 문자열은 이름 있는 상수로 추출합니다.
-- 식별자·검증 규칙이 있는 값은 value class를 검토합니다. 컬렉션에 자체 규칙·행동이 있으면 별도 타입으로 캡슐화합니다. 모든 값에 래퍼를 일괄 적용하지 않습니다.
+- 이름·전화번호처럼 하나의 값을 별도 타입으로 표현할 때는 `@JvmInline value class`를 사용합니다. 단일 underlying value와 그 값에 속하는 규칙을 타입 안에 둡니다. 여러 값·상태를 함께 표현하는 객체에는 일반 `class` 또는 `data class`를 사용하며, 모든 원시 값에 래퍼를 일괄 적용하지 않습니다.
 - 불필요한 주석을 추가하지 않습니다. 주석·KDoc은 코드만으로 드러나지 않는 의도·제약·선택 이유가 있을 때만 쓰고, 이름·매개변수·구현을 다시 설명하지 않습니다.
 
 ## Android API 호환

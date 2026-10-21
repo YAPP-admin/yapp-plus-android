@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-19
+last_verified: 2026-10-21
 ---
 
 # 디자인시스템
@@ -14,7 +14,7 @@ last_verified: 2026-10-19
 
 Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand`, `textPrimary`, `textSecondary`, `textSubtle`, `textFaint`, `background`를 사용합니다. 나머지 공용 색상과 컴포넌트 내부 색상은 `YappColor`에서 관리합니다.
 
-메인 탭 데모의 배경·표면·본문·구분선 색상은 `:core:designsystem/theme/YappMainColor.kt`에서 관리합니다. 공통 헤더·데모 안내·아이콘과 텍스트 행은 `components/main/`의 `YappMainHeader`, `YappDemoDataLabel`, `YappIconLabel`로 제공합니다. 안내 문구와 화면 동작은 Feature가 소유합니다. 인증 화면에서 사용하는 기존 색상 토큰은 변경하지 않습니다.
+메인 탭의 배경·표면·본문·구분선 색상은 `:core:designsystem/theme/YappMainColor.kt`에서 관리합니다. 공통 헤더·아이콘과 텍스트 행은 `components/main/`의 `YappMainHeader`, `YappIconLabel`로 제공합니다. 화면별 안내 문구와 동작은 Feature가 소유합니다. 인증 화면에서 사용하는 기존 색상 토큰은 변경하지 않습니다.
 
 | 토큰 | 값 | 사용처 |
 | --- | --- | --- |

@@ -11,6 +11,8 @@
     <string name="my_attendance_history_loading">출석 내역을 불러오는 중이에요</string>
     <string name="my_attendance_history_empty">완료된 출석이 없어요</string>
     <string name="my_attendance_history_error">출석 내역을 불러오지 못했어요</string>
+    <string name="my_menu_expanded">펼쳐짐</string>
+    <string name="my_menu_collapsed">접힘</string>
     <string name="my_retry">다시 시도</string>
     <string name="my_settings">설정</string>
 </resources>

@@ -125,10 +125,11 @@ class AppAuthViewModelTest {
     fun signsOutOnlyOnceAndReturnsToLoginAfterSuccess() =
         runTest(dispatcher) {
             val result = CompletableDeferred<Unit>()
-            val repository = FakeAuthRepository().apply {
-                restore = { session }
-                logout = { result.await() }
-            }
+            val repository =
+                FakeAuthRepository().apply {
+                    restore = { session }
+                    logout = { result.await() }
+                }
             val viewModel = AppAuthViewModel(repository, SavedStateHandle())
             advanceUntilIdle()
 
@@ -148,10 +149,11 @@ class AppAuthViewModelTest {
     @Test
     fun failedSignOutKeepsSessionAndCanDismissError() =
         runTest(dispatcher) {
-            val repository = FakeAuthRepository().apply {
-                restore = { session }
-                logout = { error("provider response") }
-            }
+            val repository =
+                FakeAuthRepository().apply {
+                    restore = { session }
+                    logout = { error("provider response") }
+                }
             val viewModel = AppAuthViewModel(repository, SavedStateHandle())
             advanceUntilIdle()
 

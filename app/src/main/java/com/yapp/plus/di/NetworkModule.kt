@@ -110,11 +110,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideProfileDataSource(client: SupabaseRestClient): ProfileDataSource =
-        SupabaseProfileDataSource(client)
+    fun provideProfileDataSource(client: SupabaseRestClient): ProfileDataSource = SupabaseProfileDataSource(client)
 
     @Provides
     @Singleton
-    fun provideProfile(dataSource: ProfileDataSource): ProfileRepository =
-        ProfileRepositoryImpl(dataSource)
+    fun provideProfile(dataSource: ProfileDataSource): ProfileRepository = ProfileRepositoryImpl(dataSource)
 }

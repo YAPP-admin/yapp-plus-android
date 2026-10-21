@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -29,13 +30,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AuthDemoNavHostTest {
+class AppNavHostTest {
     @get:Rule
     val composeRule = createComposeRule()
 
     private lateinit var navController: NavHostController
     private lateinit var restorationTester: StateRestorationTester
-    private var uiState by mutableStateOf(AuthDemoUiState())
     private var authState by mutableStateOf<AppAuthUiState>(AppAuthUiState.Login())
     private var hasExited = false
 
@@ -46,17 +46,13 @@ class AuthDemoNavHostTest {
             YappTheme(darkTheme = false, dynamicColor = false) {
                 AppStartContent(uiState = authState) { startDestination ->
                     navController = rememberNavController()
-                    AuthDemoNavHost(
-                        uiState = uiState,
-                        onNameChange = { uiState = uiState.copy(name = it) },
-                        onPhoneNumberChange = { uiState = uiState.copy(phoneNumber = it) },
+                    AppNavHost(
                         onExit = { hasExited = true },
                         onSignUpComplete = {
                             authState = AppAuthUiState.Authenticated(AuthSession("test-user"))
                         },
                         startDestination = startDestination,
                         navController = navController,
-                        mainContent = {},
                     )
                 }
             }
@@ -68,9 +64,9 @@ class AuthDemoNavHostTest {
         composeRule.runOnIdle {
             authState = AppAuthUiState.Authenticated(AuthSession("test-user"))
         }
-        assertCurrentRoute<AuthDemoDestination.Main>()
+        assertCurrentRoute<AppNavigationDestination.Main>()
         restorationTester.emulateSavedInstanceStateRestore()
-        assertCurrentRoute<AuthDemoDestination.Main>()
+        assertCurrentRoute<AppNavigationDestination.Main>()
         composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
         Espresso.pressBack()
         composeRule.runOnIdle { assertTrue(hasExited) }
@@ -81,75 +77,80 @@ class AuthDemoNavHostTest {
         composeRule.runOnIdle {
             authState = AppAuthUiState.Authenticated(AuthSession("test-user"))
         }
-        assertCurrentRoute<AuthDemoDestination.Main>()
+        assertCurrentRoute<AppNavigationDestination.Main>()
         composeRule.runOnIdle { authState = AppAuthUiState.Restoring }
         composeRule.onNodeWithText("구글로 계속하기").assertDoesNotExist()
         restorationTester.emulateSavedInstanceStateRestore()
         composeRule.runOnIdle { authState = AppAuthUiState.Login() }
-        assertCurrentRoute<AuthDemoDestination.Login>()
+        assertCurrentRoute<AppNavigationDestination.Login>()
         composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()
         composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
     }
 
     @Test
     fun repeatedForwardCallbacksDoNotDuplicateDestinations() {
-        assertCurrentRoute<AuthDemoDestination.Login>()
-        navigateRepeatedly(AuthDemoDestination.Name)
-        navigateRepeatedly(AuthDemoDestination.Phone)
-        navigateRepeatedly(AuthDemoDestination.SignUpComplete)
-        navigateRepeatedly(AuthDemoDestination.Main)
+        assertCurrentRoute<AppNavigationDestination.Login>()
+        navigateRepeatedly(AppNavigationDestination.Name)
+        navigateRepeatedly(AppNavigationDestination.Phone)
+        navigateRepeatedly(AppNavigationDestination.SignUpComplete)
+        navigateRepeatedly(AppNavigationDestination.Main)
 
-        popAndAssert<AuthDemoDestination.SignUpComplete>()
-        popAndAssert<AuthDemoDestination.Phone>()
-        popAndAssert<AuthDemoDestination.Name>()
-        popAndAssert<AuthDemoDestination.Login>()
+        popAndAssert<AppNavigationDestination.SignUpComplete>()
+        popAndAssert<AppNavigationDestination.Phone>()
+        popAndAssert<AppNavigationDestination.Name>()
+        popAndAssert<AppNavigationDestination.Login>()
         composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
     }
 
     @Test
     fun repeatedBackCallbacksPopOnlyTheirOwnEntry() {
-        navigateRepeatedly(AuthDemoDestination.Name)
-        navigateRepeatedly(AuthDemoDestination.Phone)
-        navigateRepeatedly(AuthDemoDestination.SignUpComplete)
+        navigateRepeatedly(AppNavigationDestination.Name)
+        navigateRepeatedly(AppNavigationDestination.Phone)
+        navigateRepeatedly(AppNavigationDestination.SignUpComplete)
 
         composeRule.runOnIdle {
             val pendingEntry = checkNotNull(navController.currentBackStackEntry)
             repeat(5) { navController.navigateBackFrom(pendingEntry, onExit = {}) }
         }
 
-        assertCurrentRoute<AuthDemoDestination.Phone>()
+        assertCurrentRoute<AppNavigationDestination.Phone>()
     }
 
     @Test
     fun restoresTheDestinationAndCompleteBackStack() {
-        navigateRepeatedly(AuthDemoDestination.Name)
-        navigateRepeatedly(AuthDemoDestination.Phone)
-        navigateRepeatedly(AuthDemoDestination.SignUpComplete)
-        navigateRepeatedly(AuthDemoDestination.Main)
+        navigateRepeatedly(AppNavigationDestination.Name)
+        navigateRepeatedly(AppNavigationDestination.Phone)
+        navigateRepeatedly(AppNavigationDestination.SignUpComplete)
+        navigateRepeatedly(AppNavigationDestination.Main)
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertCurrentRoute<AuthDemoDestination.Main>()
-        popAndAssert<AuthDemoDestination.SignUpComplete>()
-        popAndAssert<AuthDemoDestination.Phone>()
-        popAndAssert<AuthDemoDestination.Name>()
-        popAndAssert<AuthDemoDestination.Login>()
+        assertCurrentRoute<AppNavigationDestination.Main>()
+        popAndAssert<AppNavigationDestination.SignUpComplete>()
+        popAndAssert<AppNavigationDestination.Phone>()
+        popAndAssert<AppNavigationDestination.Name>()
+        popAndAssert<AppNavigationDestination.Login>()
     }
 
     @Test
-    fun authDemoCompletesImmediatelyAndStartsTheApp() {
+    fun signupRequiresProfileInputsBeforeCompleting() {
         composeRule.runOnIdle {
             authState = AppAuthUiState.SignUpRequired(AuthSession("test-user"))
         }
-        assertCurrentRoute<AuthDemoDestination.Name>()
+        assertCurrentRoute<AppNavigationDestination.Name>()
+        composeRule.onNodeWithText("다음").assertIsNotEnabled()
+        updateInput("이름")
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
+        assertCurrentRoute<AppNavigationDestination.Phone>()
+        composeRule.onNodeWithText("다음").assertIsNotEnabled()
+        updateInput("임시 번호")
         composeRule.onNodeWithText("다음").assertIsEnabled().performClick()
-        assertCurrentRoute<AuthDemoDestination.SignUpComplete>()
+        assertCurrentRoute<AppNavigationDestination.SignUpComplete>()
         composeRule.onNodeWithText("회원가입을 완료했어요!").assertIsDisplayed()
         composeRule.onNodeWithText("운영진 승인을 기다리고 있어요...").assertDoesNotExist()
         composeRule.onNodeWithText("앱 둘러보기").assertDoesNotExist()
         composeRule.onNodeWithText("시작하기").performClick()
-        assertCurrentRoute<AuthDemoDestination.Main>()
+        assertCurrentRoute<AppNavigationDestination.Main>()
         composeRule.runOnIdle { assertTrue(navController.previousBackStackEntry == null) }
         Espresso.pressBack()
         composeRule.runOnIdle { assertTrue(hasExited) }
@@ -157,7 +158,7 @@ class AuthDemoNavHostTest {
 
     @Test
     fun preservesInputsAcrossRestorationAndNavigationBack() {
-        navigateRepeatedly(AuthDemoDestination.Name)
+        navigateRepeatedly(AppNavigationDestination.Name)
         updateInput("이름")
         composeRule.onNodeWithText("다음").performClick()
         updateInput("01012345678")
@@ -165,14 +166,14 @@ class AuthDemoNavHostTest {
 
         restorationTester.emulateSavedInstanceStateRestore()
 
-        assertCurrentRoute<AuthDemoDestination.SignUpComplete>()
+        assertCurrentRoute<AppNavigationDestination.SignUpComplete>()
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("01012345678")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("이름")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()
-        navigateRepeatedly(AuthDemoDestination.Name)
+        navigateRepeatedly(AppNavigationDestination.Name)
         composeRule.onNode(hasSetTextAction()).assertTextContains("이름")
     }
 
@@ -187,7 +188,7 @@ class AuthDemoNavHostTest {
         }
     }
 
-    private fun navigateRepeatedly(destination: AuthDemoDestination) {
+    private fun navigateRepeatedly(destination: AppNavigationDestination) {
         composeRule.runOnIdle {
             val entry = checkNotNull(navController.currentBackStackEntry)
             repeat(5) { navController.navigateFrom(entry, destination) }
@@ -195,12 +196,12 @@ class AuthDemoNavHostTest {
         composeRule.waitForIdle()
     }
 
-    private inline fun <reified T : AuthDemoDestination> popAndAssert() {
+    private inline fun <reified T : AppNavigationDestination> popAndAssert() {
         composeRule.runOnIdle { assertTrue(navController.popBackStack()) }
         assertCurrentRoute<T>()
     }
 
-    private inline fun <reified T : AuthDemoDestination> assertCurrentRoute() {
+    private inline fun <reified T : AppNavigationDestination> assertCurrentRoute() {
         composeRule.runOnIdle {
             assertTrue(navController.currentDestination?.hasRoute<T>() == true)
         }

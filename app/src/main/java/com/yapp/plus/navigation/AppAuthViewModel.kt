@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val SESSION_REQUEST_TIMEOUT_MILLIS = 100_000L
 
@@ -86,7 +87,7 @@ internal class AppAuthViewModel
             var requestCompleted = false
             try {
                 val session =
-                    withTimeoutOrNull(SESSION_REQUEST_TIMEOUT_MILLIS) {
+                    withTimeoutOrNull(SESSION_REQUEST_TIMEOUT_MILLIS.milliseconds) {
                         request().also { requestCompleted = true }
                     }
                 mutableUiState.value =

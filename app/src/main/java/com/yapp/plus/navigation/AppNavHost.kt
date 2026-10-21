@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -12,29 +13,27 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.yapp.plus.feature.login.LoginContent
+import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.feature.login.LoginRoute
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
-import com.yapp.plus.feature.signup.AuthStatus
-import com.yapp.plus.feature.signup.AuthStatusContent
-import com.yapp.plus.feature.signup.SignUpContent
-import com.yapp.plus.feature.signup.SignUpStep
+import com.yapp.plus.feature.signup.SignUpCompleteRoute
+import com.yapp.plus.feature.signup.SignUpNameRoute
+import com.yapp.plus.feature.signup.SignUpPhoneRoute
+import com.yapp.plus.feature.signup.SignUpViewModel
 
 @Composable
-internal fun AuthDemoNavHost(
-    uiState: AuthDemoUiState,
-    onNameChange: (String) -> Unit,
-    onPhoneNumberChange: (String) -> Unit,
+internal fun AppNavHost(
     onExit: () -> Unit,
+    onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit = {},
+    isSessionInProgress: Boolean = false,
+    hasSessionError: Boolean = false,
+    onSessionErrorDismissed: () -> Unit = {},
+    onSessionRetry: (() -> Unit)? = null,
     onSignUpComplete: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
-    startDestination: AuthDemoDestination = AuthDemoDestination.Login,
+    startDestination: AppNavigationDestination = AppNavigationDestination.Login,
     navController: NavHostController = rememberNavController(),
-    loginContent: @Composable (() -> Unit) -> Unit = { onBack ->
-        LoginContent(onBack = onBack, onGoogleLogin = {})
-    },
-    mainContent: @Composable (() -> Unit) -> Unit = { onAttendanceComplete ->
-        MainTabScaffold(onAttendanceComplete = onAttendanceComplete)
-    },
+    signUpViewModel: SignUpViewModel = hiltViewModel(),
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     BackHandler(
@@ -46,45 +45,48 @@ internal fun AuthDemoNavHost(
         startDestination = startDestination,
         modifier = modifier.fillMaxSize(),
     ) {
-        composable<AuthDemoDestination.Login> { entry ->
-            loginContent { navController.navigateBackFrom(entry, onExit) }
-        }
-        composable<AuthDemoDestination.Name> { entry ->
-            SignUpContent(
-                step = SignUpStep.Name,
-                value = uiState.name,
-                onValueChange = onNameChange,
-                isNextEnabled = true,
-                onNext = { navController.navigateFrom(entry, AuthDemoDestination.Phone) },
+        composable<AppNavigationDestination.Login> { entry ->
+            LoginRoute(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
-                modifier = Modifier.fillMaxSize(),
+                onGoogleCredentialReceived = onGoogleCredentialReceived,
+                isSessionInProgress = isSessionInProgress,
+                hasSessionError = hasSessionError,
+                onSessionErrorDismissed = onSessionErrorDismissed,
+                onSessionRetry = onSessionRetry,
             )
         }
-        composable<AuthDemoDestination.Phone> { entry ->
-            SignUpContent(
-                step = SignUpStep.Phone,
-                value = uiState.phoneNumber,
-                onValueChange = onPhoneNumberChange,
-                isNextEnabled = true,
-                onNext = { navController.navigateFrom(entry, AuthDemoDestination.SignUpComplete) },
+        composable<AppNavigationDestination.Name> { entry ->
+            SignUpNameRoute(
+                onNext = { navController.navigateFrom(entry, AppNavigationDestination.Phone) },
                 onBack = { navController.navigateBackFrom(entry, onExit) },
                 modifier = Modifier.fillMaxSize(),
+                viewModel = signUpViewModel,
             )
         }
-        composable<AuthDemoDestination.SignUpComplete> { entry ->
-            AuthStatusContent(
-                status = AuthStatus.Complete,
+        composable<AppNavigationDestination.Phone> { entry ->
+            SignUpPhoneRoute(
+                onNext = { navController.navigateFrom(entry, AppNavigationDestination.SignUpComplete) },
+                onBack = { navController.navigateBackFrom(entry, onExit) },
+                modifier = Modifier.fillMaxSize(),
+                viewModel = signUpViewModel,
+            )
+        }
+        composable<AppNavigationDestination.SignUpComplete> { entry ->
+            SignUpCompleteRoute(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
                 onAction = { navController.completeSignUpFrom(entry, onSignUpComplete) },
                 modifier = Modifier.fillMaxSize(),
+                viewModel = signUpViewModel,
             )
         }
-        composable<AuthDemoDestination.Main> { entry ->
-            mainContent {
-                navController.navigateFrom(entry, AuthDemoDestination.AttendanceComplete)
-            }
+        composable<AppNavigationDestination.Main> { entry ->
+            MainTabScaffold(
+                onAttendanceComplete = {
+                    navController.navigateFrom(entry, AppNavigationDestination.AttendanceComplete)
+                },
+            )
         }
-        composable<AuthDemoDestination.AttendanceComplete> { entry ->
+        composable<AppNavigationDestination.AttendanceComplete> { entry ->
             HomeAttendanceCompleteScreen(
                 onConfirm = { navController.navigateBackFrom(entry, onExit) },
             )
@@ -94,7 +96,7 @@ internal fun AuthDemoNavHost(
 
 internal fun NavHostController.navigateFrom(
     entry: NavBackStackEntry,
-    destination: AuthDemoDestination,
+    destination: AppNavigationDestination,
 ) {
     if (!canNavigateFrom(entry)) return
     navigate(destination) { launchSingleTop = true }
@@ -118,7 +120,7 @@ internal fun NavHostController.completeSignUpFrom(
 ) {
     if (!canNavigateFrom(entry)) return
     if (onSignUpComplete == null) {
-        navigateFrom(entry, AuthDemoDestination.Main)
+        navigateFrom(entry, AppNavigationDestination.Main)
     } else {
         onSignUpComplete()
     }

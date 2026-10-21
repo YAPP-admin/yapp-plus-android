@@ -6,7 +6,6 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.yapp.plus.feature.login.LoginRoute
 
 @Composable
 internal fun AppStartRoute(
@@ -17,28 +16,23 @@ internal fun AppStartRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val loginState = uiState as? AppAuthUiState.Login
     AppStartContent(uiState = uiState, modifier = modifier) { startDestination ->
-        AuthDemoRoute(
+        AppNavigationRoute(
             onExit = onExit,
+            onGoogleCredentialReceived = viewModel::signInWithGoogle,
+            isSessionInProgress = loginState?.isSigningIn == true,
+            hasSessionError =
+                loginState?.hasError == true ||
+                    uiState == AppAuthUiState.RestoreError,
+            onSessionErrorDismissed = viewModel::dismissError,
+            onSessionRetry =
+                if (uiState == AppAuthUiState.RestoreError) {
+                    viewModel::retrySessionRestore
+                } else {
+                    null
+                },
             onSignUpComplete = viewModel::completeSignUp,
             startDestination = startDestination,
             modifier = modifier,
-            loginContent = { onBack ->
-                LoginRoute(
-                    onBack = onBack,
-                    onGoogleCredentialReceived = viewModel::signInWithGoogle,
-                    isSessionInProgress = loginState?.isSigningIn == true,
-                    hasSessionError =
-                        loginState?.hasError == true ||
-                            uiState == AppAuthUiState.RestoreError,
-                    onSessionErrorDismissed = viewModel::dismissError,
-                    onSessionRetry =
-                        if (uiState == AppAuthUiState.RestoreError) {
-                            viewModel::retrySessionRestore
-                        } else {
-                            null
-                        },
-                )
-            },
         )
     }
 }
@@ -47,7 +41,7 @@ internal fun AppStartRoute(
 internal fun AppStartContent(
     uiState: AppAuthUiState,
     modifier: Modifier = Modifier,
-    content: @Composable (AuthDemoDestination) -> Unit,
+    content: @Composable (AppNavigationDestination) -> Unit,
 ) {
     if (uiState == AppAuthUiState.Restoring) {
         YappSplashScreen(modifier = modifier)
@@ -60,9 +54,9 @@ internal fun AppStartContent(
             }
         val startDestination =
             when {
-                session == null -> AuthDemoDestination.Login
-                uiState is AppAuthUiState.SignUpRequired -> AuthDemoDestination.Name
-                else -> AuthDemoDestination.Main
+                session == null -> AppNavigationDestination.Login
+                uiState is AppAuthUiState.SignUpRequired -> AppNavigationDestination.Name
+                else -> AppNavigationDestination.Main
             }
         key(session?.userId, uiState is AppAuthUiState.SignUpRequired) {
             content(startDestination)

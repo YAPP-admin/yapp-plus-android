@@ -22,33 +22,20 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
-import com.yapp.plus.core.designsystem.components.main.YappDemoDataLabel
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.schedule.components.ScheduleItem
 import com.yapp.plus.feature.main.schedule.model.ScheduleSessionUiModel
-import com.yapp.plus.feature.main.schedule.model.ScheduleStatusUiModel
-import com.yapp.plus.feature.main.schedule.model.ScheduleTypeUiModel
 import com.yapp.plus.feature.main.schedule.model.ScheduleUiState
 import com.yapp.plus.core.designsystem.R as DesignSystemR
-
-@Composable
-fun ScheduleScreen(modifier: Modifier = Modifier) {
-    ScheduleScreen(
-        state = demoScheduleUiState(),
-        modifier = modifier,
-        showDemoDataLabel = true,
-    )
-}
 
 @Composable
 fun ScheduleScreen(
     state: ScheduleUiState<List<ScheduleSessionUiModel>>,
     modifier: Modifier = Modifier,
     onRetry: () -> Unit = {},
-    showDemoDataLabel: Boolean = false,
 ) {
     Column(
         modifier =
@@ -81,7 +68,6 @@ fun ScheduleScreen(
                 } else {
                     ScheduleSessionsList(
                         sessions = state.value,
-                        showDemoDataLabel = showDemoDataLabel,
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -138,7 +124,6 @@ private fun SchedulePlaceholder(
 @Composable
 private fun ScheduleSessionsList(
     sessions: List<ScheduleSessionUiModel>,
-    showDemoDataLabel: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -150,83 +135,5 @@ private fun ScheduleSessionsList(
         sessions.forEach { session ->
             ScheduleItem(session = session)
         }
-        if (showDemoDataLabel) {
-            YappDemoDataLabel(
-                text = stringResource(R.string.schedule_demo_data),
-                modifier = Modifier.padding(vertical = 16.dp),
-            )
-        }
     }
 }
-
-@Composable
-private fun demoScheduleUiState(): ScheduleUiState<List<ScheduleSessionUiModel>> =
-    ScheduleUiState.Content(
-        listOf(
-            demoScheduleSession(
-                dateResource = R.string.schedule_date_first,
-                nameResource = R.string.schedule_team,
-                locationResource = null,
-                timeResource = R.string.schedule_time,
-                type = ScheduleTypeUiModel.Team,
-                status = ScheduleStatusUiModel.Past,
-            ),
-            demoScheduleSession(
-                dateResource = R.string.schedule_date_second,
-                nameResource = R.string.schedule_planning,
-                locationResource = R.string.schedule_place_second,
-                timeResource = R.string.schedule_time_second,
-                type = ScheduleTypeUiModel.Regular,
-                status = ScheduleStatusUiModel.Past,
-            ),
-            demoScheduleSession(
-                dateResource = R.string.schedule_date_third,
-                nameResource = R.string.schedule_team,
-                locationResource = null,
-                timeResource = R.string.schedule_time,
-                type = ScheduleTypeUiModel.Team,
-                status = ScheduleStatusUiModel.Today,
-            ),
-            demoScheduleSession(
-                dateResource = R.string.schedule_date_fourth,
-                nameResource = R.string.schedule_team,
-                locationResource = null,
-                timeResource = R.string.schedule_time,
-                type = ScheduleTypeUiModel.Team,
-                status = ScheduleStatusUiModel.Upcoming,
-            ),
-            demoScheduleSession(
-                dateResource = R.string.schedule_date_fifth,
-                nameResource = R.string.schedule_user_test,
-                locationResource = R.string.schedule_place_fifth,
-                timeResource = R.string.schedule_time_fifth,
-                type = ScheduleTypeUiModel.Regular,
-                status = ScheduleStatusUiModel.Upcoming,
-            ),
-            demoScheduleSession(
-                dateResource = R.string.schedule_date_sixth,
-                nameResource = R.string.schedule_team,
-                locationResource = null,
-                timeResource = R.string.schedule_time,
-                type = ScheduleTypeUiModel.Team,
-                status = ScheduleStatusUiModel.Upcoming,
-            ),
-        ),
-    )
-
-@Composable
-private fun demoScheduleSession(
-    dateResource: Int,
-    nameResource: Int,
-    locationResource: Int?,
-    timeResource: Int,
-    type: ScheduleTypeUiModel,
-    status: ScheduleStatusUiModel,
-) = ScheduleSessionUiModel(
-    dateLabel = stringResource(dateResource),
-    name = stringResource(nameResource),
-    location = locationResource?.let { resource -> stringResource(resource) },
-    timeLabel = stringResource(timeResource),
-    type = type,
-    status = status,
-)

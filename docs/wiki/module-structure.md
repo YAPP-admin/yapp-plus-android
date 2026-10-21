@@ -20,7 +20,7 @@ last_verified: 2026-10-21
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 알림 설정, 약관 링크, 앱 버전, 로그아웃·회원 탈퇴 안내 화면 구현; My 탭에서 App이 연결 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce를 Domain credential로 App에 전달; nonce 해시·취소·중복 요청·재시도 오류 UI 구현 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력과 임시 가입 완료를 한 Route·ViewModel 흐름으로 구현; App 연결은 단일 가입 목적지·완료 콜백 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·공지·세션 일정·출석 인증·사전 보고의 Repository 계약 구현됨; 인증·공지 Data와 로그인·홈/게시판 Feature 연결 완료 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·공지·세션 일정·출석 인증·사전 보고·My 테스트 프로필/출석 이력 Repository 계약 구현됨; My Data·Feature 연결 후속 |
 | `:data` | `com.yapp.plus.data` | Android Library; 인증·일정·공지·출석 검증 Supabase 어댑터·공지 Repository와 인증 REST helper 구현; 보고 backend 없음; YAPP 어댑터와 토큰 갱신·암호화 저장 보존 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·토큰 복원/교체 조율·401 갱신 및 중복 방지 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |

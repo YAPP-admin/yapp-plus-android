@@ -7,7 +7,9 @@ import com.yapp.plus.domain.auth.GoogleLoginCredential
 internal class FakeAuthRepository : AuthRepository {
     var restore: suspend () -> AuthSession? = { null }
     var login: suspend () -> AuthSession = { AuthSession("test-user") }
+    var logout: suspend () -> Unit = {}
     var loginCount = 0
+    var logoutCount = 0
     var credential: GoogleLoginCredential? = null
 
     override suspend fun fetchSession(): AuthSession? = restore()
@@ -18,5 +20,8 @@ internal class FakeAuthRepository : AuthRepository {
         return login()
     }
 
-    override suspend fun signOut() = Unit
+    override suspend fun signOut() {
+        logoutCount += 1
+        logout()
+    }
 }

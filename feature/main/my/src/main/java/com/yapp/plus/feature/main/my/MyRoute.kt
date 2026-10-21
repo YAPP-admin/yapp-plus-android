@@ -7,13 +7,17 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun MyRoute(modifier: Modifier = Modifier) {
+fun MyRoute(
+    onSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val viewModel: MyViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MyScreen(
         state = uiState,
         onRetry = viewModel::retry,
+        onSettingsClick = onSettingsClick,
         modifier = modifier,
     )
 }

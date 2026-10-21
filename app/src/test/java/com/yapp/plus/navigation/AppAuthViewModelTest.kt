@@ -11,6 +11,7 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -118,5 +119,50 @@ class AppAuthViewModelTest {
             viewModel.signInWithGoogle(GoogleLoginCredential("fake-id-token", "raw-nonce"))
             advanceUntilIdle()
             assertEquals(AppAuthUiState.Login(hasError = true), viewModel.uiState.value)
+        }
+
+    @Test
+    fun signsOutOnlyOnceAndReturnsToLoginAfterSuccess() =
+        runTest(dispatcher) {
+            val result = CompletableDeferred<Unit>()
+            val repository = FakeAuthRepository().apply {
+                restore = { session }
+                logout = { result.await() }
+            }
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
+            advanceUntilIdle()
+
+            repeat(3) { viewModel.signOut() }
+            runCurrent()
+
+            assertEquals(
+                AppAuthUiState.Authenticated(session, isSigningOut = true),
+                viewModel.uiState.value,
+            )
+            assertEquals(1, repository.logoutCount)
+            result.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(AppAuthUiState.Login(), viewModel.uiState.value)
+        }
+
+    @Test
+    fun failedSignOutKeepsSessionAndCanDismissError() =
+        runTest(dispatcher) {
+            val repository = FakeAuthRepository().apply {
+                restore = { session }
+                logout = { error("provider response") }
+            }
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
+            advanceUntilIdle()
+
+            viewModel.signOut()
+            advanceUntilIdle()
+
+            assertEquals(
+                AppAuthUiState.Authenticated(session, hasSignOutError = true),
+                viewModel.uiState.value,
+            )
+            viewModel.dismissSignOutError()
+            assertEquals(AppAuthUiState.Authenticated(session), viewModel.uiState.value)
         }
 }

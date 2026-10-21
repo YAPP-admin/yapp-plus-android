@@ -7,4 +7,7 @@ interface AuthRepository {
     suspend fun fetchSession(): AuthSession?
 
     suspend fun signOut()
+
+    /** 현재 앱 계정과 연결 데이터를 삭제한 뒤 로컬 인증 세션을 정리한다. */
+    suspend fun deleteAccount()
 }

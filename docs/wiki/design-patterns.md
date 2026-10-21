@@ -56,12 +56,18 @@ last_verified: 2026-10-22
 
 ## MVP 인증·공지 계약
 
-- `AuthRepository`는 Google credential 교환, 현재 세션 조회·복원, 로그아웃을 제공합니다. `GoogleLoginCredential`은 ID 토큰과 원본 nonce만 전달하며 영구 저장·로그 출력을 금지합니다. Google 요청에는 nonce의 SHA-256 hex를 보내고 Domain에는 원본을 전달합니다. `AuthSession.userId`는 형식을 해석하지 않는 사용자 식별자이며 Supabase 사용자 ID와 미래 YAPP 회원 ID의 대응은 후속 계약입니다.
+- `AuthRepository`는 Google credential 교환, 현재 세션 조회·복원, 로그아웃과 앱 계정 삭제를 제공합니다. `GoogleLoginCredential`은 ID 토큰과 원본 nonce만 전달하며 영구 저장·로그 출력을 금지합니다. Google 요청에는 nonce의 SHA-256 hex를 보내고 Domain에는 원본을 전달합니다. `AuthSession.userId`는 형식을 해석하지 않는 사용자 식별자이며 Supabase 사용자 ID와 미래 YAPP 회원 ID의 대응은 후속 계약입니다.
 - 인증 세션이 없는 조회는 `null`, 인증·복원 요청 자체의 실패는 예외로 구분합니다. Google 토큰 발급만으로 인증 성공 UiState를 만들지 않습니다. Data가 인증 제공자의 교환을 완료한 뒤 반환한 세션으로 App이 인증 흐름을 조율합니다.
 - `NoticeRepository`는 운영·세션 공지를 유형별 또는 전체 목록과 상세로 조회합니다. 목록은 게시 시각 내림차순이며, 상세에서 조회할 수 있는 공지가 없으면 `null`을 반환합니다. 공통 `Notice`는 홈의 `Long` 식별자, 제목, 본문, 유형과 게시 시각을 제공합니다. 날짜·유형 문구와 홈·게시판 UI 모델 변환은 각 Feature 책임입니다.
 - 인증·공지·제출 프로필 및 My 테스트 데이터 Data 구현과 App Hilt 연결은 완료했습니다. Login Feature는 Domain credential을 App에 전달하고 App ViewModel이 인증 교환·시작 시 세션 복원을 조율합니다. 복원 중에는 Splash를 표시하고 실패에는 재시도를 제공합니다. 신규 Google 인증은 Signup Feature의 단일 Route로 진입해 이름·휴대폰 입력 후 Supabase 제출 프로필을 저장하고, 성공한 경우 임시 가입 완료 화면을 표시합니다. 저장된 세션 복원은 바로 메인 그래프를 엽니다. `SignUpRoute`가 자신의 `SignUpViewModel`을 가져와 내부 단계·입력값을 유지하고, 완료 액션은 입력을 지운 뒤 콜백으로 App에 메인 전환을 요청합니다. My는 `ProfileRepository`에서 제출한 이름·휴대폰, `MyRepository`에서 테스트 프로필·검증된 테스트 출석 이력을 읽습니다. 출석 이력은 펼쳤을 때 불러오고 오류 재시도를 제공합니다. 홈은 한국 시간의 일요일 00:00부터 다음 일요일 전까지 게시된 공지를 표시하며, 게시판은 전체·운영·세션 필터와 상세를 조회합니다. App이 공지 ID·화면 이동을, Feature가 조회 상태·필터 복원·UI 변환을 소유합니다. 과제·기타 분류의 정책 대응은 미정으로 남깁니다. 공지의 전송 DTO·본문 표현 형식·페이지 처리 같은 서버 세부 계약은 Domain 모델만으로 확정하지 않습니다.
 
 Supabase 출석 검증은 기존 `AttendanceDataSource` 계약의 정수 코드를 네 자리 ASCII 숫자 문자열로 왼쪽 0 채움한 뒤 인증된 `POST /rest/v1/rpc/mvp_verify_attendance`에 `p_session_id`·`p_code`만 보냅니다. 성공은 요청 세션과 일치하는 단일 행의 `verified=true`와 유효한 `checked_in_at`으로 확인하며 시각·사용자는 DB가 정합니다. REST helper는 조회와 POST 모두 Supabase 세션의 401 복원·갱신 뒤 원래 요청을 한 번 재시도합니다. PostgREST 오류의 정확한 `INVALID_ATTENDANCE_CODE` marker만 코드 오류로 매핑하고 다른 오류·응답 검증 실패는 일반 `AttendanceException`으로 정제하며 취소는 전파합니다. MVP migration에 보고 backend가 없어 `submitReport`는 요청 없이 일반 실패를 반환하고 YAPP 보고 어댑터는 보존합니다. Supabase MVP의 홈에는 보고 진입·시트·완료 안내를 노출하지 않으며 보고 전용 Feature 상태는 제거했습니다. Domain 보고 계약과 Data/YAPP 어댑터는 향후 서버 지원을 위해 보존합니다.
+
+### 앱 계정 삭제 계약
+
+- `AuthRepository.deleteAccount()`는 대상 ID를 받지 않습니다. Data가 현재 세션을 검증한 뒤 `POST /rest/v1/rpc/mvp_delete_account`를 호출하며, `deleted=true`와 현재 사용자의 `user_id`가 일치할 때만 로컬 토큰을 지웁니다. 인증 작업은 기존 Mutex로 직렬화하고 서버 삭제가 시작되면 확인과 로컬 정리를 취소로 분리하지 않습니다.
+- DB의 공개 함수는 invoker wrapper이고 비공개 definer helper가 `auth.uid()`와 실제 `auth.sessions`를 검사합니다. 인증 계정 삭제와 연결 행의 cascade는 한 트랜잭션입니다. 계정이 이미 삭제된 동일 인증 주체의 재요청은 멱등이며 실패 시 관련 데이터 변경을 롤백합니다. 제한적 RLS로 삭제된 계정의 JWT 조회·프로필 재생성을 차단합니다.
+- App 인증 ViewModel이 삭제 진행·오류·재시도와 로그인 전환을 소유합니다. Setting Feature는 확인·진행·오류 UI와 콜백만 제공합니다. 삭제 확인은 `rememberSaveable`로 복원하고 진행 중에는 닫기와 추가 동작을 막습니다. 오류 후 세션을 복원할 수 없으면 로그인으로 이동합니다.
 
 ## HTTP 인증 세션 갱신
 

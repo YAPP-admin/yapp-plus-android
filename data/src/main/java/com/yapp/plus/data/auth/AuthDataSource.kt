@@ -8,4 +8,6 @@ interface AuthDataSource {
     suspend fun fetchSession(): AuthSessionData?
 
     suspend fun signOut()
+
+    suspend fun deleteAccount()
 }

@@ -342,3 +342,13 @@ last_verified: 2026-10-21
 - 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [모듈 구조](module-structure.md), [설계 패턴](design-patterns.md), `README.md`, `AGENTS.md`, `:feature:main:my`.
 - 적용 상태: My Domain/Data 계약과 Supabase 조회 어댑터는 [PR #112](https://github.com/YAPP-admin/yapp-plus-android/pull/112)에서 연결했고, 기존 My UI 컴포넌트는 [PR #114](https://github.com/YAPP-admin/yapp-plus-android/pull/114)에서 추가했습니다. 이 결정은 My 화면의 ProfileRepository·MyRepository 상태 조립, 지연 조회와 펼침 UI를 연결합니다. 테스트 데이터가 없으면 빈 상태를 표시합니다.
 - 대체한 결정: DEC-0032의 테스트 출석 이력을 My에 표시하지 않는 부분만 대체합니다. 제출 프로필 저장과 이름·휴대폰 표시는 유지합니다.
+
+## DEC-0035 · 출시를 위한 앱 계정 삭제와 미완성 메뉴 숨김
+
+- 기록일: 2026-10-22
+- 결정: 설정에서 본인의 앱 계정과 연결된 제출·테스트 프로필, 테스트 출석·허용 등록을 삭제할 수 있게 합니다. 삭제 범위와 복구 불가를 확인받고 진행·실패·재시도를 표시합니다. 외부 요청은 사용자가 제공한 `yappplus.official@gmail.com`으로 받습니다. 홈 알림·출석 점수와 설정 알림 토글은 연동 전까지 숨깁니다.
+- 이유: Play 제출에 필요한 계정 삭제 경로를 제공하고 미완성 메뉴를 출시 화면에서 제외하기 위해서입니다.
+- 근거: 사용자 명시 요청과 문의 이메일 지정, [이슈 #117](https://github.com/YAPP-admin/yapp-plus-android/issues/117).
+- 반영: [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`, Domain·Data·App·Home·Setting, 계정 삭제 migration 및 공개 안내 HTML.
+- 적용 상태: 클라이언트와 DB migration의 로컬 검증 후, 사용자의 배포 요청에 따라 2026-10-22 YAPP Supabase main에 migration을 적용·이력 등록했습니다. connector에 대상 프로젝트 권한이 없어 로그인된 대시보드로 적용했으며 실제 DB의 임시 fixture를 롤백하는 검증과 Data API의 익명 요청 거부를 확인했습니다. [외부 안내 페이지](https://yapp-account-deletion.jeoungpeto0908.chatgpt.site)를 Sites에 공개하고 비인증 HTTP 200 및 문의 링크를 검증했습니다. 실제 사용자 계정은 삭제하지 않았습니다. 같은 날 사용자가 앱 생성 및 필수 선언·약관 동의에 승인하여 YAPP Plus 개발자 계정에 `YAPP 출석`(`com.yapp.plus`, 한국어, 무료)을 생성했습니다. 데이터 보안 양식에 데이터 수집 여부 예·계정 생성 방식 OAuth·공개 계정 삭제 URL을 임시저장하고 저장 완료 표시를 확인했습니다. 전체 데이터 보안 선언 제출과 스토어 공개는 남아 있습니다.
+- 대체한 결정: DEC-0033의 계정 삭제 안내만 제공하던 상태와 알림 토글 노출을 대체합니다. YAPP 동아리 회원 자격과 앱 계정 삭제의 구분은 유지합니다.

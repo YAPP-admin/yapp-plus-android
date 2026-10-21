@@ -17,26 +17,8 @@ import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.my.R
-
-sealed interface MyAttendanceHistoryState {
-    data object NotRequested : MyAttendanceHistoryState
-
-    data object Loading : MyAttendanceHistoryState
-
-    data object Empty : MyAttendanceHistoryState
-
-    data object Error : MyAttendanceHistoryState
-
-    @JvmInline
-    value class Content(
-        val items: List<MyAttendanceHistoryItem>,
-    ) : MyAttendanceHistoryState
-}
-
-data class MyAttendanceHistoryItem(
-    val sessionName: String,
-    val checkedInAtLabel: String,
-)
+import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryItem
+import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryState
 
 @Composable
 fun MyAttendanceHistory(
@@ -91,7 +73,7 @@ fun MyAttendanceHistory(
                 HistoryMessage(stringResource(R.string.my_attendance_history_empty), modifier)
             } else {
                 Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    state.items.forEach { item -> MyAttendanceHistoryItem(item) }
+                    state.items.forEach { item -> AttendanceHistoryRow(item) }
                 }
             }
     }
@@ -111,7 +93,7 @@ private fun HistoryMessage(
 }
 
 @Composable
-private fun MyAttendanceHistoryItem(item: MyAttendanceHistoryItem) {
+private fun AttendanceHistoryRow(item: MyAttendanceHistoryItem) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),

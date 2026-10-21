@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-21
+last_verified: 2026-10-22
 ---
 
 # 모듈 구조
@@ -16,11 +16,11 @@ last_verified: 2026-10-21
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | 이번 주 세션·주간 달력·알림 UI·출석 코드/완료 구현; 출석 검증·주간 공지 Repository 연결; Supabase MVP의 보고 UI 숨김; 알림 조회는 후속 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 전체·운영·세션 공지 목록·상세·조회 상태·재시도·필터 복원 구현됨; App에서 연결 |
-| `:feature:main:my` | `com.yapp.plus.feature.main.my` | 프로필 조회 ViewModel·로딩/빈/오류/콘텐츠 상태·이름/휴대폰 UI 구현; App에서 연결 |
+| `:feature:main:my` | `com.yapp.plus.feature.main.my` | 제출 프로필·테스트 프로필·테스트 출석 내역의 상태와 UI 연결; 출석 내역 펼침·지연 조회·오류 재시도 구현; App에서 연결 |
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 알림 설정, 약관 링크, 앱 버전, 로그아웃·회원 탈퇴 안내 화면 구현; My 탭에서 App이 연결 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce를 Domain credential로 App에 전달; nonce 해시·취소·중복 요청·재시도 오류 UI 구현 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력과 임시 가입 완료를 한 Route·ViewModel 흐름으로 구현; App 연결은 단일 가입 목적지·완료 콜백 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·공지·세션 일정·출석 인증·사전 보고·My 테스트 프로필/출석 이력 Repository 계약 구현됨; My Data·Feature 연결 후속 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·공지·세션 일정·출석 인증·사전 보고·My 테스트 프로필/출석 이력 Repository 계약 구현됨 |
 | `:data` | `com.yapp.plus.data` | Android Library; 인증·일정·공지·출석 검증·My 프로필/출석 이력 Supabase 어댑터와 Repository, 인증 REST helper 구현; 보고 backend 없음; YAPP 어댑터와 토큰 갱신·암호화 저장 보존 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·토큰 복원/교체 조율·401 갱신 및 중복 방지 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
@@ -32,9 +32,9 @@ last_verified: 2026-10-21
 
 `:feature:login`과 `:feature:signup`은 서로 의존하지 않고 `:core:designsystem`의 공통 인증 표현을 재사용합니다. Login Feature는 Credential Manager에서 Google ID 토큰과 nonce를 받아 App 콜백으로 전달합니다. 새 Google 인증 뒤 App은 단일 가입 목적지를 열고, Signup Feature가 이름 → 휴대폰 → 임시 가입 완료 단계를 내부 상태로 진행합니다. 가입 완료 액션은 입력값을 지우고 콜백으로 App에 알려 메인으로 전환합니다. 저장된 세션 복원은 가입 단계를 건너뜁니다. `SignUpRoute`가 Feature ViewModel을 직접 가져오며 `SavedStateHandle`로 입력값과 현재 단계를 유지·복원합니다. 가입 단계 안의 뒤로 가기는 Feature가 처리하고, 앱 목적지 이동·앱 종료 처리는 App이 소유합니다. 실제 YAPP 가입·운영진 인증 API는 연결하지 않으며 입력값도 서버로 보내지 않습니다. 회원가입 진입 안내·버튼·구분선은 제공하지 않습니다.
 
-현재 `:feature:main:home`, `:feature:main:schedule`, `:feature:main:board`, `:feature:main:my`가 각각 홈·일정·게시판·My 화면을 제공합니다. 기존 `:feature:attendance` 모듈은 제거했습니다. App이 `YappBottomNavigation`과 `YappBottomNavigationItem`을 조합해 메인 탭 선택을 저장·복원하고, 네 Feature 화면과 Domain 계약에 대한 Data 구현을 조립합니다. Feature 간 직접 의존성은 없습니다. 공통 헤더와 아이콘·텍스트 행은 `:core:designsystem`의 `YappMainHeader`, `YappIconLabel`을 사용합니다. debug·release 모두 Supabase 세션을 복원하며, 새 Google 인증은 단일 Signup Feature 화면 안에서 이름·휴대폰을 입력하고 제출 프로필 저장을 성공한 뒤 가입 완료 단계와 메인 화면으로 이동합니다. `:domain:signup`의 `Name`과 `PhoneNumber`는 각각 공백뿐인 값을 입력되지 않은 상태로 판단하고, `:feature:signup` Route가 두 객체의 상태를 조합해 다음 버튼을 제어합니다. Signup Feature가 Route·ViewModel·`SavedStateHandle`로 단계와 입력값을 유지·복원하며, App Navigation은 가입 목적지와 완료 콜백만 연결합니다. 인증된 세션 복원은 바로 메인에서 시작합니다. 저장 프로필은 공식 YAPP 가입이나 권한을 만들지 않으며 My 화면은 저장된 이름·휴대폰을 표시하고 가짜 회원·출석 데이터를 표시하지 않습니다.
+현재 `:feature:main:home`, `:feature:main:schedule`, `:feature:main:board`, `:feature:main:my`가 각각 홈·일정·게시판·My 화면을 제공합니다. 기존 `:feature:attendance` 모듈은 제거했습니다. App이 `YappBottomNavigation`과 `YappBottomNavigationItem`을 조합해 메인 탭 선택을 저장·복원하고, 네 Feature 화면과 Domain 계약에 대한 Data 구현을 조립합니다. Feature 간 직접 의존성은 없습니다. 공통 헤더와 아이콘·텍스트 행은 `:core:designsystem`의 `YappMainHeader`, `YappIconLabel`을 사용합니다. debug·release 모두 Supabase 세션을 복원하며, 새 Google 인증은 단일 Signup Feature 화면 안에서 이름·휴대폰을 입력하고 제출 프로필 저장을 성공한 뒤 가입 완료 단계와 메인 화면으로 이동합니다. `:domain:signup`의 `Name`과 `PhoneNumber`는 각각 공백뿐인 값을 입력되지 않은 상태로 판단하고, `:feature:signup` Route가 두 객체의 상태를 조합해 다음 버튼을 제어합니다. Signup Feature가 Route·ViewModel·`SavedStateHandle`로 단계와 입력값을 유지·복원하며, App Navigation은 가입 목적지와 완료 콜백만 연결합니다. 인증된 세션 복원은 바로 메인에서 시작합니다. 저장 프로필은 공식 YAPP 가입이나 권한을 만들지 않습니다. My는 저장된 이름·휴대폰과 My Repository의 테스트 프로필을 표시하고, 펼쳤을 때 검증된 테스트 출석 내역을 조회합니다. 공식 회원·점수 API와 홈 출석 내역은 미연동입니다.
 
-홈은 이번 주 세션·주간 달력, API 결과·로딩·오류·빈 상태, 빠른 메뉴, 공지와 알림 UI를 표시합니다. App이 알림과 완료 화면의 이동을 소유하고 `HomeInteractionViewModel`이 코드 입력·출석 제출 상태와 오류를 관리합니다. 출석 인증은 Domain 계약과 Supabase Data 구현을 통해 RPC를 호출합니다. Supabase MVP에서 사전 보고 UI와 상태는 제거했으며 빠른 메뉴는 전체 세션과 출석 점수로 연결합니다. 보고 Domain 계약과 Data/YAPP 어댑터는 향후 서버 지원을 위해 보존합니다. 홈은 한국 시간의 일요일 00:00부터 다음 일요일 전까지 게시된 공지를, 게시판은 전체·운영·세션 목록과 공지 상세를 Repository로 조회합니다. 각 조회의 로딩·오류·재시도·빈 상태를 제공하며 App이 공지 ID와 뒤로 가기를 소유합니다. 알림 조회는 후속이라 App은 알림에 빈 목록을 공급합니다. 출석 기록 API가 연동될 때까지 홈과 My는 최근 출석 이력을 표시하지 않습니다. 홈 세션 카드의 예시 값은 `src/debug` Preview 전용 리소스에 둡니다. 일정은 Repository 조회의 로딩·오류·빈 상태와 결과만 표시하고 고정된 예시 일정 화면은 두지 않습니다. My는 Repository에서 제출 프로필을 읽고 로딩·빈 상태·오류 재시도·이름·휴대폰 UI를 제공하며, My Domain/Data 출석 이력 조회 계약과 구현을 추가했습니다. 화면 상태·표시는 후속 Feature PR에서 연결합니다. 홈 세션 카드와 각 탭·하단 아이템의 개별 Preview는 각 Feature의 `src/debug`에서 제공하며, 게시판 분류의 Preview provider는 해당 Feature의 debug 소스에서 `:core:preview`를 재사용합니다.
+홈은 이번 주 세션·주간 달력, API 결과·로딩·오류·빈 상태, 빠른 메뉴, 공지와 알림 UI를 표시합니다. App이 알림과 완료 화면의 이동을 소유하고 `HomeInteractionViewModel`이 코드 입력·출석 제출 상태와 오류를 관리합니다. 출석 인증은 Domain 계약과 Supabase Data 구현을 통해 RPC를 호출합니다. Supabase MVP에서 사전 보고 UI와 상태는 제거했으며 빠른 메뉴는 전체 세션과 출석 점수로 연결합니다. 보고 Domain 계약과 Data/YAPP 어댑터는 향후 서버 지원을 위해 보존합니다. 홈은 한국 시간의 일요일 00:00부터 다음 일요일 전까지 게시된 공지를, 게시판은 전체·운영·세션 목록과 공지 상세를 Repository로 조회합니다. 각 조회의 로딩·오류·재시도·빈 상태를 제공하며 App이 공지 ID와 뒤로 가기를 소유합니다. 알림 조회는 후속이라 App은 알림에 빈 목록을 공급합니다. 홈에는 최근 출석 이력을 표시하지 않습니다. 홈 세션 카드의 예시 값은 `src/debug` Preview 전용 리소스에 둡니다. 일정은 Repository 조회의 로딩·오류·빈 상태와 결과만 표시하고 고정된 예시 일정 화면은 두지 않습니다. My는 `ProfileRepository`에서 제출 프로필과 `MyRepository`에서 테스트 프로필을 읽습니다. 출석 내역 메뉴를 펼치면 테스트 세션에서 검증된 완료 출석만 조회하며, 로딩·빈 상태·오류 재시도를 제공합니다. My 조회는 `src/main`에서 실제 Repository를 사용하고 Preview 데이터만 `src/debug`에 둡니다. 각 탭·하단 아이템의 개별 Preview는 해당 Feature의 `src/debug`에서 제공하며, 게시판 분류의 Preview provider는 `:core:preview`를 재사용합니다.
 
 ## 파일 배치
 

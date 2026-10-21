@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.main.my.model.MyProfileSummaryState
 
 @Preview(name = "My profile summary", widthDp = 393)
 @Composable

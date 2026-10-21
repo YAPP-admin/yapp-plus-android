@@ -16,7 +16,10 @@ fun MyRoute(
 
     MyScreen(
         state = uiState,
-        onRetry = viewModel::retry,
+        onRetrySubmittedProfile = viewModel::retry,
+        onRetryTestProfile = viewModel::retryTestProfile,
+        onAttendanceHistoryClick = viewModel::toggleAttendanceHistory,
+        onRetryAttendanceHistory = viewModel::retryAttendanceHistory,
         onSettingsClick = onSettingsClick,
         modifier = modifier,
     )

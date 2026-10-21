@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-18
+last_verified: 2026-10-22
 ---
 
 # YAPP LLM Wiki

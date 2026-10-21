@@ -20,19 +20,7 @@ import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.my.R
-
-sealed interface MyProfileSummaryState {
-    data object Loading : MyProfileSummaryState
-
-    data object Empty : MyProfileSummaryState
-
-    data object Error : MyProfileSummaryState
-
-    @JvmInline
-    value class Content(
-        val displayName: String,
-    ) : MyProfileSummaryState
-}
+import com.yapp.plus.feature.main.my.model.MyProfileSummaryState
 
 @Composable
 fun MyProfileSummary(
@@ -64,7 +52,7 @@ fun MyProfileSummary(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             YappText(
-                text = profile ?: stringResource(R.string.my_information_title),
+                text = profile ?: stringResource(R.string.my_profile_test_title),
                 style = YappTypography.headline1Bold,
                 color = YappMainColor.textPrimary,
             )

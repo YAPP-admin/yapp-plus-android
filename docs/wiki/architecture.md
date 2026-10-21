@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-20
+last_verified: 2026-10-22
 ---
 
 # 아키텍처
@@ -43,6 +43,7 @@ Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유�
 - App의 Hilt 조립에서 현재 Supabase 어댑터를 선택하고, 향후 확인된 YAPP 서버 계약의 어댑터로 바꿉니다. Feature와 Domain 계약은 공급자 교체를 위해 수정하지 않습니다. Fake는 같은 DataSource 계약을 구현하는 테스트 대역으로 사용합니다.
 - Google ID 토큰과 원본 nonce는 Domain의 로그인 입력 모델로 전달하지만 인증 제공자의 access/refresh token은 Data에서 관리합니다. `AuthSession`은 토큰·프로필·제공자 SDK 타입 없이 불투명한 사용자 식별자만 노출합니다.
 - 비공개 테스트 제출 프로필은 `ProfileRepository`의 공급자 독립 계약으로 Signup과 My Feature가 사용합니다. Data가 DataSource·Supabase 어댑터·DTO 변환을 소유하고 App이 Hilt에서 주입합니다. DB는 `auth.uid()`로 사용자 행을 정하며 RLS로 본인 행만 허용합니다. 이 정보는 공식 YAPP 회원 등록 자료가 아닙니다.
+- My Feature는 `MyRepository`로 수동 제공된 비공개 테스트 프로필과 테스트 세션의 검증된 완료 출석을 조회합니다. 제출 프로필(`ProfileRepository`)과 테스트 데이터(`MyRepository`)는 별도 계약이며 Domain·Data·Feature 경계를 유지합니다. My 테스트 DB 객체와 `MyRepository`는 인증 사용자 본인의 데이터만 노출하며 공식 회원 정보·점수 API를 대체하지 않습니다.
 - YAPP 세션 토큰 저장·401 갱신과 Supabase 인증 세션은 공급자가 다른 별도 세션입니다. Supabase 토큰을 기존 YAPP API나 YAPP 세션 갱신 경로에 전달하지 않습니다.
 
 적용 상태: 인증·공지 Domain 계약과 기존 세션 일정·출석 `RepositoryImpl`의 DataSource 인터페이스 주입을 구현했습니다. Supabase `AuthDataSource`·`AuthRepositoryImpl`과 App Hilt 연결, YAPP 세션과 분리한 암호화 토큰 저장소를 추가했습니다. App은 일정·공지·출석 검증의 Supabase 어댑터와 공지 Repository를 연결합니다. Login Feature의 Domain credential을 App에서 Supabase 세션으로 교환하고 앱 시작 시 복원합니다. 복원 실패에는 재시도를 제공하며 debug·release 모두 인증된 세션으로 메인에 진입합니다. 홈의 주간 공지와 게시판의 유형별 목록·상세도 공지 Repository에 연결했습니다. 세션 DataSource는 Data 소유의 날짜·시간·상태가 명시된 공통 모델을 반환하며 공급자 응답 DTO를 노출하지 않습니다. YAPP 출석 HTTP 어댑터는 보존하며 Supabase 경로의 보고 호출은 backend가 없어 일반 출석 실패로 끝납니다. Supabase의 세션·공지·본인 출석 조회와 서버 출석 검증 계약은 [DB migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql)에 추가했으며 YAPP Supabase 프로젝트 main 브랜치에 적용·이력 등록했습니다. 남은 작업은 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90)에 기록합니다. YAPP 초기 로그인·회원 식별자 대응처럼 미확정인 서버 계약을 이 경계만을 위해 만들지 않습니다.
@@ -57,4 +58,4 @@ Supabase의 `mvp_context`·`mvp_session_schedule` view는 호출자 권한과 RL
 
 경계 변경 전 호출부, Gradle 의존성, 객체 조립 위치와 관련 테스트를 확인합니다. 변경 후 계약 호환성과 의존성 방향을 검토하고 영향받는 모듈부터 검증합니다.
 
-가입 완료 화면은 이름·휴대폰 번호의 Supabase 저장 성공 뒤에 표시합니다. 실패 시 Signup Feature는 입력을 보존하고 재시도 상태를 표시하며, My Feature는 동일한 Repository에서 현재 사용자의 프로필을 불러옵니다. [제출 프로필 migration](../../supabase/migrations/20261021080517_submission_profiles.sql)은 본인 읽기·삽입·갱신만 허용하며 삭제 권한을 주지 않습니다.
+가입 완료 화면은 이름·휴대폰 번호의 Supabase 저장 성공 뒤에 표시합니다. 실패 시 Signup Feature는 입력을 보존하고 재시도 상태를 표시하며, My Feature는 `ProfileRepository`에서 제출 프로필을 읽습니다. `MyRepository`는 테스트 프로필·출석 이력을 읽고 ViewModel이 각 Domain 모델을 UI 상태로 변환합니다. [제출 프로필 migration](../../supabase/migrations/20261021080517_submission_profiles.sql)은 본인 읽기·삽입·갱신만 허용하며 삭제 권한을 주지 않습니다. [My 테스트 데이터 migration](../../supabase/migrations/20261021062321_mvp_my_test_data.sql)은 테스트 프로필의 본인 조회와 검증된 테스트 출석 조회를 허용하며 역할·점수는 제공하지 않습니다.

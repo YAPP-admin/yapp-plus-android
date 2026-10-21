@@ -332,3 +332,13 @@ last_verified: 2026-10-21
 - 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`, `:feature:setting`, App, My Feature.
 - 적용 상태: 설정 화면과 App의 진입·뒤로 이동을 구현했습니다. 알림 토글은 App 화면 상태로 동작하고, 로그아웃은 기존 Supabase Auth 로그아웃을 호출합니다. 계정 탈퇴는 안내만 표시하며 삭제 요청은 보내지 않습니다.
 - 대체한 결정: 없음.
+
+## DEC-0034 · My에 비공개 테스트 출석 이력 표시
+
+- 기록일: 2026-10-22
+- 결정: My 화면은 `MyRepository`를 통해 테스트 프로필과 테스트 세션에서 검증된 완료 출석 내역을 표시합니다. 출석 내역은 사용자가 메뉴를 펼칠 때 조회하고, 로딩·빈 상태·오류 및 재시도를 제공합니다. My의 제출 이름·휴대폰은 기존 `ProfileRepository`로 계속 조회합니다. 출석 점수·공식 YAPP 회원·공식 출석 이력은 이 테스트 조회에 포함하지 않으며 홈의 최근 출석 이력도 추가하지 않습니다.
+- 이유: 비공개 테스트 사용자가 실제로 검증된 출석 결과를 확인할 수 있게 하면서 테스트 데이터를 공식 YAPP 회원 정보·출석 점수로 오인하지 않게 합니다.
+- 근거: 사용자 요청과 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
+- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [모듈 구조](module-structure.md), [설계 패턴](design-patterns.md), `README.md`, `AGENTS.md`, `:feature:main:my`.
+- 적용 상태: My Domain/Data 계약과 Supabase 조회 어댑터는 [PR #112](https://github.com/YAPP-admin/yapp-plus-android/pull/112)에서 연결했고, 기존 My UI 컴포넌트는 [PR #114](https://github.com/YAPP-admin/yapp-plus-android/pull/114)에서 추가했습니다. 이 결정은 My 화면의 ProfileRepository·MyRepository 상태 조립, 지연 조회와 펼침 UI를 연결합니다. 테스트 데이터가 없으면 빈 상태를 표시합니다.
+- 대체한 결정: DEC-0032의 테스트 출석 이력을 My에 표시하지 않는 부분만 대체합니다. 제출 프로필 저장과 이름·휴대폰 표시는 유지합니다.

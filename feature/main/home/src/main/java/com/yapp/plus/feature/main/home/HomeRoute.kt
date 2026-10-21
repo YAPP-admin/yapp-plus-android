@@ -20,9 +20,7 @@ import com.yapp.plus.feature.main.home.model.HomeSheet
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
-    onNotificationsClick: () -> Unit = {},
     onSessionsClick: () -> Unit = {},
-    onScoreClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
     onAttendanceComplete: () -> Unit = {},
 ) {
@@ -50,10 +48,8 @@ fun HomeRoute(
             onRetry = viewModel::retry,
             noticeState = notices,
             onNoticeRetry = viewModel::retryNotices,
-            onNotificationsClick = onNotificationsClick,
             onAttendanceClick = interactionViewModel::openAttendanceCode,
             onSessionsClick = onSessionsClick,
-            onScoreClick = onScoreClick,
             onNoticeClick = onNoticeClick,
             hasAttended = session != null && interaction.attendedSessionId == session.sessionId,
         )

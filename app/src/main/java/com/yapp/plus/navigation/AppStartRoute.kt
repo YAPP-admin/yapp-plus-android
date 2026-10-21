@@ -36,6 +36,10 @@ internal fun AppStartRoute(
             isLoggingOut = authenticatedState?.isSigningOut == true,
             hasLogoutError = authenticatedState?.hasSignOutError == true,
             onLogoutErrorDismissed = viewModel::dismissSignOutError,
+            onDeleteAccount = viewModel::deleteAccount,
+            isDeletingAccount = authenticatedState?.isDeletingAccount == true,
+            hasDeleteAccountError = authenticatedState?.hasDeleteAccountError == true,
+            onDeleteAccountErrorDismissed = viewModel::dismissDeleteAccountError,
             startDestination = startDestination,
             modifier = modifier,
         )

@@ -167,4 +167,66 @@ class AppAuthViewModelTest {
             viewModel.dismissSignOutError()
             assertEquals(AppAuthUiState.Authenticated(session), viewModel.uiState.value)
         }
+
+    @Test
+    fun deletionWaitsForServerAndBlocksRepeatedDeletionAndLogout() =
+        runTest(dispatcher) {
+            val result = CompletableDeferred<Unit>()
+            val repository =
+                FakeAuthRepository().apply {
+                    restore = { session }
+                    delete = { result.await() }
+                }
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
+            advanceUntilIdle()
+            repeat(3) { viewModel.deleteAccount() }
+            viewModel.signOut()
+            runCurrent()
+            assertEquals(1, repository.deleteCount)
+            assertEquals(0, repository.logoutCount)
+            assertEquals(
+                AppAuthUiState.Authenticated(session, isDeletingAccount = true),
+                viewModel.uiState.value,
+            )
+            result.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(AppAuthUiState.Login(), viewModel.uiState.value)
+        }
+
+    @Test
+    fun failedDeletionKeepsSessionAndCanRetry() =
+        runTest(dispatcher) {
+            val repository =
+                FakeAuthRepository().apply {
+                    restore = { session }
+                    delete = { error("server unavailable") }
+                }
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
+            advanceUntilIdle()
+            viewModel.deleteAccount()
+            advanceUntilIdle()
+            assertEquals(
+                AppAuthUiState.Authenticated(session, hasDeleteAccountError = true),
+                viewModel.uiState.value,
+            )
+            viewModel.dismissDeleteAccountError()
+            repository.delete = {}
+            viewModel.deleteAccount()
+            advanceUntilIdle()
+            assertEquals(2, repository.deleteCount)
+            assertEquals(AppAuthUiState.Login(), viewModel.uiState.value)
+        }
+
+    @Test
+    fun deletionWithAnInvalidatedSessionReturnsToLogin() =
+        runTest(dispatcher) {
+            val repository = FakeAuthRepository().apply { restore = { session } }
+            val viewModel = AppAuthViewModel(repository, SavedStateHandle())
+            advanceUntilIdle()
+            repository.delete = { error("response lost") }
+            repository.restore = { null }
+            viewModel.deleteAccount()
+            advanceUntilIdle()
+            assertEquals(AppAuthUiState.Login(), viewModel.uiState.value)
+        }
 }

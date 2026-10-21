@@ -22,6 +22,10 @@ internal fun AppNavigationRoute(
     isLoggingOut: Boolean = false,
     hasLogoutError: Boolean = false,
     onLogoutErrorDismissed: () -> Unit = {},
+    onDeleteAccount: () -> Unit = {},
+    isDeletingAccount: Boolean = false,
+    hasDeleteAccountError: Boolean = false,
+    onDeleteAccountErrorDismissed: () -> Unit = {},
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
 ) {
@@ -41,6 +45,10 @@ internal fun AppNavigationRoute(
             isLoggingOut = isLoggingOut,
             hasLogoutError = hasLogoutError,
             onLogoutErrorDismissed = onLogoutErrorDismissed,
+            onDeleteAccount = onDeleteAccount,
+            isDeletingAccount = isDeletingAccount,
+            hasDeleteAccountError = hasDeleteAccountError,
+            onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
             startDestination = startDestination,
             modifier =
                 Modifier

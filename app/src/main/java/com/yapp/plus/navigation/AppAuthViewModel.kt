@@ -67,7 +67,7 @@ internal class AppAuthViewModel
 
         fun signOut() {
             val state = mutableUiState.value as? AppAuthUiState.Authenticated ?: return
-            if (state.isSigningOut) return
+            if (state.isSigningOut || state.isDeletingAccount) return
             mutableUiState.value = state.copy(isSigningOut = true, hasSignOutError = false)
             viewModelScope.launch {
                 try {
@@ -105,6 +105,50 @@ internal class AppAuthViewModel
             val state = mutableUiState.value as? AppAuthUiState.Authenticated ?: return
             if (!state.hasSignOutError) return
             mutableUiState.value = state.copy(hasSignOutError = false)
+        }
+
+        fun deleteAccount() {
+            val state = mutableUiState.value as? AppAuthUiState.Authenticated ?: return
+            if (state.isDeletingAccount || state.isSigningOut) return
+            mutableUiState.value = state.copy(isDeletingAccount = true, hasDeleteAccountError = false)
+            viewModelScope.launch {
+                try {
+                    authRepository.deleteAccount()
+                    savedStateHandle.remove<Boolean>(REQUIRES_SIGN_UP_KEY)
+                    mutableUiState.value = AppAuthUiState.Login()
+                } catch (exception: CancellationException) {
+                    throw exception
+                } catch (_: Exception) {
+                    recoverDeletionFailure(state)
+                } finally {
+                    val current = mutableUiState.value as? AppAuthUiState.Authenticated
+                    if (current?.isDeletingAccount == true) {
+                        mutableUiState.value = current.copy(isDeletingAccount = false)
+                    }
+                }
+            }
+        }
+
+        fun dismissDeleteAccountError() {
+            val state = mutableUiState.value as? AppAuthUiState.Authenticated ?: return
+            mutableUiState.value = state.copy(hasDeleteAccountError = false)
+        }
+
+        private suspend fun recoverDeletionFailure(state: AppAuthUiState.Authenticated) {
+            val session =
+                try {
+                    authRepository.fetchSession()
+                } catch (exception: CancellationException) {
+                    throw exception
+                } catch (_: Exception) {
+                    state.session
+                }
+            mutableUiState.value =
+                if (session == null) {
+                    AppAuthUiState.Login()
+                } else {
+                    AppAuthUiState.Authenticated(session, hasDeleteAccountError = true)
+                }
         }
 
         fun dismissError() {

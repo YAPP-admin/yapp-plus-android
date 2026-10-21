@@ -56,19 +56,44 @@ class SupabaseAuthDataSource(
             AuthSessionData(session.user.id)
         }
 
-    override suspend fun fetchSession(): AuthSessionData? =
+    override suspend fun fetchSession(): AuthSessionData? = serialized { restoreSession() }
+
+    private suspend fun restoreSession(): AuthSessionData? {
+        val tokens = tokenLocalDataSource.fetchTokens()
+        if (tokens.accessToken == null) return null
+        val response = request(path = "user", accessToken = tokens.accessToken)
+        if (response.status != HttpStatusCode.Unauthorized) return readUser(response)
+        val renewed =
+            refresh(tokens.refreshToken ?: return clearSession()) ?: return null
+        val retried = request(path = "user", accessToken = renewed.accessToken)
+        if (isInvalidSession(retried)) return clearSession()
+        return readUser(retried)
+    }
+
+    override suspend fun deleteAccount() {
         serialized {
-            val tokens = tokenLocalDataSource.fetchTokens()
-            if (tokens.accessToken == null) return@serialized null
-            val response = request(path = "user", accessToken = tokens.accessToken)
-            if (response.status != HttpStatusCode.Unauthorized) return@serialized readUser(response)
-            val renewed =
-                refresh(tokens.refreshToken ?: return@serialized clearSession())
-                    ?: return@serialized null
-            val retried = request(path = "user", accessToken = renewed.accessToken)
-            if (isInvalidSession(retried)) return@serialized clearSession()
-            readUser(retried)
+            // Once deletion starts, finish the server confirmation and local cleanup together.
+            withContext(NonCancellable) {
+                val session =
+                    restoreSession() ?: throw AuthDataSourceException("Authentication required")
+                requestAccountDeletion(session)
+                clearSession()
+            }
         }
+    }
+
+    private suspend fun requestAccountDeletion(session: AuthSessionData) {
+        val response =
+            request(
+                path = "rpc/mvp_delete_account",
+                apiPath = "rest/v1",
+                method = HttpMethod.Post,
+                accessToken = tokenLocalDataSource.fetchTokens().accessToken,
+            )
+        requireSuccess(response)
+        val result = json.decodeFromString<SupabaseDeleteAccountResponse>(response.bodyAsText())
+        check(result.deleted && result.userId == session.userId)
+    }
 
     override suspend fun signOut() {
         serialized {
@@ -128,11 +153,12 @@ class SupabaseAuthDataSource(
         method: HttpMethod = HttpMethod.Get,
         accessToken: String? = null,
         body: JsonObject? = null,
+        apiPath: String = "auth/v1",
     ): HttpResponse {
         if (!publishableKey.startsWith("sb_publishable_")) {
             throw AuthDataSourceException("Configure supabase.publishableKey before authentication")
         }
-        return httpClient.request("${projectUrl.trimEnd('/')}/auth/v1/$path") {
+        return httpClient.request("${projectUrl.trimEnd('/')}/$apiPath/$path") {
             expectSuccess = false
             this.method = method
             header("apikey", publishableKey)

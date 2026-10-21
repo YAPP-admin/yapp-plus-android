@@ -16,4 +16,6 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun signOut() = dataSource.signOut()
+
+    override suspend fun deleteAccount() = dataSource.deleteAccount()
 }

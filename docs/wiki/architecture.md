@@ -59,3 +59,5 @@ Supabase의 `mvp_context`·`mvp_session_schedule` view는 호출자 권한과 RL
 경계 변경 전 호출부, Gradle 의존성, 객체 조립 위치와 관련 테스트를 확인합니다. 변경 후 계약 호환성과 의존성 방향을 검토하고 영향받는 모듈부터 검증합니다.
 
 가입 완료 화면은 이름·휴대폰 번호의 Supabase 저장 성공 뒤에 표시합니다. 실패 시 Signup Feature는 입력을 보존하고 재시도 상태를 표시하며, My Feature는 `ProfileRepository`에서 제출 프로필을 읽습니다. `MyRepository`는 테스트 프로필·출석 이력을 읽고 ViewModel이 각 Domain 모델을 UI 상태로 변환합니다. [제출 프로필 migration](../../supabase/migrations/20261021080517_submission_profiles.sql)은 본인 읽기·삽입·갱신만 허용하며 삭제 권한을 주지 않습니다. [My 테스트 데이터 migration](../../supabase/migrations/20261021062321_mvp_my_test_data.sql)은 테스트 프로필의 본인 조회와 검증된 테스트 출석 조회를 허용하며 역할·점수는 제공하지 않습니다.
+
+앱 계정 삭제는 `AuthRepository` → Data의 Supabase RPC → 비공개 DB helper로 연결합니다. 프로필의 직접 DELETE 권한은 계속 주지 않고, 인증 계정 삭제 시 외래 키 cascade로 연결 데이터를 삭제합니다. App 인증 ViewModel이 처리 상태와 로그인 전환을 소유하고 Setting Feature에는 상태와 콜백만 전달합니다. 서버 적용 상태는 [제품 정책](product-policy.md#앱-계정-삭제)을 따릅니다.

@@ -300,6 +300,120 @@ class SupabaseAuthDataSourceTest {
             }
         }
 
+    @Test
+    fun `deletion sends no target identity and clears tokens only after server confirmation`() =
+        runTest {
+            val storage = FakeAuthTokenLocalDataSource(tokens())
+            withSource(storage, handler = { request ->
+                if (request.url.encodedPath.endsWith("/user")) {
+                    respond("""{"id":"user"}""")
+                } else {
+                    assertEquals("/rest/v1/rpc/mvp_delete_account", request.url.encodedPath)
+                    assertEquals(HttpMethod.Post, request.method)
+                    assertEquals("Bearer access-secret", request.headers[HttpHeaders.Authorization])
+                    assertTrue(request.url.parameters.isEmpty())
+                    assertFalse(request.body is TextContent)
+                    assertEquals(tokens(), storage.tokens)
+                    respond("""{"deleted":true,"user_id":"user"}""")
+                }
+            }) { source ->
+                AuthRepositoryImpl(source).deleteAccount()
+                assertEquals(SessionTokenRecord(), storage.tokens)
+            }
+        }
+
+    @Test
+    fun `failed or mismatched deletion preserves tokens and hides server details`() =
+        runTest {
+            for (body in listOf(
+                "access-secret",
+                """{"deleted":false,"user_id":"user"}""",
+                """{"deleted":true,"user_id":"other"}""",
+            )) {
+                val storage = FakeAuthTokenLocalDataSource(tokens())
+                withSource(storage, handler = { request ->
+                    if (request.url.encodedPath.endsWith("/user")) {
+                        respond("""{"id":"user"}""")
+                    } else {
+                        respond(body)
+                    }
+                }) { source ->
+                    assertRedacted(runCatching { source.deleteAccount() }.exceptionOrNull())
+                    assertEquals(tokens(), storage.tokens)
+                }
+            }
+        }
+
+    @Test
+    fun `server rejection preserves tokens and hides server details`() =
+        runTest {
+            val storage = FakeAuthTokenLocalDataSource(tokens())
+            withSource(storage, handler = { request ->
+                if (request.url.encodedPath.endsWith("/user")) {
+                    respond("""{"id":"user"}""")
+                } else {
+                    respond("access-secret", HttpStatusCode.InternalServerError)
+                }
+            }) { source ->
+                assertRedacted(runCatching { source.deleteAccount() }.exceptionOrNull())
+                assertEquals(tokens(), storage.tokens)
+            }
+        }
+
+    @Test
+    fun `expired session refreshes before deleting with the current access token`() =
+        runTest {
+            val storage = FakeAuthTokenLocalDataSource(tokens())
+            withSource(storage, handler = { request ->
+                when {
+                    request.url.parameters["grant_type"] == "refresh_token" ->
+                        respond(rotatedTokenResponse())
+                    request.headers[HttpHeaders.Authorization] == "Bearer access-secret" ->
+                        respond("", HttpStatusCode.Unauthorized)
+                    request.url.encodedPath.endsWith("/user") -> respond("""{"id":"user"}""")
+                    else -> {
+                        assertEquals("Bearer rotated-access", request.headers[HttpHeaders.Authorization])
+                        respond("""{"deleted":true,"user_id":"user"}""")
+                    }
+                }
+            }) { source ->
+                source.deleteAccount()
+                assertEquals(SessionTokenRecord(), storage.tokens)
+            }
+        }
+
+    @Test
+    fun `caller cancellation still clears tokens after a confirmed deletion`() =
+        runTest {
+            val storage = FakeAuthTokenLocalDataSource(tokens())
+            val started = CompletableDeferred<Unit>()
+            val finish = CompletableDeferred<Unit>()
+            withSource(storage, handler = { request ->
+                if (request.url.encodedPath.endsWith("/user")) {
+                    respond("""{"id":"user"}""")
+                } else {
+                    started.complete(Unit)
+                    finish.await()
+                    respond("""{"deleted":true,"user_id":"user"}""")
+                }
+            }) { source ->
+                val job = launch { source.deleteAccount() }
+                started.await()
+                job.cancel()
+                finish.complete(Unit)
+                job.join()
+                assertEquals(SessionTokenRecord(), storage.tokens)
+            }
+        }
+
+    @Test
+    fun `deletion without a session does not call the server`() =
+        runTest {
+            withSource(handler = { error("Unexpected request") }) { source ->
+                assertRedacted(runCatching { source.deleteAccount() }.exceptionOrNull())
+            }
+        }
+
     private suspend fun withSource(
         storage: FakeAuthTokenLocalDataSource = FakeAuthTokenLocalDataSource(),
         publishableKey: String = "sb_publishable_test",

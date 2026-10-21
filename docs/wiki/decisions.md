@@ -311,4 +311,14 @@ last_verified: 2026-10-21
 - 근거: 사용자의 명시 요청 및 [이슈 #102](https://github.com/YAPP-admin/yapp-plus-android/issues/102).
 - 반영: [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `:feature:signup`, App Navigation.
 - 적용 상태: `SignUpRoute`가 Feature 내부에서 `SignUpViewModel`을 가져오며 Name → Phone → Complete 전환과 단계 내부 뒤로 가기를 처리합니다. `AppNavigationDestination.SignUp` 하나를 등록하고 ViewModel 주입을 제거했습니다. `SavedStateHandle`은 입력값과 현재 단계를 보존합니다.
-- 대체한 결정: DEC-0029의 App Navigation이 같은 Signup ViewModel을 가입 화면들에 전달한다는 구현 방식을 대체합니다. 이름·휴대폰 필수 조건과 서버에 입력값을 보내지 않는 제품 정책은 유지합니다.
+- 대체한 결정: DEC-0029의 App Navigation이 같은 Signup ViewModel을 가입 화면들에 전달한다는 구현 방식을 대체합니다. 이름·휴대폰 필수 조건과 전화번호 형식 미확정은 유지하며, 입력값 전송 여부는 DEC-0032에서 정합니다.
+
+## DEC-0032 · 비공개 테스트 가입 프로필 저장
+
+- 기록일: 2026-10-21
+- 결정: Google 인증 뒤 입력한 이름·휴대폰 번호를 임시 제출 프로필로 Supabase에 저장하고 My 화면에서 표시합니다. 전화번호 입력 다음에 `ProfileRepository`가 현재 인증 사용자 기준으로 저장하며 성공 후에만 가입 완료 화면으로 이동합니다. 실패하면 입력값을 보존하고 다시 시도합니다. 전화번호 형식은 검증하지 않습니다.
+- 이유: 기존에는 가입 입력이 `SavedStateHandle`에만 남고 완료 시 지워져 My 화면에서 회원 정보가 표시되지 않았습니다. 제출용 앱에서 입력한 값을 보존하되 미확정된 YAPP 회원 가입·운영진 승인 API는 추측하지 않습니다.
+- 근거: 사용자 요청 및 [이슈 #105](https://github.com/YAPP-admin/yapp-plus-android/issues/105).
+- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `:domain`·`:data`·`:feature:signup`·`:feature:main:my`·App, [제출 프로필 migration](../../supabase/migrations/20261021080517_submission_profiles.sql).
+- 적용 상태: `Profile`은 `Name`·`PhoneNumber` value class를 사용합니다. DataSource는 `user_id` 기본값을 DB의 `auth.uid()`에 맡기고 upsert는 재시도 가능하게 처리합니다. RLS와 권한은 인증 사용자가 자기 프로필만 읽고 삽입·갱신하도록 제한하며 삭제 권한은 부여하지 않습니다. 이 행은 앱 제출용 프로필이며 YAPP 회원·역할·가입 승인을 생성하지 않습니다. migration은 YAPP Supabase 프로젝트 main 브랜치에 적용·이력 등록했습니다.
+- 대체한 결정: DEC-0028과 DEC-0029의 이름·휴대폰 입력을 서버에 보내지 않는 부분 및 My 회원 정보 미연동 상태만 대체합니다. 실제 YAPP 가입 API·운영진 인증·회원 권한은 계속 미연동이며 출석 기록은 표시하지 않습니다.

@@ -16,12 +16,16 @@ import com.yapp.plus.data.auth.SessionTokenRemoteDataSource
 import com.yapp.plus.data.notice.NoticeDataSource
 import com.yapp.plus.data.notice.NoticeRepositoryImpl
 import com.yapp.plus.data.notice.SupabaseNoticeDataSource
+import com.yapp.plus.data.profile.ProfileDataSource
+import com.yapp.plus.data.profile.ProfileRepositoryImpl
+import com.yapp.plus.data.profile.SupabaseProfileDataSource
 import com.yapp.plus.data.session.SessionScheduleDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
 import com.yapp.plus.data.session.SupabaseSessionScheduleDataSource
 import com.yapp.plus.data.supabase.SupabaseRestClient
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.notice.NoticeRepository
+import com.yapp.plus.domain.profile.ProfileRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
 import dagger.Provides
@@ -103,4 +107,14 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideNotices(dataSource: NoticeDataSource): NoticeRepository = NoticeRepositoryImpl(dataSource)
+
+    @Provides
+    @Singleton
+    fun provideProfileDataSource(client: SupabaseRestClient): ProfileDataSource =
+        SupabaseProfileDataSource(client)
+
+    @Provides
+    @Singleton
+    fun provideProfile(dataSource: ProfileDataSource): ProfileRepository =
+        ProfileRepositoryImpl(dataSource)
 }

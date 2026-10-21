@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yapp.plus.core.designsystem.components.input.YappInputState
 import com.yapp.plus.domain.signup.Name
 import com.yapp.plus.domain.signup.PhoneNumber
 import com.yapp.plus.feature.signup.model.AuthStatus
@@ -47,7 +48,7 @@ fun SignUpRoute(
                     if (isNameStep) {
                         name.isProvided
                     } else {
-                        name.isProvided && phoneNumber.isProvided
+                        name.isProvided && phoneNumber.isProvided && !uiState.isSavingProfile
                     },
                 onNext = viewModel::goToNextStep,
                 onBack =
@@ -57,6 +58,11 @@ fun SignUpRoute(
                         viewModel::goBack
                     },
                 modifier = modifier,
+                isSaving = uiState.isSavingProfile,
+                showProfileSaveError = uiState.profileSaveFailed,
+                inputState =
+                    if (uiState.profileSaveFailed) YappInputState.Error else YappInputState.Default,
+                isInputEnabled = !uiState.isSavingProfile,
             )
         }
 

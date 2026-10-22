@@ -10,6 +10,8 @@
 
 비공개 MVP의 Supabase Auth 어댑터·암호화 세션 저장과 일정·공지·출석 검증 Data를 App Hilt에 연결했습니다. 일정은 테스트 세션만 조회하고 공식 기수가 비어 있으면 테스트 전용 0으로 매핑합니다. 출석은 인증된 RPC로 네 자리 코드를 보내고 서버가 확정한 결과를 검증합니다. MVP migration에는 보고 backend가 없어 해당 호출은 일반 실패로 끝납니다. Login Feature의 Supabase 교환·시작 시 세션 복원·오류 재시도를 연결했습니다. 홈의 주간 공지와 게시판의 유형별 목록·상세를 Repository에 연결했습니다. Supabase MVP에서 홈의 보고 진입·시트·완료 안내를 숨겼으며 Domain 보고 계약과 Data/YAPP 어댑터는 보존합니다. MVP·프로필 DB migration은 YAPP Supabase 프로젝트 main 브랜치에 적용하고 이력을 등록했습니다.
 
+설정의 앱 계정 삭제 확인·진행·오류·재시도를 App 인증 흐름과 기존 Supabase 삭제 RPC에 연결했습니다. 성공 뒤 세션을 정리하고 로그인 화면으로 이동합니다. Android 모의 검증과 실제 E2E의 범위는 [계정 삭제 정책](docs/wiki/product-policy.md#앱-계정-삭제)을 따릅니다.
+
 ## 아키텍처와 모듈
 
 인증된 API의 401 갱신과 원래 요청 1회 재시도, 동시 갱신 공유를 구현했습니다. Data의 갱신 API와 DTO, DataStore 토큰 저장소를 App singleton으로 조립하며, `:core:datastore`는 토큰 쌍을 암호화해 저장·복원합니다. 초기 YAPP 로그인 세션 발급은 후속입니다. 저장소 프로세스 재시작 검증 방법은 [모듈 구조](docs/wiki/module-structure.md#인증-저장소-자동-검증)에 있습니다.

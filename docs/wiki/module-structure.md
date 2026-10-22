@@ -56,6 +56,8 @@ last_verified: 2026-10-22
 
 ## 인증 세션 자동 검증
 
+- App의 `AccountDeletionUiTest`는 삭제 확인·복원·진행·오류 재시도를, `AccountDeletionFlowTest`는 실제 인증 ViewModel·Repository·DataSource와 MockEngine을 연결해 실패 시 토큰 보존 및 성공 후 토큰 제거·로그인 목적지 전환을 검증합니다. 테스트 전용 메모리 저장소를 사용하며 전체 Hilt 내비게이션·OAuth·운영 서버 E2E를 대체하지 않습니다.
+
 - Network의 `TokenStorePersistenceTest`와 `RestoredSessionAuthenticationTest`는 저장소 재생성 후 복원, 첫 요청의 복원 대기, 401 갱신·재시도, 동시 20개 요청의 갱신 1회 공유, 저장 실패·취소와 세션 교체 경계를 검증합니다. `SessionAuthenticationTest`는 원래 요청의 method·body·query·headers 보존과 기존 인증 경계를 검증합니다.
 - Data의 `SessionRestartInstrumentedTest`는 실제 `SessionTokenLocalDataSource`·DataStore·Android Keystore를 사용합니다. 테스트 APK에서 토큰 회전 저장 → 프로세스 종료 후 복원·삭제 → 다시 종료 후 빈 세션 복원을 검증합니다. 테스트 토큰은 가짜 값이고 일반 앱의 세션 파일이나 실제 서버를 사용하지 않습니다.
 - 프로세스 검증은 아래 스크립트가 세 단계를 각각 별도 instrumentation 프로세스로 실행하고 PID가 서로 다른지 확인합니다. 명시적인 단계 인자가 없는 일반 instrumentation 실행에서는 해당 세 단계가 생략됩니다. `adb`가 PATH에 없으면 스크립트의 `--adb` 옵션으로 경로를 전달합니다.

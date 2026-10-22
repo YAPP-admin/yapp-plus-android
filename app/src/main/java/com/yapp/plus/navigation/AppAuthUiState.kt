@@ -16,6 +16,8 @@ internal sealed interface AppAuthUiState {
         val session: AuthSession,
         val isSigningOut: Boolean = false,
         val hasSignOutError: Boolean = false,
+        val isDeletingAccount: Boolean = false,
+        val hasDeleteAccountError: Boolean = false,
     ) : AppAuthUiState
 
     data class SignUpRequired(

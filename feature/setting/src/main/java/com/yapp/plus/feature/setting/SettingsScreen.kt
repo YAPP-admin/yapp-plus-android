@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -24,6 +25,7 @@ import com.yapp.plus.core.designsystem.components.popup.YappAlertDialog
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.setting.components.AccountDeletionDialog
 import com.yapp.plus.feature.setting.components.SettingsDivider
 import com.yapp.plus.feature.setting.components.SettingsHeader
 import com.yapp.plus.feature.setting.components.SettingsLinkRow
@@ -36,15 +38,20 @@ fun SettingsScreen(
     onNotificationEnabledChange: (Boolean) -> Unit,
     onBack: () -> Unit,
     onLogout: () -> Unit,
+    onDeleteAccount: () -> Unit = {},
     modifier: Modifier = Modifier,
     isLoggingOut: Boolean = false,
     hasLogoutError: Boolean = false,
     onLogoutErrorDismissed: () -> Unit = {},
+    isDeletingAccount: Boolean = false,
+    hasDeleteAccountError: Boolean = false,
+    onDeleteAccountErrorDismissed: () -> Unit = {},
 ) {
-    var activeDialog by remember { mutableStateOf<SettingsDialog?>(null) }
+    var activeDialog by rememberSaveable { mutableStateOf<SettingsDialog?>(null) }
     val uriHandler = LocalUriHandler.current
     val privacyPolicyUri = stringResource(R.string.settings_privacy_policy_url)
     val termsUri = stringResource(R.string.settings_terms_url)
+    val deletionContactUri = stringResource(R.string.settings_account_delete_contact_uri)
 
     Column(
         modifier =
@@ -71,7 +78,21 @@ fun SettingsScreen(
         SettingsLinkRow(
             title = stringResource(R.string.settings_account_withdrawal),
             onClick = { activeDialog = SettingsDialog.AccountWithdrawal },
+            enabled = !isLoggingOut && !isDeletingAccount,
         )
+        SettingsDivider()
+        SettingsLinkRow(
+            title = stringResource(R.string.settings_account_delete_contact),
+            onClick = { runCatching { uriHandler.openUri(deletionContactUri) } },
+        )
+        SelectionContainer {
+            YappText(
+                text = stringResource(R.string.settings_account_delete_email),
+                modifier = Modifier.padding(horizontal = 20.dp),
+                style = YappTypography.body2NormalRegular,
+                color = YappMainColor.textSecondary,
+            )
+        }
 
         Spacer(Modifier.weight(1f))
         YappButton(
@@ -83,7 +104,7 @@ fun SettingsScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).height(56.dp),
             variant = YappButtonVariant.OutlinedSecondary,
             size = YappButtonSize.Large,
-            enabled = !isLoggingOut,
+            enabled = !isLoggingOut && !isDeletingAccount,
         )
         YappText(
             text = stringResource(R.string.settings_app_version, appVersion),
@@ -95,6 +116,21 @@ fun SettingsScreen(
     }
 
     when {
+        isDeletingAccount || hasDeleteAccountError || activeDialog == SettingsDialog.AccountWithdrawal -> {
+            AccountDeletionDialog(
+                isDeleting = isDeletingAccount,
+                hasError = hasDeleteAccountError,
+                onConfirm = {
+                    activeDialog = null
+                    onDeleteAccount()
+                },
+                onDismiss = {
+                    activeDialog = null
+                    onDeleteAccountErrorDismissed()
+                },
+            )
+        }
+
         hasLogoutError -> {
             YappAlertDialog(
                 onDismissRequest = onLogoutErrorDismissed,
@@ -121,22 +157,5 @@ fun SettingsScreen(
                 onDismiss = { activeDialog = null },
             )
         }
-
-        activeDialog == SettingsDialog.AccountWithdrawal -> {
-            YappAlertDialog(
-                onDismissRequest = { activeDialog = null },
-                title = stringResource(R.string.settings_account_withdrawal),
-                body = stringResource(R.string.settings_account_withdrawal_notice),
-                confirmText = stringResource(R.string.settings_confirm),
-                dismissText = null,
-                onConfirm = { activeDialog = null },
-                onDismiss = { activeDialog = null },
-            )
-        }
     }
-}
-
-private enum class SettingsDialog {
-    Logout,
-    AccountWithdrawal,
 }

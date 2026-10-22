@@ -31,6 +31,10 @@ internal fun MainTabScaffold(
     isLoggingOut: Boolean = false,
     hasLogoutError: Boolean = false,
     onLogoutErrorDismissed: () -> Unit = {},
+    onDeleteAccount: () -> Unit = {},
+    isDeletingAccount: Boolean = false,
+    hasDeleteAccountError: Boolean = false,
+    onDeleteAccountErrorDismissed: () -> Unit = {},
 ) {
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
     var areNotificationsVisible by rememberSaveable { mutableStateOf(false) }
@@ -105,6 +109,10 @@ internal fun MainTabScaffold(
                             isLoggingOut = isLoggingOut,
                             hasLogoutError = hasLogoutError,
                             onLogoutErrorDismissed = onLogoutErrorDismissed,
+                            onDeleteAccount = onDeleteAccount,
+                            isDeletingAccount = isDeletingAccount,
+                            hasDeleteAccountError = hasDeleteAccountError,
+                            onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
                         )
                     } else {
                         MyRoute(onSettingsClick = { isSettingsVisible = true })

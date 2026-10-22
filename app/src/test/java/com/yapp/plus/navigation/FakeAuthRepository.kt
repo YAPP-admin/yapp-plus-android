@@ -24,4 +24,6 @@ internal class FakeAuthRepository : AuthRepository {
         logoutCount += 1
         logout()
     }
+
+    override suspend fun deleteAccount() = Unit
 }

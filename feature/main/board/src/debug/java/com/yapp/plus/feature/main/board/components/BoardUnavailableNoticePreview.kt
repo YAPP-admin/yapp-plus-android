@@ -10,6 +10,6 @@ import com.yapp.plus.feature.main.board.model.NoticeUiState
 @Composable
 private fun BoardUnavailableNoticePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        BoardNoticeState<Nothing>(NoticeUiState.Unavailable, onRetry = {}, R.string.board_empty) {}
+        BoardNoticeState<Nothing>(state = NoticeUiState.Unavailable, onRetry = {}, emptyMessage = R.string.board_empty) {}
     }
 }

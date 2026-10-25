@@ -41,18 +41,10 @@ The same examples can be requested directly from Prism:
 curl -H 'Prefer: example=not-open' http://localhost:4010/api/sessions/current-week
 ```
 
-When the backend provides a development access token, use the real dev API and
-add the token to the ignored `local.properties` file:
-
-```properties
-yapp.api.debug.target=dev
-yapp.api.debug.token=<development access token>
-```
-
-The token is used only by debug builds and is kept out of version control. Do not
-share debug APKs containing a personal development token. Leaving the property
-empty sends requests without an `Authorization` header, so the Mock API remains
-usable without a token.
+The app's initial Google-to-YAPP session exchange is not connected yet. There is no
+`local.properties` access-token injection. The mock serves unauthenticated examples;
+it does not create a real authenticated app session. Real server authentication will
+use the encrypted session store after the initial authentication contract is connected.
 
 The `release` build always uses `yapp.api.prod.host`. If `yapp.api.debug.target` is omitted, `debug` uses `yapp.api.dev.host`.
 

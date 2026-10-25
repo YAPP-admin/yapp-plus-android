@@ -36,19 +36,15 @@ Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유�
 
 ## 데이터 공급자 교체 경계
 
-[비공개 테스트 MVP](product-policy.md#supabase-기반-비공개-테스트-mvp)의 데이터 공급자는 Supabase로 두고, 이후 YAPP 원본 서버로 교체할 수 있게 합니다. 호출 경계는 `Feature → Domain Repository 계약 → Data RepositoryImpl → 생성자 주입한 기능별 DataSource 인터페이스 → 공급자별 구현`입니다.
+호출 경계는 `Feature → Domain Repository 계약 → Data RepositoryImpl → 생성자 주입한 기능별 DataSource 인터페이스 → YAPP 서버 구현`입니다.
 
-- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 받습니다. 구체 DataSource를 내부에서 생성하거나 Supabase SDK·HTTP client를 직접 받아 공급자를 선택하지 않습니다.
-- DataSource 인터페이스와 공급자에 독립적인 공통 입출력·오류 계약은 Data에 둡니다. Supabase·YAPP의 SDK 타입, HTTP 응답과 공급자별 DTO는 각 어댑터 내부에 둡니다. Domain에는 Repository 계약과 업무 모델만 노출합니다.
-- App의 Hilt 조립에서 현재 Supabase 어댑터를 선택하고, 향후 확인된 YAPP 서버 계약의 어댑터로 바꿉니다. Feature와 Domain 계약은 공급자 교체를 위해 수정하지 않습니다. Fake는 같은 DataSource 계약을 구현하는 테스트 대역으로 사용합니다.
-- Google ID 토큰과 원본 nonce는 Domain의 로그인 입력 모델로 전달하지만 인증 제공자의 access/refresh token은 Data에서 관리합니다. `AuthSession`은 토큰·프로필·제공자 SDK 타입 없이 불투명한 사용자 식별자만 노출합니다.
-- 비공개 테스트 제출 프로필은 `ProfileRepository`의 공급자 독립 계약으로 Signup과 My Feature가 사용합니다. Data가 DataSource·Supabase 어댑터·DTO 변환을 소유하고 App이 Hilt에서 주입합니다. DB는 `auth.uid()`로 사용자 행을 정하며 RLS로 본인 행만 허용합니다. 이 정보는 공식 YAPP 회원 등록 자료가 아닙니다.
-- My Feature는 `MyRepository`로 수동 제공된 비공개 테스트 프로필과 테스트 세션의 검증된 완료 출석을 조회합니다. 제출 프로필(`ProfileRepository`)과 테스트 데이터(`MyRepository`)는 별도 계약이며 Domain·Data·Feature 경계를 유지합니다. My 테스트 DB 객체와 `MyRepository`는 인증 사용자 본인의 데이터만 노출하며 공식 회원 정보·점수 API를 대체하지 않습니다.
-- YAPP 세션 토큰 저장·401 갱신과 Supabase 인증 세션은 공급자가 다른 별도 세션입니다. Supabase 토큰을 기존 YAPP API나 YAPP 세션 갱신 경로에 전달하지 않습니다.
+- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 받습니다. DataSource의 공통 입출력과 서버 DTO는 Data가 소유하고 Domain에는 업무 모델과 Repository 계약만 노출합니다.
+- App Hilt는 일정에 `SessionScheduleRemoteDataSource`, 출석 인증·보고에 `AttendanceRemoteDataSource`를 연결합니다. Fake는 같은 DataSource 계약을 구현하는 테스트 대역으로만 사용합니다.
+- Network는 Ktor HTTP client와 토큰 복원·401 갱신 조율을 소유하고 Data는 YAPP 갱신 API·DTO와 `TokenPersistence`의 로컬 구현을 제공합니다. 실제 암호화 저장은 `:core:datastore`가 담당합니다.
+- Login Feature는 Google 크레덴셜 획득만 담당합니다. ID 토큰·원본 nonce는 메모리 콜백으로 전달하며, Google 인증을 YAPP 세션으로 바꾸는 API를 임의로 만들지 않습니다.
+- 서버 계약이 없는 공지·회원 프로필·출석 이력·계정 삭제는 데이터 요청을 조립하지 않습니다. Feature가 준비 중 상태를 표시하고 실행 콜백이 없는 인증 동작은 비활성화합니다.
 
-적용 상태: 인증·공지 Domain 계약과 기존 세션 일정·출석 `RepositoryImpl`의 DataSource 인터페이스 주입을 구현했습니다. Supabase `AuthDataSource`·`AuthRepositoryImpl`과 App Hilt 연결, YAPP 세션과 분리한 암호화 토큰 저장소를 추가했습니다. App은 일정·공지·출석 검증의 Supabase 어댑터와 공지 Repository를 연결합니다. Login Feature의 Domain credential을 App에서 Supabase 세션으로 교환하고 앱 시작 시 복원합니다. 복원 실패에는 재시도를 제공하며 debug·release 모두 인증된 세션으로 메인에 진입합니다. 홈의 주간 공지 조회는 제거하고 준비 중 UI만 표시하며, 게시판 공지 조회도 제거하고 준비 중 UI만 표시합니다. 세션 DataSource는 Data 소유의 날짜·시간·상태가 명시된 공통 모델을 반환하며 공급자 응답 DTO를 노출하지 않습니다. YAPP 출석 HTTP 어댑터는 보존하며 Supabase 경로의 보고 호출은 backend가 없어 일반 출석 실패로 끝납니다. Supabase의 세션·공지·본인 출석 조회와 서버 출석 검증 계약은 [DB migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql)에 추가했으며 YAPP Supabase 프로젝트 main 브랜치에 적용·이력 등록했습니다. 남은 작업은 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90)에 기록합니다. YAPP 초기 로그인·회원 식별자 대응처럼 미확정인 서버 계약을 이 경계만을 위해 만들지 않습니다.
-
-Supabase의 `mvp_context`·`mvp_session_schedule` view는 호출자 권한과 RLS를 적용합니다. 출석 RPC는 비공개 함수가 `auth.uid()`와 DB 요청 시각으로 검증하고, 외부에는 `mvp_verify_attendance` invoker 함수만 노출합니다. 코드·허용 목록에는 클라이언트 읽기 권한을 주지 않습니다. 기수 정보는 설정 가능한 `null`로 시작하며 세션 조회를 막지 않습니다. 일정 어댑터는 `is_test=true` 세션만 조회하며 필수 기수 필드의 미설정 값은 테스트 전용 `0`으로 매핑합니다. 이 값은 공식 YAPP 기수가 아니며 현재 일정 UI에는 기수 번호를 표시하지 않습니다.
+적용 상태: 일정·출석 검증·보고와 YAPP 세션 저장·갱신을 App에 조립했습니다. 초기 로그인·가입·공지·회원 조회·계정 삭제의 실제 연결은 [제품 정책](product-policy.md#현재-서버-연결)을 따릅니다.
 
 ## 정책과 표현
 
@@ -57,7 +53,3 @@ Supabase의 `mvp_context`·`mvp_session_schedule` view는 호출자 권한과 RL
 - 출석 정책과 API 계약은 [제품 정책](product-policy.md)에 확인된 내용만 적용합니다. 화면 표시와 서버 확정 결과를 구분합니다.
 
 경계 변경 전 호출부, Gradle 의존성, 객체 조립 위치와 관련 테스트를 확인합니다. 변경 후 계약 호환성과 의존성 방향을 검토하고 영향받는 모듈부터 검증합니다.
-
-가입 완료 화면은 이름·휴대폰 번호의 Supabase 저장 성공 뒤에 표시합니다. 실패 시 Signup Feature는 입력을 보존하고 재시도 상태를 표시하며, My Feature는 `ProfileRepository`에서 제출 프로필을 읽습니다. `MyRepository`는 테스트 프로필·출석 이력을 읽고 ViewModel이 각 Domain 모델을 UI 상태로 변환합니다. [제출 프로필 migration](../../supabase/migrations/20261021080517_submission_profiles.sql)은 본인 읽기·삽입·갱신만 허용하며 삭제 권한을 주지 않습니다. [My 테스트 데이터 migration](../../supabase/migrations/20261021062321_mvp_my_test_data.sql)은 테스트 프로필의 본인 조회와 검증된 테스트 출석 조회를 허용하며 역할·점수는 제공하지 않습니다.
-
-앱 계정 삭제는 `AuthRepository` → Data의 Supabase RPC → 비공개 DB helper로 연결합니다. 프로필의 직접 DELETE 권한은 계속 주지 않고, 인증 계정 삭제 시 외래 키 cascade로 연결 데이터를 삭제합니다. App 인증 ViewModel이 처리 상태와 로그인 전환을 소유하고 Setting Feature에는 상태와 콜백만 전달합니다. 서버 적용 상태는 [제품 정책](product-policy.md#앱-계정-삭제)을 따릅니다.

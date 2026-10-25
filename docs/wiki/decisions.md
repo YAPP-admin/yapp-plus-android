@@ -110,8 +110,8 @@ last_verified: 2026-10-25
 - 이유: 화면 표현을 독립 모듈로 분리한 뒤 App에서 승인된 데모 흐름을 연결하기 위해 단계별 PR로 진행합니다.
 - 근거: 이번 세션의 사용자 승인, [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`.
-- 적용 상태: 모듈 분리 PR #29 병합 후 [이슈 #35](https://github.com/YAPP-admin/yapp-plus-android/issues/35)에서 Navigation Compose 2.10.2의 타입 기반 목적지와 App의 공통 ViewModel·`SavedStateHandle`로 데모 흐름을 구현했습니다. 뒤로 가기·반복 탭·입력값 유지·복원을 연결하고 입력 검증 없이 다음 버튼을 활성화합니다. 후속 [DEC-0028](#dec-0028--신규-google-인증-뒤-임시-가입-완료-흐름)에서 신규 Google 인증 뒤 완료 화면으로 이동하도록 바꿨으며 실제 YAPP 가입 서버 처리는 계속 미연동입니다.
-- 대체한 결정: 신규 Google 인증의 다음 화면에 관한 기존 데모 상태를 DEC-0028로 대체합니다.
+- 적용 상태: 모듈 분리 PR #29 병합 후 [이슈 #35](https://github.com/YAPP-admin/yapp-plus-android/issues/35)에서 Navigation Compose 2.10.2의 타입 기반 목적지와 App의 공통 ViewModel·`SavedStateHandle`로 데모 흐름을 구현했습니다. 뒤로 가기·반복 탭·입력값 유지·복원을 연결하고 입력 검증 없이 다음 버튼을 활성화합니다. 현재 개발 버전의 입력·인증 연결 범위는 DEC-0037을 따릅니다.
+- 대체한 결정: 현재 개발 버전의 인증 연결 범위는 DEC-0037에서 정합니다.
 
 ## DEC-0012 · 승인 대기 화면에서 메인 탭 UI 데모로 진입
 
@@ -131,7 +131,7 @@ last_verified: 2026-10-25
 - 근거: 이번 세션의 사용자 명시 요청, [이슈 #44](https://github.com/YAPP-admin/yapp-plus-android/issues/44), [Figma 승인 대기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40229).
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), `README.md`, `:feature:signup`, `:app`.
 - 적용 상태: 승인 대기 액션·문자열과 App의 메인 이동 콜백을 제거하고 가입 흐름·입력 복원 기기 테스트를 갱신했습니다. 완료·문제 상태의 액션은 제공합니다.
-- 대체한 결정: DEC-0012의 승인 대기에서 메인 탭으로 진입하는 결정. 정적 탭 데모와 debug 홈 시작 경로는 유지합니다. 가입 흐름의 승인 대기 종료점은 DEC-0028에서 대체합니다.
+- 대체한 결정: DEC-0012의 승인 대기에서 메인 탭으로 진입하는 결정. 정적 탭 데모와 debug 홈 시작 경로는 유지합니다. 현재 개발 버전의 가입 연결 상태는 DEC-0037을 따릅니다.
 
 ## DEC-0014 · 2026 Notion 기반 회원·출석 정책을 Wiki에 반영
 
@@ -253,46 +253,6 @@ last_verified: 2026-10-25
 - 적용 상태: DataStore 토큰 복원, 갱신 API 호출, App singleton 조립과 401 재시도를 연결했습니다. 초기 Google ID 토큰 검증·YAPP 세션 발급은 후속입니다.
 - 대체한 결정: DEC-0019의 Data API·App 조립 후속 부분과 DEC-0024의 App DI·401 연결 후속 부분만 완료합니다. 기존 갱신·동시 요청 공유 정책과 토큰 저장 정책은 유지합니다.
 
-## DEC-0026 · MVP 데이터 공급자를 기능별 DataSource 주입으로 교체
-
-- 기록일: 2026-10-20
-- 결정: Domain Repository 계약 아래 Data의 `RepositoryImpl`이 기능별 DataSource 인터페이스를 생성자로 주입받습니다. 현재 Supabase, 향후 YAPP 원본 서버 어댑터를 App에서 선택하고 Fake는 같은 DataSource 계약의 테스트 대역으로 사용합니다. 공급자 교체 때문에 Domain·Feature를 수정하지 않습니다.
-- 이유: Repository 내부의 구체 DataSource 생성과 SDK·HTTP 의존을 제거해 테스트 MVP와 이후 원본 서버가 같은 기능 계약을 구현하도록 합니다.
-- 근거: 사용자의 명시 요청과 승인된 MVP 계획, [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
-- 반영: [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), 인증·공지 Domain 계약.
-- 적용 상태: `AuthRepository`와 credential·사용자 식별 세션 모델, `NoticeRepository`와 공지 모델·유형을 추가했습니다. 기존 일정·출석 Domain 계약을 재사용하고 DataSource 인터페이스 주입·공통 세션 모델을 구현했습니다. Supabase Auth DataSource·Repository와 namespace 분리 암호화 세션 저장, 일정·공지·출석 검증 Supabase DataSource와 공지 Repository를 App Hilt에 연결했습니다. YAPP 출석·보고 HTTP 어댑터는 보존하며 Supabase 보고 호출은 backend가 없어 일반 실패로 끝납니다. Login Feature의 Domain credential 전달과 App의 Supabase 교환·시작 시 세션 복원·오류 재시도를 연결했습니다. 홈의 주간 공지와 게시판의 유형별 목록·상세를 Repository에 연결했습니다. Supabase MVP의 홈에서 보고 진입·시트·완료 안내와 보고 전용 상태를 제거했으며 Domain 보고 계약과 Data/YAPP 어댑터는 보존합니다. YAPP 초기 로그인·회원 식별자 대응 같은 미확정 계약은 정의하지 않습니다.
-- 대체한 결정: 없음. 기존 계층 경계 안에서 DataSource 주입 방식을 명시합니다.
-
-## DEC-0027 · Supabase 인증과 테스트 데이터로 비공개 MVP 구성
-
-- 기록일: 2026-10-20
-- 결정: Google Credential Manager의 ID 토큰·원본 nonce를 Supabase Auth에 교환하고 세션 복원·로그아웃을 제공합니다. 세션·공지 테스트 데이터를 조회하며 새 출석은 테스트 세션별로 직접 허용한 인증 사용자와 4자리 코드에 한정합니다. 시작 20분 전부터 종료 시각까지 DB가 판정하고 중복 제출은 원래 기록을 반환하며 본인만 재조회합니다. 테스트 종료 뒤 자동 삭제 없이 수동으로 운영 데이터로 전환합니다. Supabase Google provider는 사용자가 연 Dashboard에서 컴퓨터 사용으로 설정합니다.
-- 이유: YAPP 초기 로그인과 공지 조회 계약이 준비되기 전에 비공개 테스트의 핵심 기능을 실제 인증·데이터로 확인합니다.
-- 근거: 사용자 확정 및 승인된 MVP 계획, [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
-- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md).
-- 적용 상태: Domain 계약·DataSource 주입, [DB migration](../../supabase/migrations/20261020093715_mvp_test_sessions_notices_attendance.sql)의 2주 더미 데이터·RLS·본인 기록 조회·서버 검증 RPC, Supabase Auth DataSource·Repository와 분리 암호화 세션 저장을 구현했습니다. 기수 정보·코드·허용 목록은 비워 둡니다. 로컬 PostgreSQL에서 스키마 계약을 검증했고 Auth 어댑터는 MockEngine 테스트를 통과했으며 실제 프로젝트에는 migration을 적용하지 않았습니다. 일정·공지·출석 검증 어댑터와 인증 REST helper를 연결해 Supabase 세션의 401 복원·갱신 후 원래 GET·POST를 한 번 재시도합니다. 출석 검증은 네 자리 ASCII 코드와 세션만 보내고 서버의 단일 확인 행·처리 시각을 검증하며 migration에 보고 backend는 포함하지 않습니다. 일정은 서버 주간 범위·정렬을 사용하며 테스트 세션의 미설정 기수만 0으로 매핑합니다. Google 요청에는 nonce SHA-256 hex를 보내고 원본은 Domain credential로 교환합니다. App은 시작 시 세션 복원·실패 재시도를 제공하며 모든 빌드가 인증된 세션으로 메인에 진입합니다. 홈의 주간 공지와 게시판 목록·상세·유형 필터를 Repository에 연결했습니다. Supabase MVP의 홈에서 보고 진입·시트·완료 안내와 보고 전용 상태를 제거했으며 Domain 보고 계약과 Data/YAPP 어댑터는 보존합니다. 실제 테스트 계정·코드 설정과 운영 데이터 전환은 후속입니다. 기존 확정 YAPP 출석 정책을 임의로 변경하지 않습니다.
-- 대체한 결정: DEC-0017의 ID 토큰 발급까지만 수행하는 범위를 MVP의 Supabase 교환으로 확장합니다. Google 단일 로그인 UI와 토큰 발급만으로 로그인 완료하지 않는 원칙은 유지합니다. 기존 debug 홈 시작 경로는 인증 세션 기반 시작으로 대체합니다. DEC-0024·DEC-0025의 YAPP 세션 저장·갱신 경로는 Supabase 세션과 구분해 유지합니다.
-
-## DEC-0028 · 신규 Google 인증 뒤 임시 가입 완료 흐름
-
-- 기록일: 2026-10-20
-- 결정: 새 Google 인증을 Supabase 세션으로 교환한 뒤 이름 입력 → 휴대폰 번호 입력 → 가입 완료 화면을 표시합니다. 제출용 임시 흐름에서는 실제 운영진 인증·가입 API를 기다리지 않으며, 완료 액션으로 메인 화면에 진입합니다. 이름·휴대폰 번호는 서버에 전송하지 않습니다. 저장된 Supabase 세션 복원은 가입 단계를 건너뜁니다.
-- 이유: 제출용 앱에서 회원 입력 과정을 보여 주면서 미확정된 YAPP 가입·운영진 인증 계약을 추측해 구현하지 않기 위해서입니다.
-- 근거: 사용자 명시 요청 및 [이슈 #100](https://github.com/YAPP-admin/yapp-plus-android/issues/100).
-- 반영: [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, App 인증·Navigation 조립.
-- 적용 상태: App 인증 상태가 신규 Google 인증과 세션 복원을 구분해 시작 목적지를 선택하고, 기존 `:feature:signup` 입력·완료 화면을 조립합니다. 가입 완료 시 입력값을 지우고 인증 상태를 확정해 메인 그래프로 전환합니다. 실제 YAPP 회원 등록은 수행하지 않습니다.
-- 대체한 결정: DEC-0011·DEC-0013의 가입 흐름이 승인 대기에서 끝난다는 동작을 신규 Google 인증의 임시 제출 흐름에 한해 대체합니다. 실제 가입 승인 정책은 미정으로 유지합니다.
-
-## DEC-0029 · 가입 입력 필수화와 사용자 화면의 정적 데모 제거
-
-- 기록일: 2026-10-21
-- 결정: 가입 이름과 휴대폰 번호는 공백이 아닌 값이어야 다음 단계로 진행합니다. 전화번호 형식은 검증하지 않으며 입력값도 서버에 보내지 않습니다. 출시 화면에서 가짜 회원 프로필·출석 수치, 고정 일정 목록과 데모 안내를 제거합니다. 회원 정보 API가 연결되지 않은 My 화면은 준비 중 안내만 표시합니다. 비공개 테스트에 승인한 Supabase 세션·공지 데이터는 유지합니다.
-- 이유: 빈 가입 정보와 정적 예시값이 실제 회원·출석·일정 정보처럼 보이는 것을 막고, 제출용 MVP의 실제 조회 흐름을 그대로 보여 주기 위해서입니다.
-- 근거: 사용자 명시 요청, [이슈 #102](https://github.com/YAPP-admin/yapp-plus-android/issues/102).
-- 반영: [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md), [모듈 구조](module-structure.md), [디자인시스템](design-system.md), `README.md`, `:domain:signup`, App Navigation, My·일정 화면.
-- 적용 상태: Domain의 `Name`과 `PhoneNumber`가 각각 공백 여부를 판단하고, `:feature:signup`의 각 Route가 입력 상태를 조합해 다음 버튼 활성화와 이동 콜백을 제어합니다. App Navigation은 같은 `SignUpViewModel`을 가입 화면에 전달해 입력값을 유지하며 SavedStateHandle의 기존 키 값을 새 키로 옮깁니다. 일정 화면의 하드코딩 예시 경로와 My의 프로필·점수 샘플을 제거했습니다. My는 미연동 안내를 표시하고 세션·공지 테스트 데이터는 Supabase Repository를 통해 조회합니다.
-- 대체한 결정: DEC-0012의 My·일정 정적 데이터 표시와 DEC-0020의 다른 화면 데모 UI를 유지하던 부분만 대체합니다. 화면별 debug Preview와 비공개 테스트용 Supabase 샘플 데이터는 유지합니다.
-
 ## DEC-0030 · 단일 값을 value class로 표현
 
 - 기록일: 2026-10-21
@@ -311,17 +271,7 @@ last_verified: 2026-10-25
 - 근거: 사용자의 명시 요청 및 [이슈 #102](https://github.com/YAPP-admin/yapp-plus-android/issues/102).
 - 반영: [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `:feature:signup`, App Navigation.
 - 적용 상태: `SignUpRoute`가 Feature 내부에서 `SignUpViewModel`을 가져오며 Name → Phone → Complete 전환과 단계 내부 뒤로 가기를 처리합니다. `AppNavigationDestination.SignUp` 하나를 등록하고 ViewModel 주입을 제거했습니다. `SavedStateHandle`은 입력값과 현재 단계를 보존합니다.
-- 대체한 결정: DEC-0029의 App Navigation이 같은 Signup ViewModel을 가입 화면들에 전달한다는 구현 방식을 대체합니다. 이름·휴대폰 필수 조건과 전화번호 형식 미확정은 유지하며, 입력값 전송 여부는 DEC-0032에서 정합니다.
-
-## DEC-0032 · 비공개 테스트 가입 프로필 저장
-
-- 기록일: 2026-10-21
-- 결정: Google 인증 뒤 입력한 이름·휴대폰 번호를 임시 제출 프로필로 Supabase에 저장하고 My 화면에서 표시합니다. 전화번호 입력 다음에 `ProfileRepository`가 현재 인증 사용자 기준으로 저장하며 성공 후에만 가입 완료 화면으로 이동합니다. 실패하면 입력값을 보존하고 다시 시도합니다. 전화번호 형식은 검증하지 않습니다.
-- 이유: 기존에는 가입 입력이 `SavedStateHandle`에만 남고 완료 시 지워져 My 화면에서 회원 정보가 표시되지 않았습니다. 제출용 앱에서 입력한 값을 보존하되 미확정된 YAPP 회원 가입·운영진 승인 API는 추측하지 않습니다.
-- 근거: 사용자 요청 및 [이슈 #105](https://github.com/YAPP-admin/yapp-plus-android/issues/105).
-- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `:domain`·`:data`·`:feature:signup`·`:feature:main:my`·App, [제출 프로필 migration](../../supabase/migrations/20261021080517_submission_profiles.sql).
-- 적용 상태: `Profile`은 `Name`·`PhoneNumber` value class를 사용합니다. DataSource는 `user_id` 기본값을 DB의 `auth.uid()`에 맡기고 upsert는 재시도 가능하게 처리합니다. RLS와 권한은 인증 사용자가 자기 프로필만 읽고 삽입·갱신하도록 제한하며 삭제 권한은 부여하지 않습니다. 이 행은 앱 제출용 프로필이며 YAPP 회원·역할·가입 승인을 생성하지 않습니다. migration은 YAPP Supabase 프로젝트 main 브랜치에 적용·이력 등록했습니다.
-- 대체한 결정: DEC-0028과 DEC-0029의 이름·휴대폰 입력을 서버에 보내지 않는 부분 및 My 회원 정보 미연동 상태만 대체합니다. 실제 YAPP 가입 API·운영진 인증·회원 권한은 계속 미연동이며 출석 기록은 표시하지 않습니다.
+- 대체한 결정: App Navigation이 Signup ViewModel을 전달하던 구현 방식을 대체합니다. 개발 버전의 실제 서버 제출·완료 연결 상태는 DEC-0037을 따릅니다.
 
 ## DEC-0033 · 설정 화면과 계정 탈퇴 안내
 
@@ -329,30 +279,29 @@ last_verified: 2026-10-25
 - 결정: 설정 화면은 `:feature:setting`에 두고 My 탭에서 진입하며 이동 상태는 App이 소유합니다. 알림 토글, 약관 링크, 앱 버전, 로그아웃 확인을 제공합니다. 알림 토글은 현재 화면 상태로만 유지하며 푸시 전달·설정 저장 연동은 후속입니다. 앱 계정 삭제는 YAPP 동아리 탈퇴와 별개로 안내하고, 서버 탈퇴 API가 없으면 삭제 요청을 보내지 않습니다.
 - 이유: 확인된 설정 화면을 제공하면서 미구현 계정 삭제·푸시 연동을 완료된 기능처럼 오인하게 하지 않기 위해서입니다.
 - 근거: 사용자 요청과 [이슈 #104](https://github.com/YAPP-admin/yapp-plus-android/issues/104).
+- 적용 상태: 설정 UI와 App 이동을 유지합니다. 개발 버전의 인증 실행은 DEC-0037에 따라 연결 전까지 비활성화하고 알림 토글은 숨깁니다.
 - 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`, `:feature:setting`, App, My Feature.
-- 적용 상태: 설정 화면과 App의 진입·뒤로 이동을 구현했습니다. 알림 토글은 App 화면 상태로 동작하고, 로그아웃은 기존 Supabase Auth 로그아웃을 호출합니다. 계정 탈퇴는 안내만 표시하며 삭제 요청은 보내지 않습니다.
 - 대체한 결정: 없음.
 
-## DEC-0034 · My에 비공개 테스트 출석 이력 표시
+## DEC-0036 · 비공개 테스트와 실제 개발 브랜치 분리
 
-- 기록일: 2026-10-22
-- 결정: My 화면은 `MyRepository`를 통해 테스트 프로필과 테스트 세션에서 검증된 완료 출석 내역을 표시합니다. 출석 내역은 사용자가 메뉴를 펼칠 때 조회하고, 로딩·빈 상태·오류 및 재시도를 제공합니다. My의 제출 이름·휴대폰은 기존 `ProfileRepository`로 계속 조회합니다. 출석 점수·공식 YAPP 회원·공식 출석 이력은 이 테스트 조회에 포함하지 않으며 홈의 최근 출석 이력도 추가하지 않습니다.
-- 이유: 비공개 테스트 사용자가 실제로 검증된 출석 결과를 확인할 수 있게 하면서 테스트 데이터를 공식 YAPP 회원 정보·출석 점수로 오인하지 않게 합니다.
-- 근거: 사용자 요청과 [이슈 #90](https://github.com/YAPP-admin/yapp-plus-android/issues/90).
-- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [모듈 구조](module-structure.md), [설계 패턴](design-patterns.md), `README.md`, `AGENTS.md`, `:feature:main:my`.
-- 적용 상태: My Domain/Data 계약과 Supabase 조회 어댑터는 [PR #112](https://github.com/YAPP-admin/yapp-plus-android/pull/112)에서 연결했고, 기존 My UI 컴포넌트는 [PR #114](https://github.com/YAPP-admin/yapp-plus-android/pull/114)에서 추가했습니다. 이 결정은 My 화면의 ProfileRepository·MyRepository 상태 조립, 지연 조회와 펼침 UI를 연결합니다. 테스트 데이터가 없으면 빈 상태를 표시합니다.
-- 대체한 결정: DEC-0032의 테스트 출석 이력을 My에 표시하지 않는 부분만 대체합니다. 제출 프로필 저장과 이름·휴대폰 표시는 유지합니다.
+- 기록일: 2026-10-25
+- 결정: `release/v1.0.1`은 임시 비공개 테스트 버전으로 보존하고 실제 서비스 개발은 `develop`에서 진행합니다. 같은 앱 ID `com.yapp.plus`와 Play 비공개 테스트 트랙을 사용합니다. 임시 브랜치를 개발 브랜치에 통째로 병합하지 않으며 필요한 수정만 선별해 반영합니다.
+- 이유: 배포 중인 테스트 버전을 유지하면서 실제 서비스의 서버 계약에 맞는 개발을 이어가기 위해서입니다.
+- 근거: 현재 세션의 사용자 확정 요청과 [이슈 #125](https://github.com/YAPP-admin/yapp-plus-android/issues/125).
+- 반영: [제품 정책](product-policy.md), [CONTRIBUTING.md](../../CONTRIBUTING.md), `README.md`, `AGENTS.md`.
+- 적용 상태: `release/v1.0.1` 작업 폴더와 브랜치를 보존합니다. 개발 전환은 최신 `develop` 기반의 순차 PR로 진행합니다.
+- 대체한 결정: 일반 릴리즈의 develop 재병합 절차에서 임시 `release/v1.0.1`은 제외합니다.
 
-## DEC-0035 · 출시를 위한 앱 계정 삭제와 미완성 메뉴 숨김
+## DEC-0037 · 개발 버전을 YAPP 서버 계약으로 정리
 
-- 기록일: 2026-10-22
-- 결정: 설정에서 본인의 앱 계정과 연결된 제출·테스트 프로필, 테스트 출석·허용 등록을 삭제할 수 있게 합니다. 삭제 범위와 복구 불가를 확인받고 진행·실패·재시도를 표시합니다. 외부 요청은 사용자가 제공한 `yappplus.official@gmail.com`으로 받습니다. 홈 알림·출석 점수와 설정 알림 토글은 연동 전까지 숨깁니다.
-- 이유: Play 제출에 필요한 계정 삭제 경로를 제공하고 미완성 메뉴를 출시 화면에서 제외하기 위해서입니다.
-- 근거: 사용자 명시 요청과 문의 이메일 지정, [이슈 #117](https://github.com/YAPP-admin/yapp-plus-android/issues/117).
-- 반영: [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `README.md`, `AGENTS.md`, Domain·Data·App·Home·Setting, 계정 삭제 migration 및 공개 안내 HTML.
-- 적용 상태: 클라이언트와 DB migration의 로컬 검증 후, 사용자의 배포 요청에 따라 2026-10-22 YAPP Supabase main에 migration을 적용·이력 등록했습니다. connector에 대상 프로젝트 권한이 없어 로그인된 대시보드로 적용했으며 실제 DB의 임시 fixture를 롤백하는 검증과 Data API의 익명 요청 거부를 확인했습니다. [외부 안내 페이지](https://yapp-account-deletion.jeoungpeto0908.chatgpt.site)를 Sites에 공개하고 비인증 HTTP 200 및 문의 링크를 검증했습니다. 실제 사용자 계정은 삭제하지 않았습니다. 같은 날 사용자가 앱 생성 및 필수 선언·약관 동의에 승인하여 YAPP Plus 개발자 계정에 `YAPP 출석`(`com.yapp.plus`, 한국어, 무료)을 생성했습니다. 데이터 보안 양식에 데이터 수집 여부 예·계정 생성 방식 OAuth·공개 계정 삭제 URL을 임시저장하고 저장 완료 표시를 확인했습니다. 전체 데이터 보안 선언 제출과 스토어 공개는 남아 있습니다.
-- Android 통합 검증: #120의 계정 삭제 부분만 UI와 App 연결로 나눠 적용했습니다. UI는 [PR #122](https://github.com/YAPP-admin/yapp-plus-android/pull/122)로 develop에 통합했습니다. 단위 테스트 136건과 빈 API 36 에뮬레이터의 UI 3건·모의 RPC 통합 1건을 검증했으며 실제 계정 영구 삭제·운영 DB 변경은 하지 않았습니다. 전체 Hilt 내비게이션·OAuth·서버 삭제 E2E는 별도 검증 범위입니다. 홈 메뉴와 설정 알림 숨김은 이번 계정 삭제 통합에 포함하지 않았습니다.
-- 대체한 결정: DEC-0033의 계정 삭제 안내만 제공하던 상태와 알림 토글 노출을 대체합니다. YAPP 동아리 회원 자격과 앱 계정 삭제의 구분은 유지합니다.
+- 기록일: 2026-10-25
+- 결정: 임시 테스트 백엔드의 구현·전용 계약·SQL·테스트·운영 문서를 개발 브랜치에서 제거합니다. 일정·출석 인증·보고는 기존 YAPP 어댑터로 연결하고 Google 크레덴셜 획득 코드는 유지합니다. 서버 인증 교환·가짜 가입 완료·프로필 저장은 연결하지 않으며 계약 없는 조회는 준비 중으로 표시합니다.
+- 이유: 실제 서버에 없는 API나 로그인 성공을 만들지 않고 서버 구현에 맞춰 기능을 이어가기 위해서입니다.
+- 근거: 사용자의 전체 제거 요청과 Google 크레덴셜만 유지하라는 후속 확정, [이슈 #125](https://github.com/YAPP-admin/yapp-plus-android/issues/125), 백엔드 dev 코드와 OpenAPI.
+- 반영: App·Domain·Data·Login·Signup·Home·Board·My·Setting, [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md).
+- 적용 상태: YAPP 서버 어댑터와 토큰 저장·갱신 기반을 유지하고 임시 테스트 전용 파일과 관련 결정 기록을 개발 문서에서 정리했습니다. 해당 테스트 버전의 소스·문서·배포 데이터는 임시 릴리즈에 보존합니다. 실제 Google 인증·가입·회원 조회·공지·삭제 연결은 서버 계약 확인 후 구현합니다.
+- 대체한 결정: 이전 임시 테스트의 인증·프로필·공지·출석 이력·삭제 연결을 개발 버전에서 종료합니다. 일반 계층 경계와 출석 정책은 유지합니다.
 
 ## DEC-0038 · 개발 화면을 원본 Figma에 맞춤
 
@@ -361,5 +310,5 @@ last_verified: 2026-10-25
 - 이유: 개발 중인 앱의 원본 디자인 불일치를 해결하고, 미연동 기능을 화면 정합성을 위해 임의로 활성화하지 않기 위해서입니다.
 - 근거: 현재 세션의 사용자 요청과 [이슈 #126](https://github.com/YAPP-admin/yapp-plus-android/issues/126).
 - 반영: [디자인시스템](design-system.md), [제품 정책](product-policy.md), Core 디자인시스템·Login·SignUp·Home·Board·Schedule·My·Setting·App.
-- 적용 상태: `develop`을 기준으로 PR #127·#128을 병합했고, My·설정·앱 연결은 후속 PR에서 반영합니다. DEC-0035의 홈 알림·출석 점수와 설정 알림 숨김도 적용합니다. 실제 Google OAuth·출석 서버 E2E는 이번 화면 비교 범위에 포함하지 않습니다.
-- 대체한 결정: 없음. 기존 MVP 기능·데이터 범위와 배포 브랜치 분리 결정을 유지합니다.
+- 적용 상태: `develop`에서 PR #127·#128을 병합했고 후속 UI 정리 PR도 반영했습니다. 서버 계약이 없는 회원 정보·점수·공지 기능은 연결 전까지 준비 중으로 유지하며 실제 Google 인증·출석 서버 E2E는 이번 화면 비교 범위에 포함하지 않습니다.
+- 대체한 결정: 없음. 비공개 테스트와 실제 서비스 개발의 브랜치 분리 결정은 DEC-0036을 따르고, 서버 연동 범위는 DEC-0037을 따릅니다.

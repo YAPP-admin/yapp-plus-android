@@ -16,3 +16,11 @@ private fun SettingsScreenPreview() {
         )
     }
 }
+
+@Preview(name = "Settings without authentication", widthDp = 393, heightDp = 852)
+@Composable
+private fun SettingsUnavailableActionsPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        SettingsScreen(appVersion = "1.0", onBack = {}, onLogout = null)
+    }
+}

@@ -3,6 +3,11 @@
 
     <application android:usesCleartextTraffic="true">
         <activity
+            android:name=".testing.NavigationTestActivity"
+            android:exported="false"
+            android:theme="@style/Theme.YappAttendance.Preview"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name="androidx.compose.ui.tooling.PreviewActivity"
             android:theme="@style/Theme.YappAttendance.Preview"
             android:windowSoftInputMode="adjustResize" />

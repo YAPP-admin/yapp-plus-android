@@ -4,13 +4,17 @@
 
 ## 현재 상태
 
-14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor 공통 API 클라이언트, JSON 직렬화와 DataStore 기반 YAPP 세션 저장·복원이 준비되어 있고, 이번 주 세션·현재 기수 일정 조회를 Domain·Data·홈/일정 Feature·App까지 연결했습니다. 로그인·회원가입 UI는 별도 모듈이며, Google Credential Manager에서 ID 토큰과 nonce를 발급해 App 콜백에 전달합니다. App이 ID 토큰·원본 nonce를 Supabase Auth에 교환한 뒤에만 로그인 완료로 처리합니다. 새 Google 인증 뒤 이름·휴대폰 입력을 마치면 Supabase에 제출 프로필을 저장하고 성공한 경우 임시 가입 완료 화면을 보여 줍니다. 실제 YAPP 가입·운영진 인증 API는 호출하지 않습니다. Domain의 `Name`과 `PhoneNumber`가 각각 입력 여부를 판단하고, `:feature:signup`이 저장·입력·완료 단계를 한 화면 흐름으로 조합합니다. App Navigation은 가입 목적지 하나와 완료 콜백만 연결하고, 화면 상태와 ViewModel은 Signup Feature가 소유합니다. 저장된 Supabase 세션은 복원 뒤 바로 메인으로 이동합니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리했고, App이 네 화면과 메인 탭 내비게이션·선택 상태를 관리합니다. 설정 화면은 `:feature:setting`에 두고 App이 이동 상태를 관리합니다. 홈은 이번 주 세션 API를 표시하며 주간 공지는 Repository를 조회하지 않고 준비 중 상태만 보여 줍니다. 게시판 공지도 조회 없이 준비 중 상태로 표시합니다. 최근 출석 이력은 표시하지 않습니다. My는 저장된 이름·휴대폰 제출 프로필과 My Repository의 테스트 프로필, 검증된 테스트 출석 내역을 표시합니다. 점수·공식 YAPP 회원 정보·출석 기록 API는 아직 연동되지 않았습니다.
+14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor API client·JSON 직렬화가 있고, 이번 주 세션과 현재 기수 일정 조회는 Domain·Data·Feature·App에 연결했습니다. 홈은 세션과 출석 인증 API를 사용하고 일정 탭은 현재 기수 세션을 조회합니다. 보고 계약과 YAPP 어댑터는 유지하지만 보고 UI 연결은 후속입니다.
+
+로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager에서 ID 토큰과 nonce를 얻어 메모리 콜백으로 전달하지만 YAPP 인증 교환 API가 연결되지 않아 로그인 성공이나 메인 진입으로 처리하지 않습니다. 앱은 로그인 화면에서 시작합니다. 가입은 이름·휴대폰 입력과 복원까지만 제공하고 서버 제출·가입 완료는 연결하지 않습니다.
+
+홈의 주간 공지, 게시판 공지, My 회원 정보·출석 이력·점수는 사용자용 API 계약이 없어 준비 중 상태를 표시합니다. 설정의 로그아웃·계정 삭제 실행은 서버 인증 콜백이 연결되기 전까지 비활성화합니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정 이동 상태를 관리합니다.
 
 인증 세션이 공급된 뒤의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 갱신 API·DTO·로컬 저장 연결을, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다. 초기 YAPP 로그인 API 연동은 후속이며 저장된 세션이 없으면 별도의 유효한 YAPP 토큰 쌍 공급이 필요합니다.
 
-비공개 MVP의 Supabase Auth 어댑터·암호화 세션 저장과 일정·공지·출석 검증 Data를 App Hilt에 연결했습니다. 일정은 테스트 세션만 조회하고 공식 기수가 비어 있으면 테스트 전용 0으로 매핑합니다. 출석은 인증된 RPC로 네 자리 코드를 보내고 서버가 확정한 결과를 검증합니다. MVP migration에는 보고 backend가 없어 해당 호출은 일반 실패로 끝납니다. Login Feature의 Supabase 교환·시작 시 세션 복원·오류 재시도를 연결했습니다. 홈과 게시판 공지 조회를 제거하고 준비 중 상태만 표시합니다. Supabase MVP에서 홈의 보고 진입·시트·완료 안내를 숨겼으며 Domain 보고 계약과 Data/YAPP 어댑터는 보존합니다. MVP·프로필 DB migration은 YAPP Supabase 프로젝트 main 브랜치에 적용하고 이력을 등록했습니다.
+YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도합니다. 임시 테스트 백엔드·데이터 어댑터·SQL은 개발 버전에서 제거했습니다. 일정·출석 인증과 세션 갱신은 확인된 YAPP API 계약을 사용합니다. 공지·My 정보·계정 삭제 API 연결은 후속입니다.
 
-설정의 앱 계정 삭제 확인·진행·오류·재시도를 App 인증 흐름과 기존 Supabase 삭제 RPC에 연결했습니다. 성공 뒤 세션을 정리하고 로그인 화면으로 이동합니다. Android 모의 검증과 실제 E2E의 범위는 [계정 삭제 정책](docs/wiki/product-policy.md#앱-계정-삭제)을 따릅니다.
+계정 삭제 UI는 확인·진행·오류 표현을 유지합니다. 서버 삭제 계약과 실행 콜백이 없어 현재 개발 앱에서는 요청을 보내지 않고 동작을 비활성화합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#앱-계정-삭제)입니다.
 
 ## 아키텍처와 모듈
 
@@ -50,7 +54,7 @@ Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합
 ./gradlew :app:testDebugUnitTest
 ```
 
-현재 `applicationId`와 네임스페이스는 `com.yapp.plus`입니다. 배포용 앱 ID는 Play Console 등록 전에 확정해야 합니다.
+현재 `applicationId`와 네임스페이스는 `com.yapp.plus`입니다. 비공개 테스트는 기존 `release/v1.0.1` 브랜치와 같은 Play 앱을 사용하며 실제 개발은 `develop`에서 이어갑니다. 자세한 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를 따릅니다.
 
 ## 기여
 
@@ -95,4 +99,4 @@ OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지�
 
 ### 수정된 홈 화면
 
-홈의 주간 세션·달력·전체 세션/출석 점수 빠른 메뉴, 알림 UI와 출석 코드 입력/완료 흐름을 연결했습니다. 출석 검증은 Supabase RPC를 사용하고 기존 YAPP 검증·보고 어댑터는 향후 전환을 위해 보존합니다. 현재 Supabase MVP에는 보고 UI를 노출하지 않습니다. 주간 공지와 게시판 목록·상세는 서버 미연동으로 조회하지 않고 준비 중 상태를 표시합니다. 알림·출석 기록 조회는 후속입니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.
+홈은 이번 주 세션·달력·출석 코드 입력/완료 흐름을 표시하고, 출석 검증은 YAPP API를 사용합니다. 보고 UI와 알림 진입·출석 점수 메뉴는 숨깁니다. 주간 공지와 게시판 목록·상세는 서버 API 연결 전까지 준비 중 상태를 표시합니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.

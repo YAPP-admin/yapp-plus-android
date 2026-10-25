@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-22
+last_verified: 2026-10-26
 ---
 
 # 설계 패턴
@@ -35,7 +35,7 @@ last_verified: 2026-10-22
 
 - Repository 계약은 Domain, 구현은 Data에 둡니다. 사용하는 책임을 기준으로 계약을 나누고 관련 없는 기능을 거대한 인터페이스에 모으지 않습니다.
 - 원격·로컬 데이터 접근은 DataSource 경계로 분리합니다.
-- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 일정·공지·출석 검증은 Supabase 어댑터를 사용하며 전환 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
+- `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 일정·출석 검증·보고는 YAPP 서버 어댑터를 사용하며 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
 - DTO는 Data 내부에 두고 Domain 변환도 Data에서 처리합니다.
 - Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
@@ -47,31 +47,22 @@ last_verified: 2026-10-22
 - 하위 UI 컴포넌트는 콜백으로 이동을 요청하며, 다른 화면의 구현 대신 필요한 식별자와 입력을 전달합니다.
 - 시스템 뒤로 가기와 전체 내비게이션은 App이 소유합니다. 공통 레이아웃은 뒤로 버튼의 콜백만 전달하고 `BackHandler`나 목적지 선택을 포함하지 않습니다. 시스템 바 inset도 App에서 공급합니다.
 
-### 가입 단계 흐름
+### 가입 입력 흐름
 
-- 이름·휴대폰·임시 완료 화면이 하나의 가입 흐름이면 `:feature:signup`이 단일 `SignUpRoute`와 ViewModel로 상태 및 내부 단계 이동을 소유합니다. Route는 Feature 안에서 `hiltViewModel()`로 ViewModel을 가져오고 App Navigation은 Feature ViewModel을 주입하지 않습니다.
-- App은 타입 기반 가입 목적지 하나와 가입 완료 콜백만 연결합니다. 이름 → 휴대폰 → 완료 전환과 단계 안의 뒤로 가기는 Signup Feature가 처리하며, 완료 콜백 이후 앱 목적지 전환은 App이 처리합니다. 입력값과 현재 단계는 `SavedStateHandle`로 구성 변경·시스템 상태 복원에 대응합니다.
-- 휴대폰 입력 다음에는 `ProfileRepository`에 `Name`·`PhoneNumber` 값 객체를 전달해 현재 인증 사용자의 제출 프로필을 저장합니다. 저장 중에는 입력과 중복 제출을 막고, 실패하면 입력 화면과 값을 유지해 같은 동작으로 재시도합니다. 저장 성공 후에만 완료 상태와 앱 완료 콜백에 도달합니다.
-- My Feature는 `ProfileRepository`의 제출 프로필과 `MyRepository`의 테스트 프로필·검증된 출석 내역을 별도로 읽고, ViewModel에서 Domain 모델을 UI 상태로 변환합니다. 프로필 조회는 초기 로딩하고, 출석 내역은 메뉴를 처음 펼쳤을 때 지연 조회합니다. 출석 메뉴를 접어도 조회 결과를 보존하며 오류 시 각 데이터만 따로 재시도합니다. 테스트 프로필·제출 프로필·출석 내역 각각의 로딩·빈 상태·오류를 독립적으로 표시합니다.
+- `:feature:signup`은 단일 `SignUpRoute`와 ViewModel로 이름·휴대폰 입력과 내부 뒤로 가기를 소유합니다. Route는 Feature 안에서 `hiltViewModel()`로 ViewModel을 가져옵니다.
+- 입력값과 현재 단계는 `SavedStateHandle`로 유지·복원합니다. 이름이 공백이 아니면 휴대폰 입력으로 이동합니다.
+- 서버 인증·가입 연결 전에는 입력을 제출하거나 가입 완료·메인 진입을 처리하지 않습니다. 이전 완료 단계는 휴대폰 단계로 복원하며, 미확정 계약을 임시 저장소나 가짜 성공으로 대체하지 않습니다.
 
-## MVP 인증·공지 계약
+## Google 크레덴셜과 미연동 기능
 
-- `AuthRepository`는 Google credential 교환, 현재 세션 조회·복원, 로그아웃과 앱 계정 삭제를 제공합니다. `GoogleLoginCredential`은 ID 토큰과 원본 nonce만 전달하며 영구 저장·로그 출력을 금지합니다. Google 요청에는 nonce의 SHA-256 hex를 보내고 Domain에는 원본을 전달합니다. `AuthSession.userId`는 형식을 해석하지 않는 사용자 식별자이며 Supabase 사용자 ID와 미래 YAPP 회원 ID의 대응은 후속 계약입니다.
-- 인증 세션이 없는 조회는 `null`, 인증·복원 요청 자체의 실패는 예외로 구분합니다. Google 토큰 발급만으로 인증 성공 UiState를 만들지 않습니다. Data가 인증 제공자의 교환을 완료한 뒤 반환한 세션으로 App이 인증 흐름을 조율합니다.
-- `NoticeRepository`는 운영·세션 공지를 유형별 또는 전체 목록과 상세로 조회합니다. 목록은 게시 시각 내림차순이며, 상세에서 조회할 수 있는 공지가 없으면 `null`을 반환합니다. 공통 `Notice`는 홈의 `Long` 식별자, 제목, 본문, 유형과 게시 시각을 제공합니다. 날짜·유형 문구와 홈·게시판 UI 모델 변환은 각 Feature 책임입니다.
-- 인증·공지·제출 프로필 및 My 테스트 데이터 Data 구현과 App Hilt 연결은 완료했습니다. Login Feature는 Domain credential을 App에 전달하고 App ViewModel이 인증 교환·시작 시 세션 복원을 조율합니다. 복원 중에는 Splash를 표시하고 실패에는 재시도를 제공합니다. 신규 Google 인증은 Signup Feature의 단일 Route로 진입해 이름·휴대폰 입력 후 Supabase 제출 프로필을 저장하고, 성공한 경우 임시 가입 완료 화면을 표시합니다. 저장된 세션 복원은 바로 메인 그래프를 엽니다. `SignUpRoute`가 자신의 `SignUpViewModel`을 가져와 내부 단계·입력값을 유지하고, 완료 액션은 입력을 지운 뒤 콜백으로 App에 메인 전환을 요청합니다. My는 `ProfileRepository`에서 제출한 이름·휴대폰, `MyRepository`에서 테스트 프로필·검증된 테스트 출석 이력을 읽습니다. 출석 이력은 펼쳤을 때 불러오고 오류 재시도를 제공합니다. 홈은 한국 시간의 일요일 00:00부터 다음 일요일 전까지 게시된 공지를 표시하며, 게시판은 전체·운영·세션 필터와 상세를 조회합니다. App이 공지 ID·화면 이동을, Feature가 조회 상태·필터 복원·UI 변환을 소유합니다. 과제·기타 분류의 정책 대응은 미정으로 남깁니다. 공지의 전송 DTO·본문 표현 형식·페이지 처리 같은 서버 세부 계약은 Domain 모델만으로 확정하지 않습니다.
-
-Supabase 출석 검증은 기존 `AttendanceDataSource` 계약의 정수 코드를 네 자리 ASCII 숫자 문자열로 왼쪽 0 채움한 뒤 인증된 `POST /rest/v1/rpc/mvp_verify_attendance`에 `p_session_id`·`p_code`만 보냅니다. 성공은 요청 세션과 일치하는 단일 행의 `verified=true`와 유효한 `checked_in_at`으로 확인하며 시각·사용자는 DB가 정합니다. REST helper는 조회와 POST 모두 Supabase 세션의 401 복원·갱신 뒤 원래 요청을 한 번 재시도합니다. PostgREST 오류의 정확한 `INVALID_ATTENDANCE_CODE` marker만 코드 오류로 매핑하고 다른 오류·응답 검증 실패는 일반 `AttendanceException`으로 정제하며 취소는 전파합니다. MVP migration에 보고 backend가 없어 `submitReport`는 요청 없이 일반 실패를 반환하고 YAPP 보고 어댑터는 보존합니다. Supabase MVP의 홈에는 보고 진입·시트·완료 안내를 노출하지 않으며 보고 전용 Feature 상태는 제거했습니다. Domain 보고 계약과 Data/YAPP 어댑터는 향후 서버 지원을 위해 보존합니다.
-
-### 앱 계정 삭제 계약
-
-- `AuthRepository.deleteAccount()`는 대상 ID를 받지 않습니다. Data가 현재 세션을 검증한 뒤 `POST /rest/v1/rpc/mvp_delete_account`를 호출하며, `deleted=true`와 현재 사용자의 `user_id`가 일치할 때만 로컬 토큰을 지웁니다. 인증 작업은 기존 Mutex로 직렬화하고 서버 삭제가 시작되면 확인과 로컬 정리를 취소로 분리하지 않습니다.
-- DB의 공개 함수는 invoker wrapper이고 비공개 definer helper가 `auth.uid()`와 실제 `auth.sessions`를 검사합니다. 인증 계정 삭제와 연결 행의 cascade는 한 트랜잭션입니다. 계정이 이미 삭제된 동일 인증 주체의 재요청은 멱등이며 실패 시 관련 데이터 변경을 롤백합니다. 제한적 RLS로 삭제된 계정의 JWT 조회·프로필 재생성을 차단합니다.
-- App 인증 ViewModel이 삭제 진행·오류·재시도와 로그인 전환을 소유합니다. Setting Feature는 확인·진행·오류 UI와 콜백만 제공합니다. 삭제 확인은 `rememberSaveable`로 복원하고 진행 중에는 닫기와 추가 동작을 막습니다. 오류 후 세션을 복원할 수 없으면 로그인으로 이동합니다.
+- `GoogleLoginCredential`은 ID 토큰과 원본 nonce를 전달하며 영구 저장·로그 출력을 금지합니다. Google 요청에는 nonce의 SHA-256 hex를 보내고 App 콜백에는 원본을 전달합니다.
+- Credential Manager 요청은 중복 입력·취소·실패·재시도를 처리합니다. 크레덴셜 발급만으로 앱 로그인 완료 상태를 만들지 않습니다. 현재 App에는 서버 인증 교환과 자동 메인 진입을 연결하지 않습니다.
+- 공지·회원 정보·출석 이력의 서버 계약이 준비되지 않은 Feature는 명시적인 `Unavailable` 상태를 표시합니다. 빈 서버 결과나 네트워크 오류로 오인하지 않도록 재시도를 노출하지 않습니다.
+- App의 인증 실행 콜백이 없는 설정 메뉴는 비활성화합니다. 계정 삭제 확인·진행·오류 표현은 UI 컴포넌트로 보존하며, 서버 삭제 계약 없이 요청하지 않습니다.
 
 ## HTTP 인증 세션 갱신
 
-이 절은 기존 YAPP API 세션에 적용합니다. MVP의 Supabase 인증 세션은 [데이터 공급자 교체 경계](architecture.md#데이터-공급자-교체-경계)에 따라 분리합니다.
+이 절은 YAPP API가 발급한 access/refresh token 쌍에 적용합니다.
 
 - API 서버의 인증된 요청이 401을 받으면 refresh token으로 `POST /api/auth/session-renewals`를 호출하고, 성공한 경우 원래 요청을 한 번만 재시도합니다. method·body·query·기존 헤더를 유지하고 Authorization을 새 access token으로 교체합니다. 재시도도 401이면 추가 갱신하지 않습니다.
 - 동시에 전송한 요청은 같은 갱신 작업과 결과를 공유합니다. 갱신 완료 뒤 늦게 도착하는 이전 토큰의 401도 그 결과를 사용합니다. 일시적인 실패도 같은 요청 집합에서 공유하고, 이후 새 요청은 다시 갱신을 시도할 수 있습니다.

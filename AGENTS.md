@@ -5,9 +5,10 @@
 - YAPP 공식 출석 앱의 Android 저장소다. Kotlin과 Jetpack Compose를 사용한다.
 - 승인된 아키텍처는 [Wiki의 아키텍처 문서](docs/wiki/architecture.md)에 기록된 MVVM + 단방향 상태 흐름(UDF) + 필요한 범위의 Clean Architecture다.
 - GitHub 저장소는 `YAPP-admin/yapp-plus-android`다. 브랜치·제목·라벨·변경량 정책의 기준은 [CONTRIBUTING.md](CONTRIBUTING.md)다.
+- `release/v1.0.1`은 기존 비공개 테스트 버전으로 보존하고 실제 개발은 `develop` 기반 작업 브랜치에서 진행한다. 같은 앱 ID `com.yapp.plus`를 사용하며 임시 브랜치를 `develop`에 통째로 병합하지 않는다. 실제 서비스 배포는 최신 `develop`에서 새 릴리즈 브랜치로 준비한다.
 - 공통 Gradle convention plugin은 `build-logic/` included build에서 관리하고, 라이브러리 버전은 `gradle/libs.versions.toml`에 둔다.
-- 이번 주 세션·현재 기수 일정 API는 Domain·Data를 거쳐 홈·일정 Feature의 ViewModel과 App 화면까지 연결되어 있다. 인증·일정·공지·출석 검증의 Supabase Data와 App Hilt, Login Feature의 인증 교환·시작 시 세션 복원을 연결했다. 홈의 주간 공지는 서버 미연동 상태로 준비 중 UI만 표시하고 조회하지 않으며, 게시판은 서버 미연동 상태로 준비 중 UI만 표시하고 공지를 조회하지 않는다. debug·release 모두 인증된 Supabase 세션으로 메인에 진입한다. Supabase MVP에는 보고 backend가 없어 홈의 보고 진입·화면을 숨겼으며 Domain 계약과 Data/YAPP 보고 어댑터는 향후 지원을 위해 보존한다. My 테스트 프로필과 검증된 테스트 출석 이력은 Repository를 거쳐 My Feature에 연결되어 있다. 계정별 테스트 프로필 행·출석 코드·허용 목록 설정과 공식 YAPP 회원 정보·점수 API는 후속 작업이다.
-- 설정 계정 삭제 확인·진행·오류·재시도를 App 인증 ViewModel과 기존 AuthRepository에 연결했다. 삭제 확인 후 세션 정리와 로그인 복귀를 처리하며, Android 모의 검증 범위와 실제 E2E 미검증 상태는 [계정 삭제 정책](docs/wiki/product-policy.md#앱-계정-삭제)을 따른다.
+- 실제 개발은 YAPP 서버의 일정·출석 인증·사전 보고 DataSource와 Repository를 App Hilt에서 조립한다. 공지·My 정보·출석 이력은 사용자용 API 계약 연결 전까지 준비 중 UI로 표시한다. 임시 테스트 전용 구현·SQL·운영 문서는 개발 버전에서 제거한다.
+- Google Credential Manager의 ID 토큰·원본 nonce 획득 코드를 유지하되 YAPP 인증 교환·가입·프로필 저장·자동 메인 진입은 미연결이다. 서버 실행 콜백이 없는 로그아웃·계정 삭제 동작은 비활성화하며 현재 연결 범위는 [제품 정책](docs/wiki/product-policy.md#현재-서버-연결)을 따른다.
 - YAPP access/refresh token 쌍은 Data와 `:core:datastore`를 통해 암호화 저장·복원한다. App singleton이 Data 저장소와 갱신 API를 Network에 연결하며, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도한다. 초기 YAPP 세션 발급은 후속 작업이다.
 - 홈, 게시판, My, 일정 탭은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리하고 설정 화면은 `:feature:setting`으로 분리한다. 탭·설정 화면 이동 상태는 App이 소유하며 실제 모듈 현황은 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.

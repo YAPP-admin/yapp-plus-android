@@ -1,6 +1,8 @@
 package com.yapp.plus.domain.auth
 
 interface AuthRepository {
+    suspend fun signInWithEmail(credential: EmailLoginCredential): AuthSession
+
     suspend fun signInWithGoogle(credential: GoogleLoginCredential): AuthSession
 
     /** 복원 가능한 인증 세션이 없으면 null을 반환한다. */

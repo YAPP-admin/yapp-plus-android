@@ -36,8 +36,8 @@ fun YappIconLabel(
         )
         YappText(
             text = text,
-            style = YappTypography.caption1Bold,
-            color = tint ?: YappMainColor.textSecondary,
+            style = YappTypography.scaleT2Medium,
+            color = tint ?: YappMainColor.textSubtle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

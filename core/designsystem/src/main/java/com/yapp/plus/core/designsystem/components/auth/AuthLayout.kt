@@ -25,6 +25,7 @@ import com.yapp.plus.core.designsystem.theme.YappAuthColor
 fun AuthLayout(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    showBack: Boolean = true,
     bottom: @Composable () -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
 ) {
@@ -45,12 +46,14 @@ fun AuthLayout(
                         .height(54.dp)
                         .padding(start = 4.dp),
             ) {
-                IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_auth_back),
-                        contentDescription = stringResource(R.string.yapp_auth_back),
-                        modifier = Modifier.size(24.dp),
-                    )
+                if (showBack) {
+                    IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_auth_back),
+                            contentDescription = stringResource(R.string.yapp_auth_back),
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
                 }
             }
             Box(modifier = Modifier.weight(1f), content = content)

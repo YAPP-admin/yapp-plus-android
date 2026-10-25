@@ -5,11 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -60,7 +64,15 @@ fun YappBottomSheet(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(horizontal = if (isHome) 10.dp else 8.dp),
+                .padding(horizontal = if (isHome) 10.dp else 8.dp)
+                .padding(
+                    bottom =
+                        if (isHome) {
+                            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        } else {
+                            0.dp
+                        },
+                ),
         sheetState = actualSheetState,
         shape = RoundedCornerShape(if (isHome) 16.dp else 20.dp),
         containerColor = YappColor.white,
@@ -68,6 +80,9 @@ fun YappBottomSheet(
         tonalElevation = 0.dp,
         scrimColor = if (isHome) YappHomeColor.scrim else YappColor.scrim,
         dragHandle = handle,
+        contentWindowInsets = {
+            if (isHome) WindowInsets(0, 0, 0, 0) else BottomSheetDefaults.windowInsets
+        },
     ) {
         Column(
             modifier =

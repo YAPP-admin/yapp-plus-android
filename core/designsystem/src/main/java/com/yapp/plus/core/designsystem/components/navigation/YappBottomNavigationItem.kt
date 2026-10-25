@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,7 +21,7 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
 private val navigationItemWidth = 70.dp
-private val navigationItemMinimumHeight = 54.dp
+private val navigationItemMinimumHeight = 52.dp
 private val navigationIconSize = 24.dp
 
 @Composable
@@ -30,8 +31,9 @@ fun YappBottomNavigationItem(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedIconColor: Color = YappMainColor.textSecondary,
 ) {
-    val contentColor = if (isSelected) YappMainColor.textPrimary else YappMainColor.textFaint
+    val contentColor = if (isSelected) YappMainColor.textSecondary else YappMainColor.textFaint
     Column(
         modifier =
             modifier
@@ -39,17 +41,17 @@ fun YappBottomNavigationItem(
                 .heightIn(min = navigationItemMinimumHeight)
                 .selectable(selected = isSelected, role = Role.Tab, onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
     ) {
         Icon(
             painter = painterResource(iconResource),
             contentDescription = null,
             modifier = Modifier.size(navigationIconSize),
-            tint = contentColor,
+            tint = if (isSelected) selectedIconColor else YappMainColor.textFaint,
         )
         YappText(
             text = label,
-            style = YappTypography.caption1Bold,
+            style = YappTypography.scaleT2Bold,
             color = contentColor,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

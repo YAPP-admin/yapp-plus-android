@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -27,7 +26,7 @@ internal fun inputTextStyle(
     variant: YappTextFieldVariant = YappTextFieldVariant.Default,
 ): TextStyle =
     if (variant == YappTextFieldVariant.Auth) {
-        YappTypography.body1NormalRegular.copy(letterSpacing = 0.sp)
+        YappTypography.scaleT5Regular
     } else {
         when (size) {
             YappInputSize.Large -> YappTypography.body1NormalRegular

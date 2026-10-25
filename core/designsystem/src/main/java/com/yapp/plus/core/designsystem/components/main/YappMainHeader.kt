@@ -41,7 +41,7 @@ fun YappMainHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (leadingContent == null) {
-            YappText(title, YappTypography.heading1Bold, YappMainColor.textPrimary)
+            YappText(title, YappTypography.scaleT8Bold, YappMainColor.textPrimary)
         } else {
             leadingContent()
         }

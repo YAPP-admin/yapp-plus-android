@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.components.auth.AuthGraphic
 import com.yapp.plus.core.designsystem.components.auth.AuthHeading
 import com.yapp.plus.core.designsystem.components.auth.AuthLayout
@@ -55,7 +54,7 @@ fun AuthStatusContent(
                 Spacer(Modifier.height(10.dp))
                 YappText(
                     text = stringResource(status.descriptionResource),
-                    style = YappTypography.body1NormalRegular.copy(letterSpacing = 0.sp),
+                    style = YappTypography.scaleT5Regular,
                     color = YappAuthColor.textSecondary,
                 )
                 if (status == AuthStatus.Pending) {
@@ -104,10 +103,7 @@ internal fun AuthStatusAction(
                     YappText(
                         text = stringResource(R.string.auth_contact),
                         style =
-                            YappTypography.headline1Bold.copy(
-                                lineHeight = 24.sp,
-                                letterSpacing = 0.sp,
-                            ),
+                            YappTypography.scaleT6Bold,
                         color = YappAuthColor.textSubtle,
                     )
                 }

@@ -1,10 +1,12 @@
 package com.yapp.plus.core.designsystem.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.R
@@ -31,10 +33,29 @@ private fun yappTextStyle(
     lineHeight = lineHeight,
     letterSpacing = letterSpacing,
     fontFeatureSettings = YAPP_FONT_FEATURE_SETTINGS,
+    platformStyle = PlatformTextStyle(includeFontPadding = false),
+    lineHeightStyle =
+        LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None,
+        ),
 )
 
 /** Typography tokens from the YAPP Figma type scale. */
 object YappTypography {
+    val scaleT2Medium = yappTextStyle(FontWeight.Medium, 12.sp, 16.sp, 0.sp)
+    val scaleT2Bold = yappTextStyle(FontWeight.Bold, 12.sp, 16.sp, 0.sp)
+    val scaleT3Medium = yappTextStyle(FontWeight.Medium, 13.sp, 18.sp, 0.sp)
+    val scaleT4Medium = yappTextStyle(FontWeight.Medium, 14.sp, 19.sp, 0.sp)
+    val scaleT4Regular = yappTextStyle(FontWeight.Normal, 14.sp, 19.sp, 0.sp)
+    val scaleT4Bold = yappTextStyle(FontWeight.Bold, 14.sp, 19.sp, 0.sp)
+    val scaleT5Regular = yappTextStyle(FontWeight.Normal, 16.sp, 22.sp, 0.sp)
+    val scaleT5Bold = yappTextStyle(FontWeight.Bold, 16.sp, 22.sp, 0.sp)
+    val scaleT6Bold = yappTextStyle(FontWeight.Bold, 18.sp, 24.sp, 0.sp)
+    val scaleT7Bold = yappTextStyle(FontWeight.Bold, 20.sp, 27.sp, 0.sp)
+    val scaleT8Bold = yappTextStyle(FontWeight.Bold, 22.sp, 30.sp, 0.sp)
+    val scaleT10Bold = yappTextStyle(FontWeight.Bold, 26.sp, 35.sp, 0.sp)
+
     val display1Bold = yappTextStyle(FontWeight.Bold, 56.sp, 72.sp, (-1.7864).sp)
     val display2Bold = yappTextStyle(FontWeight.Bold, 40.sp, 52.sp, (-1.128).sp)
 

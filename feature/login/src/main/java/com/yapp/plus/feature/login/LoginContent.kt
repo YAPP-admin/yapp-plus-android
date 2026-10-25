@@ -30,7 +30,7 @@ fun LoginContent(
     modifier: Modifier = Modifier,
     isLoginEnabled: Boolean = true,
 ) {
-    AuthLayout(onBack = onBack, modifier = modifier) {
+    AuthLayout(onBack = onBack, modifier = modifier, showBack = false) {
         Column(
             modifier =
                 Modifier
@@ -40,12 +40,12 @@ fun LoginContent(
                     .padding(top = 14.dp, bottom = 24.dp),
         ) {
             AuthHeading(stringResource(R.string.auth_login_title))
-            Spacer(Modifier.height(48.dp))
+            Spacer(Modifier.height(84.dp))
             AuthGraphic(
-                resource = DesignSystemR.drawable.graphic_point_enabled,
+                resource = DesignSystemR.drawable.graphic_login,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
             )
-            Spacer(Modifier.height(64.dp))
+            Spacer(Modifier.height(104.dp))
             YappButton(
                 text = stringResource(R.string.auth_google_continue),
                 onClick = onGoogleLogin,

@@ -11,8 +11,6 @@ private fun SettingsScreenPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         SettingsScreen(
             appVersion = "1.0",
-            notificationsEnabled = true,
-            onNotificationEnabledChange = {},
             onBack = {},
             onLogout = {},
         )

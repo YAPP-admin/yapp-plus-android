@@ -37,7 +37,7 @@ fun MyProfileSummary(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(106.dp)
+                .height(102.dp)
                 .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -53,7 +53,7 @@ fun MyProfileSummary(
         ) {
             YappText(
                 text = profile ?: stringResource(R.string.my_profile_test_title),
-                style = YappTypography.headline1Bold,
+                style = YappTypography.scaleT7Bold,
                 color = YappMainColor.textPrimary,
             )
             when (state) {
@@ -66,7 +66,7 @@ fun MyProfileSummary(
                     TextButton(onClick = onRetry) {
                         YappText(
                             text = stringResource(R.string.my_retry),
-                            style = YappTypography.label1NormalMedium,
+                            style = YappTypography.scaleT4Regular,
                             color = YappMainColor.brand,
                         )
                     }
@@ -82,7 +82,7 @@ fun MyProfileSummary(
 private fun ProfileSubtitle(messageResource: Int) {
     YappText(
         text = stringResource(messageResource),
-        style = YappTypography.label1NormalMedium,
+        style = YappTypography.scaleT4Regular,
         color = YappHomeColor.subtle,
     )
 }

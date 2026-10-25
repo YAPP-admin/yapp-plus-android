@@ -86,8 +86,6 @@ class AccountDeletionFlowTest {
                         if (authenticated != null) {
                             SettingsScreen(
                                 appVersion = "1.0",
-                                notificationsEnabled = true,
-                                onNotificationEnabledChange = {},
                                 onBack = {},
                                 onLogout = viewModel::signOut,
                                 onDeleteAccount = viewModel::deleteAccount,

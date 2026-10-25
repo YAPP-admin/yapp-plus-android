@@ -3,5 +3,5 @@
     <string name="attendance_tab_home">홈</string>
     <string name="attendance_tab_schedule">일정</string>
     <string name="attendance_tab_board">게시판</string>
-    <string name="attendance_tab_my">My</string>
+    <string name="attendance_tab_my">MY</string>
 </resources>

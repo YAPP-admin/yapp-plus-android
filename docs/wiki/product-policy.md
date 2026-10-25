@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-22
+last_verified: 2026-10-25
 ---
 
 # 제품 정책
@@ -14,6 +14,15 @@ last_verified: 2026-10-22
 - [용어 정의서 2026](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84802e8e37d0e9ffee3fb9)
 
 두 Notion 문서는 YAPP 정관 ver 6.0 (2026), 운영세칙 ver 6.0 (2026)을 기준으로 합니다. 회원 분류와 앱 권한 용어는 [회원·역할 정책](membership-policy.md)에 정리합니다. 출처 문서가 [확인 필요], 미정, 개선안으로 표시한 내용은 확정 정책으로 취급하지 않습니다.
+
+## 개발 화면과 Figma 적용 범위
+
+- `develop`의 로그인·가입·완료·홈·게시판·일정·My·설정은 [원본 Figma](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487)의 배치, 타이포그래피, 색상, 에셋을 적용합니다. 이 UI 수정은 개발 브랜치에 반영하며, 비공개 테스트 배포 브랜치 생성과 분리합니다.
+- 승인된 MVP 범위는 유지합니다. Google 인증만 제공하고 공식 회원 역할·기수·점수, 읽음 수·읽음 확인, 신규 공지 유형, 팀 사진이나 보고 기능을 화면 비교용 가짜 데이터로 추가하지 않습니다.
+- My는 제출 이름·휴대폰 번호와 검증된 테스트 출석 내역을 표시합니다. Figma의 공식 회원 정보·점수 카드를 그대로 노출하지 않습니다. 설정의 계정 삭제 안내·문의 이메일·앱 버전도 유지합니다.
+- DEC-0035에서 확정한 홈 알림·출석 점수와 설정 알림 토글 숨김을 이 화면 정리에서 반영합니다. 이미 숨긴 보고 메뉴도 유지합니다.
+
+적용 상태: [이슈 #126](https://github.com/YAPP-admin/yapp-plus-android/issues/126)의 Figma 대조 결과를 develop 기준 작업 트리에 반영했습니다. 화면 검토용 Preview와 fixture는 debug/androidTest에만 두며 실제 화면의 Repository 연결은 유지합니다. 비공개 테스트 배포는 UI 수정이 develop에 반영된 뒤 별도의 release 브랜치로 준비합니다.
 
 ## Supabase 기반 비공개 테스트 MVP
 

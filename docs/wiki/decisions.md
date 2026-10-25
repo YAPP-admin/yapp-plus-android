@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-21
+last_verified: 2026-10-25
 ---
 
 # 결정 기록
@@ -353,3 +353,13 @@ last_verified: 2026-10-21
 - 적용 상태: 클라이언트와 DB migration의 로컬 검증 후, 사용자의 배포 요청에 따라 2026-10-22 YAPP Supabase main에 migration을 적용·이력 등록했습니다. connector에 대상 프로젝트 권한이 없어 로그인된 대시보드로 적용했으며 실제 DB의 임시 fixture를 롤백하는 검증과 Data API의 익명 요청 거부를 확인했습니다. [외부 안내 페이지](https://yapp-account-deletion.jeoungpeto0908.chatgpt.site)를 Sites에 공개하고 비인증 HTTP 200 및 문의 링크를 검증했습니다. 실제 사용자 계정은 삭제하지 않았습니다. 같은 날 사용자가 앱 생성 및 필수 선언·약관 동의에 승인하여 YAPP Plus 개발자 계정에 `YAPP 출석`(`com.yapp.plus`, 한국어, 무료)을 생성했습니다. 데이터 보안 양식에 데이터 수집 여부 예·계정 생성 방식 OAuth·공개 계정 삭제 URL을 임시저장하고 저장 완료 표시를 확인했습니다. 전체 데이터 보안 선언 제출과 스토어 공개는 남아 있습니다.
 - Android 통합 검증: #120의 계정 삭제 부분만 UI와 App 연결로 나눠 적용했습니다. UI는 [PR #122](https://github.com/YAPP-admin/yapp-plus-android/pull/122)로 develop에 통합했습니다. 단위 테스트 136건과 빈 API 36 에뮬레이터의 UI 3건·모의 RPC 통합 1건을 검증했으며 실제 계정 영구 삭제·운영 DB 변경은 하지 않았습니다. 전체 Hilt 내비게이션·OAuth·서버 삭제 E2E는 별도 검증 범위입니다. 홈 메뉴와 설정 알림 숨김은 이번 계정 삭제 통합에 포함하지 않았습니다.
 - 대체한 결정: DEC-0033의 계정 삭제 안내만 제공하던 상태와 알림 토글 노출을 대체합니다. YAPP 동아리 회원 자격과 앱 계정 삭제의 구분은 유지합니다.
+
+## DEC-0038 · 개발 화면을 원본 Figma에 맞춤
+
+- 기록일: 2026-10-25
+- 결정: `develop`의 앱 화면을 사용자가 지정한 Figma 앱 화면 페이지와 비교해 수정합니다. 실제 프레임의 `scale/t*` 타이포그래피, 배치·간격·색상·그래픽을 적용하며 Android 시스템 영역과 승인된 앱 데이터·기능 범위는 유지합니다.
+- 이유: 개발 중인 앱의 원본 디자인 불일치를 해결하고, 미연동 기능을 화면 정합성을 위해 임의로 활성화하지 않기 위해서입니다.
+- 근거: 현재 세션의 사용자 요청과 [이슈 #126](https://github.com/YAPP-admin/yapp-plus-android/issues/126).
+- 반영: [디자인시스템](design-system.md), [제품 정책](product-policy.md), Core 디자인시스템·Login·SignUp·Home·Board·Schedule·My·Setting·App.
+- 적용 상태: `develop`을 기준으로 PR #127·#128을 병합했고, My·설정·앱 연결은 후속 PR에서 반영합니다. DEC-0035의 홈 알림·출석 점수와 설정 알림 숨김도 적용합니다. 실제 Google OAuth·출석 서버 E2E는 이번 화면 비교 범위에 포함하지 않습니다.
+- 대체한 결정: 없음. 기존 MVP 기능·데이터 범위와 배포 브랜치 분리 결정을 유지합니다.

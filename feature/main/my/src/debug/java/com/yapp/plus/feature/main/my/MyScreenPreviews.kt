@@ -10,6 +10,17 @@ import com.yapp.plus.feature.main.my.model.MyProfileUiModel
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
 import com.yapp.plus.feature.main.my.model.MyUiState
 
+@Preview(name = "Submitted profile", widthDp = 393)
+@Composable
+private fun MyProfileContentPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        MyProfileContent(
+            state = MyProfileUiState.Content(MyProfileUiModel("홍길동", "01012345678")),
+            onRetry = {},
+        )
+    }
+}
+
 @Preview(name = "My page", widthDp = 393, heightDp = 692)
 @Preview(name = "Tall My page", widthDp = 393, heightDp = 852)
 @Preview(name = "Compact My page", widthDp = 320, heightDp = 560)

@@ -31,8 +31,6 @@ class AccountDeletionUiTest {
             YappTheme {
                 SettingsScreen(
                     appVersion = "1.0",
-                    notificationsEnabled = true,
-                    onNotificationEnabledChange = {},
                     onBack = {},
                     onLogout = {},
                     onDeleteAccount = { requests++ },
@@ -58,8 +56,6 @@ class AccountDeletionUiTest {
             YappTheme {
                 SettingsScreen(
                     appVersion = "1.0",
-                    notificationsEnabled = true,
-                    onNotificationEnabledChange = {},
                     onBack = {},
                     onLogout = {},
                     onDeleteAccount = {
@@ -88,8 +84,6 @@ class AccountDeletionUiTest {
             YappTheme {
                 SettingsScreen(
                     appVersion = "1.0",
-                    notificationsEnabled = true,
-                    onNotificationEnabledChange = {},
                     onBack = {},
                     onLogout = {},
                     onDeleteAccount = {

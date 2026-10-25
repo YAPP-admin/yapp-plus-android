@@ -21,3 +21,17 @@ private fun SettingsComponentsPreview() {
         }
     }
 }
+
+@Preview(widthDp = 393, showBackground = true)
+@Composable
+private fun SettingsHeaderPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) { SettingsHeader({}) }
+}
+
+@Preview(widthDp = 393, showBackground = true)
+@Composable
+private fun SettingsLinkRowPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        SettingsLinkRow(title = "개인정보 처리 방침", onClick = {})
+    }
+}

@@ -2,12 +2,13 @@ package com.yapp.plus.feature.setting
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,20 +23,17 @@ import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.popup.YappAlertDialog
+import com.yapp.plus.core.designsystem.components.popup.YappAlertDialogVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.setting.components.AccountDeletionDialog
-import com.yapp.plus.feature.setting.components.SettingsDivider
 import com.yapp.plus.feature.setting.components.SettingsHeader
 import com.yapp.plus.feature.setting.components.SettingsLinkRow
-import com.yapp.plus.feature.setting.components.SettingsNotificationRow
 
 @Composable
 fun SettingsScreen(
     appVersion: String,
-    notificationsEnabled: Boolean,
-    onNotificationEnabledChange: (Boolean) -> Unit,
     onBack: () -> Unit,
     onLogout: () -> Unit,
     onDeleteAccount: () -> Unit = {},
@@ -60,50 +58,43 @@ fun SettingsScreen(
                 .background(YappMainColor.surface),
     ) {
         SettingsHeader(onBackClick = onBack)
-        SettingsNotificationRow(
-            enabled = notificationsEnabled,
-            onEnabledChange = onNotificationEnabledChange,
-        )
-        SettingsDivider()
-        SettingsLinkRow(
-            title = stringResource(R.string.settings_privacy_policy),
-            onClick = { runCatching { uriHandler.openUri(privacyPolicyUri) } },
-        )
-        SettingsDivider()
-        SettingsLinkRow(
-            title = stringResource(R.string.settings_terms),
-            onClick = { runCatching { uriHandler.openUri(termsUri) } },
-        )
-        SettingsDivider()
-        SettingsLinkRow(
-            title = stringResource(R.string.settings_account_withdrawal),
-            onClick = { activeDialog = SettingsDialog.AccountWithdrawal },
-            enabled = !isLoggingOut && !isDeletingAccount,
-        )
-        SettingsDivider()
-        SettingsLinkRow(
-            title = stringResource(R.string.settings_account_delete_contact),
-            onClick = { runCatching { uriHandler.openUri(deletionContactUri) } },
-        )
-        SelectionContainer {
-            YappText(
-                text = stringResource(R.string.settings_account_delete_email),
-                modifier = Modifier.padding(horizontal = 20.dp),
-                style = YappTypography.body2NormalRegular,
-                color = YappMainColor.textSecondary,
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            SettingsLinkRow(
+                title = stringResource(R.string.settings_privacy_policy),
+                onClick = { runCatching { uriHandler.openUri(privacyPolicyUri) } },
             )
+            SettingsLinkRow(
+                title = stringResource(R.string.settings_terms),
+                onClick = { runCatching { uriHandler.openUri(termsUri) } },
+            )
+            SettingsLinkRow(
+                title = stringResource(R.string.settings_account_withdrawal),
+                onClick = { activeDialog = SettingsDialog.AccountWithdrawal },
+                enabled = !isLoggingOut && !isDeletingAccount,
+            )
+            SettingsLinkRow(
+                title = stringResource(R.string.settings_account_delete_contact),
+                onClick = { runCatching { uriHandler.openUri(deletionContactUri) } },
+            )
+            SelectionContainer {
+                YappText(
+                    text = stringResource(R.string.settings_account_delete_email),
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    style = YappTypography.body2NormalRegular,
+                    color = YappMainColor.textSecondary,
+                )
+            }
         }
 
-        Spacer(Modifier.weight(1f))
         YappButton(
             text =
                 stringResource(
                     if (isLoggingOut) R.string.settings_logging_out else R.string.settings_logout,
                 ),
             onClick = { activeDialog = SettingsDialog.Logout },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).height(56.dp),
-            variant = YappButtonVariant.OutlinedSecondary,
-            size = YappButtonSize.Large,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(56.dp),
+            variant = YappButtonVariant.OutlinedAssistive,
+            size = YappButtonSize.Settings,
             enabled = !isLoggingOut && !isDeletingAccount,
         )
         YappText(
@@ -146,8 +137,10 @@ fun SettingsScreen(
         activeDialog == SettingsDialog.Logout -> {
             YappAlertDialog(
                 onDismissRequest = { activeDialog = null },
-                title = stringResource(R.string.settings_logout),
-                body = stringResource(R.string.settings_logout_confirmation),
+                title = stringResource(R.string.settings_logout_confirmation),
+                body = null,
+                variant = YappAlertDialogVariant.Compact,
+                compactWidth = 272.dp,
                 confirmText = stringResource(R.string.settings_logout),
                 dismissText = stringResource(R.string.settings_cancel),
                 onConfirm = {

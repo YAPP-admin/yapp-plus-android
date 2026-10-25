@@ -1,5 +1,6 @@
 package com.yapp.plus.feature.main.my
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,13 +45,14 @@ fun MyScreen(
     onSettingsClick: () -> Unit = {},
 ) {
     Column(
-        modifier = modifier.fillMaxSize().background(YappMainColor.background),
+        modifier = modifier.fillMaxSize().background(YappMainColor.surface),
     ) {
         YappMainHeader(
             title = stringResource(R.string.my_title),
             iconResource = DesignSystemR.drawable.ic_settings,
             iconDescription = stringResource(R.string.my_settings),
             onIconClick = onSettingsClick,
+            iconTint = YappMainColor.textSubtle,
         )
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -69,6 +71,9 @@ fun MyScreen(
                 )
             }
             item {
+                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.fillMaxWidth().height(8.dp).background(YappMainColor.background))
+                Spacer(Modifier.height(12.dp))
                 MyMenuRow(
                     title = stringResource(R.string.my_attendance_history_title),
                     expanded = state.isAttendanceHistoryExpanded,
@@ -88,22 +93,23 @@ fun MyScreen(
 }
 
 @Composable
-private fun MyProfileContent(
+internal fun MyProfileContent(
     state: MyProfileUiState,
     onRetry: () -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
         color = YappMainColor.surface,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, YappMainColor.divider),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             YappText(
                 text = stringResource(R.string.my_information_title),
-                style = YappTypography.headline2Bold,
+                style = YappTypography.scaleT4Bold,
                 color = YappMainColor.textPrimary,
             )
             when (state) {
@@ -200,7 +206,7 @@ private fun ProfileField(
         )
         YappText(
             text = value,
-            style = YappTypography.body1NormalMedium,
+            style = YappTypography.scaleT5Regular,
             color = YappMainColor.textPrimary,
         )
     }

@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.yapp.plus.core.designsystem.components.navigation.YappBottomNavigation
 import com.yapp.plus.core.designsystem.components.navigation.YappBottomNavigationItem
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 
 @Composable
 internal fun MainTabNavigation(
@@ -19,6 +20,8 @@ internal fun MainTabNavigation(
                 iconResource = tab.iconResource,
                 isSelected = tab == selectedTab,
                 onClick = { onTabSelected(tab) },
+                selectedIconColor =
+                    if (tab == MainTab.My) YappMainColor.textPrimary else YappMainColor.textSecondary,
             )
         }
     }

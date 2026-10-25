@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.components.main.YappDetailHeader
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -32,27 +32,12 @@ fun SettingsHeader(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.fillMaxWidth().height(54.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier.align(Alignment.CenterStart).padding(start = 4.dp).size(48.dp),
-        ) {
-            Icon(
-                painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
-                contentDescription = stringResource(R.string.settings_back),
-                modifier = Modifier.size(24.dp),
-                tint = YappMainColor.textPrimary,
-            )
-        }
-        YappText(
-            text = stringResource(R.string.settings_title),
-            style = YappTypography.headline1Bold,
-            color = YappMainColor.textPrimary,
-        )
-    }
+    YappDetailHeader(
+        title = stringResource(R.string.settings_title),
+        backDescription = stringResource(R.string.settings_back),
+        onBack = onBackClick,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -65,7 +50,7 @@ fun SettingsNotificationRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(64.dp)
+                .height(60.dp)
                 .toggleable(value = enabled, role = Role.Switch, onValueChange = onEnabledChange)
                 .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -73,7 +58,7 @@ fun SettingsNotificationRow(
     ) {
         YappText(
             text = stringResource(R.string.settings_notifications),
-            style = YappTypography.body1NormalMedium,
+            style = YappTypography.scaleT5Bold,
             color = YappMainColor.textPrimary,
         )
         Switch(
@@ -103,7 +88,7 @@ fun SettingsLinkRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(64.dp)
+                .height(56.dp)
                 .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
                 .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -111,14 +96,14 @@ fun SettingsLinkRow(
     ) {
         YappText(
             text = title,
-            style = YappTypography.body1NormalMedium,
+            style = YappTypography.scaleT5Bold,
             color = YappMainColor.textPrimary,
         )
         Icon(
             painter = painterResource(DesignSystemR.drawable.ic_chevron_right),
             contentDescription = null,
-            modifier = Modifier.size(20.dp),
-            tint = YappMainColor.textSecondary,
+            modifier = Modifier.size(24.dp),
+            tint = YappMainColor.border,
         )
     }
 }

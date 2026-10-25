@@ -39,7 +39,6 @@ internal fun MainTabScaffold(
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
     var areNotificationsVisible by rememberSaveable { mutableStateOf(false) }
     var isSettingsVisible by rememberSaveable { mutableStateOf(false) }
-    var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
     var selectedNoticeId by rememberSaveable { mutableStateOf<Long?>(null) }
     BackHandler(enabled = selectedTab == MainTab.Board && selectedNoticeId != null) {
         selectedNoticeId = null
@@ -102,8 +101,6 @@ internal fun MainTabScaffold(
                     if (isSettingsVisible) {
                         SettingsScreen(
                             appVersion = BuildConfig.VERSION_NAME,
-                            notificationsEnabled = notificationsEnabled,
-                            onNotificationEnabledChange = { notificationsEnabled = it },
                             onBack = { isSettingsVisible = false },
                             onLogout = onLogout,
                             isLoggingOut = isLoggingOut,

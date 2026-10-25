@@ -51,8 +51,8 @@ fun MyMenuRow(
     ) {
         YappText(
             text = title,
-            style = YappTypography.body2NormalMedium,
-            color = YappMainColor.textSecondary,
+            style = YappTypography.scaleT5Bold,
+            color = YappMainColor.textPrimary,
         )
         Icon(
             painter = painterResource(DesignSystemR.drawable.ic_chevron_right),

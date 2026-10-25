@@ -21,19 +21,6 @@ import com.yapp.plus.feature.signup.SignUpRoute
 internal fun AppNavHost(
     onExit: () -> Unit,
     onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit = {},
-    isSessionInProgress: Boolean = false,
-    hasSessionError: Boolean = false,
-    onSessionErrorDismissed: () -> Unit = {},
-    onSessionRetry: (() -> Unit)? = null,
-    onSignUpComplete: (() -> Unit)? = null,
-    onLogout: () -> Unit = {},
-    isLoggingOut: Boolean = false,
-    hasLogoutError: Boolean = false,
-    onLogoutErrorDismissed: () -> Unit = {},
-    onDeleteAccount: () -> Unit = {},
-    isDeletingAccount: Boolean = false,
-    hasDeleteAccountError: Boolean = false,
-    onDeleteAccountErrorDismissed: () -> Unit = {},
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
     navController: NavHostController = rememberNavController(),
@@ -52,31 +39,16 @@ internal fun AppNavHost(
             LoginRoute(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
                 onGoogleCredentialReceived = onGoogleCredentialReceived,
-                isSessionInProgress = isSessionInProgress,
-                hasSessionError = hasSessionError,
-                onSessionErrorDismissed = onSessionErrorDismissed,
-                onSessionRetry = onSessionRetry,
             )
         }
         composable<AppNavigationDestination.SignUp> { entry ->
             SignUpRoute(
                 onBack = { navController.navigateBackFromSignUp(entry, onExit) },
-                onSignUpComplete = {
-                    navController.completeSignUpFrom(entry, onSignUpComplete)
-                },
                 modifier = Modifier.fillMaxSize(),
             )
         }
         composable<AppNavigationDestination.Main> { entry ->
             MainTabScaffold(
-                onLogout = onLogout,
-                isLoggingOut = isLoggingOut,
-                hasLogoutError = hasLogoutError,
-                onLogoutErrorDismissed = onLogoutErrorDismissed,
-                onDeleteAccount = onDeleteAccount,
-                isDeletingAccount = isDeletingAccount,
-                hasDeleteAccountError = hasDeleteAccountError,
-                onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
                 onAttendanceComplete = {
                     navController.navigateFrom(entry, AppNavigationDestination.AttendanceComplete)
                 },
@@ -122,18 +94,6 @@ internal fun NavHostController.navigateBackFrom(
         onExit()
     } else {
         popBackStack()
-    }
-}
-
-internal fun NavHostController.completeSignUpFrom(
-    entry: NavBackStackEntry,
-    onSignUpComplete: (() -> Unit)?,
-) {
-    if (!canNavigateFrom(entry)) return
-    if (onSignUpComplete == null) {
-        navigateFrom(entry, AppNavigationDestination.Main)
-    } else {
-        onSignUpComplete()
     }
 }
 

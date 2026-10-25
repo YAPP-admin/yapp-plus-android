@@ -19,10 +19,6 @@ fun LoginRoute(
     onBack: () -> Unit,
     onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit,
     modifier: Modifier = Modifier,
-    isSessionInProgress: Boolean = false,
-    hasSessionError: Boolean = false,
-    onSessionErrorDismissed: () -> Unit = {},
-    onSessionRetry: (() -> Unit)? = null,
 ) {
     val viewModel: LoginViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -32,13 +28,10 @@ fun LoginRoute(
 
     val coroutineScope = rememberCoroutineScope()
     val requestLogin: () -> Unit = {
-        if (!isSessionInProgress) {
-            onSessionErrorDismissed()
-            coroutineScope.launch {
-                viewModel
-                    .onGoogleLogin(activity, serverClientId)
-                    ?.let(currentOnGoogleCredentialReceived)
-            }
+        coroutineScope.launch {
+            viewModel
+                .onGoogleLogin(activity, serverClientId)
+                ?.let(currentOnGoogleCredentialReceived)
         }
     }
 
@@ -46,18 +39,15 @@ fun LoginRoute(
         onBack = onBack,
         onGoogleLogin = requestLogin,
         modifier = modifier,
-        isLoginEnabled = !uiState.isLoginInProgress && !isSessionInProgress,
+        isLoginEnabled = !uiState.isLoginInProgress,
     )
 
-    if (uiState.dialog == LoginUiState.Dialog.Error || hasSessionError) {
+    if (uiState.dialog == LoginUiState.Dialog.Error) {
         LoginErrorDialog(
-            onDismiss = {
-                viewModel.dismissDialog()
-                onSessionErrorDismissed()
-            },
+            onDismiss = viewModel::dismissDialog,
             onRetry = {
                 viewModel.dismissDialog()
-                if (hasSessionError && onSessionRetry != null) onSessionRetry() else requestLogin()
+                requestLogin()
             },
         )
     }

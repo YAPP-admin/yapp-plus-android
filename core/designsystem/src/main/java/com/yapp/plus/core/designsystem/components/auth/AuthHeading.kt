@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -17,12 +16,7 @@ fun AuthHeading(
     YappText(
         text = text,
         modifier = modifier.semantics { heading() },
-        style =
-            YappTypography.title3Bold.copy(
-                fontSize = 26.sp,
-                lineHeight = 36.sp,
-                letterSpacing = (-0.5).sp,
-            ),
+        style = YappTypography.scaleT10Bold,
         color = YappAuthColor.textPrimary,
     )
 }

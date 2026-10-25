@@ -19,12 +19,12 @@ internal data class ButtonMetrics(
                 YappButtonSize.HomePrimary ->
                     ButtonMetrics(
                         20.dp,
-                        16.dp,
+                        15.dp,
                         12.dp,
                         8.dp,
                         24.dp,
                         Alignment.CenterHorizontally,
-                        54.dp,
+                        52.dp,
                     )
                 YappButtonSize.HomeSecondary ->
                     ButtonMetrics(
@@ -39,13 +39,15 @@ internal data class ButtonMetrics(
                 YappButtonSize.CallToAction ->
                     ButtonMetrics(
                         horizontalPadding = 20.dp,
-                        verticalPadding = 16.dp,
+                        verticalPadding = 15.dp,
                         cornerRadius = 12.dp,
                         iconSpacing = 8.dp,
                         iconSize = 24.dp,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     )
 
+                YappButtonSize.Settings ->
+                    ButtonMetrics(20.dp, 16.dp, 12.dp, 8.dp, 24.dp, Alignment.CenterHorizontally)
                 YappButtonSize.Social ->
                     ButtonMetrics(
                         horizontalPadding = 20.dp,

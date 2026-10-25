@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
@@ -60,10 +59,7 @@ internal fun YappPopupActionButton(
                 text = text,
                 style =
                     if (isCompact) {
-                        YappTypography.label1NormalBold.copy(
-                            lineHeight = 18.sp,
-                            letterSpacing = 0.sp,
-                        )
+                        YappTypography.scaleT4Bold
                     } else {
                         YappTypography.body1NormalBold
                     },

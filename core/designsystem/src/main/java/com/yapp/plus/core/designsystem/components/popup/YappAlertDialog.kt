@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -44,12 +45,13 @@ fun YappAlertDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     variant: YappAlertDialogVariant = YappAlertDialogVariant.Default,
+    compactWidth: Dp = compactDialogMaxWidth,
 ) {
     val isCompact = variant == YappAlertDialogVariant.Compact
-    val shape = RoundedCornerShape(if (isCompact) 12.dp else 20.dp)
+    val shape = RoundedCornerShape(if (isCompact) 16.dp else 20.dp)
     val elevation = if (isCompact) 0.dp else 36.dp
     val horizontalPadding = if (isCompact) 20.dp else 16.dp
-    val widthModifier = if (isCompact) Modifier.widthIn(max = compactDialogMaxWidth) else Modifier
+    val widthModifier = if (isCompact) Modifier.widthIn(max = compactWidth) else Modifier
     val textAlign = if (isCompact) TextAlign.Start else TextAlign.Center
     val titleColor = if (isCompact) YappColor.foregroundNeutral else YappColor.textPrimary
     val bodyColor = if (isCompact) YappColor.foregroundMuted else YappColor.textSecondary
@@ -93,7 +95,7 @@ fun YappAlertDialog(
                                 modifier = Modifier.fillMaxWidth(),
                                 style =
                                     if (isCompact) {
-                                        YappTypography.headline1Bold.copy(letterSpacing = 0.sp)
+                                        YappTypography.scaleT6Bold
                                     } else {
                                         YappTypography.headline1Bold
                                     },
@@ -107,7 +109,7 @@ fun YappAlertDialog(
                                 modifier = Modifier.fillMaxWidth(),
                                 style =
                                     if (isCompact) {
-                                        YappTypography.label1NormalMedium.copy(letterSpacing = 0.sp)
+                                        YappTypography.scaleT4Medium
                                     } else {
                                         YappTypography.body2NormalRegular.copy(
                                             fontSize = 14.sp,

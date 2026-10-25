@@ -13,16 +13,16 @@ enum class AuthStatus(
     Pending(
         titleResource = R.string.auth_pending_title,
         descriptionResource = R.string.auth_pending_description,
-        graphicResource = DesignSystemR.drawable.graphic_point_construction,
+        graphicResource = DesignSystemR.drawable.graphic_auth_pending,
     ),
     Complete(
         titleResource = R.string.auth_complete_title,
         descriptionResource = R.string.auth_complete_description,
-        graphicResource = DesignSystemR.drawable.graphic_point_happy,
+        graphicResource = DesignSystemR.drawable.graphic_auth_complete,
     ),
     Problem(
         titleResource = R.string.auth_problem_title,
         descriptionResource = R.string.auth_problem_description,
-        graphicResource = DesignSystemR.drawable.graphic_point_disabled,
+        graphicResource = DesignSystemR.drawable.graphic_auth_problem,
     ),
 }

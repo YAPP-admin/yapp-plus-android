@@ -17,8 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 
 private val navigationDividerHeight = 1.dp
-private val navigationHorizontalPadding = 16.dp
-private val navigationVerticalPadding = 8.dp
+private val navigationHorizontalPadding = 20.dp
 
 @Composable
 fun YappBottomNavigation(
@@ -36,7 +35,7 @@ fun YappBottomNavigation(
                 Modifier
                     .fillMaxWidth()
                     .height(navigationDividerHeight)
-                    .background(YappMainColor.divider),
+                    .background(YappMainColor.border),
         )
         Row(
             modifier =
@@ -44,10 +43,12 @@ fun YappBottomNavigation(
                     .fillMaxWidth()
                     .selectableGroup()
                     .padding(
-                        horizontal = navigationHorizontalPadding,
-                        vertical = navigationVerticalPadding,
+                        start = navigationHorizontalPadding,
+                        end = navigationHorizontalPadding,
+                        top = 7.dp,
+                        bottom = 4.dp,
                     ),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             content = content,
         )

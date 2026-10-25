@@ -94,15 +94,13 @@ fun YappButton(
 @Composable
 private fun buttonTextStyle(size: YappButtonSize) =
     when (size) {
+        YappButtonSize.Settings -> YappTypography.scaleT6Bold
         YappButtonSize.HomePrimary -> YappHomeTypography.cardTitle
         YappButtonSize.HomeSecondary -> YappHomeTypography.bodyBold
         YappButtonSize.CallToAction ->
-            YappTypography.headline1Bold.copy(
-                lineHeight = 24.sp,
-                letterSpacing = 0.sp,
-            )
+            YappTypography.scaleT5Bold
 
-        YappButtonSize.Social -> YappTypography.body1NormalBold.copy(letterSpacing = 0.sp)
+        YappButtonSize.Social -> YappTypography.scaleT5Bold
 
         YappButtonSize.XLarge,
         YappButtonSize.Large,

@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-21
+last_verified: 2026-10-25
 ---
 
 # 디자인시스템
@@ -109,3 +109,38 @@ Figma의 Bold 표기는 해당 스타일의 실제 글꼴 굵기를 따릅니다
 [Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284)은 `YappHomeColor`와 `YappHomeTypography`로 표현합니다. 배경 `#F3F4F5`, 검정 액션 `#2A3038`, 비활성 액션 `#555D6D`의 50% 투명도, 오류 `#FA342C`와 원본의 11–26sp·15–35sp 스타일을 사용합니다. 공통 기본값과 다른 탭의 표현은 유지합니다.
 
 홈 빠른 메뉴의 두 그래픽과 출석 완료의 캐릭터·좌우 장식, tooltip 화살표·코드 오류 아이콘은 해당 Figma 레이어를 PNG로 직접 내보낸 `:feature:main:home`의 `drawable-nodpi/home_*.png`입니다. 빠른 메뉴는 원본 카드에서 실제 보이는 101.5×70dp 영역을 유지합니다. 기존 YAPP 로고와 빈 상태 벡터도 재사용하며, 작은 빈 상태는 원본의 50% 투명도를 적용합니다. 완료 그래픽의 원형 배경은 Figma Frame의 채움·반경으로 구성하고, 세 레이어는 Motion context의 공통 2초 타임라인을 Compose에서 재생합니다. 시스템 애니메이션이 꺼져 있으면 정적인 완료 그래픽을 표시합니다.
+
+
+## 비공개 테스트 화면의 원본 정합성
+
+`release/v1.0.1`의 화면 표현은 [Figma 앱 화면 페이지](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487)의 실제 프레임을 기준으로 합니다. 기존 Typography 페이지와 다른 화면별 `scale/t*` 스타일은 `YappTypography.scaleT*` 토큰으로 제공합니다. 모두 자간 0이며 Regular 400, Medium 500, Bold 700을 사용합니다.
+
+| 토큰 크기 | 글자 / 행간(sp) |
+| --- | --- |
+| t2 | 12 / 16 |
+| t3 | 13 / 18 |
+| t4 | 14 / 19 |
+| t5 | 16 / 22 |
+| t6 | 18 / 24 |
+| t7 | 20 / 27 |
+| t8 | 22 / 30 |
+| t10 | 26 / 35 |
+
+글꼴 패딩은 사용하지 않고 행간은 가운데 정렬하며 첫 줄·마지막 줄도 자르지 않습니다(`includeFontPadding = false`, `LineHeightStyle.Trim.None`). 이 설정으로 22sp 행간과 상하 15dp 여백을 사용하는 가입 CTA가 원본의 52dp 높이를 유지합니다.
+
+- 인증 제목은 26/35sp, Google 버튼은 54dp, 가입·출석 CTA는 52dp입니다.
+- 메인 헤더는 54dp, 하단 탭은 시스템 내비게이션 영역을 제외한 64dp입니다. 상세·설정 헤더는 왼쪽 뒤로가기와 가운데 제목을 배치하며 공지 상세에는 하단 탭을 표시하지 않습니다.
+- 공지 유형 탭은 한 줄 너비를 확보하고, 목록은 상단부터 배지·제목·날짜를 표시합니다. 날짜는 한국 시간의 `yyyy.MM.dd (E)`로 표시합니다.
+- 일정은 날짜 열 70dp, 열 간격 16dp, 행의 위아래 여백 20dp를 사용합니다. 정규 세션 배지는 노란색이며 별도의 진행 상태 배지나 오늘 배경을 추가하지 않습니다.
+- 로그아웃 팝업은 너비 272dp·모서리 16dp, 인증 안내 팝업은 너비 285dp입니다. 홈 입력 시트는 가로 여백 10dp와 모서리 16dp를 적용하고 Android 시스템 내비게이션 영역 위에 배치합니다.
+
+인증 그래픽은 벡터 변환에서 생긴 클리핑·음영 차이를 없애기 위해 해당 Figma 그래픽 레이어 자체를 내보낸 PNG를 `drawable-nodpi`에 제공합니다. 화면 전체 이미지를 UI로 사용하지 않습니다.
+
+| 리소스 | Figma 그래픽 레이어 |
+| --- | --- |
+| `graphic_login.png` | `222:40179` |
+| `graphic_auth_complete.png` | `222:40089` |
+| `graphic_auth_problem.png` | `222:40103` |
+| `graphic_auth_pending.png` | `222:40239` |
+
+화면 크기·시스템 바·키보드 영역은 Android의 실제 inset을 따릅니다. Figma의 iOS 상태 바와 홈 인디케이터는 앱 UI로 그리지 않습니다. 지원하지 않는 메뉴와 테스트 프로필 표현은 [비공개 테스트 제품 정책](product-policy.md#비공개-테스트-화면과-figma-적용-범위)을 따릅니다.

@@ -108,11 +108,11 @@ internal data class ButtonColors(
                         container = YappColor.transparent,
                         content =
                             if (enabled) {
-                                YappColor.textPrimary
+                                YappColor.foregroundNeutral
                             } else {
                                 YappColor.disabledOutlineContent
                             },
-                        border = YappColor.border,
+                        border = YappColor.strokeNeutralWeak,
                     )
             }
     }

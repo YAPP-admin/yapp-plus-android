@@ -17,7 +17,7 @@ class MainActivityNavigationTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun startsAtLoginWithoutAStoredSupabaseSession() {
+    fun startsAtCredentialLogin() {
         composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()
         composeRule.onNodeWithText("이번주 세션").assertDoesNotExist()
     }

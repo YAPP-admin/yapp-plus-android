@@ -24,6 +24,22 @@ class AccountDeletionUiTest {
     val composeRule = createComposeRule()
 
     @Test
+    fun authenticationActionsAreDisabledWithoutServerCallbacks() {
+        composeRule.setContent {
+            YappTheme {
+                SettingsScreen(
+                    appVersion = "1.0",
+                    onBack = {},
+                    onLogout = null,
+                )
+            }
+        }
+        composeRule.onNodeWithText("알림").assertDoesNotExist()
+        composeRule.onNodeWithText("앱 계정 삭제").assertIsNotEnabled()
+        composeRule.onNodeWithText("로그아웃").assertIsNotEnabled()
+    }
+
+    @Test
     fun confirmationSurvivesRestorationAndCancelDoesNotDelete() {
         var requests = 0
         val restoration = StateRestorationTester(composeRule)

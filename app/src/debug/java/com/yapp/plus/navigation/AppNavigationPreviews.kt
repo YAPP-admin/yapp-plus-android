@@ -6,11 +6,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.yapp.plus.core.designsystem.theme.YappTheme
 
-@Preview(name = "Session restoration", widthDp = 393, heightDp = 756)
+@Preview(name = "Splash", widthDp = 393, heightDp = 756)
 @Composable
-private fun AppStartContentPreview() {
+private fun YappSplashScreenPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        AppStartContent(uiState = AppAuthUiState.Restoring) {}
+        YappSplashScreen()
     }
 }
 

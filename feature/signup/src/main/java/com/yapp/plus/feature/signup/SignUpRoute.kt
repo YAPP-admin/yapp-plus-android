@@ -12,7 +12,6 @@ import com.yapp.plus.feature.signup.model.SignUpStep
 @Composable
 fun SignUpRoute(
     onBack: () -> Unit,
-    @Suppress("UNUSED_PARAMETER") onSignUpComplete: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {

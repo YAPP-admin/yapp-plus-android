@@ -8,6 +8,8 @@ import java.time.ZoneId
 import java.time.temporal.TemporalAdjusters
 
 sealed interface HomeNoticeUiState {
+    data object Unavailable : HomeNoticeUiState
+
     data object Loading : HomeNoticeUiState
 
     data object Error : HomeNoticeUiState

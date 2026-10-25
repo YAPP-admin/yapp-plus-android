@@ -36,6 +36,8 @@ internal fun HomeNoticeContent(
     modifier: Modifier = Modifier,
 ) {
     when (state) {
+        HomeNoticeUiState.Unavailable ->
+            HomeEmptyState(stringResource(R.string.home_notices_preparing), modifier)
         HomeNoticeUiState.Loading ->
             Box(modifier, Alignment.Center) {
                 CircularProgressIndicator(color = YappHomeColor.session)

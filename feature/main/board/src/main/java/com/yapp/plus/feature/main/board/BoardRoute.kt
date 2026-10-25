@@ -1,7 +1,6 @@
 package com.yapp.plus.feature.main.board
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -17,18 +16,13 @@ fun BoardRoute(
 ) {
     val viewModel: BoardViewModel = hiltViewModel()
     val category by viewModel.category.collectAsStateWithLifecycle()
-    val notices by viewModel.notices.collectAsStateWithLifecycle()
-    val detail by viewModel.detail.collectAsStateWithLifecycle()
-    val displayedDetail = detail.takeIf { noticeId == viewModel.noticeId } ?: NoticeUiState.Loading
-    LaunchedEffect(noticeId) { viewModel.showNotice(noticeId) }
     BoardScreen(
         modifier = modifier,
         category = category,
-        notices = notices,
-        detail = displayedDetail.takeIf { noticeId != null },
+        notices = NoticeUiState.Unavailable,
+        detail = NoticeUiState.Unavailable.takeIf { noticeId != null },
         onCategorySelected = viewModel::selectCategory,
         onNoticeClick = onNoticeClick,
-        onRetry = if (noticeId == null) viewModel::retry else viewModel::retryDetail,
         onBack = onBack,
     )
 }

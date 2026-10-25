@@ -2,24 +2,21 @@ package com.yapp.plus.feature.main.my
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yapp.plus.feature.main.my.model.MyUiState
 
 @Composable
 fun MyRoute(
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: MyViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    var isHistoryExpanded by rememberSaveable { mutableStateOf(false) }
     MyScreen(
-        state = uiState,
-        onRetrySubmittedProfile = viewModel::retry,
-        onRetryTestProfile = viewModel::retryTestProfile,
-        onAttendanceHistoryClick = viewModel::toggleAttendanceHistory,
-        onRetryAttendanceHistory = viewModel::retryAttendanceHistory,
+        state = MyUiState(isAttendanceHistoryExpanded = isHistoryExpanded),
+        onAttendanceHistoryClick = { isHistoryExpanded = !isHistoryExpanded },
         onSettingsClick = onSettingsClick,
         modifier = modifier,
     )

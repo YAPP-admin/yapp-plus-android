@@ -7,10 +7,8 @@
     <string name="my_profile_error">회원 정보를 불러오지 못했어요</string>
     <string name="my_profile_loading">회원 정보를 불러오는 중이에요</string>
     <string name="my_profile_preparing">회원 정보 기능을 준비하고 있어요</string>
-    <string name="my_profile_unavailable">등록된 회원 정보가 없어요</string>
-    <string name="my_profile_test_title">YAPP 테스트 프로필</string>
-    <string name="my_profile_test_label">YAPP 비공개 테스트 계정</string>
     <string name="my_attendance_history_title">출석 내역</string>
+    <string name="my_attendance_history_preparing">출석 내역 기능을 준비하고 있어요</string>
     <string name="my_attendance_history_loading">출석 내역을 불러오는 중이에요</string>
     <string name="my_attendance_history_empty">완료된 출석이 없어요</string>
     <string name="my_attendance_history_error">출석 내역을 불러오지 못했어요</string>

@@ -27,6 +27,8 @@ fun MyAttendanceHistory(
     onRetry: () -> Unit,
 ) {
     when (state) {
+        MyAttendanceHistoryState.Unavailable ->
+            HistoryMessage(stringResource(R.string.my_attendance_history_preparing), modifier)
         MyAttendanceHistoryState.NotRequested -> Unit
         MyAttendanceHistoryState.Loading ->
             Box(

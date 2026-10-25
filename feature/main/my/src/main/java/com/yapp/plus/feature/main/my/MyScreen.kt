@@ -28,7 +28,6 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.my.components.MyAttendanceHistory
 import com.yapp.plus.feature.main.my.components.MyMenuRow
-import com.yapp.plus.feature.main.my.components.MyProfileSummary
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
 import com.yapp.plus.feature.main.my.model.MyUiState
@@ -38,8 +37,7 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 fun MyScreen(
     state: MyUiState = MyUiState(),
     modifier: Modifier = Modifier,
-    onRetrySubmittedProfile: () -> Unit = {},
-    onRetryTestProfile: () -> Unit = {},
+    onRetryProfile: () -> Unit = {},
     onAttendanceHistoryClick: () -> Unit = {},
     onRetryAttendanceHistory: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
@@ -59,15 +57,9 @@ fun MyScreen(
             contentPadding = PaddingValues(bottom = 24.dp),
         ) {
             item {
-                MyProfileSummary(
-                    state = state.testProfile,
-                    onRetry = onRetryTestProfile,
-                )
-            }
-            item {
                 MyProfileContent(
-                    state = state.submittedProfile,
-                    onRetry = onRetrySubmittedProfile,
+                    state = state.profile,
+                    onRetry = onRetryProfile,
                 )
             }
             item {

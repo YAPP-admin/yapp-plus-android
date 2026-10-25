@@ -40,7 +40,6 @@ import com.yapp.plus.feature.main.board.model.NoticeUiState
 import com.yapp.plus.feature.main.home.AvailableHomePreview
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.main.my.MyScreen
-import com.yapp.plus.feature.main.my.model.MyProfileSummaryState
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
 import com.yapp.plus.feature.main.my.model.MyUiState
@@ -186,11 +185,10 @@ private fun ReferenceScreen(screen: String) {
             ReferenceTab(MainTab.My) {
                 MyScreen(
                     MyUiState(
-                        submittedProfile =
+                        profile =
                             MyProfileUiState.Content(
                                 MyProfileUiModel("김야뿌", "01012345678"),
                             ),
-                        testProfile = MyProfileSummaryState.Content("김야뿌"),
                     ),
                 )
             }

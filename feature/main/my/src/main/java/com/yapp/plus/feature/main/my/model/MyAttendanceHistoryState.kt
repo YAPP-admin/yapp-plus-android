@@ -1,6 +1,8 @@
 package com.yapp.plus.feature.main.my.model
 
 sealed interface MyAttendanceHistoryState {
+    data object Unavailable : MyAttendanceHistoryState
+
     data object NotRequested : MyAttendanceHistoryState
 
     data object Loading : MyAttendanceHistoryState

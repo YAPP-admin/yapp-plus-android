@@ -64,17 +64,17 @@ fun BoardCategoryChip(
     Column(
         modifier =
             modifier
-                .width(IntrinsicSize.Min)
+                .width(IntrinsicSize.Max)
                 .selectable(selected = isSelected, role = Role.Tab, onClick = onClick),
     ) {
         YappText(
             stringResource(category.labelResource),
-            YappTypography.body1NormalBold,
+            YappTypography.scaleT5Bold,
             if (isSelected) YappMainColor.textPrimary else YappMainColor.textFaint,
             modifier =
                 Modifier
                     .padding(horizontal = 6.dp)
-                    .padding(top = 8.dp, bottom = 10.dp),
+                    .padding(top = 8.dp, bottom = 8.dp),
         )
         Box(
             modifier =
@@ -105,7 +105,7 @@ fun BoardEmptyState(
         )
         YappText(
             stringResource(message),
-            YappTypography.body1NormalRegular,
+            YappTypography.scaleT5Regular,
             YappMainColor.textSecondary,
             textAlign = TextAlign.Center,
         )

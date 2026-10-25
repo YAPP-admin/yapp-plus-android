@@ -45,7 +45,7 @@ class BoardViewModelTest {
             viewModel.selectCategory(BoardCategory.Operation)
             val operation = (viewModel.notices.value as NoticeUiState.Content).value.single()
             assertEquals(BoardCategory.Operation, operation.category)
-            assertEquals("2026-10-20", operation.date)
+            assertEquals("2026.10.20 (화)", operation.date)
             viewModel.selectCategory(BoardCategory.Session)
             viewModel.selectCategory(BoardCategory.Session)
             assertEquals(listOf(null, NoticeType.OPERATION, NoticeType.SESSION), calls)

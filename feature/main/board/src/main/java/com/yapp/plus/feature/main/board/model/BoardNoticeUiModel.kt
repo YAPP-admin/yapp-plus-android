@@ -2,6 +2,8 @@ package com.yapp.plus.feature.main.board.model
 
 import com.yapp.plus.domain.notice.Notice
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class BoardNoticeUiModel(
     val id: Long,
@@ -17,5 +19,8 @@ internal fun Notice.toUiModel() =
         title = title,
         content = content,
         category = BoardCategory.entries.first { it.noticeType == type },
-        date = publishedAt.atZone(ZoneId.of("Asia/Seoul")).toLocalDate().toString(),
+        date =
+            publishedAt.atZone(ZoneId.of("Asia/Seoul")).format(
+                DateTimeFormatter.ofPattern("yyyy.MM.dd (E)", Locale.KOREAN),
+            ),
     )

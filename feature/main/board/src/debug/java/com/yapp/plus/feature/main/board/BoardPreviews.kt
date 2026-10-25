@@ -9,6 +9,7 @@ import com.yapp.plus.core.preview.EnumPreviewParameterProvider
 import com.yapp.plus.feature.main.board.components.BoardCategoryChip
 import com.yapp.plus.feature.main.board.components.BoardCategorySelector
 import com.yapp.plus.feature.main.board.components.BoardEmptyState
+import com.yapp.plus.feature.main.board.components.BoardNoticeBadge
 import com.yapp.plus.feature.main.board.components.BoardNoticeCard
 import com.yapp.plus.feature.main.board.components.BoardNoticeDetail
 import com.yapp.plus.feature.main.board.components.BoardNoticeState
@@ -81,3 +82,11 @@ private fun previewNotice() =
 
 private class BoardCategoryPreviewParameterProvider :
     EnumPreviewParameterProvider<BoardCategory>(BoardCategory.entries)
+
+@Preview(showBackground = true)
+@Composable
+private fun BoardNoticeBadgePreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        BoardNoticeBadge(BoardCategory.Session)
+    }
+}

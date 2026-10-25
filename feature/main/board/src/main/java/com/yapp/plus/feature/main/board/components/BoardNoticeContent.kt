@@ -4,7 +4,10 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,7 +37,10 @@ internal fun <T> BoardNoticeState(
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit,
 ) {
-    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Box(
+        modifier.fillMaxWidth(),
+        contentAlignment = if (state is NoticeUiState.Content) Alignment.TopStart else Alignment.Center,
+    ) {
         when (state) {
             NoticeUiState.Loading -> CircularProgressIndicator(color = YappMainColor.brand)
             NoticeUiState.Empty -> BoardEmptyState(message = emptyMessage)
@@ -61,21 +67,22 @@ internal fun BoardNoticeCard(
     notice: BoardNoticeUiModel,
     onClick: () -> Unit,
 ) {
-    val categoryLabel = stringResource(notice.category.labelResource)
     Surface(onClick = onClick, color = YappMainColor.surface) {
         Column(Modifier.fillMaxWidth().padding(vertical = 20.dp)) {
+            BoardNoticeBadge(notice.category)
+            Spacer(Modifier.height(10.dp))
             YappText(
                 notice.title,
-                YappTypography.body1NormalBold,
+                YappTypography.scaleT5Bold,
                 YappMainColor.textPrimary,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
             YappText(
-                stringResource(R.string.board_metadata, categoryLabel, notice.date),
-                YappTypography.caption1Bold,
-                YappMainColor.textSecondary,
-                Modifier.padding(top = 8.dp),
+                notice.date,
+                YappTypography.scaleT2Medium,
+                YappMainColor.textSubtle,
+                Modifier.padding(top = 8.dp, bottom = 5.dp),
             )
         }
     }
@@ -84,18 +91,24 @@ internal fun BoardNoticeCard(
 
 @Composable
 internal fun BoardNoticeDetail(notice: BoardNoticeUiModel) {
-    val categoryLabel = stringResource(notice.category.labelResource)
     Column(
-        Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(vertical = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(bottom = 24.dp),
     ) {
-        YappText(notice.title, YappTypography.heading1Bold, YappMainColor.textPrimary)
-        YappText(
-            stringResource(R.string.board_metadata, categoryLabel, notice.date),
-            YappTypography.caption1Bold,
-            YappMainColor.textSecondary,
-        )
+        YappText(notice.title, YappTypography.scaleT7Bold, YappMainColor.textPrimary)
+        Row(
+            modifier = Modifier.padding(top = 8.dp, bottom = 28.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BoardNoticeBadge(notice.category)
+            YappText(notice.date, YappTypography.scaleT3Medium, YappMainColor.textFaint)
+        }
         HorizontalDivider(color = YappMainColor.divider)
-        YappText(notice.content, YappTypography.body1NormalRegular, YappMainColor.textPrimary)
+        YappText(
+            notice.content,
+            YappTypography.scaleT4Regular,
+            YappMainColor.textPrimary,
+            Modifier.padding(top = 28.dp),
+        )
     }
 }

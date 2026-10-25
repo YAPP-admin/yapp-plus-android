@@ -42,7 +42,7 @@ private fun SignUpContentPreview(
                 step = step,
                 value = previewValue,
                 onValueChange = { previewValue = it },
-                isNextEnabled = previewValue.isNotEmpty(),
+                isNextEnabled = step == SignUpStep.Name && previewValue.isNotEmpty(),
                 onNext = {},
                 onBack = {},
                 modifier =

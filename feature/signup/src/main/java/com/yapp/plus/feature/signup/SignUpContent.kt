@@ -49,8 +49,6 @@ fun SignUpContent(
     modifier: Modifier = Modifier,
     inputState: YappInputState = YappInputState.Default,
     isInputEnabled: Boolean = true,
-    isSaving: Boolean = false,
-    showProfileSaveError: Boolean = false,
 ) {
     check(step != SignUpStep.Complete)
     val isName = step == SignUpStep.Name
@@ -65,7 +63,7 @@ fun SignUpContent(
         bottom = {
             if (!isImeVisible) {
                 AuthPrimaryAction(
-                    text = stringResource(if (isSaving) R.string.auth_saving else R.string.auth_next),
+                    text = stringResource(R.string.auth_next),
                     onClick = onNext,
                     isEnabled = isNextEnabled,
                 )
@@ -102,10 +100,10 @@ fun SignUpContent(
                     ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             )
-            if (showProfileSaveError) {
+            if (!isName) {
                 Spacer(Modifier.height(8.dp))
                 YappText(
-                    text = stringResource(R.string.auth_profile_save_error),
+                    text = stringResource(R.string.auth_registration_preparing),
                     style = YappTypography.body2NormalRegular,
                     color = YappAuthColor.textSecondary,
                 )

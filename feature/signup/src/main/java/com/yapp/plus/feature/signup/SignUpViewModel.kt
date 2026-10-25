@@ -2,21 +2,14 @@ package com.yapp.plus.feature.signup
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.yapp.plus.domain.profile.Profile
-import com.yapp.plus.domain.profile.ProfileRepository
 import com.yapp.plus.domain.signup.Name
-import com.yapp.plus.domain.signup.PhoneNumber
 import com.yapp.plus.feature.signup.model.SignUpStep
 import com.yapp.plus.feature.signup.model.SignUpUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +17,6 @@ class SignUpViewModel
     @Inject
     constructor(
         private val savedStateHandle: SavedStateHandle,
-        private val profileRepository: ProfileRepository,
     ) : ViewModel() {
         private val mutableUiState =
             MutableStateFlow(
@@ -35,7 +27,6 @@ class SignUpViewModel
                 ),
             )
         val uiState: StateFlow<SignUpUiState> = mutableUiState.asStateFlow()
-        private var saveProfileJob: Job? = null
 
         fun updateName(value: String) {
             savedStateHandle[NAME_KEY] = value
@@ -44,40 +35,17 @@ class SignUpViewModel
 
         fun updatePhoneNumber(value: String) {
             savedStateHandle[PHONE_NUMBER_KEY] = value
-            mutableUiState.update { it.copy(phoneNumber = value, profileSaveFailed = false) }
+            mutableUiState.update { it.copy(phoneNumber = value) }
         }
 
         fun goToNextStep() {
-            val currentState = mutableUiState.value
-            val nextStep =
-                when (currentState.step) {
-                    SignUpStep.Name -> {
-                        if (!Name(currentState.name).isProvided) return
-                        SignUpStep.Phone
-                    }
-
-                    SignUpStep.Phone -> {
-                        if (currentState.isSavingProfile || !currentState.hasRequiredInputs()) return
-                        saveProfileAndComplete(currentState)
-                        return
-                    }
-
-                    SignUpStep.Complete -> return
-                }
-            setStep(nextStep)
+            val state = mutableUiState.value
+            if (state.step != SignUpStep.Name || !Name(state.name).isProvided) return
+            setStep(SignUpStep.Phone)
         }
 
         fun goBack() {
-            saveProfileJob?.cancel()
-            saveProfileJob = null
-            val previousStep =
-                when (mutableUiState.value.step) {
-                    SignUpStep.Name -> return
-                    SignUpStep.Phone -> SignUpStep.Name
-                    SignUpStep.Complete -> SignUpStep.Phone
-                }
-            mutableUiState.update { it.copy(isSavingProfile = false, profileSaveFailed = false) }
-            setStep(previousStep)
+            if (mutableUiState.value.step == SignUpStep.Phone) setStep(SignUpStep.Name)
         }
 
         fun clearSignUpInputs() {
@@ -92,49 +60,17 @@ class SignUpViewModel
             mutableUiState.update { it.copy(step = step) }
         }
 
-        private fun saveProfileAndComplete(state: SignUpUiState) {
-            saveProfileJob =
-                viewModelScope.launch {
-                    mutableUiState.update { it.copy(isSavingProfile = true, profileSaveFailed = false) }
-                    try {
-                        profileRepository.saveProfile(
-                            Profile(
-                                name = Name(state.name),
-                                phoneNumber = PhoneNumber(state.phoneNumber),
-                            ),
-                        )
-                        mutableUiState.update {
-                            it.copy(
-                                step = SignUpStep.Complete,
-                                isSavingProfile = false,
-                            )
-                        }
-                        savedStateHandle[STEP_KEY] = SignUpStep.Complete.name
-                    } catch (exception: CancellationException) {
-                        throw exception
-                    } catch (_: Exception) {
-                        mutableUiState.update {
-                            it.copy(isSavingProfile = false, profileSaveFailed = true)
-                        }
-                    }
-                }
-        }
-
-        private fun SignUpUiState.hasRequiredInputs(): Boolean =
-            Name(name).isProvided && PhoneNumber(phoneNumber).isProvided
-
-        private fun restoreStep(): SignUpStep {
-            val savedStep = savedStateHandle.get<String>(STEP_KEY) ?: return SignUpStep.Name
-            return SignUpStep.entries.firstOrNull { it.name == savedStep } ?: SignUpStep.Name
-        }
+        private fun restoreStep(): SignUpStep =
+            when (savedStateHandle.get<String>(STEP_KEY)) {
+                SignUpStep.Phone.name, SignUpStep.Complete.name -> SignUpStep.Phone
+                else -> SignUpStep.Name
+            }
 
         private fun restoreInput(
             key: String,
             legacyKey: String,
         ): String {
-            val value =
-                savedStateHandle.get<String>(key)
-                    ?: savedStateHandle.get<String>(legacyKey)
+            val value = savedStateHandle.get<String>(key) ?: savedStateHandle.get<String>(legacyKey)
             savedStateHandle.remove<String>(legacyKey)
             if (value != null) savedStateHandle[key] = value
             return value.orEmpty()

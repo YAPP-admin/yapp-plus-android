@@ -42,6 +42,7 @@ internal fun <T> BoardNoticeState(
         contentAlignment = if (state is NoticeUiState.Content) Alignment.TopStart else Alignment.Center,
     ) {
         when (state) {
+            NoticeUiState.Unavailable -> BoardEmptyState(message = R.string.board_preparing)
             NoticeUiState.Loading -> CircularProgressIndicator(color = YappMainColor.brand)
             NoticeUiState.Empty -> BoardEmptyState(message = emptyMessage)
             NoticeUiState.Error ->

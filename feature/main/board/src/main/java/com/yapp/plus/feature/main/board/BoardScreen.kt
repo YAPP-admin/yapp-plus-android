@@ -27,7 +27,7 @@ import com.yapp.plus.feature.main.board.model.NoticeUiState
 fun BoardScreen(
     modifier: Modifier = Modifier,
     category: BoardCategory = BoardCategory.All,
-    notices: NoticeUiState<List<BoardNoticeUiModel>> = NoticeUiState.Empty,
+    notices: NoticeUiState<List<BoardNoticeUiModel>> = NoticeUiState.Unavailable,
     detail: NoticeUiState<BoardNoticeUiModel>? = null,
     onCategorySelected: (BoardCategory) -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},

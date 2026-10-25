@@ -44,3 +44,11 @@ private fun MyScreenPreview() {
         )
     }
 }
+
+@Preview(name = "Profile preparing", widthDp = 393)
+@Composable
+private fun MyProfileUnavailablePreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        MyProfileContent(state = MyProfileUiState.Unavailable, onRetry = {})
+    }
+}

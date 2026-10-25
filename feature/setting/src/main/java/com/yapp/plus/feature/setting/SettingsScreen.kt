@@ -35,8 +35,8 @@ import com.yapp.plus.feature.setting.components.SettingsLinkRow
 fun SettingsScreen(
     appVersion: String,
     onBack: () -> Unit,
-    onLogout: () -> Unit,
-    onDeleteAccount: () -> Unit = {},
+    onLogout: (() -> Unit)?,
+    onDeleteAccount: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     isLoggingOut: Boolean = false,
     hasLogoutError: Boolean = false,
@@ -70,7 +70,7 @@ fun SettingsScreen(
             SettingsLinkRow(
                 title = stringResource(R.string.settings_account_withdrawal),
                 onClick = { activeDialog = SettingsDialog.AccountWithdrawal },
-                enabled = !isLoggingOut && !isDeletingAccount,
+                enabled = onDeleteAccount != null && !isLoggingOut && !isDeletingAccount,
             )
             SettingsLinkRow(
                 title = stringResource(R.string.settings_account_delete_contact),
@@ -95,7 +95,7 @@ fun SettingsScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(56.dp),
             variant = YappButtonVariant.OutlinedAssistive,
             size = YappButtonSize.Settings,
-            enabled = !isLoggingOut && !isDeletingAccount,
+            enabled = onLogout != null && !isLoggingOut && !isDeletingAccount,
         )
         YappText(
             text = stringResource(R.string.settings_app_version, appVersion),
@@ -113,7 +113,7 @@ fun SettingsScreen(
                 hasError = hasDeleteAccountError,
                 onConfirm = {
                     activeDialog = null
-                    onDeleteAccount()
+                    onDeleteAccount?.invoke()
                 },
                 onDismiss = {
                     activeDialog = null
@@ -145,7 +145,7 @@ fun SettingsScreen(
                 dismissText = stringResource(R.string.settings_cancel),
                 onConfirm = {
                     activeDialog = null
-                    onLogout()
+                    onLogout?.invoke()
                 },
                 onDismiss = { activeDialog = null },
             )

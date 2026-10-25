@@ -15,6 +15,7 @@ import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
+import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 
 @Composable
@@ -29,7 +30,6 @@ fun HomeRoute(
     val viewModel: HomeViewModel = hiltViewModel()
     val interactionViewModel: HomeInteractionViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val notices by viewModel.notices.collectAsStateWithLifecycle()
     val interaction by interactionViewModel.uiState.collectAsStateWithLifecycle()
     val session = (state as? AttendanceUiState.Content)?.value
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -48,8 +48,7 @@ fun HomeRoute(
             state = state,
             modifier = Modifier.fillMaxSize(),
             onRetry = viewModel::retry,
-            noticeState = notices,
-            onNoticeRetry = viewModel::retryNotices,
+            noticeState = HomeNoticeUiState.Unavailable,
             onNotificationsClick = onNotificationsClick,
             onAttendanceClick = interactionViewModel::openAttendanceCode,
             onSessionsClick = onSessionsClick,

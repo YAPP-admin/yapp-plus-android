@@ -113,6 +113,8 @@ internal fun MyProfileContent(
                 color = YappMainColor.textPrimary,
             )
             when (state) {
+                MyProfileUiState.Unavailable ->
+                    ProfileStatus(stringResource(R.string.my_profile_preparing))
                 MyProfileUiState.Loading ->
                     ProfileStatus(
                         message = stringResource(R.string.my_profile_loading),

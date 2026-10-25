@@ -1,27 +1,15 @@
 package com.yapp.plus.feature.signup
 
 import androidx.lifecycle.SavedStateHandle
-import com.yapp.plus.domain.profile.Profile
-import com.yapp.plus.domain.profile.ProfileRepository
-import com.yapp.plus.domain.signup.Name
-import com.yapp.plus.domain.signup.PhoneNumber
 import com.yapp.plus.feature.signup.model.SignUpStep
 import com.yapp.plus.feature.signup.model.SignUpUiState
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SignUpViewModelTest {
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
-
     @Test
     fun updatesOneInputWithoutClearingTheOther() {
-        val viewModel = SignUpViewModel(SavedStateHandle(), FakeProfileRepository())
+        val viewModel = SignUpViewModel(SavedStateHandle())
 
         viewModel.updateName("이름")
         viewModel.updatePhoneNumber("01012345678")
@@ -36,13 +24,13 @@ class SignUpViewModelTest {
     @Test
     fun recreatesInputsFromTheSavedStateHandle() {
         val handle = SavedStateHandle()
-        val viewModel = SignUpViewModel(handle, FakeProfileRepository())
+        val viewModel = SignUpViewModel(handle)
         viewModel.updateName("이름")
         viewModel.updatePhoneNumber("01012345678")
 
         val restoredHandle =
             SavedStateHandle(handle.keys().associateWith { key -> handle.get<Any?>(key) })
-        val restoredViewModel = SignUpViewModel(restoredHandle, FakeProfileRepository())
+        val restoredViewModel = SignUpViewModel(restoredHandle)
 
         assertEquals(viewModel.uiState.value, restoredViewModel.uiState.value)
         restoredViewModel.updatePhoneNumber("")
@@ -52,7 +40,7 @@ class SignUpViewModelTest {
 
     @Test
     fun preservesInputWithoutPhoneFormatValidation() {
-        val viewModel = SignUpViewModel(SavedStateHandle(), FakeProfileRepository())
+        val viewModel = SignUpViewModel(SavedStateHandle())
 
         viewModel.updateName(" ")
         viewModel.updatePhoneNumber("번호 형식 미확정")
@@ -73,7 +61,6 @@ class SignUpViewModelTest {
                         "authDemoPhoneNumber" to "번호 형식 미확정",
                     ),
                 ),
-                FakeProfileRepository(),
             )
 
         assertEquals(
@@ -83,55 +70,30 @@ class SignUpViewModelTest {
     }
 
     @Test
-    fun savesProfileBeforeShowingCompletion() =
-        runTest(mainDispatcherRule.dispatcher) {
-            val repository = FakeProfileRepository()
-            val viewModel = SignUpViewModel(SavedStateHandle(), repository)
-            viewModel.updateName("홍길동")
-            viewModel.goToNextStep()
-            viewModel.updatePhoneNumber("01012345678")
-
-            viewModel.goToNextStep()
-            advanceUntilIdle()
-
-            assertEquals(Profile(Name("홍길동"), PhoneNumber("01012345678")), repository.savedProfile)
-            assertEquals(SignUpStep.Complete, viewModel.uiState.value.step)
-        }
+    fun validInputsDoNotCompleteRegistrationWithoutServerAuthentication() {
+        val viewModel = SignUpViewModel(SavedStateHandle())
+        viewModel.updateName("홍길동")
+        viewModel.goToNextStep()
+        viewModel.updatePhoneNumber("01012345678")
+        repeat(3) { viewModel.goToNextStep() }
+        assertEquals(SignUpStep.Phone, viewModel.uiState.value.step)
+        assertEquals("01012345678", viewModel.uiState.value.phoneNumber)
+    }
 
     @Test
-    fun failedSaveKeepsInputsAndPhoneStepForRetry() =
-        runTest(mainDispatcherRule.dispatcher) {
-            val repository = FakeProfileRepository().apply { failure = IllegalStateException() }
-            val viewModel = SignUpViewModel(SavedStateHandle(), repository)
-            viewModel.updateName("홍길동")
-            viewModel.goToNextStep()
-            viewModel.updatePhoneNumber("01012345678")
+    fun previouslySavedCompletionRestoresToPhoneInput() {
+        val viewModel =
+            SignUpViewModel(
+                SavedStateHandle(mapOf(SignUpViewModel.STEP_KEY to SignUpStep.Complete.name)),
+            )
+        assertEquals(SignUpStep.Phone, viewModel.uiState.value.step)
+    }
 
-            viewModel.goToNextStep()
-            advanceUntilIdle()
-
-            assertEquals(SignUpStep.Phone, viewModel.uiState.value.step)
-            assertEquals("홍길동", viewModel.uiState.value.name)
-            assertEquals("01012345678", viewModel.uiState.value.phoneNumber)
-            assertEquals(true, viewModel.uiState.value.profileSaveFailed)
-
-            repository.failure = null
-            viewModel.goToNextStep()
-            advanceUntilIdle()
-
-            assertEquals(SignUpStep.Complete, viewModel.uiState.value.step)
-            assertEquals(false, viewModel.uiState.value.profileSaveFailed)
-        }
-}
-
-private class FakeProfileRepository : ProfileRepository {
-    var savedProfile: Profile? = null
-    var failure: Exception? = null
-
-    override suspend fun fetchProfile(): Profile? = savedProfile
-
-    override suspend fun saveProfile(profile: Profile) {
-        failure?.let { throw it }
-        savedProfile = profile
+    @Test
+    fun blankNameCannotAdvance() {
+        val viewModel = SignUpViewModel(SavedStateHandle())
+        viewModel.updateName("  ")
+        viewModel.goToNextStep()
+        assertEquals(SignUpStep.Name, viewModel.uiState.value.step)
     }
 }

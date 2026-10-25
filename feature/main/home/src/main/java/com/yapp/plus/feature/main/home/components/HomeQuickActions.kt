@@ -21,7 +21,6 @@ import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.feature.main.home.R
-import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun HomeQuickActions(
@@ -36,14 +35,6 @@ internal fun HomeQuickActions(
             image = R.drawable.home_action_sessions,
             onClick = onSessionsClick,
             modifier = Modifier.weight(1f),
-        )
-        HomeQuickAction(
-            title = stringResource(R.string.home_attendance_score),
-            description = stringResource(R.string.home_check),
-            image = DesignSystemR.drawable.ic_navigation_user,
-            onClick = onScoreClick,
-            modifier = Modifier.weight(1f),
-            imageModifier = Modifier.padding(end = 16.dp).size(width = 24.dp, height = 70.dp),
         )
     }
 }

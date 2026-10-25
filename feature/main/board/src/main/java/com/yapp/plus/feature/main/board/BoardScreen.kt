@@ -12,6 +12,7 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.components.main.YappDetailHeader
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.components.BoardCategorySelector
@@ -21,7 +22,6 @@ import com.yapp.plus.feature.main.board.components.BoardNoticeState
 import com.yapp.plus.feature.main.board.model.BoardCategory
 import com.yapp.plus.feature.main.board.model.BoardNoticeUiModel
 import com.yapp.plus.feature.main.board.model.NoticeUiState
-import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
 fun BoardScreen(
@@ -41,12 +41,16 @@ fun BoardScreen(
                 .fillMaxSize()
                 .background(YappMainColor.surface),
     ) {
-        YappMainHeader(
-            title = stringResource(R.string.board_title),
-            iconResource = DesignSystemR.drawable.ic_chevron_left.takeIf { detail != null },
-            iconDescription = stringResource(R.string.board_back),
-            onIconClick = onBack,
-        )
+        if (detail == null) {
+            YappMainHeader(title = stringResource(R.string.board_title))
+        } else {
+            val category = (detail as? NoticeUiState.Content)?.value?.category
+            YappDetailHeader(
+                title = stringResource(category?.labelResource ?: R.string.board_title),
+                backDescription = stringResource(R.string.board_back),
+                onBack = onBack,
+            )
+        }
         Column(
             modifier =
                 Modifier
@@ -61,7 +65,7 @@ fun BoardScreen(
             } else {
                 BoardCategorySelector(category, onCategorySelected)
                 BoardNoticeState(notices, onRetry, R.string.board_empty, Modifier.weight(1f)) {
-                    LazyColumn(state = listState) {
+                    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                         items(it, key = { notice -> notice.id }) { notice ->
                             BoardNoticeCard(notice, { onNoticeClick(notice.id) })
                         }

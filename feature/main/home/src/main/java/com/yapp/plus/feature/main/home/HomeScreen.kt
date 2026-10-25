@@ -52,9 +52,6 @@ fun HomeScreen(
     Column(modifier.fillMaxSize().background(YappHomeColor.background)) {
         YappMainHeader(
             title = stringResource(R.string.attendance_home_title),
-            iconResource = DesignSystemR.drawable.ic_notification,
-            iconDescription = stringResource(R.string.attendance_home_notifications),
-            onIconClick = onNotificationsClick,
             horizontalPadding = 16.dp,
             iconTint = YappHomeColor.subtle,
             leadingContent = {

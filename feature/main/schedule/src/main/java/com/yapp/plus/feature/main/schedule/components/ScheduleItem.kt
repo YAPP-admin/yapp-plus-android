@@ -1,6 +1,5 @@
 package com.yapp.plus.feature.main.schedule.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,21 +8,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.components.chip.YappChip
-import com.yapp.plus.core.designsystem.components.chip.YappChipColor
-import com.yapp.plus.core.designsystem.components.chip.YappChipSize
-import com.yapp.plus.core.designsystem.components.chip.YappChipStyle
 import com.yapp.plus.core.designsystem.components.main.YappIconLabel
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.main.schedule.R
 import com.yapp.plus.feature.main.schedule.model.ScheduleSessionUiModel
+import com.yapp.plus.feature.main.schedule.model.ScheduleTypeUiModel
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -36,16 +34,7 @@ fun ScheduleItem(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp)
-                    .background(
-                        color =
-                            if (session.status.isToday) {
-                                YappMainColor.background
-                            } else {
-                                YappMainColor.surface
-                            },
-                        shape = RoundedCornerShape(8.dp),
-                    ).padding(horizontal = 8.dp, vertical = 8.dp)
+                    .padding(vertical = 20.dp)
                     .alpha(
                         if (session.status.isPast) {
                             0.5f
@@ -57,7 +46,7 @@ fun ScheduleItem(
         ) {
             YappText(
                 session.dateLabel,
-                YappTypography.label1NormalBold,
+                YappTypography.scaleT4Bold,
                 YappMainColor.textPrimary,
                 modifier = Modifier.width(70.dp),
             )
@@ -71,33 +60,31 @@ fun ScheduleItem(
                 ) {
                     YappText(
                         session.name,
-                        YappTypography.label1NormalBold,
+                        YappTypography.scaleT4Bold,
                         YappMainColor.textPrimary,
                         modifier = Modifier.weight(1f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    session.status.labelResource?.let { labelRes ->
-                        YappChip(
-                            text = stringResource(labelRes),
-                            color = YappChipColor.CoolNeutral,
-                            size = YappChipSize.Small,
-                            style = YappChipStyle.Weak,
-                        )
+                    if (session.type == ScheduleTypeUiModel.Regular) {
+                        Surface(
+                            color = YappMainColor.warningWeak,
+                            shape = RoundedCornerShape(4.dp),
+                        ) {
+                            YappText(
+                                text = stringResource(session.type.labelResource),
+                                style = YappTypography.scaleT2Bold,
+                                color = YappMainColor.warning,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            )
+                        }
                     }
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    YappText(
-                        text = stringResource(session.type.labelResource),
-                        style = YappTypography.caption1Bold,
-                        color = YappMainColor.textSecondary,
+                    YappIconLabel(
+                        text = session.location ?: stringResource(R.string.schedule_location_missing),
+                        iconResource = DesignSystemR.drawable.ic_map_pin,
                     )
-                    session.location?.let { location ->
-                        YappIconLabel(
-                            text = location,
-                            iconResource = DesignSystemR.drawable.ic_map_pin,
-                        )
-                    }
                     YappIconLabel(
                         text = session.timeLabel,
                         iconResource = DesignSystemR.drawable.ic_clock,

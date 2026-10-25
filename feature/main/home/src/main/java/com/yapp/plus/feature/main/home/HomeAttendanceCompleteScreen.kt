@@ -1,7 +1,6 @@
 package com.yapp.plus.feature.main.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -54,15 +53,14 @@ fun HomeAttendanceCompleteScreen(
                     YappHomeTypography.bodyLarge,
                     YappHomeColor.muted,
                 )
-                Box(Modifier.fillMaxWidth().weight(1f).heightIn(min = 260.dp), Alignment.Center) {
-                    HomeCompletionGraphic()
-                }
+                Spacer(Modifier.height(160.dp))
+                HomeCompletionGraphic(Modifier.align(Alignment.CenterHorizontally))
             }
         }
         YappButton(
             text = stringResource(R.string.home_confirm),
             onClick = onConfirm,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
             variant = YappButtonVariant.SolidBrand,
             size = YappButtonSize.HomePrimary,
         )

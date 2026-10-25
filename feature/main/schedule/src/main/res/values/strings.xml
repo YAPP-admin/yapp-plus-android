@@ -5,10 +5,11 @@
     <string name="schedule_planning">기획 세션</string>
     <string name="schedule_place_second">ICT콤플렉스 6층 커뮤니티라운지</string>
     <string name="schedule_time_second">오후 12시 ~ 오후 6시</string>
-    <string name="schedule_regular">정기 세션</string>
+    <string name="schedule_regular">정규 세션</string>
     <string name="schedule_today">오늘</string>
     <string name="schedule_upcoming">예정</string>
     <string name="schedule_empty">등록된 세션 일정이 없어요</string>
     <string name="schedule_error">세션 일정을 불러오지 못했어요</string>
     <string name="schedule_retry">다시 시도</string>
+    <string name="schedule_location_missing">-</string>
 </resources>

@@ -55,7 +55,7 @@ internal fun MainTabScaffold(
         containerColor = YappMainColor.surface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            if (!isSettingsVisible) {
+            if (!isSettingsVisible && selectedNoticeId == null && !areNotificationsVisible) {
                 MainTabNavigation(
                     selectedTab = selectedTab,
                     onTabSelected = {

@@ -8,7 +8,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
     implementation(project(":core:designsystem"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation)

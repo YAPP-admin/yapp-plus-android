@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.network.auth.TokenStore
 import com.yapp.plus.core.network.auth.Tokens
+import com.yapp.plus.data.auth.datasource.session.SessionTokenLocalDataSource
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

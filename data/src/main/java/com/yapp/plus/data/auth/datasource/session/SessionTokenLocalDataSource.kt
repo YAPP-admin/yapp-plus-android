@@ -1,4 +1,4 @@
-package com.yapp.plus.data.auth
+package com.yapp.plus.data.auth.datasource.session
 
 import android.content.Context
 import com.yapp.plus.core.datastore.SessionDataStore

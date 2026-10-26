@@ -17,4 +17,6 @@ data class Tokens private constructor(
             refreshToken = tokens.refreshToken,
             sessionId = sessionId,
         )
+
+    override fun toString(): String = "Tokens(accessToken=<redacted>, refreshToken=<redacted>)"
 }

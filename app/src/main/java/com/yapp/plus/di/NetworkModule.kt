@@ -46,8 +46,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named(UNAUTHENTICATED_CLIENT)
-    fun provideUnauthenticatedApiHttpClient(): HttpClient =
-        ApiHttpClientFactory.createUnauthenticated()
+    fun provideUnauthenticatedClient(): HttpClient = ApiHttpClientFactory.createUnauthenticated()
 
     @Provides
     @Singleton

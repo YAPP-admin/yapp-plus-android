@@ -46,12 +46,14 @@ class SessionTokenRemoteDataSource(
     private fun AuthRenewalResponse.toRefreshResult(): RefreshResult {
         check(result == SIGNED_IN_RESULT) { "Unexpected session renewal result" }
         val tokens = checkNotNull(session) { "Missing renewed session" }
-        val accessToken = checkNotNull(tokens.accessToken.takeIf(String::isNotBlank)) {
-            "Missing renewed access token"
-        }
-        val refreshToken = checkNotNull(tokens.refreshToken?.takeIf(String::isNotBlank)) {
-            "Missing renewed refresh token"
-        }
+        val accessToken =
+            checkNotNull(tokens.accessToken.takeIf(String::isNotBlank)) {
+                "Missing renewed access token"
+            }
+        val refreshToken =
+            checkNotNull(tokens.refreshToken?.takeIf(String::isNotBlank)) {
+                "Missing renewed refresh token"
+            }
         return RefreshResult.Success(Tokens(accessToken, refreshToken))
     }
 

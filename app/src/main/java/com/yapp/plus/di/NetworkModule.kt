@@ -8,8 +8,8 @@ import com.yapp.plus.core.network.auth.TokenStore
 import com.yapp.plus.data.attendance.AttendanceDataSource
 import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
-import com.yapp.plus.data.auth.SessionTokenLocalDataSource
-import com.yapp.plus.data.auth.SessionTokenRemoteDataSource
+import com.yapp.plus.data.auth.datasource.session.SessionTokenLocalDataSource
+import com.yapp.plus.data.auth.datasource.session.SessionTokenRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleDataSource
 import com.yapp.plus.data.session.SessionScheduleRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
@@ -21,6 +21,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import javax.inject.Named
 import javax.inject.Singleton
 import com.yapp.plus.core.network.BuildConfig as NetworkBuildConfig
 
@@ -44,8 +45,15 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSessionTokenRefresher(): TokenRefresher =
-        SessionTokenRemoteDataSource(ApiHttpClientFactory.createUnauthenticated())
+    @Named(UNAUTHENTICATED_CLIENT)
+    fun provideUnauthenticatedApiHttpClient(): HttpClient =
+        ApiHttpClientFactory.createUnauthenticated()
+
+    @Provides
+    @Singleton
+    fun provideSessionTokenRefresher(
+        @Named(UNAUTHENTICATED_CLIENT) httpClient: HttpClient,
+    ): TokenRefresher = SessionTokenRemoteDataSource(httpClient)
 
     @Provides
     @Singleton
@@ -73,4 +81,6 @@ object NetworkModule {
     @Singleton
     fun provideAttendance(dataSource: AttendanceDataSource): AttendanceRepository =
         AttendanceRepositoryImpl(dataSource = dataSource)
+
+    private const val UNAUTHENTICATED_CLIENT = "unauthenticated"
 }

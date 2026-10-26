@@ -1,6 +1,7 @@
 package com.yapp.plus.data.auth
 
 import com.yapp.plus.core.network.auth.RefreshResult
+import com.yapp.plus.data.auth.datasource.session.SessionTokenRemoteDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -77,7 +78,7 @@ class SessionTokenRemoteDataSourceTest {
         }
 
     @Test
-    fun `successful response without rotated refresh token is rejected`() =
+    fun `successful response without rotated refresh token propagates failure`() =
         runTest {
             val engine =
                 MockEngine {

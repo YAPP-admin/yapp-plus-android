@@ -1,8 +1,8 @@
-package com.yapp.plus.data.auth
+package com.yapp.plus.data.auth.model.request
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class SessionRenewalRequest(
+internal data class SessionRenewalRequest(
     val refreshToken: String,
 )

@@ -28,25 +28,37 @@ suspend fun <T> invokeRequest(call: suspend () -> T): NetworkRequestResult<T> =
     } catch (exception: CancellationException) {
         throw exception
     } catch (exception: ResponseException) {
-        AndroidNetworkLogger.log(
-            "request http failure status=${exception.response.status.value}, " +
+        val statusCode = exception.response.status.value
+        val safeException =
+            ResponseException(
+                exception.response,
+                "HTTP request failed with status=$statusCode",
+            )
+        logRequestFailure(
+            "request http failure status=$statusCode, " +
                 "type=${exception.javaClass.simpleName}",
         )
-        NetworkRequestResult.Error(
-            NetworkRequestError.Http(exception.response.status.value, exception),
-        )
+        NetworkRequestResult.Error(NetworkRequestError.Http(statusCode, safeException))
     } catch (exception: HttpRequestTimeoutException) {
-        AndroidNetworkLogger.log("request timeout type=${exception.javaClass.simpleName}")
+        logRequestFailure("request timeout type=${exception.javaClass.simpleName}")
         NetworkRequestResult.Error(NetworkRequestError.Timeout(exception))
     } catch (exception: IOException) {
-        AndroidNetworkLogger.log("request network failure type=${exception.javaClass.simpleName}")
+        logRequestFailure("request network failure type=${exception.javaClass.simpleName}")
         NetworkRequestResult.Error(NetworkRequestError.Network(exception))
     } catch (exception: SerializationException) {
-        AndroidNetworkLogger.log(
+        logRequestFailure(
             "request serialization failure type=${exception.javaClass.simpleName}",
         )
         NetworkRequestResult.Error(NetworkRequestError.Serialization(exception))
     } catch (exception: Exception) {
-        AndroidNetworkLogger.log("request unknown failure type=${exception.javaClass.simpleName}")
+        logRequestFailure("request unknown failure type=${exception.javaClass.simpleName}")
         NetworkRequestResult.Error(NetworkRequestError.Unknown(exception))
     }
+
+private fun logRequestFailure(message: String) {
+    try {
+        AndroidNetworkLogger.log(message)
+    } catch (_: RuntimeException) {
+        // Logging must not replace the network result in local JVM tests.
+    }
+}

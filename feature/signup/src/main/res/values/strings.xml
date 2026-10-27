@@ -3,6 +3,12 @@
     <string name="auth_name_hint">본인 이름을 입력해 주세요</string>
     <string name="auth_phone_title">휴대폰 번호를 입력해 주세요</string>
     <string name="auth_phone_hint">휴대폰 번호를 입력해 주세요</string>
+    <string name="auth_name_required">이름을 입력해 주세요</string>
+    <string name="auth_name_invalid">이름을 확인해 주세요</string>
+    <string name="auth_name_too_long">이름은 100자 이하로 입력해 주세요</string>
+    <string name="auth_phone_required">휴대폰 번호를 입력해 주세요</string>
+    <string name="auth_phone_invalid">올바른 휴대폰 번호를 입력해 주세요</string>
+    <string name="auth_phone_already_exists">이미 가입된 휴대폰 번호예요. 번호를 확인해 주세요</string>
     <string name="auth_next">다음</string>
     <string name="auth_pending_title" tools:ignore="TypographyEllipsis">운영진 승인을 기다리고 있어요...</string>
     <string name="auth_pending_description">승인 완료까지 잠시만 기다려 주세요</string>
@@ -12,5 +18,14 @@
     <string name="auth_problem_title">앗, 문제가 발생했어요!</string>
     <string name="auth_problem_description">운영진에게 문의하면 빠르게 해결할 수 있어요</string>
     <string name="auth_contact">운영진에게 문의하기</string>
-    <string name="auth_registration_preparing">회원가입을 준비하고 있어요</string>
+    <string name="auth_signup_submit">회원가입</string>
+    <string name="auth_signup_submitting">가입 중...</string>
+    <string name="auth_signup_error_title">회원가입을 완료하지 못했어요</string>
+    <string name="auth_signup_error_description">네트워크 상태를 확인하고 다시 시도해 주세요</string>
+    <string name="auth_signup_invalid_request">이름과 휴대폰 번호를 확인해 주세요</string>
+    <string name="auth_signup_expired">가입 정보가 만료됐어요. 다시 로그인해 주세요</string>
+    <string name="auth_signup_already_exists">이미 가입된 정보가 있어요. 기존 계정으로 로그인해 주세요</string>
+    <string name="auth_signup_login_again">로그인으로 이동</string>
+    <string name="auth_retry">다시 시도</string>
+    <string name="auth_close">닫기</string>
 </resources>

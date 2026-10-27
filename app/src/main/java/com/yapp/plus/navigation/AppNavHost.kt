@@ -28,6 +28,14 @@ internal fun AppNavHost(
     onGoogleCredentialReceived: suspend (GoogleLoginCredential) -> AuthResult = {
         AuthResult.Failed(com.yapp.plus.domain.auth.AuthFailure.Unavailable)
     },
+    onLogout: (() -> Unit)? = null,
+    isLoggingOut: Boolean = false,
+    hasLogoutError: Boolean = false,
+    onLogoutErrorDismissed: () -> Unit = {},
+    onDeleteAccount: (() -> Unit)? = null,
+    isDeletingAccount: Boolean = false,
+    hasDeleteAccountError: Boolean = false,
+    onDeleteAccountErrorDismissed: () -> Unit = {},
     registrationToken: String? = null,
     sessionAuthenticated: Boolean? = null,
     onRegistrationCompleted: () -> Unit = {},
@@ -116,6 +124,14 @@ internal fun AppNavHost(
                 onAttendanceComplete = {
                     navController.navigateFrom(entry, AppNavigationDestination.AttendanceComplete)
                 },
+                onLogout = onLogout,
+                isLoggingOut = isLoggingOut,
+                hasLogoutError = hasLogoutError,
+                onLogoutErrorDismissed = onLogoutErrorDismissed,
+                onDeleteAccount = onDeleteAccount,
+                isDeletingAccount = isDeletingAccount,
+                hasDeleteAccountError = hasDeleteAccountError,
+                onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
             )
         }
         composable<AppNavigationDestination.AttendanceComplete> { entry ->

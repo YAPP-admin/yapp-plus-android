@@ -45,9 +45,9 @@ last_verified: 2026-10-27
 | 세션 갱신 | `POST /api/auth/session-renewals`; 암호화 저장·복원과 401 뒤 한 번 재시도 구현 |
 | Google 로그인 | `POST /api/auth/oidc/google/native-authentications`; `SIGNED_IN` 세션 저장·메인 이동, `SIGNUP_REQUIRED` 가입 토큰을 Signup으로 전달 |
 | 회원가입 | `POST /api/users`; registration token·이름·E.164 전화번호 제출, 성공 응답 세션 저장 |
-| 로그아웃 | `DELETE /api/auth/sessions/current`; 현재 refresh token 전달과 성공 뒤 로컬 token 삭제를 Data에 구현. 설정 콜백·로그인 이동은 이슈 #149 후속 PR |
+| 로그아웃 | `DELETE /api/auth/sessions/current`; 현재 refresh token을 전달하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도 |
 | 공지·My | 사용자용 API 연결은 후속; 현재 준비 중 상태 표시 |
-| 통합 탈퇴 | `DELETE /api/users/me`; 인증 client의 API 요청과 성공 뒤 로컬 token 삭제를 Data에 구현. 설정 안내는 모든 기수 소속·세션 종료와 개인정보 비식별화로 갱신. App 연결은 이슈 #149 후속 PR |
+| 통합 탈퇴 | `DELETE /api/users/me`; Bearer access token으로 요청하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도. 설정 안내·확인·진행·오류와 App 연결 구현 |
 
 저장된 YAPP 토큰 쌍은 앱 시작과 첫 인증 API 요청 전에 복원합니다. 초기 Google 세션 발급은 YAPP API 계약에 연결했습니다. 로컬 access-token 주입이나 가짜 인증 세션은 만들지 않습니다.
 
@@ -113,11 +113,11 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 - 설정의 알림은 앱 푸시 전체 설정이며 해제하면 푸시를 보내지 않습니다. 푸시 전달과 설정 저장이 미연동인 현재 개발 버전에서는 알림 토글을 숨깁니다. 이용약관은 각 약관의 Notion 페이지로 연결하고 현재 앱 버전을 표시합니다.
 - 이전 활동 이력은 기수·직군 조합이며 시작일과 종료일은 비어 있을 수 있습니다. 회원 용어와 공식 직군 범위는 [회원·역할 정책](membership-policy.md)을 따릅니다.
 
-## 앱 계정 삭제
+## 계정·기수 통합 탈퇴
 
-2026-10-27 확인한 dev 서버의 `DELETE /api/users/me`는 앱 계정 삭제와 동아리 탈퇴를 따로 처리하지 않는 통합 탈퇴 API입니다. Bearer access token이 필요하고 요청 본문 없이 성공 시 `204 No Content`를 반환합니다. 모든 기수 Membership을 `WITHDRAWN`으로 변경하고 모든 세션을 폐기하며, 개인정보를 비식별화하고 운영·출결 이력의 연결 ID를 보존합니다. Native 앱은 서버 성공 뒤에만 로컬 token 쌍을 삭제하고 로그인 화면으로 이동합니다. 실패하면 세션을 유지해 다시 시도할 수 있게 합니다. 설정 안내는 모든 기수 소속 탈퇴, 세션 폐기, 개인정보 비식별화와 복구 불가를 명시합니다. 재가입은 새 User와 승인 절차로 시작합니다. [서버 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#11-계정동아리-통합-탈퇴)을 따릅니다.
+2026-10-27 확인한 dev 서버의 `DELETE /api/users/me`는 앱 계정과 동아리 회원 자격을 함께 종료하는 통합 탈퇴 API입니다. Bearer access token이 필요하고 요청 본문 없이 성공 시 `204 No Content`를 반환합니다. 모든 기수 Membership을 `WITHDRAWN`으로 변경하고 모든 세션을 폐기하며, 개인정보를 비식별화하고 운영·출결 이력의 연결 ID를 보존합니다. Native 앱은 서버 성공 뒤에만 로컬 token 쌍을 삭제하고 로그인 화면으로 이동합니다. 실패하면 세션을 유지해 다시 시도할 수 있게 합니다. 설정 안내는 모든 기수 소속 탈퇴, 전체 세션 종료, 개인정보 비식별화와 복구 불가를 명시합니다. 재가입은 새 User와 승인 절차로 시작합니다. [서버 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#11-계정동아리-통합-탈퇴)을 따릅니다.
 
-사용자가 요청한 dev 계정의 직접 API 탈퇴에서 `204`, 기존 token의 인증 요청 거절 `401`, 로컬 token 삭제와 프로세스 재시작 후 로그인 화면을 확인했습니다. 이슈 #149에서 Domain·Data API와 설정 안내를 구현했으며 App 인증 흐름 연결은 후속입니다. 실행 콜백이 없는 현재 설정 동작은 비활성화 상태를 유지합니다. 실제 Settings 화면에서의 서버 탈퇴 E2E는 확인하지 않았습니다.
+사용자가 요청한 dev 계정의 직접 API 탈퇴에서 `204`, 기존 token의 인증 요청 거절 `401`, 로컬 token 삭제와 프로세스 재시작 후 로그인 화면을 확인했습니다. 이슈 #149는 Domain 계약, Data API, 설정 안내, App 인증 흐름 순서로 나눴으며 이 작업에서 설정 콜백까지 연결했습니다. 자동 Android 검증은 모의 콜백을 사용하는 범위이며, 실제 Settings 화면에서의 서버 탈퇴 E2E는 확인하지 않았습니다.
 
 ## 아직 정해지지 않은 항목
 

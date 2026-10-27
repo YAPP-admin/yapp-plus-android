@@ -10,17 +10,17 @@ last_verified: 2026-10-27
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션 |
+| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증 연결; 공지 준비 중; 보고·알림·점수 진입 숨김 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 UI·분류 선택 복원; 사용자용 API 연결 전 준비 중 표시 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | 프로필·출석 이력 UI 준비 중; 설정 이동·이력 펼침 상태만 관리 |
-| `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·앱 버전·로그아웃 확인·통합 탈퇴 안내/진행/오류 재시도 UI; 실행 콜백 없는 인증 동작은 비활성화 |
+| `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·앱 버전·로그아웃 확인·통합 탈퇴 안내/확인/오류 재시도 UI; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 가입 토큰을 받아 이름·휴대폰 입력·검증·서버 제출·완료 상태를 관리; 입력은 복원하고 토큰은 메모리 전용 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증 결과, 일정·출석 계약·가입 입력 값 객체 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증/세션 작업 결과, 일정·출석 계약·가입 입력 값 객체 |
 | `:data` | `com.yapp.plus.data` | Google OIDC 인증·회원가입·로그아웃·통합 탈퇴·세션 갱신 및 YAPP 일정·출석 어댑터와 Repository, 암호화 저장 연결 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·토큰 복원/교체 조율·401 갱신 및 중복 방지 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
@@ -28,7 +28,7 @@ last_verified: 2026-10-27
 
 14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
-개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. 공지·My의 실제 조회 계약은 준비 전이며, 미연동 UI는 `Unavailable` 상태로 표시합니다.
+개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·로그아웃·통합 탈퇴·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. 공지·My의 실제 조회 계약은 준비 전이며, 미연동 UI는 `Unavailable` 상태로 표시합니다.
 
 Login Feature는 Google Credential Manager의 ID 토큰과 nonce를 메모리의 App 콜백으로 전달합니다. App은 YAPP 인증 결과를 해석해 세션을 저장하거나 Signup Feature로 이동합니다. Signup Feature는 가입 토큰을 저장하지 않고 이름·휴대폰 입력, E.164 검증, 서버 제출·완료 전환과 내부 뒤로 가기·입력 복원을 소유합니다. 시작 시 세션 복원은 App이 소유합니다.
 
@@ -58,7 +58,7 @@ App은 네 탭·공지 ID·설정 화면 이동을 소유합니다. 홈과 일�
 
 - App 내비게이션 UI 테스트는 debug 전용 Hilt 진입점 `NavigationTestActivity`를 사용합니다. 일반 `ComponentActivity`는 Hilt ViewModel을 생성하지 못하며 이 테스트 Activity는 release 소스에 포함하지 않습니다.
 
-- App의 `AccountDeletionUiTest`는 주입한 콜백으로 통합 탈퇴 안내·확인·복원·진행·오류 재시도 UI를 확인합니다. API 35 에뮬레이터에서 4건을 통과했습니다. App 실행 연결은 후속이며, UI 검증을 실제 서버 E2E 검증으로 간주하지 않습니다.
+- App의 `AccountDeletionUiTest`는 주입한 콜백으로 통합 탈퇴 확인·복원·진행·오류 재시도 UI를 확인합니다. 화면과 실제 API의 연결은 구현됐지만 이 테스트는 서버 요청을 검증하지 않으며, UI 검증을 서버 E2E 검증으로 간주하지 않습니다.
 
 - Network의 `TokenStorePersistenceTest`와 `RestoredSessionAuthenticationTest`는 저장소 재생성 후 복원, 첫 요청의 복원 대기, 401 갱신·재시도, 동시 20개 요청의 갱신 1회 공유, 저장 실패·취소와 세션 교체 경계를 검증합니다. `SessionAuthenticationTest`는 원래 요청의 method·body·query·headers 보존과 기존 인증 경계를 검증합니다.
 - Data의 `SessionRestartInstrumentedTest`는 실제 `SessionTokenLocalDataSource`·DataStore·Android Keystore를 사용합니다. 테스트 APK에서 토큰 회전 저장 → 프로세스 종료 후 복원·삭제 → 다시 종료 후 빈 세션 복원을 검증합니다. 테스트 토큰은 가짜 값이고 일반 앱의 세션 파일이나 실제 서버를 사용하지 않습니다.

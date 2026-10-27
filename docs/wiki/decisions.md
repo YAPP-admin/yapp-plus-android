@@ -321,8 +321,8 @@ last_verified: 2026-10-27
 - 근거: 사용자 제공 API 계약, [백엔드 APIDOC의 Google Native OIDC 인증 및 가입 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md), [Android Credential Manager 공식 구현 안내](https://developer.android.com/identity/sign-in/credential-manager-siwg-implementation).
 - 반영: `:domain`의 인증 계약과 전화번호 변환, `:data`의 인증·가입 DataSource와 Repository, App Hilt·세션 복원·내비게이션, Login·Signup Feature, `AGENTS.md`, `README.md`, [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), [제품 정책](product-policy.md).
 - 적용 상태: dev API와 통신하도록 로컬 `local.properties`에 제공된 개발 API host를 지정했습니다. 2026-10-27 실기기에서 실제 Google 로그인, 가입, 암호화 세션 저장과 프로세스 재시작 후 메인 복원을 확인했습니다. 인증 후 Navigation의 메인 스레드 위반을 수정했고 앱 빌드·lint, 관련 모듈 단위 테스트 43건을 통과했습니다.
-- 추가 확인: 같은 날 사용자 요청으로 dev 계정을 `DELETE /api/users/me`로 탈퇴시켜 성공 `204`, 기존 세션 거절 `401`, 로컬 token 삭제와 로그인 복귀를 확인했습니다. 서버는 계정·동아리 통합 탈퇴를 제공하며, 기존 앱 계정 삭제 안내와 실행 연결은 [제품 정책](product-policy.md#앱-계정-삭제)의 후속 상태를 따릅니다.
-- 대체한 결정: DEC-0037의 Google 인증 교환·가입 연결 후속 상태를 완료합니다. 공지·회원 프로필·출석 조회·삭제 미연동 범위는 유지합니다.
+- 추가 확인: 같은 날 사용자 요청으로 dev 계정을 `DELETE /api/users/me`로 탈퇴시켜 성공 `204`, 기존 세션 거절 `401`, 로컬 token 삭제와 로그인 복귀를 확인했습니다. 서버는 계정·동아리 통합 탈퇴를 제공합니다. 연결 상태는 [제품 정책](product-policy.md#계정-기수-통합-탈퇴)을 따릅니다.
+- 대체한 결정: DEC-0037의 Google 인증 교환·가입 연결 후속 상태를 완료합니다. 공지·회원 프로필·출석 조회 미연동 범위는 유지합니다. 로그아웃·통합 탈퇴 적용 상태는 이후 DEC-0041에서 정합니다.
 
 ## DEC-0040 · 가입 필드 오류와 이름 수정 시 전화번호 유지
 
@@ -340,6 +340,6 @@ last_verified: 2026-10-27
 - 결정: 로그아웃은 `DELETE /api/auth/sessions/current`에 현재 refresh token을 전달하고 서버 성공 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동합니다. 실패하면 현재 세션을 보존하고 재시도할 수 있게 합니다. `DELETE /api/users/me`는 앱 계정만 삭제하는 API가 아니라 모든 기수 소속과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 사용자가 확인한 뒤 Bearer access token으로 요청하고, 서버 성공 뒤에만 로컬 token을 삭제해 로그인 화면으로 이동합니다.
 - 이유: 기존 설정의 앱 계정 삭제 안내를 실제 서버 계약과 일치시키고, 서버에서 처리되지 않은 탈퇴를 로컬 세션 삭제로 완료 처리하지 않기 위함입니다.
 - 근거: 사용자의 확정 요청과 [이슈 #149](https://github.com/YAPP-admin/yapp-plus-android/issues/149), [백엔드 인증·로그아웃 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/AuthController.kt), [백엔드 통합 탈퇴 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/UserWithdrawalController.kt).
-- 반영: [제품 정책](product-policy.md), `:domain` 인증 Repository 계약, 후속 `:data` 어댑터·`:feature:setting` 안내·App 인증 흐름.
-- 적용 상태: Domain 계약은 PR #153, Data API와 실패 경계 검증은 PR #155에 반영했습니다. 설정 안내·문의 문구와 Preview·UI 테스트를 통합 탈퇴 범위에 맞췄으며 [회원·역할 정책](membership-policy.md)의 이전 앱 계정 삭제 안내도 동기화했습니다. API 35 에뮬레이터의 모의 콜백 UI 테스트 4건을 통과했습니다. App 실행 콜백과 인증 상태 전환은 이슈 #149의 후속 PR로 연결합니다.
+- 반영: [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, Domain·Data 인증 Repository와 설정 문구·App 인증 흐름.
+- 적용 상태: Domain 계약은 [PR #153](https://github.com/YAPP-admin/yapp-plus-android/pull/153)에 분리했고 Data·설정 UI·App 연결은 이슈 #149의 순차 작업 브랜치에 적용했습니다. Data 컴파일과 KtLint, 설정 Feature 빌드·lint, App KtLint는 통과했습니다. 전체 App 컴파일은 `develop`에 있는 중복 `LoginRoute` 선언 오류로 실패했으며 실제 Settings 서버 E2E는 확인하지 못했습니다.
 - 대체한 결정: DEC-0033의 앱 계정 삭제와 YAPP 동아리 탈퇴를 별도 처리한다는 정책을 대체합니다. 설정 화면 구조와 다른 알림·약관 정책은 유지합니다.

@@ -34,6 +34,14 @@ internal fun AppNavigationRoute(
             AppNavHost(
                 onExit = onExit,
                 onGoogleCredentialReceived = onGoogleCredentialReceived ?: authViewModel::authenticateWithGoogle,
+                onLogout = authViewModel::logout,
+                isLoggingOut = authUiState.isLoggingOut,
+                hasLogoutError = authUiState.hasLogoutError,
+                onLogoutErrorDismissed = authViewModel::onLogoutErrorDismissed,
+                onDeleteAccount = authViewModel::withdraw,
+                isDeletingAccount = authUiState.isWithdrawing,
+                hasDeleteAccountError = authUiState.hasWithdrawalError,
+                onDeleteAccountErrorDismissed = authViewModel::onWithdrawalErrorDismissed,
                 onRegistrationCompleted = {
                     authViewModel.onRegistrationCompleted()
                     onRegistrationCompleted()

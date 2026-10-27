@@ -8,13 +8,13 @@
 
 로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager ID Token과 원본 nonce를 YAPP native-authentication API에 보내고, `SIGNED_IN` 세션을 암호화 저장하거나 `SIGNUP_REQUIRED` 토큰으로 기존 회원가입 입력 흐름을 진행합니다. 가입 성공 시 세션을 저장하고, 앱 시작 시 저장 세션을 복원해 메인 또는 로그인 화면을 엽니다.
 
-홈의 주간 공지, 게시판 공지, My 회원 정보·출석 이력·점수는 API 연결 전까지 준비 중 상태를 표시합니다. 설정의 로그아웃·계정 삭제 실행은 서버 인증 콜백이 연결되기 전까지 비활성화합니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정 이동 상태를 관리합니다.
+홈의 주간 공지, 게시판 공지, My 회원 정보·출석 이력·점수는 API 연결 전까지 준비 중 상태를 표시합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정 이동 상태를 관리합니다.
 
 인증 세션의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 Google 로그인·가입·세션 갱신 API를 연결하고, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다.
 
-YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도합니다. 임시 테스트 백엔드·데이터 어댑터·SQL은 개발 버전에서 제거했습니다. 일정·출석 인증과 세션 갱신은 확인된 YAPP API 계약을 사용합니다. 공지·My 정보·계정 삭제 API 연결은 후속입니다.
+YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도합니다. 임시 테스트 백엔드·데이터 어댑터·SQL은 개발 버전에서 제거했습니다. 일정·출석 인증·세션 갱신·로그아웃·통합 탈퇴는 확인된 YAPP API 계약을 사용합니다. 공지·My 정보 조회 API 연결은 후속입니다.
 
-계정 삭제 UI는 확인·진행·오류 표현을 유지합니다. 계정·동아리 통합 탈퇴 API 계약은 확인했으며, 기존 안내 범위 조정과 실행 콜백 연결 전까지 현재 개발 앱의 삭제 동작은 비활성화합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#앱-계정-삭제)입니다.
+설정의 로그아웃과 YAPP 탈퇴 UI는 확인·진행·오류·재시도 흐름으로 연결했습니다. 탈퇴 API는 모든 기수 회원 자격과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 서버 응답이 성공한 경우에만 로컬 세션을 지우고 로그인 화면으로 이동합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#계정-기수-통합-탈퇴)입니다.
 
 ## 아키텍처와 모듈
 

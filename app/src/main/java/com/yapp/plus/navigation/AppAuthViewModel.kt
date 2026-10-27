@@ -15,22 +15,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-internal data class AppAuthUiState(
-    val isCheckingSession: Boolean = true,
-    val hasSession: Boolean = false,
-    val registrationToken: String? = null,
-    val isLoggingOut: Boolean = false,
-    val hasLogoutError: Boolean = false,
-    val isWithdrawing: Boolean = false,
-    val hasWithdrawalError: Boolean = false,
-) {
-    override fun toString(): String =
-        "AppAuthUiState(isCheckingSession=$isCheckingSession, hasSession=$hasSession, " +
-            "registrationToken=<redacted>, isLoggingOut=$isLoggingOut, " +
-            "hasLogoutError=$hasLogoutError, isWithdrawing=$isWithdrawing, " +
-            "hasWithdrawalError=$hasWithdrawalError)"
-}
-
 @HiltViewModel
 internal class AppAuthViewModel
     @Inject
@@ -117,8 +101,28 @@ internal class AppAuthViewModel
             operation: suspend () -> AuthOperationResult,
         ) {
             val currentState = mutableUiState.value
-            if (!currentState.hasSession || currentState.isLoggingOut || currentState.isWithdrawing) return
+            if (
+                !currentState.hasSession || currentState.isLoggingOut || currentState.isWithdrawing
+            ) {
+                return
+            }
 
+            startSessionOperation(isLogout)
+            viewModelScope.launch {
+                try {
+                    updateSessionOperationResult(
+                        result = executeSessionOperation(operation),
+                        isLogout = isLogout,
+                    )
+                } finally {
+                    mutableUiState.update {
+                        it.copy(isLoggingOut = false, isWithdrawing = false)
+                    }
+                }
+            }
+        }
+
+        private fun startSessionOperation(isLogout: Boolean) {
             mutableUiState.update {
                 it.copy(
                     isLoggingOut = isLogout,
@@ -127,38 +131,33 @@ internal class AppAuthViewModel
                     hasWithdrawalError = false,
                 )
             }
-            viewModelScope.launch {
-                val result =
-                    try {
-                        operation()
-                    } catch (exception: CancellationException) {
-                        throw exception
-                    } catch (exception: Exception) {
-                        AuthOperationResult.Failure
-                    }
-                when (result) {
-                    AuthOperationResult.Success ->
-                        mutableUiState.update {
-                            it.copy(
-                                hasSession = false,
-                                registrationToken = null,
-                                isLoggingOut = false,
-                                hasLogoutError = false,
-                                isWithdrawing = false,
-                                hasWithdrawalError = false,
-                            )
-                        }
+        }
 
-                    AuthOperationResult.Failure, AuthOperationResult.NotSupported ->
-                        mutableUiState.update {
-                            it.copy(
-                                isLoggingOut = false,
-                                hasLogoutError = isLogout,
-                                isWithdrawing = false,
-                                hasWithdrawalError = !isLogout,
-                            )
-                        }
-                }
+        private suspend fun executeSessionOperation(
+            operation: suspend () -> AuthOperationResult,
+        ): AuthOperationResult =
+            try {
+                operation()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                AuthOperationResult.Failure
+            }
+
+        private fun updateSessionOperationResult(
+            result: AuthOperationResult,
+            isLogout: Boolean,
+        ) {
+            when (result) {
+                AuthOperationResult.Success ->
+                    mutableUiState.update {
+                        it.copy(hasSession = false, registrationToken = null)
+                    }
+
+                AuthOperationResult.Failure, AuthOperationResult.NotSupported ->
+                    mutableUiState.update {
+                        it.copy(hasLogoutError = isLogout, hasWithdrawalError = !isLogout)
+                    }
             }
         }
     }

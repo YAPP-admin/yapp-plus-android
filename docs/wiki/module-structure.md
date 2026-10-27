@@ -17,7 +17,7 @@ last_verified: 2026-10-27
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 UI·분류 선택 복원; 사용자용 API 연결 전 준비 중 표시 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | 프로필·출석 이력 UI 준비 중; 설정 이동·이력 펼침 상태만 관리 |
-| `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·앱 버전·로그아웃 확인·통합 탈퇴 안내/확인/오류 재시도 UI; 인증 요청은 App 콜백 사용 |
+| `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·앱 버전·로그아웃 확인·통합 탈퇴 안내/확인/진행/오류 재시도 UI; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 가입 토큰을 받아 이름·휴대폰 입력·검증·서버 제출·완료 상태를 관리; 입력은 복원하고 토큰은 메모리 전용 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증/세션 작업 결과, 일정·출석 계약·가입 입력 값 객체 |
@@ -58,7 +58,8 @@ App은 네 탭·공지 ID·설정 화면 이동을 소유합니다. 홈과 일�
 
 - App 내비게이션 UI 테스트는 debug 전용 Hilt 진입점 `NavigationTestActivity`를 사용합니다. 일반 `ComponentActivity`는 Hilt ViewModel을 생성하지 못하며 이 테스트 Activity는 release 소스에 포함하지 않습니다.
 
-- App의 `AccountDeletionUiTest`는 주입한 콜백으로 통합 탈퇴 확인·복원·진행·오류 재시도 UI를 확인합니다. 화면과 실제 API의 연결은 구현됐지만 이 테스트는 서버 요청을 검증하지 않으며, UI 검증을 서버 E2E 검증으로 간주하지 않습니다.
+- App의 `AppAuthViewModelTest`는 Fake Repository로 성공 전 세션 보존, 실패·재시도, 중복·교차 요청 방지와 취소 후 로딩 해제를 검증하며 8건을 통과했습니다.
+- App의 `AccountDeletionUiTest` 4건은 주입한 콜백으로 통합 탈퇴 안내·확인·복원·진행·오류 재시도를, `SessionOperationNavigationUiTest` 2건은 성공 콜백 후 로그인 복귀와 Main back stack 제거를 확인합니다. API 35 에뮬레이터에서 6건을 통과했습니다. 실제 API 연결은 구현됐지만 이 UI 테스트는 모의 콜백을 사용하므로 서버 E2E 검증으로 간주하지 않습니다.
 
 - Network의 `TokenStorePersistenceTest`와 `RestoredSessionAuthenticationTest`는 저장소 재생성 후 복원, 첫 요청의 복원 대기, 401 갱신·재시도, 동시 20개 요청의 갱신 1회 공유, 저장 실패·취소와 세션 교체 경계를 검증합니다. `SessionAuthenticationTest`는 원래 요청의 method·body·query·headers 보존과 기존 인증 경계를 검증합니다.
 - Data의 `SessionRestartInstrumentedTest`는 실제 `SessionTokenLocalDataSource`·DataStore·Android Keystore를 사용합니다. 테스트 APK에서 토큰 회전 저장 → 프로세스 종료 후 복원·삭제 → 다시 종료 후 빈 세션 복원을 검증합니다. 테스트 토큰은 가짜 값이고 일반 앱의 세션 파일이나 실제 서버를 사용하지 않습니다.

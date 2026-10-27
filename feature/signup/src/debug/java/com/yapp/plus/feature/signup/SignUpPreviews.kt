@@ -51,6 +51,42 @@ private fun SignUpContentPreview(
                         .consumeWindowInsets(padding),
                 inputState = inputState,
                 isInputEnabled = fixture.isEnabled,
+                supportingText =
+                    if (fixture.hasError) {
+                        stringResource(
+                            if (step == SignUpStep.Name) {
+                                R.string.auth_name_too_long
+                            } else {
+                                R.string.auth_phone_invalid
+                            },
+                        )
+                    } else {
+                        null
+                    },
+            )
+        }
+    }
+}
+
+@Preview(name = "Signup name correction with saved phone", widthDp = 393, heightDp = 756)
+@Composable
+private fun SignUpNameCorrectionPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        Scaffold(containerColor = YappAuthColor.background) { padding ->
+            SignUpContent(
+                step = SignUpStep.Name,
+                value = stringResource(R.string.auth_preview_name),
+                onValueChange = {},
+                isNextEnabled = false,
+                onNext = {},
+                onBack = {},
+                modifier =
+                    Modifier
+                        .padding(padding)
+                        .consumeWindowInsets(padding),
+                actionText = stringResource(R.string.auth_signup_submit),
+                inputState = YappInputState.Error,
+                supportingText = stringResource(R.string.auth_name_too_long),
             )
         }
     }

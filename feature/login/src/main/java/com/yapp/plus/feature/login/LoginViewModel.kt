@@ -42,6 +42,10 @@ internal class LoginViewModel
             mutableUiState.update { it.copy(dialog = null) }
         }
 
+        fun showAuthenticationError() {
+            showError()
+        }
+
         private suspend fun requestGoogleCredential(
             activity: Activity?,
             serverClientId: String,

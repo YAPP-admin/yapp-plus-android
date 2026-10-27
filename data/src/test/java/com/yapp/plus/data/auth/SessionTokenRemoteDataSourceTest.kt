@@ -78,7 +78,7 @@ class SessionTokenRemoteDataSourceTest {
         }
 
     @Test
-    fun `successful response without rotated refresh token propagates failure`() =
+    fun `successful response without rotated refresh token is rejected`() =
         runTest {
             val engine =
                 MockEngine {
@@ -89,9 +89,9 @@ class SessionTokenRemoteDataSourceTest {
                     )
                 }
             createClient(engine).use { client ->
-                assertTrue(
-                    runCatching { SessionTokenRemoteDataSource(client).refresh("refresh") }
-                        .isFailure,
+                assertEquals(
+                    RefreshResult.Rejected,
+                    SessionTokenRemoteDataSource(client).refresh("refresh"),
                 )
             }
         }

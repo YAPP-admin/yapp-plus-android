@@ -6,26 +6,24 @@ import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
 sealed interface NetworkRequestError {
-    val cause: Exception
-
     data class Http(
         val statusCode: Int,
-        override val cause: ResponseException,
+        val cause: ResponseException,
     ) : NetworkRequestError
 
     data class Timeout(
-        override val cause: HttpRequestTimeoutException,
+        val cause: HttpRequestTimeoutException,
     ) : NetworkRequestError
 
     data class Network(
-        override val cause: IOException,
+        val cause: IOException,
     ) : NetworkRequestError
 
     data class Serialization(
-        override val cause: SerializationException,
+        val cause: SerializationException,
     ) : NetworkRequestError
 
     data class Unknown(
-        override val cause: Exception,
+        val cause: Exception,
     ) : NetworkRequestError
 }

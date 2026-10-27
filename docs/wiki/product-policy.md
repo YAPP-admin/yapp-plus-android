@@ -45,8 +45,9 @@ last_verified: 2026-10-27
 | 세션 갱신 | `POST /api/auth/session-renewals`; 암호화 저장·복원과 401 뒤 한 번 재시도 구현 |
 | Google 로그인 | `POST /api/auth/oidc/google/native-authentications`; `SIGNED_IN` 세션 저장·메인 이동, `SIGNUP_REQUIRED` 가입 토큰을 Signup으로 전달 |
 | 회원가입 | `POST /api/users`; registration token·이름·E.164 전화번호 제출, 성공 응답 세션 저장 |
+| 로그아웃 | `DELETE /api/auth/sessions/current`; 현재 refresh token 전달, 성공 뒤 로컬 세션 제거·로그인 이동 연결은 이슈 #149 후속 PR |
 | 공지·My | 사용자용 API 연결은 후속; 현재 준비 중 상태 표시 |
-| 계정 탈퇴 | `DELETE /api/users/me`; dev 계약·실제 응답 확인, 앱 설정 UI 실행 연결은 후속 |
+| 통합 탈퇴 | `DELETE /api/users/me`; dev 계약·실제 응답 확인, Domain 계약 추가; Data·설정 UI·App 연결은 이슈 #149 후속 PR |
 
 저장된 YAPP 토큰 쌍은 앱 시작과 첫 인증 API 요청 전에 복원합니다. 초기 Google 세션 발급은 YAPP API 계약에 연결했습니다. 로컬 access-token 주입이나 가짜 인증 세션은 만들지 않습니다.
 
@@ -114,9 +115,9 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 ## 앱 계정 삭제
 
-기존 앱 정책은 계정 삭제와 동아리 탈퇴·제적을 구분합니다. 삭제 확인·진행·실패·재시도 UI는 보존합니다. 2026-10-27 확인한 dev 서버의 `DELETE /api/users/me`는 계정·동아리 통합 탈퇴이며, Bearer access token이 필요하고 요청 본문 없이 성공 시 `204 No Content`를 반환합니다. 모든 기수 Membership을 `WITHDRAWN`으로 변경하고 모든 세션을 폐기하며, 개인정보를 비식별화하고 운영·출결 이력의 연결 ID를 보존합니다. Native 앱은 성공 후 로컬 token을 삭제해야 합니다. 재가입은 새 User와 승인 절차로 시작합니다. [서버 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#11-계정동아리-통합-탈퇴)을 따릅니다.
+2026-10-27 확인한 dev 서버의 `DELETE /api/users/me`는 앱 계정 삭제와 동아리 탈퇴를 따로 처리하지 않는 통합 탈퇴 API입니다. Bearer access token이 필요하고 요청 본문 없이 성공 시 `204 No Content`를 반환합니다. 모든 기수 Membership을 `WITHDRAWN`으로 변경하고 모든 세션을 폐기하며, 개인정보를 비식별화하고 운영·출결 이력의 연결 ID를 보존합니다. Native 앱은 서버 성공 뒤에만 로컬 token 쌍을 삭제하고 로그인 화면으로 이동합니다. 실패하면 세션을 유지해 다시 시도할 수 있게 합니다. 설정 안내는 모든 기수 소속 탈퇴, 세션 폐기, 개인정보 비식별화와 복구 불가를 명시합니다. 재가입은 새 User와 승인 절차로 시작합니다. [서버 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#11-계정동아리-통합-탈퇴)을 따릅니다.
 
-사용자가 요청한 dev 계정의 직접 API 탈퇴에서 `204`, 기존 token의 인증 요청 거절 `401`, 로컬 token 삭제와 프로세스 재시작 후 로그인 화면을 확인했습니다. 이 검증은 설정 UI의 실행 연결을 뜻하지 않습니다. 기존 계정 삭제 안내와 서버의 통합 탈퇴 범위를 맞추는 제품 결정·UI 수정 및 실행 연결은 후속이며, 현재 설정의 삭제 실행은 비활성화합니다.
+사용자가 요청한 dev 계정의 직접 API 탈퇴에서 `204`, 기존 token의 인증 요청 거절 `401`, 로컬 token 삭제와 프로세스 재시작 후 로그인 화면을 확인했습니다. 이는 설정 UI가 이미 연결됐다는 뜻은 아닙니다. 이슈 #149는 Domain 계약부터 Data API·설정 안내·App 인증 흐름 순서로 나누어 연결합니다. 첫 Domain PR이 적용되는 동안에도 Data·UI·App 연결이 병합되기 전까지 설정의 실행 콜백은 비활성화 상태를 유지합니다.
 
 ## 아직 정해지지 않은 항목
 

@@ -333,3 +333,13 @@ last_verified: 2026-10-25
 - 반영: `RegistrationFieldError`, 가입 오류 DTO·Repository 매핑, Signup ViewModel·Route·입력창·Preview·테스트, App 인증 후 화면 이동과 opt-in 실서버 가입 E2E, [제품 정책](product-policy.md), [설계 패턴](design-patterns.md).
 - 적용 상태: 이름 화면 복귀·전화번호 유지·이름 화면 재제출·수정 상태 복원·동시 필드 오류·전화번호 중복 처리를 로컬 작업 트리에 구현했습니다. 관련 단위 테스트 22건, 변경 모듈 ktlint, App debug 빌드·lint를 통과했습니다. 2026-10-27 Samsung 실기기와 실제 dev 서버에서 Google 신규 인증 → 이름 101자 제출 `400` → 이름 화면 오류 표시 → 이름만 수정 → 동일한 E.164 전화번호로 재제출 `200` → 가입 완료·메인 진입·Activity 재생성을 E2E로 통과했고 프로세스 종료·재시작 후에도 메인 세션 복원을 확인했습니다. 번호 중복 `409`의 입력창 표시도 별도로 확인했습니다. 가입 토큰은 메모리 전용으로 유지하며 만료 시 기존 로그인 복귀를 따릅니다.
 - 대체한 결정: DEC-0039의 일반적인 가입 실패 처리에 필드별 복구 동작을 구체화합니다.
+
+## DEC-0041 · 로그아웃과 계정·기수 통합 탈퇴 연결
+
+- 기록일: 2026-10-27
+- 결정: 로그아웃은 `DELETE /api/auth/sessions/current`에 현재 refresh token을 전달하고 서버 성공 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동합니다. 실패하면 현재 세션을 보존하고 재시도할 수 있게 합니다. `DELETE /api/users/me`는 앱 계정만 삭제하는 API가 아니라 모든 기수 소속과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 사용자가 확인한 뒤 Bearer access token으로 요청하고, 서버 성공 뒤에만 로컬 token을 삭제해 로그인 화면으로 이동합니다.
+- 이유: 기존 설정의 앱 계정 삭제 안내를 실제 서버 계약과 일치시키고, 서버에서 처리되지 않은 탈퇴를 로컬 세션 삭제로 완료 처리하지 않기 위함입니다.
+- 근거: 사용자의 확정 요청과 [이슈 #149](https://github.com/YAPP-admin/yapp-plus-android/issues/149), [백엔드 인증·로그아웃 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/AuthController.kt), [백엔드 통합 탈퇴 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/UserWithdrawalController.kt).
+- 반영: [제품 정책](product-policy.md), `:domain` 인증 Repository 계약, 후속 `:data` 어댑터·`:feature:setting` 안내·App 인증 흐름.
+- 적용 상태: 이 PR에서 logout·withdraw Domain 계약과 성공/실패 결과 타입을 추가합니다. Data API 호출, 안내 문구, App 상태 전환은 선행 PR 병합 뒤 이슈 #149의 순차 PR로 연결합니다.
+- 대체한 결정: DEC-0033의 앱 계정 삭제와 YAPP 동아리 탈퇴를 별도 처리한다는 정책을 대체합니다. 설정 화면 구조와 다른 알림·약관 정책은 유지합니다.

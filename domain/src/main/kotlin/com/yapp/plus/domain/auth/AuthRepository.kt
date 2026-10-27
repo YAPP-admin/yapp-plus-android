@@ -13,4 +13,8 @@ interface AuthRepository {
     ): AuthResult
 
     suspend fun hasStoredSession(): Boolean
+
+    suspend fun logout(): AuthOperationResult = AuthOperationResult.NotSupported
+
+    suspend fun withdraw(): AuthOperationResult = AuthOperationResult.NotSupported
 }

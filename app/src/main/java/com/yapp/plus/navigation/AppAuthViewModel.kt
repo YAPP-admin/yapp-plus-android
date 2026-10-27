@@ -3,6 +3,7 @@ package com.yapp.plus.navigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.auth.AuthFailure
+import com.yapp.plus.domain.auth.AuthOperationResult
 import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
@@ -13,15 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-internal data class AppAuthUiState(
-    val isCheckingSession: Boolean = true,
-    val hasSession: Boolean = false,
-    val registrationToken: String? = null,
-) {
-    override fun toString(): String =
-        "AppAuthUiState(isCheckingSession=$isCheckingSession, hasSession=$hasSession, registrationToken=<redacted>)"
-}
 
 @HiltViewModel
 internal class AppAuthViewModel
@@ -79,6 +71,93 @@ internal class AppAuthViewModel
         fun onRegistrationCompleted() {
             mutableUiState.update {
                 it.copy(hasSession = true, registrationToken = null)
+            }
+        }
+
+        fun logout() {
+            performSessionOperation(
+                isLogout = true,
+                operation = authRepository::logout,
+            )
+        }
+
+        fun withdraw() {
+            performSessionOperation(
+                isLogout = false,
+                operation = authRepository::withdraw,
+            )
+        }
+
+        fun onLogoutErrorDismissed() {
+            mutableUiState.update { it.copy(hasLogoutError = false) }
+        }
+
+        fun onWithdrawalErrorDismissed() {
+            mutableUiState.update { it.copy(hasWithdrawalError = false) }
+        }
+
+        private fun performSessionOperation(
+            isLogout: Boolean,
+            operation: suspend () -> AuthOperationResult,
+        ) {
+            val currentState = mutableUiState.value
+            if (
+                !currentState.hasSession || currentState.isLoggingOut || currentState.isWithdrawing
+            ) {
+                return
+            }
+
+            startSessionOperation(isLogout)
+            viewModelScope.launch {
+                try {
+                    updateSessionOperationResult(
+                        result = executeSessionOperation(operation),
+                        isLogout = isLogout,
+                    )
+                } finally {
+                    mutableUiState.update {
+                        it.copy(isLoggingOut = false, isWithdrawing = false)
+                    }
+                }
+            }
+        }
+
+        private fun startSessionOperation(isLogout: Boolean) {
+            mutableUiState.update {
+                it.copy(
+                    isLoggingOut = isLogout,
+                    hasLogoutError = false,
+                    isWithdrawing = !isLogout,
+                    hasWithdrawalError = false,
+                )
+            }
+        }
+
+        private suspend fun executeSessionOperation(
+            operation: suspend () -> AuthOperationResult,
+        ): AuthOperationResult =
+            try {
+                operation()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                AuthOperationResult.Failure
+            }
+
+        private fun updateSessionOperationResult(
+            result: AuthOperationResult,
+            isLogout: Boolean,
+        ) {
+            when (result) {
+                AuthOperationResult.Success ->
+                    mutableUiState.update {
+                        it.copy(hasSession = false, registrationToken = null)
+                    }
+
+                AuthOperationResult.Failure, AuthOperationResult.NotSupported ->
+                    mutableUiState.update {
+                        it.copy(hasLogoutError = isLogout, hasWithdrawalError = !isLogout)
+                    }
             }
         }
     }

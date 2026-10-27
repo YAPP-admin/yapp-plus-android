@@ -23,23 +23,6 @@ fun LoginRoute(
     onGoogleCredentialReceived: suspend (GoogleLoginCredential) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val onAuthenticationResult: suspend (GoogleLoginCredential) -> Boolean = { credential ->
-        onGoogleCredentialReceived(credential)
-        true
-    }
-    LoginRoute(
-        onBack = onBack,
-        onGoogleCredentialReceived = onAuthenticationResult,
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun LoginRoute(
-    onBack: () -> Unit,
-    onGoogleCredentialReceived: suspend (GoogleLoginCredential) -> Boolean,
-    modifier: Modifier = Modifier,
-) {
     val viewModel: LoginViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activity = LocalActivity.current

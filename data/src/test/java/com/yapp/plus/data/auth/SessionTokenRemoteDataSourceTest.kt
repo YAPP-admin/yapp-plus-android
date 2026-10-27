@@ -1,6 +1,7 @@
 package com.yapp.plus.data.auth
 
 import com.yapp.plus.core.network.auth.RefreshResult
+import com.yapp.plus.data.auth.datasource.session.SessionTokenRemoteDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -88,9 +89,9 @@ class SessionTokenRemoteDataSourceTest {
                     )
                 }
             createClient(engine).use { client ->
-                assertTrue(
-                    runCatching { SessionTokenRemoteDataSource(client).refresh("refresh") }
-                        .isFailure,
+                assertEquals(
+                    RefreshResult.Rejected,
+                    SessionTokenRemoteDataSource(client).refresh("refresh"),
                 )
             }
         }

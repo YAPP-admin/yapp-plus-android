@@ -6,7 +6,7 @@ last_verified: 2026-10-25
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0033`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0039`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -312,3 +312,24 @@ last_verified: 2026-10-25
 - 반영: [디자인시스템](design-system.md), [제품 정책](product-policy.md), Core 디자인시스템·Login·SignUp·Home·Board·Schedule·My·Setting·App.
 - 적용 상태: `develop`에서 PR #127·#128을 병합했고 후속 UI 정리 PR도 반영했습니다. 서버 계약이 없는 회원 정보·점수·공지 기능은 연결 전까지 준비 중으로 유지하며 실제 Google 인증·출석 서버 E2E는 이번 화면 비교 범위에 포함하지 않습니다.
 - 대체한 결정: 없음. 비공개 테스트와 실제 서비스 개발의 브랜치 분리 결정은 DEC-0036을 따르고, 서버 연동 범위는 DEC-0037을 따릅니다.
+
+## DEC-0039 · Google 네이티브 인증과 가입을 YAPP 서버에 연결
+
+- 기록일: 2026-10-26
+- 결정: Google Credential Manager의 Web Client ID와 매 로그인별 SHA-256 nonce를 사용해 ID Token·원본 nonce를 `POST /api/auth/oidc/google/native-authentications`로 검증합니다. `SIGNED_IN`의 YAPP token 쌍을 암호화 저장하고, `SIGNUP_REQUIRED`는 일회용 registration token을 메모리에만 유지해 `POST /api/users`의 이름·E.164 전화번호 제출로 이어갑니다. 앱 시작 시 저장된 세션을 복원해 인증 목적지를 정합니다.
+- 이유: 개발 버전의 Google 로그인과 기존 가입 UI를 실제 서버 계약에 연결하고, 인증 정보의 수명과 세션 복원 경계를 분명히 하기 위함입니다.
+- 근거: 사용자 제공 API 계약, [백엔드 APIDOC의 Google Native OIDC 인증 및 가입 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md), [Android Credential Manager 공식 구현 안내](https://developer.android.com/identity/sign-in/credential-manager-siwg-implementation).
+- 반영: `:domain`의 인증 계약과 전화번호 변환, `:data`의 인증·가입 DataSource와 Repository, App Hilt·세션 복원·내비게이션, Login·Signup Feature, `AGENTS.md`, `README.md`, [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), [제품 정책](product-policy.md).
+- 적용 상태: dev API와 통신하도록 로컬 `local.properties`에 제공된 개발 API host를 지정했습니다. 2026-10-27 실기기에서 실제 Google 로그인, 가입, 암호화 세션 저장과 프로세스 재시작 후 메인 복원을 확인했습니다. 인증 후 Navigation의 메인 스레드 위반을 수정했고 앱 빌드·lint, 관련 모듈 단위 테스트 43건을 통과했습니다.
+- 추가 확인: 같은 날 사용자 요청으로 dev 계정을 `DELETE /api/users/me`로 탈퇴시켜 성공 `204`, 기존 세션 거절 `401`, 로컬 token 삭제와 로그인 복귀를 확인했습니다. 서버는 계정·동아리 통합 탈퇴를 제공하며, 기존 앱 계정 삭제 안내와 실행 연결은 [제품 정책](product-policy.md#앱-계정-삭제)의 후속 상태를 따릅니다.
+- 대체한 결정: DEC-0037의 Google 인증 교환·가입 연결 후속 상태를 완료합니다. 공지·회원 프로필·출석 조회·삭제 미연동 범위는 유지합니다.
+
+## DEC-0040 · 가입 필드 오류와 이름 수정 시 전화번호 유지
+
+- 기록일: 2026-10-26
+- 결정: 가입은 이름·전화번호를 함께 제출하고 서버의 `fieldErrors`를 입력별로 표시합니다. 이름만 오류이면 이름 입력으로 돌아가고, 수정 후 기존 전화번호로 바로 재제출합니다. 두 필드 모두 오류이면 이름을 먼저 고친 뒤 전화번호도 수정합니다. 전화번호 중복은 전화번호 입력 오류로 처리합니다.
+- 이유: 오류가 난 입력으로 돌아가 수정하게 하면서 오류가 없는 전화번호의 재입력을 생략하기 위함입니다.
+- 근거: 사용자의 명시적 구현 요청, dev 서버의 입력 오류 응답과 [백엔드 가입 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#8-user-가입-완료).
+- 반영: `RegistrationFieldError`, 가입 오류 DTO·Repository 매핑, Signup ViewModel·Route·입력창·Preview·테스트, App 인증 후 화면 이동과 opt-in 실서버 가입 E2E, [제품 정책](product-policy.md), [설계 패턴](design-patterns.md).
+- 적용 상태: 이름 화면 복귀·전화번호 유지·이름 화면 재제출·수정 상태 복원·동시 필드 오류·전화번호 중복 처리를 로컬 작업 트리에 구현했습니다. 관련 단위 테스트 22건, 변경 모듈 ktlint, App debug 빌드·lint를 통과했습니다. 2026-10-27 Samsung 실기기와 실제 dev 서버에서 Google 신규 인증 → 이름 101자 제출 `400` → 이름 화면 오류 표시 → 이름만 수정 → 동일한 E.164 전화번호로 재제출 `200` → 가입 완료·메인 진입·Activity 재생성을 E2E로 통과했고 프로세스 종료·재시작 후에도 메인 세션 복원을 확인했습니다. 번호 중복 `409`의 입력창 표시도 별도로 확인했습니다. 가입 토큰은 메모리 전용으로 유지하며 만료 시 기존 로그인 복귀를 따릅니다.
+- 대체한 결정: DEC-0039의 일반적인 가입 실패 처리에 필드별 복구 동작을 구체화합니다.

@@ -341,5 +341,5 @@ last_verified: 2026-10-27
 - 이유: 기존 설정의 앱 계정 삭제 안내를 실제 서버 계약과 일치시키고, 서버에서 처리되지 않은 탈퇴를 로컬 세션 삭제로 완료 처리하지 않기 위함입니다.
 - 근거: 사용자의 확정 요청과 [이슈 #149](https://github.com/YAPP-admin/yapp-plus-android/issues/149), [백엔드 인증·로그아웃 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/AuthController.kt), [백엔드 통합 탈퇴 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/UserWithdrawalController.kt).
 - 반영: [제품 정책](product-policy.md), `:domain` 인증 Repository 계약, 후속 `:data` 어댑터·`:feature:setting` 안내·App 인증 흐름.
-- 적용 상태: Domain 계약과 성공/실패 결과 타입은 PR #153에 반영했습니다. Data는 로그아웃·통합 탈퇴 API의 `204` 성공 뒤에만 token 쌍을 삭제하고 그 외 응답·요청 실패에서는 세션을 보존합니다. 설정 안내와 App 상태 전환은 이슈 #149의 후속 순차 PR로 연결합니다.
+- 적용 상태: Domain 계약은 PR #153, Data API와 실패 경계 검증은 PR #155에 반영했습니다. 설정 안내·문의 문구와 Preview·UI 테스트를 통합 탈퇴 범위에 맞췄으며 [회원·역할 정책](membership-policy.md)의 이전 앱 계정 삭제 안내도 동기화했습니다. API 35 에뮬레이터의 모의 콜백 UI 테스트 4건을 통과했습니다. App 실행 콜백과 인증 상태 전환은 이슈 #149의 후속 PR로 연결합니다.
 - 대체한 결정: DEC-0033의 앱 계정 삭제와 YAPP 동아리 탈퇴를 별도 처리한다는 정책을 대체합니다. 설정 화면 구조와 다른 알림·약관 정책은 유지합니다.

@@ -11,4 +11,8 @@ interface AuthDataSource {
         name: String,
         phoneNumber: String,
     ): AuthResponseResult
+
+    suspend fun logout(refreshToken: String)
+
+    suspend fun withdraw()
 }

@@ -68,8 +68,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthDataSource(
-        @Named(UNAUTHENTICATED_CLIENT) httpClient: HttpClient,
-    ): AuthDataSource = AuthRemoteDataSource(httpClient)
+        @Named(UNAUTHENTICATED_CLIENT) unauthenticatedClient: HttpClient,
+        authenticatedClient: HttpClient,
+    ): AuthDataSource =
+        AuthRemoteDataSource(
+            unauthenticatedClient = unauthenticatedClient,
+            authenticatedClient = authenticatedClient,
+        )
 
     @Provides
     @Singleton

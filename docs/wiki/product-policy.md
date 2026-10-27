@@ -45,9 +45,9 @@ last_verified: 2026-10-27
 | 세션 갱신 | `POST /api/auth/session-renewals`; 암호화 저장·복원과 401 뒤 한 번 재시도 구현 |
 | Google 로그인 | `POST /api/auth/oidc/google/native-authentications`; `SIGNED_IN` 세션 저장·메인 이동, `SIGNUP_REQUIRED` 가입 토큰을 Signup으로 전달 |
 | 회원가입 | `POST /api/users`; registration token·이름·E.164 전화번호 제출, 성공 응답 세션 저장 |
-| 로그아웃 | `DELETE /api/auth/sessions/current`; 현재 refresh token 전달, 성공 뒤 로컬 세션 제거·로그인 이동 연결은 이슈 #149 후속 PR |
+| 로그아웃 | `DELETE /api/auth/sessions/current`; 현재 refresh token 전달과 성공 뒤 로컬 token 삭제를 Data에 구현. 설정 콜백·로그인 이동은 이슈 #149 후속 PR |
 | 공지·My | 사용자용 API 연결은 후속; 현재 준비 중 상태 표시 |
-| 통합 탈퇴 | `DELETE /api/users/me`; dev 계약·실제 응답 확인, Domain 계약 추가; Data·설정 UI·App 연결은 이슈 #149 후속 PR |
+| 통합 탈퇴 | `DELETE /api/users/me`; 인증 client의 API 요청과 성공 뒤 로컬 token 삭제를 Data에 구현. 설정 안내·App 연결은 이슈 #149 후속 PR |
 
 저장된 YAPP 토큰 쌍은 앱 시작과 첫 인증 API 요청 전에 복원합니다. 초기 Google 세션 발급은 YAPP API 계약에 연결했습니다. 로컬 access-token 주입이나 가짜 인증 세션은 만들지 않습니다.
 

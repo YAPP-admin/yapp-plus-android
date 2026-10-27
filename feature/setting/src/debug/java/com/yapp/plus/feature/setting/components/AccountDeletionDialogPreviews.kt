@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
 
-@Preview(name = "Confirm account deletion")
+@Preview(name = "Confirm YAPP withdrawal")
 @Composable
 private fun AccountDeletionConfirmationPreview() {
     YappTheme {
@@ -12,7 +12,7 @@ private fun AccountDeletionConfirmationPreview() {
     }
 }
 
-@Preview(name = "Account deletion in progress")
+@Preview(name = "Withdrawal in progress")
 @Composable
 private fun AccountDeletionProgressPreview() {
     YappTheme {
@@ -20,7 +20,7 @@ private fun AccountDeletionProgressPreview() {
     }
 }
 
-@Preview(name = "Account deletion failed")
+@Preview(name = "Withdrawal failed")
 @Composable
 private fun AccountDeletionFailurePreview() {
     YappTheme {

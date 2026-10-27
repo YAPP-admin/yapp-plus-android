@@ -7,6 +7,7 @@ import com.yapp.plus.core.network.invokeRequest
 import com.yapp.plus.data.auth.datasource.auth.AuthDataSource
 import com.yapp.plus.data.auth.datasource.auth.AuthResponseResult
 import com.yapp.plus.domain.auth.AuthFailure
+import com.yapp.plus.domain.auth.AuthOperationResult
 import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
@@ -44,6 +45,25 @@ class AuthRepositoryImpl(
 
     override suspend fun hasStoredSession(): Boolean = tokenStore.currentTokens() != null
 
+    override suspend fun logout(): AuthOperationResult =
+        executeSessionOperation {
+            val refreshToken =
+                checkNotNull(tokenStore.currentTokens()?.refreshToken) {
+                    "Cannot log out without a stored refresh token"
+                }
+            dataSource.logout(refreshToken)
+            tokenStore.updateTokens(null)
+        }
+
+    override suspend fun withdraw(): AuthOperationResult =
+        executeSessionOperation {
+            checkNotNull(tokenStore.currentTokens()) {
+                "Cannot withdraw without a stored session"
+            }
+            dataSource.withdraw()
+            tokenStore.updateTokens(null)
+        }
+
     private suspend fun execute(request: suspend () -> AuthResponseResult): AuthResult {
         val responseResult =
             when (val requestResult = invokeRequest(request)) {
@@ -69,4 +89,10 @@ class AuthRepositoryImpl(
             AuthResult.Failed(AuthFailure.Unavailable)
         }
     }
+
+    private suspend fun executeSessionOperation(operation: suspend () -> Unit): AuthOperationResult =
+        when (invokeRequest(operation)) {
+            is NetworkRequestResult.Success -> AuthOperationResult.Success
+            is NetworkRequestResult.Error -> AuthOperationResult.Failure
+        }
 }

@@ -8,12 +8,16 @@ import com.yapp.plus.core.network.auth.TokenStore
 import com.yapp.plus.data.attendance.AttendanceDataSource
 import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
+import com.yapp.plus.data.auth.datasource.auth.AuthDataSource
+import com.yapp.plus.data.auth.datasource.auth.AuthRemoteDataSource
 import com.yapp.plus.data.auth.datasource.session.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.datasource.session.SessionTokenRemoteDataSource
+import com.yapp.plus.data.auth.repository.AuthRepositoryImpl
 import com.yapp.plus.data.session.SessionScheduleDataSource
 import com.yapp.plus.data.session.SessionScheduleRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
 import com.yapp.plus.domain.attendance.AttendanceRepository
+import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
 import dagger.Provides
@@ -46,7 +50,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named(UNAUTHENTICATED_CLIENT)
-    fun provideUnauthenticatedClient(): HttpClient = ApiHttpClientFactory.createUnauthenticated()
+    fun provideUnauthenticatedApiHttpClient(): HttpClient = ApiHttpClientFactory.createUnauthenticated()
 
     @Provides
     @Singleton
@@ -60,6 +64,19 @@ object NetworkModule {
         tokenStore: TokenStore,
         tokenRefresher: TokenRefresher,
     ): HttpClient = ApiHttpClientFactory.create(tokenStore, tokenRefresher)
+
+    @Provides
+    @Singleton
+    fun provideAuthDataSource(
+        @Named(UNAUTHENTICATED_CLIENT) httpClient: HttpClient,
+    ): AuthDataSource = AuthRemoteDataSource(httpClient)
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        dataSource: AuthDataSource,
+        tokenStore: TokenStore,
+    ): AuthRepository = AuthRepositoryImpl(dataSource, tokenStore)
 
     @Provides
     @Singleton

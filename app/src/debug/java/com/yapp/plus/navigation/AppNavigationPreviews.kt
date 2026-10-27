@@ -18,7 +18,7 @@ private fun YappSplashScreenPreview() {
 @Composable
 private fun AppNavigationRoutePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        AppNavigationRoute(onExit = {})
+        AppNavHost(onExit = {})
     }
 }
 
@@ -26,7 +26,7 @@ private fun AppNavigationRoutePreview() {
 @Composable
 private fun MainRoutePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        AppNavigationRoute(
+        AppNavHost(
             onExit = {},
             startDestination = AppNavigationDestination.Main,
         )

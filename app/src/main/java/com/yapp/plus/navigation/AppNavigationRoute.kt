@@ -5,29 +5,53 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
 
 @Composable
 internal fun AppNavigationRoute(
     onExit: () -> Unit,
-    onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit = {},
+    onGoogleCredentialReceived: (suspend (GoogleLoginCredential) -> AuthResult)? = null,
+    onRegistrationCompleted: () -> Unit = {},
+    registrationToken: String? = null,
     modifier: Modifier = Modifier,
-    startDestination: AppNavigationDestination = AppNavigationDestination.Login,
+    startDestination: AppNavigationDestination? = null,
 ) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = YappAuthColor.background,
-    ) { innerPadding ->
-        AppNavHost(
-            onExit = onExit,
-            onGoogleCredentialReceived = onGoogleCredentialReceived,
-            startDestination = startDestination,
-            modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .consumeWindowInsets(innerPadding),
-        )
+    val authViewModel: AppAuthViewModel = hiltViewModel()
+    val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    if (authUiState.isCheckingSession && startDestination == null) {
+        YappSplashScreen(modifier = modifier)
+    } else {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            containerColor = YappAuthColor.background,
+        ) { innerPadding ->
+            AppNavHost(
+                onExit = onExit,
+                onGoogleCredentialReceived = onGoogleCredentialReceived ?: authViewModel::authenticateWithGoogle,
+                onRegistrationCompleted = {
+                    authViewModel.onRegistrationCompleted()
+                    onRegistrationCompleted()
+                },
+                registrationToken = registrationToken ?: authUiState.registrationToken,
+                sessionAuthenticated = authUiState.hasSession,
+                startDestination =
+                    startDestination
+                        ?: if (authUiState.hasSession) {
+                            AppNavigationDestination.Main
+                        } else {
+                            AppNavigationDestination.Login
+                        },
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding),
+            )
+        }
     }
 }

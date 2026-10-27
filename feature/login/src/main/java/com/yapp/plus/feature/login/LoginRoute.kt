@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginRoute(
     onBack: () -> Unit,
-    onGoogleCredentialReceived: (GoogleLoginCredential) -> Unit,
+    onGoogleCredentialReceived: suspend (GoogleLoginCredential) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     val onAuthenticationResult: suspend (GoogleLoginCredential) -> Boolean = { credential ->

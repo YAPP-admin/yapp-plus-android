@@ -6,19 +6,19 @@
 
 14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor API client·JSON 직렬화가 있고, 이번 주 세션과 현재 기수 일정 조회는 Domain·Data·Feature·App에 연결했습니다. 홈은 세션과 출석 인증 API를 사용하고 일정 탭은 현재 기수 세션을 조회합니다. 보고 계약과 YAPP 어댑터는 유지하지만 보고 UI 연결은 후속입니다.
 
-로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager에서 ID 토큰과 nonce를 얻어 메모리 콜백으로 전달하지만 YAPP 인증 교환 API가 연결되지 않아 로그인 성공이나 메인 진입으로 처리하지 않습니다. 앱은 로그인 화면에서 시작합니다. 가입은 이름·휴대폰 입력과 복원까지만 제공하고 서버 제출·가입 완료는 연결하지 않습니다.
+로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager ID Token과 원본 nonce를 YAPP native-authentication API에 보내고, `SIGNED_IN` 세션을 암호화 저장하거나 `SIGNUP_REQUIRED` 토큰으로 기존 회원가입 입력 흐름을 진행합니다. 가입 성공 시 세션을 저장하고, 앱 시작 시 저장 세션을 복원해 메인 또는 로그인 화면을 엽니다.
 
-홈의 주간 공지, 게시판 공지, My 회원 정보·출석 이력·점수는 사용자용 API 계약이 없어 준비 중 상태를 표시합니다. 설정의 로그아웃·계정 삭제 실행은 서버 인증 콜백이 연결되기 전까지 비활성화합니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정 이동 상태를 관리합니다.
+홈의 주간 공지, 게시판 공지, My 회원 정보·출석 이력·점수는 API 연결 전까지 준비 중 상태를 표시합니다. 설정의 로그아웃·계정 삭제 실행은 서버 인증 콜백이 연결되기 전까지 비활성화합니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정 이동 상태를 관리합니다.
 
-인증 세션이 공급된 뒤의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 갱신 API·DTO·로컬 저장 연결을, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다. 초기 YAPP 로그인 API 연동은 후속이며 저장된 세션이 없으면 별도의 유효한 YAPP 토큰 쌍 공급이 필요합니다.
+인증 세션의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 Google 로그인·가입·세션 갱신 API를 연결하고, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다.
 
 YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도합니다. 임시 테스트 백엔드·데이터 어댑터·SQL은 개발 버전에서 제거했습니다. 일정·출석 인증과 세션 갱신은 확인된 YAPP API 계약을 사용합니다. 공지·My 정보·계정 삭제 API 연결은 후속입니다.
 
-계정 삭제 UI는 확인·진행·오류 표현을 유지합니다. 서버 삭제 계약과 실행 콜백이 없어 현재 개발 앱에서는 요청을 보내지 않고 동작을 비활성화합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#앱-계정-삭제)입니다.
+계정 삭제 UI는 확인·진행·오류 표현을 유지합니다. 계정·동아리 통합 탈퇴 API 계약은 확인했으며, 기존 안내 범위 조정과 실행 콜백 연결 전까지 현재 개발 앱의 삭제 동작은 비활성화합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#앱-계정-삭제)입니다.
 
 ## 아키텍처와 모듈
 
-인증된 API의 401 갱신과 원래 요청 1회 재시도, 동시 갱신 공유를 구현했습니다. Data의 갱신 API와 DTO, DataStore 토큰 저장소를 App singleton으로 조립하며, `:core:datastore`는 토큰 쌍을 암호화해 저장·복원합니다. 초기 YAPP 로그인 세션 발급은 후속입니다. 저장소 프로세스 재시작 검증 방법은 [모듈 구조](docs/wiki/module-structure.md#인증-저장소-자동-검증)에 있습니다.
+인증된 API의 401 갱신과 원래 요청 1회 재시도, 동시 갱신 공유를 구현했습니다. Data의 인증·가입·갱신 API와 DTO, DataStore 토큰 저장소를 App singleton으로 조립하며, `:core:datastore`는 토큰 쌍을 암호화해 저장·복원합니다. 저장소 프로세스 재시작 검증 방법은 [모듈 구조](docs/wiki/module-structure.md#인증-저장소-자동-검증)에 있습니다.
 
 MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
 현재 14개 Gradle 모듈과 build-logic 설정, 디자인시스템 공통 표현, `:core:preview`의 재사용 Preview 데이터가 준비되어 있습니다. 로그인은 `:feature:login`, 가입 입력·단계·상태는 `:feature:signup`이 소유합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지와 Google ID 토큰 콜백을 조립하고, 메인 탭 내비게이션·선택 상태와 설정 화면 이동 상태도 소유합니다. 가입 단계와 입력값은 Feature의 `SignUpViewModel` 및 `SavedStateHandle`로 유지·복원합니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.

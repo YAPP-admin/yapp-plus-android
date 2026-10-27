@@ -10,7 +10,7 @@ last_verified: 2026-10-26
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·Google 크레덴셜 콜백·YAPP 일정/출석 Data 조립·토큰 저장/갱신·탭 내비게이션 |
+| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증 연결; 공지 준비 중; 보고·알림·점수 진입 숨김 |
@@ -18,19 +18,19 @@ last_verified: 2026-10-26
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 UI·분류 선택 복원; 사용자용 API 연결 전 준비 중 표시 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | 프로필·출석 이력 UI 준비 중; 설정 이동·이력 펼침 상태만 관리 |
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·앱 버전·인증 확인 UI; 실행 콜백 없는 로그아웃·계정 삭제 비활성화 |
-| `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce를 Domain credential로 App에 전달; nonce 해시·취소·중복 요청·재시도 오류 UI 구현 |
-| `:feature:signup` | `com.yapp.plus.feature.signup` | 이름·휴대폰 입력·복원; 실제 제출·완료·메인 진입은 미연결 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 일정·출석 인증·보고 계약과 가입 입력 값 객체 |
-| `:data` | `com.yapp.plus.data` | YAPP 일정·출석 인증·보고 어댑터와 Repository, 세션 갱신 API·암호화 저장 연결 |
+| `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
+| `:feature:signup` | `com.yapp.plus.feature.signup` | 가입 토큰을 받아 이름·휴대폰 입력·검증·서버 제출·완료 상태를 관리; 입력은 복원하고 토큰은 메모리 전용 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증 결과, 일정·출석 계약·가입 입력 값 객체 |
+| `:data` | `com.yapp.plus.data` | Google OIDC 인증·회원가입·세션 갱신 및 YAPP 일정·출석 어댑터와 Repository, 암호화 저장 연결 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·토큰 복원/교체 조율·401 갱신 및 중복 방지 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | DataStore 세션 레코드·Keystore 암호화·백업 제외 파일 저장 구현됨; Data에서 사용 |
 
 14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
-개발 버전은 YAPP 서버의 일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. 공지·My의 실제 조회 계약은 준비 전이며, 미연동 UI는 `Unavailable` 상태로 표시합니다.
+개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. 공지·My의 실제 조회 계약은 준비 전이며, 미연동 UI는 `Unavailable` 상태로 표시합니다.
 
-Login Feature는 Google Credential Manager의 ID 토큰과 nonce를 메모리의 App 콜백으로 전달합니다. 서버 인증 교환과 시작 시 인증 목적지 결정은 미연결이며 앱은 로그인에서 시작합니다. Signup Feature는 이름·휴대폰 입력과 내부 뒤로 가기·복원을 소유하고 서버 제출·완료 전환을 하지 않습니다.
+Login Feature는 Google Credential Manager의 ID 토큰과 nonce를 메모리의 App 콜백으로 전달합니다. App은 YAPP 인증 결과를 해석해 세션을 저장하거나 Signup Feature로 이동합니다. Signup Feature는 가입 토큰을 저장하지 않고 이름·휴대폰 입력, E.164 검증, 서버 제출·완료 전환과 내부 뒤로 가기·입력 복원을 소유합니다. 시작 시 세션 복원은 App이 소유합니다.
 
 App은 네 탭·공지 ID·설정 화면 이동을 소유합니다. 홈과 일정의 ViewModel은 Repository 결과를 표시하고 예시 값은 `src/debug` Preview에서만 사용합니다. My의 펼침 여부는 Route의 저장 가능한 UI 상태이며 API 요청을 만들지 않습니다. 기능별 화면은 Preview와 테스트에서 독립적으로 확인합니다.
 

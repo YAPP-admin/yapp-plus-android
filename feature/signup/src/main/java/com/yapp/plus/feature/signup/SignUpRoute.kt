@@ -20,6 +20,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignUpRoute(
     onBack: () -> Unit,
+    registrationToken: String?,
+    onRegistrationCompleted: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SignUpRoute(

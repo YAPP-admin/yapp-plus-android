@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-26
+last_verified: 2026-10-27
 ---
 
 # 아키텍처
@@ -39,12 +39,12 @@ Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유�
 호출 경계는 `Feature → Domain Repository 계약 → Data RepositoryImpl → 생성자 주입한 기능별 DataSource 인터페이스 → YAPP 서버 구현`입니다.
 
 - `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 받습니다. DataSource의 공통 입출력과 서버 DTO는 Data가 소유하고 Domain에는 업무 모델과 Repository 계약만 노출합니다.
-- App Hilt는 일정에 `SessionScheduleRemoteDataSource`, 출석 인증·보고에 `AttendanceRemoteDataSource`를 연결합니다. Fake는 같은 DataSource 계약을 구현하는 테스트 대역으로만 사용합니다.
+- App Hilt는 인증에 `AuthRemoteDataSource`, 일정에 `SessionScheduleRemoteDataSource`, 출석 인증·보고에 `AttendanceRemoteDataSource`를 연결합니다. Fake는 같은 DataSource 계약을 구현하는 테스트 대역으로만 사용합니다.
 - Network는 Ktor HTTP client와 토큰 복원·401 갱신 조율을 소유하고 Data는 YAPP 갱신 API·DTO와 `TokenPersistence`의 로컬 구현을 제공합니다. 실제 암호화 저장은 `:core:datastore`가 담당합니다.
-- Login Feature는 Google 크레덴셜 획득만 담당합니다. ID 토큰·원본 nonce는 메모리 콜백으로 전달하며, Google 인증을 YAPP 세션으로 바꾸는 API를 임의로 만들지 않습니다.
-- 서버 계약이 없는 공지·회원 프로필·출석 이력·계정 삭제는 데이터 요청을 조립하지 않습니다. Feature가 준비 중 상태를 표시하고 실행 콜백이 없는 인증 동작은 비활성화합니다.
+- Login Feature는 Google Credential Manager 크레덴셜을 획득합니다. App은 메모리 콜백으로 받은 ID 토큰·원본 nonce를 Data의 `AuthRepository`에 전달하고, 인증 결과의 YAPP 토큰 쌍을 `TokenStore`에 저장합니다. Signup Feature는 일회용 가입 토큰·이름·E.164 전화번호를 서버에 제출합니다.
+- 아직 연결하지 않은 공지·회원 프로필·출석 이력은 Feature가 준비 중 상태를 표시합니다. 통합 탈퇴의 서버 계약은 확인했지만 설정 UI·인증 실행 콜백 연결은 후속이며, 현재 실행 콜백이 없는 인증 동작은 비활성화합니다.
 
-적용 상태: 일정·출석 검증·보고와 YAPP 세션 저장·갱신을 App에 조립했습니다. 초기 로그인·가입·공지·회원 조회·계정 삭제의 실제 연결은 [제품 정책](product-policy.md#현재-서버-연결)을 따릅니다.
+적용 상태: Google 네이티브 로그인·가입과 YAPP 세션 저장·복원·갱신, 일정·출석 검증·보고를 App에 조립했습니다. 공지·회원 조회·계정 삭제의 실제 연결은 [제품 정책](product-policy.md#현재-서버-연결)을 따릅니다.
 
 ## 정책과 표현
 

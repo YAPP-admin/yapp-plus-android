@@ -343,3 +343,13 @@ last_verified: 2026-10-27
 - 반영: [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, Domain·Data 인증 Repository와 설정 문구·App 인증 흐름.
 - 적용 상태: 빌드 복구 [PR #154](https://github.com/YAPP-admin/yapp-plus-android/pull/154), Domain [PR #153](https://github.com/YAPP-admin/yapp-plus-android/pull/153), Data [PR #155](https://github.com/YAPP-admin/yapp-plus-android/pull/155), 설정 안내 [PR #156](https://github.com/YAPP-admin/yapp-plus-android/pull/156)을 순서대로 반영했습니다. App 실행 콜백·성공 후 로그인 복귀·오류 재시도·중복 방지와 취소 후 로딩 해제를 연결했습니다. App 단위 테스트 8건, API 35 에뮬레이터 UI 테스트 6건, App debug 빌드·lint·KtLint를 통과했습니다. 실제 Settings 서버 E2E는 확인하지 못했습니다.
 - 대체한 결정: DEC-0033의 앱 계정 삭제와 YAPP 동아리 탈퇴를 별도 처리한다는 정책을 대체합니다. 설정 화면 구조와 다른 알림·약관 정책은 유지합니다.
+
+## DEC-0042 · 앱 기능 명세서 ver 2를 화면 요구 기준으로 반영
+
+- 기록일: 2026-10-26
+- 결정: 사용자가 제공한 [기능 명세서 `🟠APP (ver 2)` 탭](https://docs.google.com/spreadsheets/d/1K-2VwMPkoT8kq-bujUIMetTPKal11Iql2GUmMd1M7eE/edit?gid=848576421#gid=848576421)을 화면의 목표 요구로 기록합니다. Android에는 Google 로그인을 적용하며 시트의 iOS 전용 Apple 로그인 요구를 Android로 확대하지 않습니다.
+- 이유: 갱신된 기능 명세와 후속 화면 요구를 현재 제품 정책에서 추적하기 위해서입니다.
+- 근거: 사용자의 2026-10-26 Wiki 갱신 요청과 시트의 변경 표시. Drive 개정 이력은 제공되지 않아 변경 열과 기존 APP 탭을 대조했습니다.
+- 반영: [제품 정책](product-policy.md)의 `앱 기능 명세서 ver 2` 절.
+- 적용 상태: 문서에 목표와 현재 구현을 구분해 기록했습니다. DEC-0039의 YAPP 서버 인증·가입 결정은 현재 구현 기준으로 유지합니다. 멤버십 연결·승인, 팀 사진 출석·검수, 공식 회원·출석 조회, 공지·알림 서버 연결은 후속입니다. 탈퇴 보존 문구의 범위와 기간은 미확정으로 유지합니다.
+- 대체한 결정: 없음.

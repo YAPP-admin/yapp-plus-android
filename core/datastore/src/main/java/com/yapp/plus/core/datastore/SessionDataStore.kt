@@ -10,7 +10,7 @@ import java.security.MessageDigest
 class SessionDataStore(
     context: Context,
     namespace: String,
-) {
+) : SessionRecordStore {
     private val applicationContext = context.applicationContext
     private val dataStore =
         DataStoreFactory.create(
@@ -19,11 +19,14 @@ class SessionDataStore(
             produceFile = { sessionFile(applicationContext, namespace) },
         )
 
-    suspend fun fetchTokens(): SessionTokenRecord = dataStore.data.first()
+    override suspend fun fetchTokens(): SessionTokenRecord = dataStore.data.first()
 
     suspend fun updateTokens(tokens: SessionTokenRecord) {
         dataStore.updateData { tokens }
     }
+
+    override suspend fun updateSession(transform: SessionRecordUpdate): SessionTokenRecord =
+        dataStore.updateData(transform)
 
     private fun sessionFile(
         context: Context,

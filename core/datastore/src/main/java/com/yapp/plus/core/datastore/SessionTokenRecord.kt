@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 data class SessionTokenRecord(
     val accessToken: String? = null,
     val refreshToken: String? = null,
+    val storageKey: String? = null,
+    val userName: String? = null,
 ) {
     init {
         require(

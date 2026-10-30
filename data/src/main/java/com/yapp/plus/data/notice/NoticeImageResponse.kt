@@ -9,4 +9,13 @@ internal data class NoticeImageResponse(
     val readUrl: String,
     val readUrlExpiresAt: String,
     val displayOrder: Int,
-)
+) {
+    fun toData(): NoticeImageData =
+        NoticeImageData(
+            imageKey = imageKey,
+            filename = filename,
+            readUrl = readUrl,
+            readUrlExpiresAt = readUrlExpiresAt,
+            displayOrder = displayOrder,
+        )
+}

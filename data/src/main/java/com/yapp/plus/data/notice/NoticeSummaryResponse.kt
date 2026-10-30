@@ -9,4 +9,13 @@ internal data class NoticeSummaryResponse(
     val type: String,
     val createdDate: String,
     val daysUntilDeadline: Long?,
-)
+) {
+    fun toData(): NoticeSummaryData =
+        NoticeSummaryData(
+            postId = postId,
+            title = title,
+            type = type,
+            createdDate = createdDate,
+            daysUntilDeadline = daysUntilDeadline,
+        )
+}

@@ -8,4 +8,12 @@ internal data class NoticeAssignmentResponse(
     val positions: List<String>,
     val submissionUrl: String,
     val submissionLinkText: String,
-)
+) {
+    fun toData(): NoticeAssignmentData =
+        NoticeAssignmentData(
+            deadlineDate = deadlineDate,
+            positions = positions,
+            submissionUrl = submissionUrl,
+            submissionLinkText = submissionLinkText,
+        )
+}

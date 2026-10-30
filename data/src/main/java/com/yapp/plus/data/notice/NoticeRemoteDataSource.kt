@@ -20,19 +20,7 @@ class NoticeRemoteDataSource(
                     parameter("type", type)
                     cursor?.let { parameter("cursor", it) }
                 }.body<NoticePageResponse>()
-        return NoticePageData(
-            response.totalPostCount,
-            response.items.map {
-                NoticeSummaryData(
-                    it.postId,
-                    it.title,
-                    it.type,
-                    it.createdDate,
-                    it.daysUntilDeadline,
-                )
-            },
-            response.nextCursor,
-        )
+        return response.toData()
     }
 
     override suspend fun fetchNotice(id: Long): NoticeDetailData {

@@ -14,31 +14,16 @@ internal data class NoticeDetailResponse(
     val readCount: Long,
     val read: Boolean,
 ) {
-    fun toData() =
+    fun toData(): NoticeDetailData =
         NoticeDetailData(
-            postId,
-            title,
-            contentMarkdown,
-            type,
-            createdDate,
-            assignment?.let {
-                NoticeAssignmentData(
-                    it.deadlineDate,
-                    it.positions,
-                    it.submissionUrl,
-                    it.submissionLinkText,
-                )
-            },
-            images.map {
-                NoticeImageData(
-                    it.imageKey,
-                    it.filename,
-                    it.readUrl,
-                    it.readUrlExpiresAt,
-                    it.displayOrder,
-                )
-            },
-            readCount,
-            read,
+            postId = postId,
+            title = title,
+            contentMarkdown = contentMarkdown,
+            type = type,
+            createdDate = createdDate,
+            assignment = assignment?.toData(),
+            images = images.map { it.toData() },
+            readCount = readCount,
+            read = read,
         )
 }

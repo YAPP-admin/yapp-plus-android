@@ -7,6 +7,7 @@ enum class BoardCategory(
     @param:StringRes val labelResource: Int,
 ) {
     All(R.string.board_category_all),
-    Operation(R.string.board_category_operation),
     Session(R.string.board_category_session),
+    Assignment(R.string.board_category_assignment),
+    Operation(R.string.board_category_operation),
 }

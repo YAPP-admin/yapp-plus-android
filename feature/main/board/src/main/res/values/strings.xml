@@ -2,7 +2,7 @@
     <string name="board_title">게시판</string>
     <string name="board_category_all">전체</string>
     <string name="board_category_session">세션</string>
-    <string name="board_category_operation">운영</string>
+    <string name="board_category_operation">기타</string>
     <string name="board_back">뒤로</string>
     <string name="board_error">공지를 불러오지 못했어요</string>
     <string name="board_retry">다시 시도</string>
@@ -10,4 +10,17 @@
     <string name="board_metadata">%1$s · %2$s</string>
     <string name="board_empty">아직 작성된 공지사항이 없어요</string>
     <string name="board_preparing">게시판을 준비하고 있어요</string>
+    <string name="board_category_assignment">과제</string>
+    <string name="board_deadline_before">D-%1$d</string>
+    <string name="board_deadline_today">D-day</string>
+    <string name="board_deadline_after">D+%1$d</string>
+    <string name="board_read_title">공지를 다 읽으셨나요?</string>
+    <string name="board_read_count">지금까지 %1$d명이 확인했어요!</string>
+    <string name="board_read_action">확인하기</string>
+    <string name="board_read_done">확인했어요</string>
+    <string name="board_read_error">읽음 확인을 완료하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="board_image_error">이미지를 다시 불러오기</string>
+    <string name="board_assignment_deadline">제출 기한</string>
+    <string name="board_assignment_positions">제출 대상</string>
+    <string name="board_assignment_method">제출 방법</string>
 </resources>

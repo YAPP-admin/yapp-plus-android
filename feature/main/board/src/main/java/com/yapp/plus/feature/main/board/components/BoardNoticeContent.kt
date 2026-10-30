@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
@@ -39,7 +37,8 @@ internal fun <T> BoardNoticeState(
 ) {
     Box(
         modifier.fillMaxWidth(),
-        contentAlignment = if (state is NoticeUiState.Content) Alignment.TopStart else Alignment.Center,
+        contentAlignment =
+            if (state is NoticeUiState.Content) Alignment.TopStart else Alignment.Center,
     ) {
         when (state) {
             NoticeUiState.Unavailable -> BoardEmptyState(message = R.string.board_preparing)
@@ -70,7 +69,10 @@ internal fun BoardNoticeCard(
 ) {
     Surface(onClick = onClick, color = YappMainColor.surface) {
         Column(Modifier.fillMaxWidth().padding(vertical = 20.dp)) {
-            BoardNoticeBadge(notice.category)
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                BoardNoticeBadge(notice.category)
+                notice.daysUntilDeadline?.let { BoardDeadlineBadge(it) }
+            }
             Spacer(Modifier.height(10.dp))
             YappText(
                 notice.title,
@@ -88,28 +90,4 @@ internal fun BoardNoticeCard(
         }
     }
     HorizontalDivider(color = YappMainColor.divider)
-}
-
-@Composable
-internal fun BoardNoticeDetail(notice: BoardNoticeUiModel) {
-    Column(
-        Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(bottom = 24.dp),
-    ) {
-        YappText(notice.title, YappTypography.scaleT7Bold, YappMainColor.textPrimary)
-        Row(
-            modifier = Modifier.padding(top = 8.dp, bottom = 28.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            BoardNoticeBadge(notice.category)
-            YappText(notice.date, YappTypography.scaleT3Medium, YappMainColor.textFaint)
-        }
-        HorizontalDivider(color = YappMainColor.divider)
-        YappText(
-            notice.content,
-            YappTypography.scaleT4Regular,
-            YappMainColor.textPrimary,
-            Modifier.padding(top = 28.dp),
-        )
-    }
 }

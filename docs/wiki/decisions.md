@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-27
+last_verified: 2026-10-30
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0039`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0046`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -357,20 +357,22 @@ last_verified: 2026-10-27
 ## DEC-0043 · My 출석 조회 연결과 Figma UI 기준
 
 - 기록일: 2026-10-29
-- 결정: My·설정은 사용자 지정 Figma를 따르고 앱 버전·탈퇴 문의 이메일·확장 안내를 제거합니다. 서버와 탈퇴 문구의 차이를 설명한 뒤 사용자가 Figma 원문을 재확인했습니다. 미지원 API는 UI를 유지하고 연결만 비우며 알림 토글은 화면 상태만 변경합니다.
-- 근거: 사용자의 My 구현 요청과 후속 답변, [Figma](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40302), [이슈 #160](https://github.com/YAPP-admin/yapp-plus-android/issues/160).
-- 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), [회원·역할 정책](membership-policy.md)과 설정 UI·호출부·UI 테스트.
-- 적용 상태: 설정 UI만 독립 PR로 반영합니다. My 화면·출석 API는 후속 PR이며 전체 로컬 구현·검증 기록은 이슈에 보존합니다. 이 변경은 서버의 통합 탈퇴·비식별화·이력 보존과 실패 시 세션 보존을 바꾸지 않습니다.
-- 대체한 결정: DEC-0033/DEC-0038의 앱 버전·확장 안내 유지와 DEC-0041의 화면 문구를 대체합니다. 통합 탈퇴 API 계약은 유지합니다.
+- 결정: My의 출석 점수·이력은 확인된 사용자 API에 연결하고, 화면·별도 이력 이동·설정·확인 팝업은 Figma를 따릅니다. Figma에 없는 앱 버전·탈퇴 문의 이메일·확장 안내를 제거합니다. 서버와 탈퇴 문구의 차이를 설명한 뒤 사용자가 Figma 원문을 명시적으로 재확인했습니다. 서버의 통합 탈퇴·비식별화·이력 보존·실패 시 세션 보존은 변경하지 않습니다. 미지원 API에 대해서는 사용자가 “api 연결만 비워놔”라고 명시했으므로 Figma UI를 유지하고 조회값을 `—`로 표시하며 API·문의 URL 연결만 비워 둡니다. 알림 토글은 화면 상태만 변경합니다.
+- 이유: 준비 중 화면에서 제공되는 실제 출석 조회로 전환하고, 요청된 UI/UX 기준과 구현을 맞추기 위해서입니다.
+- 근거: 사용자의 마이페이지 구현 요청·탈퇴 문구 후속 답변, [Figma](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40302), [이슈 #160](https://github.com/YAPP-admin/yapp-plus-android/issues/160), [서버 API 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md).
+- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), [회원·역할 정책](membership-policy.md), [디자인시스템](design-system-components.md), AGENTS·README, Domain·Data·My·Setting·App.
+- 적용 상태: 로컬 구현과 빌드·lint·ktlint·단위 58건·API 35 UI 13건 검증을 완료했습니다. 사용자용 프로필·지각 면제권·알림 설정·문의 URL과 진행률 산식은 미확인입니다. 해당 UI는 유지하고 API 연결과 산식만 비워 두었습니다. 서버 응답을 임의 계산이나 예시 값으로 대체하지 않습니다. Domain 계약·Data·공통/설정 UI와 My 요약 컴포넌트는 PR #162~#171로 병합했습니다. 2026-10-30 추가 적용: PR #174·#175·#178로 My 프로필·메인·별도 내역 UI와 조회·이동을 반영했습니다.
+- 대체한 결정: DEC-0033/DEC-0038의 앱 버전·추가 탈퇴 안내 유지, DEC-0041의 화면 안내 문구, DEC-0042의 My 출석 조회 미연결 상태를 갱신하며 My·설정의 미지원 필드 숨김을 이 작업에 한해 UI 유지로 대체합니다. 통합 탈퇴 서버 계약과 다른 기능 범위는 유지합니다.
+
 
 ## DEC-0044 · 서버에 존재하는 사용자 API의 후속 연결
 
-- 기록일: 2026-10-30
-- 결정: 사용자의 “api 연동 마저해줘”, “서버에있는것만진행해” 요청에 따라 확인된 사용자 API의 Domain 계약부터 분리해 반영합니다. 출석 점수·이력, 인증 응답 이름, 공지, 사전 보고, 팀 사진 및 푸시 기기를 대상으로 하며 사전 보고의 지각은 현재 서버의 `LATE`를 사용합니다.
-- 근거: [이슈 #160](https://github.com/YAPP-admin/yapp-plus-android/issues/160), [이슈 #161](https://github.com/YAPP-admin/yapp-plus-android/issues/161), [백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c).
-- 반영: [제품 정책](product-policy.md)과 Domain 모델·Repository 인터페이스.
-- 적용 상태: 계약 정의까지 반영하며 Data 구현·Feature 연결은 후속 PR입니다. 미확인 팀원 정보·Firebase 설정·회원 정보·알림 설정·문의 URL을 임의로 만들지 않습니다. 통합 로컬 구현의 검증 기록은 이슈에 유지합니다.
-- 대체한 결정: 사전 보고의 이전 시간별 지각 enum 설명을 현재 사용자 API 계약으로 정정합니다. 서버 판정과 미확인 기능의 연결 보류 원칙은 유지합니다.
+- 날짜: 2026-10-30
+- 결정: 사용자의 “api 연동 마저해줘”, “서버에있는것만진행해”에 따라 확인된 서버 계약을 연결합니다. 로그인·가입 응답의 이름을 세션과 함께 저장해 My에 표시하고 공지 목록·상세·읽음, 홈 주간 공지와 사전 보고를 연결합니다. 지각 보고는 현재 사용자 Controller가 허용하는 `LATE`를 사용하며 추가 시간 선택은 제거합니다.
+- 근거: [이슈 #161](https://github.com/YAPP-admin/yapp-plus-android/issues/161), [백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c), Figma 공지 상세·보고 시트.
+- 적용 상태: API·화면 연결, 전체 모듈 debug 빌드·lint, ktlint, 관련 단위 테스트 97건(Data 52·Network 23·Board 4·Home 9·My 9), API 35 UI 테스트 18건과 Wiki 검사를 완료했습니다. 검증은 Fake·MockEngine·에뮬레이터를 사용했으며 실제 서버 계정으로 E2E 요청을 수행하지 않았습니다. 팀 사진 presign·업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현하며, 본인 membershipId·팀원 목록과 Android Firebase 설정을 확인하기 전에는 UI 제출·실제 푸시 수신을 완료로 간주하지 않습니다. 이름이 없던 기존 저장 세션은 다음 로그인 성공부터 이름을 표시합니다. 미확인 회원 정보·면제권·알림 설정·문의 연결은 비워 둡니다.
+- 추가 적용: PR #172~#178로 가입 Route 정리, App 조립, My·홈·게시판의 화면과 API 연결을 영역별로 나누어 병합했습니다. 최종 통합 코드에서 전체 단위 테스트 129건, 전체 debug 빌드·lint·ktlint와 테스트 APK 빌드를 통과했습니다. 동일 기능 코드의 API 35 UI 테스트 18건도 다시 통과했습니다.
+- 대체한 결정: DEC-0038·DEC-0042·DEC-0043의 공지·보고·이름 미연결 상태를 갱신합니다. Figma UI·문구 기준과 확인되지 않은 값의 빈 표시 정책은 유지합니다. 서버 조회 계약이 없는 관리자 전용 API를 사용자 토큰으로 대체 호출하지 않습니다.
 
 ## DEC-0045 · Data 모델의 매핑을 원본 타입에 캡슐화
 
@@ -379,5 +381,5 @@ last_verified: 2026-10-27
 - 이유: 변환 책임을 원본 모델에 모으고 요청·저장소 코드와 분리하기 위함입니다.
 - 근거: 현재 세션에서 `AttendanceScoreResponse.toData()`와 같은 매핑을 수신 타입 내부로 캡슐화하라는 사용자 요청.
 - 반영: [설계 패턴](design-patterns.md), 출석 점수·이력 DTO와 Data 모델. 같은 작업의 공지 매핑에도 적용합니다.
-- 적용 상태: 출석 조회 매핑부터 반영하며 기존 검증·변환 동작을 유지합니다.
+- 적용 상태: 출석 점수·이력과 공지 매핑에 반영했으며 기존 검증·변환 동작을 유지합니다.
 - 대체한 결정: 없음. Data의 DTO·Domain 변환 소유권과 계층 의존성은 유지합니다.

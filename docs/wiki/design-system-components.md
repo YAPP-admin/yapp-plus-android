@@ -70,4 +70,4 @@ YappText(
 
 - `YappChipSize.Profile`은 13sp/18sp 글자, 가로 10dp·세로 2dp 여백과 8dp 모서리를 사용합니다. `YappChipColor.Brand`와 함께 프로필의 활동회원 배지를 표시합니다. 개별 Preview는 `src/debug`의 `components/chip/ProfileChipPreview.kt`에서 확인합니다.
 - `YappMainColor.basement`, `layerFill`, `critical`, `criticalWeak`는 My 요약 카드 배경과 결석 배지에 사용하는 Figma 색상입니다.
-- 이 PR은 공통 변형·리소스까지 반영하며 My·설정 소비 화면과 API 연결은 후속입니다.
+- My·설정의 API 연결 범위와 표시 정책은 [DEC-0043](decisions.md#dec-0043--my-출석-조회-연결과-figma-ui-기준)을 따릅니다.

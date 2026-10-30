@@ -34,29 +34,6 @@ class AttendanceReadRemoteDataSource(
                 .get("attendance-history") {
                     cursor?.let { parameter("cursor", it) }
                 }.body<AttendanceHistoryResponse>()
-        return AttendanceHistoryData(
-            totalSessionCount = response.summary.totalSessionCount,
-            startedSessionCount = response.summary.startedSessionCount,
-            items =
-                response.items.map {
-                    AttendanceHistoryEntryData(
-                        sessionId = it.sessionId,
-                        sessionName = it.sessionName,
-                        attendanceStatus = it.attendanceStatus,
-                        staffDecisionStatus = it.staffDecisionStatus,
-                    )
-                },
-            nextCursor = response.nextCursor,
-        )
+        return response.toData()
     }
 }
-
-private fun AttendanceScoreResponse.toData(): AttendanceScoreData =
-    AttendanceScoreData(
-        generationId = generationId,
-        totalScore = totalScore,
-        attendanceCount = attendanceCount,
-        lateCount = lateCount,
-        absentCount = absentCount,
-        earlyLeaveCount = earlyLeaveCount,
-    )

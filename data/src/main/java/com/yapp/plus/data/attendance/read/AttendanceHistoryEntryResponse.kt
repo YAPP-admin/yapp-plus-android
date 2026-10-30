@@ -8,4 +8,12 @@ internal data class AttendanceHistoryEntryResponse(
     val sessionName: String,
     val attendanceStatus: String,
     val staffDecisionStatus: String?,
-)
+) {
+    fun toData(): AttendanceHistoryEntryData =
+        AttendanceHistoryEntryData(
+            sessionId = sessionId,
+            sessionName = sessionName,
+            attendanceStatus = attendanceStatus,
+            staffDecisionStatus = staffDecisionStatus,
+        )
+}

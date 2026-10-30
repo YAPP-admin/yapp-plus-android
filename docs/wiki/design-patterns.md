@@ -37,6 +37,7 @@ last_verified: 2026-10-27
 - 원격·로컬 데이터 접근은 DataSource 경계로 분리합니다.
 - `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 일정·출석 검증·보고는 YAPP 서버 어댑터를 사용하며 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
 - DTO는 Data 내부에 두고 Domain 변환도 Data에서 처리합니다.
+- 직접 소유하는 DTO·Data 모델의 변환은 원본 타입의 `toData()`·`toDomain()` 멤버 함수로 캡슐화합니다. DataSource·Repository 파일에 해당 타입의 매핑 확장 함수를 두지 않습니다. 호출부는 요청·결과 흐름을 조율하며 의존성 방향은 유지합니다.
 - Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
 

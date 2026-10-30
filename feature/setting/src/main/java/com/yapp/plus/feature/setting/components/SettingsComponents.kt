@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,19 +60,22 @@ fun SettingsNotificationRow(
             style = YappTypography.scaleT5Bold,
             color = YappMainColor.textPrimary,
         )
-        Switch(
-            checked = enabled,
-            onCheckedChange = null,
-            colors =
-                SwitchDefaults.colors(
-                    checkedThumbColor = YappMainColor.surface,
-                    checkedTrackColor = YappMainColor.brand,
-                    checkedBorderColor = YappMainColor.brand,
-                    uncheckedThumbColor = YappMainColor.surface,
-                    uncheckedTrackColor = YappMainColor.textFaint,
-                    uncheckedBorderColor = YappMainColor.textFaint,
-                ),
-        )
+        Box(
+            modifier =
+                Modifier
+                    .size(width = 52.dp, height = 28.dp)
+                    .background(
+                        if (enabled) YappMainColor.brand else YappMainColor.textFaint,
+                        CircleShape,
+                    ).padding(2.dp),
+            contentAlignment = if (enabled) Alignment.CenterEnd else Alignment.CenterStart,
+        ) {
+            Box(
+                Modifier
+                    .size(24.dp)
+                    .background(YappMainColor.surface, CircleShape),
+            )
+        }
     }
 }
 

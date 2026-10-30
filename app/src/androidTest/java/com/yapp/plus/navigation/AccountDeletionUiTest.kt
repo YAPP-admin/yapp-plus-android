@@ -6,11 +6,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -33,14 +39,13 @@ class AccountDeletionUiTest {
         composeRule.setContent {
             YappTheme {
                 SettingsScreen(
-                    appVersion = "1.0",
                     onBack = {},
                     onLogout = null,
                 )
             }
         }
-        composeRule.onNodeWithText("알림").assertDoesNotExist()
-        composeRule.onNodeWithText("YAPP 탈퇴").assertIsNotEnabled()
+        composeRule.onNodeWithText("알림").assertIsDisplayed()
+        composeRule.onNodeWithText("회원 탈퇴").assertIsNotEnabled()
         composeRule.onNodeWithText("로그아웃").assertIsNotEnabled()
     }
 
@@ -51,7 +56,6 @@ class AccountDeletionUiTest {
         restoration.setContent {
             YappTheme {
                 SettingsScreen(
-                    appVersion = "1.0",
                     onBack = {},
                     onLogout = {},
                     onDeleteAccount = { requests++ },
@@ -59,19 +63,23 @@ class AccountDeletionUiTest {
                 )
             }
         }
-        composeRule.onNodeWithText("yappplus.official@gmail.com").assertIsDisplayed()
-        composeRule.onNodeWithText("YAPP 탈퇴").performClick()
+        composeRule.onNodeWithText("yappplus.official@gmail.com").assertDoesNotExist()
+        composeRule.onNodeWithText("앱 버전", substring = true).assertDoesNotExist()
+        saveWindowScreenshot("settings")
+        composeRule.onNodeWithText("알림").assertIsOn().performClick()
+        composeRule.onNodeWithText("알림").assertIsOff()
+        composeRule.onNodeWithText("회원 탈퇴").performClick()
         restoration.emulateSavedInstanceStateRestore()
-        composeRule.onNodeWithText("YAPP에서 탈퇴할까요?").assertIsDisplayed()
+        composeRule.onNodeWithText("알림").assertIsOff()
+        composeRule.onNodeWithText("정말 탈퇴하시겠어요?").assertIsDisplayed()
         composeRule
             .onNodeWithText(
-                "모든 기수의 YAPP 회원 자격에서 탈퇴 처리되고 모든 세션이 종료돼요. " +
-                    "이름·전화번호 등 개인정보는 비식별화되어 복구할 수 없어요.",
+                "탈퇴하시면 모든 정보가 삭제돼요.",
             ).assertIsDisplayed()
-        saveConfirmationScreenshot()
+        saveWindowScreenshot("withdrawal-confirmation")
         composeRule.onNodeWithText("취소").performClick()
         composeRule.runOnIdle { assertEquals(0, requests) }
-        composeRule.onNodeWithText("YAPP 탈퇴").performClick()
+        composeRule.onNodeWithText("회원 탈퇴").performClick()
         composeRule.onNodeWithText("탈퇴하기").performClick()
         composeRule.runOnIdle { assertEquals(1, requests) }
     }
@@ -83,7 +91,6 @@ class AccountDeletionUiTest {
         composeRule.setContent {
             YappTheme {
                 SettingsScreen(
-                    appVersion = "1.0",
                     onBack = {},
                     onLogout = {},
                     onDeleteAccount = {
@@ -94,7 +101,7 @@ class AccountDeletionUiTest {
                 )
             }
         }
-        composeRule.onNodeWithText("YAPP 탈퇴").performClick()
+        composeRule.onNodeWithText("회원 탈퇴").performClick()
         composeRule.onNodeWithText("탈퇴하기").performClick()
         composeRule.onNodeWithText("탈퇴 처리 중이에요").assertIsDisplayed()
         composeRule.onNodeWithText("탈퇴하기").assertDoesNotExist()
@@ -111,7 +118,6 @@ class AccountDeletionUiTest {
         composeRule.setContent {
             YappTheme {
                 SettingsScreen(
-                    appVersion = "1.0",
                     onBack = {},
                     onLogout = {},
                     onDeleteAccount = {
@@ -133,10 +139,11 @@ class AccountDeletionUiTest {
         composeRule.onNodeWithText("탈퇴 처리 실패").assertDoesNotExist()
     }
 
-    private fun saveConfirmationScreenshot() {
+    private fun saveWindowScreenshot(name: String) {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
-        val bitmap = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
-        val file = File(instrumentation.targetContext.cacheDir, "withdrawal-confirmation.png")
+        val node = if (name == "settings") composeRule.onRoot() else composeRule.onNode(isDialog())
+        val bitmap = node.captureToImage().asAndroidBitmap()
+        val file = File(instrumentation.targetContext.cacheDir, "$name.png")
         file.outputStream().use { output ->
             check(bitmap.compress(Bitmap.CompressFormat.PNG, 100, output))
         }

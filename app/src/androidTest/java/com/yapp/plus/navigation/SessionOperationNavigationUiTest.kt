@@ -71,7 +71,7 @@ class SessionOperationNavigationUiTest {
         if (isLogout) {
             confirmLogout()
         } else {
-            composeRule.onNodeWithText("YAPP 탈퇴").performClick()
+            composeRule.onNodeWithText("회원 탈퇴").performClick()
             composeRule.onNodeWithText("탈퇴하기").performClick()
         }
         composeRule.onNodeWithText("구글로 계속하기").assertIsDisplayed()

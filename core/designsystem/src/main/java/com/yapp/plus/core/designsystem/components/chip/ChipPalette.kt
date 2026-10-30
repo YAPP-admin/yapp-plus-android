@@ -11,6 +11,9 @@ internal data class ChipPalette(
     companion object {
         fun from(color: YappChipColor): ChipPalette =
             when (color) {
+                YappChipColor.Brand ->
+                    ChipPalette(YappColor.brand, YappColor.orangeWeak, YappColor.brand)
+
                 YappChipColor.Red ->
                     ChipPalette(
                         YappColor.red,

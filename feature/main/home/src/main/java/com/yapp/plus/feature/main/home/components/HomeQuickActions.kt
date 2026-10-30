@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +27,7 @@ internal fun HomeQuickActions(
     onSessionsClick: () -> Unit,
     onScoreClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onReportClick: () -> Unit = {},
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         HomeQuickAction(
@@ -35,6 +36,14 @@ internal fun HomeQuickActions(
             image = R.drawable.home_action_sessions,
             onClick = onSessionsClick,
             modifier = Modifier.weight(1f),
+        )
+        HomeQuickAction(
+            title = stringResource(R.string.home_report),
+            description = stringResource(R.string.home_report_before),
+            image = R.drawable.graphic_report,
+            onClick = onReportClick,
+            modifier = Modifier.weight(1f),
+            imageModifier = Modifier.size(width = 102.dp, height = 70.dp),
         )
     }
 }
@@ -56,7 +65,7 @@ internal fun HomeQuickAction(
         shape = RoundedCornerShape(12.dp),
         color = YappHomeColor.surface,
     ) {
-        Box(Modifier.heightIn(min = 70.dp)) {
+        Box(Modifier.height(70.dp)) {
             Image(
                 painterResource(image),
                 null,

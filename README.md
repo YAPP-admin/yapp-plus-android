@@ -4,17 +4,17 @@
 
 ## 현재 상태
 
-14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor API client·JSON 직렬화가 있고, 이번 주 세션과 현재 기수 일정 조회는 Domain·Data·Feature·App에 연결했습니다. 홈은 세션과 출석 인증 API를 사용하고 일정 탭은 현재 기수 세션을 조회합니다. 보고 계약과 YAPP 어댑터는 유지하지만 보고 UI 연결은 후속입니다.
+14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor API client·JSON 직렬화가 있고, 이번 주 세션과 현재 기수 일정 조회는 Domain·Data·Feature·App에 연결했습니다. 홈은 세션과 출석 인증 API를 사용하고 일정 탭은 현재 기수 세션을 조회합니다. 홈 사전 보고도 지각·조퇴·결석 선택과 사유 입력을 서버에 연결했습니다.
 
 로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager ID Token과 원본 nonce를 YAPP native-authentication API에 보내고, `SIGNED_IN` 세션을 암호화 저장하거나 `SIGNUP_REQUIRED` 토큰으로 기존 회원가입 입력 흐름을 진행합니다. 가입 성공 시 세션을 저장하고, 앱 시작 시 저장 세션을 복원해 메인 또는 로그인 화면을 엽니다.
 
-홈의 주간 공지, 게시판 공지, My 회원 정보·출석 이력·점수는 API 연결 전까지 준비 중 상태를 표시합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정 이동 상태를 관리합니다.
+홈 주간 공지와 게시판 목록·상세·읽음 확인은 사용자 공지 API에 연결했습니다. My는 사용자 출석 점수·커서 기반 이력 API를 연결했고, 이름은 인증 성공 응답에서 저장·복원하며 기수·역할·직군·지각 면제권·문의·알림 설정은 Figma UI를 유지하고 API·URL 연결만 비워 둡니다. 미확인 조회값과 진행률은 `—`로 표시하며 알림 토글은 화면 상태만 변경합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정·출석 내역 이동 상태를 관리합니다.
 
 인증 세션의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 Google 로그인·가입·세션 갱신 API를 연결하고, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다.
 
-YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도합니다. 임시 테스트 백엔드·데이터 어댑터·SQL은 개발 버전에서 제거했습니다. 일정·출석 인증·세션 갱신·로그아웃·통합 탈퇴는 확인된 YAPP API 계약을 사용합니다. 공지·My 정보 조회 API 연결은 후속입니다.
+YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도합니다. 임시 테스트 백엔드·데이터 어댑터·SQL은 개발 버전에서 제거했습니다. 일정·출석 인증·세션 갱신·로그아웃·통합 탈퇴는 확인된 YAPP API 계약을 사용합니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제 어댑터도 조립했습니다. 팀원 목록·본인 membershipId와 Firebase 설정이 확인되면 화면 제출·실제 수신 흐름을 연결합니다.
 
-설정의 로그아웃과 회원 탈퇴는 Figma 확인 문구·진행·오류·재시도 흐름을 사용합니다. 앱 버전·확장 안내를 제거했고 알림 토글은 API 연결 전까지 화면 상태만 변경합니다. 탈퇴 API는 모든 기수 회원 자격과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 서버 응답이 성공한 경우에만 로컬 세션을 지우고 로그인 화면으로 이동합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#계정-기수-통합-탈퇴)입니다.
+설정의 로그아웃과 회원 탈퇴는 Figma 확인 문구·진행·오류·재시도 흐름을 사용합니다. Figma에 없는 앱 버전·탈퇴 문의 이메일·확장 안내를 제거했고 알림 토글은 API 연결 전까지 화면 상태만 변경합니다. 탈퇴 API는 모든 기수 회원 자격과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 서버 응답이 성공한 경우에만 로컬 세션을 지우고 로그인 화면으로 이동합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#계정-기수-통합-탈퇴)입니다.
 
 ## 아키텍처와 모듈
 
@@ -99,4 +99,4 @@ OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지�
 
 ### 수정된 홈 화면
 
-홈은 이번 주 세션·달력·출석 코드 입력/완료 흐름을 표시하고, 출석 검증은 YAPP API를 사용합니다. 보고 UI와 알림 진입·출석 점수 메뉴는 숨깁니다. 주간 공지와 게시판 목록·상세는 서버 API 연결 전까지 준비 중 상태를 표시합니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.
+홈은 이번 주 세션·달력·출석 코드 입력/완료 흐름을 표시하고, 출석 검증은 YAPP API를 사용합니다. 보고 UI와 주간 공지·게시판 목록·상세·읽음은 서버 API를 사용합니다. 알림함 진입과 별도 출석 점수 메뉴는 숨깁니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.

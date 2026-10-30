@@ -10,6 +10,7 @@ import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
 import com.yapp.plus.data.auth.datasource.auth.AuthDataSource
 import com.yapp.plus.data.auth.datasource.auth.AuthRemoteDataSource
+import com.yapp.plus.data.auth.datasource.session.SessionProfileDataSource
 import com.yapp.plus.data.auth.datasource.session.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.datasource.session.SessionTokenRemoteDataSource
 import com.yapp.plus.data.auth.repository.AuthRepositoryImpl
@@ -34,13 +35,19 @@ import com.yapp.plus.core.network.BuildConfig as NetworkBuildConfig
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideSessionPersistence(
+    fun provideSessionLocalDataSource(
         @ApplicationContext context: Context,
-    ): TokenPersistence =
+    ): SessionTokenLocalDataSource =
         SessionTokenLocalDataSource(
             context = context,
             namespace = NetworkBuildConfig.API_BASE_URL,
         )
+
+    @Provides
+    fun provideSessionPersistence(source: SessionTokenLocalDataSource): TokenPersistence = source
+
+    @Provides
+    fun provideProfileSource(source: SessionTokenLocalDataSource): SessionProfileDataSource = source
 
     @Provides
     @Singleton
@@ -81,7 +88,8 @@ object NetworkModule {
     fun provideAuthRepository(
         dataSource: AuthDataSource,
         tokenStore: TokenStore,
-    ): AuthRepository = AuthRepositoryImpl(dataSource, tokenStore)
+        profileSource: SessionProfileDataSource,
+    ): AuthRepository = AuthRepositoryImpl(dataSource, tokenStore, profileSource)
 
     @Provides
     @Singleton

@@ -13,6 +13,7 @@ internal data class ChipMetrics(
             when (size) {
                 YappChipSize.Large -> ChipMetrics(10.dp, 3.dp, 8.dp)
                 YappChipSize.Small -> ChipMetrics(8.dp, 2.dp, 6.dp)
+                YappChipSize.Profile -> ChipMetrics(10.dp, 2.dp, 8.dp)
             }
     }
 }

@@ -43,6 +43,7 @@ fun HomeScreen(
     onRetry: () -> Unit = {},
     onSessionsClick: () -> Unit = {},
     onScoreClick: () -> Unit = {},
+    onReportClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
     noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
     onNoticeRetry: () -> Unit = {},
@@ -82,6 +83,7 @@ fun HomeScreen(
                 HomeQuickActions(
                     onSessionsClick = onSessionsClick,
                     onScoreClick = onScoreClick,
+                    onReportClick = onReportClick,
                 )
                 Spacer(Modifier.height(40.dp))
                 Box(Modifier.weight(1f).fillMaxWidth().heightIn(min = 220.dp)) {

@@ -21,7 +21,8 @@
     <string name="home_week_notices">이번 주 공지</string>
     <string name="home_notices_empty">아직 공지사항이 없어요</string>
     <string name="home_notice_session">세션</string>
-    <string name="home_notice_operation">운영</string>
+    <string name="home_notice_operation">기타</string>
+    <string name="home_notice_assignment">과제</string>
     <string name="home_notices_error">공지를 불러오지 못했어요</string>
     <string name="home_notices_preparing">공지를 준비하고 있어요</string>
     <string name="home_notifications_empty">아직 알림이 없어요</string>
@@ -38,4 +39,18 @@
     <string name="home_code_complete_description">출석 내역은 마이페이지에서 확인할 수 있어요</string>
     <string name="home_report">출결 보고</string>
     <string name="home_report_before">미리하기</string>
+    <string name="home_report_title">출결을 보고해 주세요</string>
+    <string name="home_report_description">미리 알려주시면 점수 차감이 줄어들어요</string>
+    <string name="home_report_late">지각</string>
+    <string name="home_report_early_leave">조퇴</string>
+    <string name="home_report_absent">결석</string>
+    <string name="home_report_reason_title">%1$s 사유를 입력해 주세요</string>
+    <string name="home_report_reason_hint">사유를 입력해 주세요</string>
+    <string name="home_report_reason_count">%1$d/30</string>
+    <string name="home_report_complete">출결 보고를 완료했어요</string>
+    <string name="home_report_not_eligible">현재 기수의 출결 보고 대상이 아니에요.</string>
+    <string name="home_report_no_session">보고할 세션이 없어요.</string>
+    <string name="home_report_unavailable">이미 출석했거나 보고할 수 있는 시간이 지났어요.</string>
+    <string name="home_report_session_changed">세션 정보가 변경됐어요. 확인 후 다시 시도해 주세요.</string>
+    <string name="home_report_invalid">보고 종류와 30자 이내의 사유를 확인해 주세요.</string>
 </resources>

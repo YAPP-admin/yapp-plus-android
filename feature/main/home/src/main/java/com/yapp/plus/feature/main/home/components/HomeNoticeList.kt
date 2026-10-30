@@ -23,6 +23,7 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
@@ -82,13 +83,17 @@ internal fun HomeNoticeCard(
     onClick: () -> Unit,
 ) {
     val chipColor =
-        if (notice.isSessionNotice) {
+        if (notice.isAssignmentNotice) {
+            YappMainColor.assignmentWeak
+        } else if (notice.isSessionNotice) {
             YappHomeColor.sessionWeak
         } else {
             YappHomeColor.background
         }
     val chipLabel =
-        if (notice.isSessionNotice) {
+        if (notice.isAssignmentNotice) {
+            R.string.home_notice_assignment
+        } else if (notice.isSessionNotice) {
             R.string.home_notice_session
         } else {
             R.string.home_notice_operation
@@ -111,7 +116,11 @@ internal fun HomeNoticeCard(
                     YappText(
                         stringResource(chipLabel),
                         YappHomeTypography.captionBold,
-                        if (notice.isSessionNotice) YappHomeColor.session else YappHomeColor.muted,
+                        when {
+                            notice.isAssignmentNotice -> YappMainColor.assignment
+                            notice.isSessionNotice -> YappHomeColor.session
+                            else -> YappHomeColor.muted
+                        },
                         Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                     )
                 }

@@ -4,4 +4,5 @@ data class HomeNoticeUiModel(
     val id: Long,
     val title: String,
     val isSessionNotice: Boolean,
+    val isAssignmentNotice: Boolean = false,
 )

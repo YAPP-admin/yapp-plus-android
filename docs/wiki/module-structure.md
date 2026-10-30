@@ -16,7 +16,7 @@ last_verified: 2026-10-27
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증 연결; 공지 준비 중; 보고·알림·점수 진입 숨김 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 UI·분류 선택 복원; 사용자용 API 연결 전 준비 중 표시 |
-| `:feature:main:my` | `com.yapp.plus.feature.main.my` | 프로필·출석 이력 UI 준비 중; 설정 이동·이력 펼침 상태만 관리 |
+| `:feature:main:my` | `com.yapp.plus.feature.main.my` | 프로필·출석 이력 UI 준비 중; 설정 이동·이력 펼침 상태 관리; Figma 요약·규칙·출결 배지와 Domain 기반 표시 모델 준비, 화면 조합은 후속 |
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·알림 UI·Figma 로그아웃/회원 탈퇴 확인·진행·오류 재시도 UI; 앱 버전·확장 안내 제거; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 가입 토큰을 받아 이름·휴대폰 입력·검증·서버 제출·완료 상태를 관리; 입력은 복원하고 토큰은 메모리 전용 |

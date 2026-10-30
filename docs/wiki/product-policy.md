@@ -81,6 +81,7 @@ YAPP 서버의 출석 인증·보고 계약을 따릅니다. 홈의 보고 UI는
 
 - `POST /api/attendance-verifications`는 `sessionId`와 정수 `code`를 받습니다. 서버 응답의 `verified`와 `checkedInAt`으로 검증 성공을 판정하며 출석의 최종 확정과 점수 계산은 서버가 담당합니다.
 - `POST /api/attendance-reports`는 `LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 사유를 받습니다. 응답의 `sessionId`와 `submittedAt`으로 서버의 제출 결과를 확인합니다.
+- 사전 보고 Data는 서버 오류 코드를 Domain 오류로 전달하며 `LATE`와 선택적 사유 계약을 검증합니다. 팀 사진은 SHA-256 체크섬으로 presign을 요청한 뒤 서명된 헤더를 붙여 별도 미인증 client로 업로드·제출합니다. 푸시 기기 등록·해제 Data 어댑터는 `ANDROID`를 사용합니다. App 조립과 본인 membershipId·팀원 목록·Firebase 연결은 후속이며 확인되지 않은 정보를 만들지 않습니다.
 - Domain은 출석 코드 검증·사전 보고 Repository 계약과 보고 종류·코드 오류 표현을 정의합니다. Data의 DTO·YAPP API 어댑터와 App 연결은 구현됐으며 홈의 출석 코드 제출은 이 경로를 사용합니다. 보고 UI 연결은 후속입니다.
 
 ## 일정·출석 정책

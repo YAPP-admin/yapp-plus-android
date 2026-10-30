@@ -49,7 +49,10 @@ class AttendanceRemoteDataSource(
             }
         if (response.status.value !in 200..299) {
             val error = response.body<AttendanceErrorResponse>()
-            throw AttendanceException(isInvalidCode = error.code == "INVALID_ATTENDANCE_CODE")
+            throw AttendanceException(
+                isInvalidCode = error.code == "INVALID_ATTENDANCE_CODE",
+                code = error.code,
+            )
         }
         return response
     }

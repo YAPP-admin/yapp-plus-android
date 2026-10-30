@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -16,6 +17,7 @@ import androidx.compose.ui.test.performClick
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.testing.NavigationTestActivity
@@ -39,6 +41,25 @@ class SessionOperationNavigationUiTest {
     @Test
     fun withdrawalSuccessClearsMainBackStackAndShowsLogin() {
         assertSessionOperationReturnsToLogin(isLogout = false)
+    }
+
+    @Test
+    fun historyRestoresWithoutTabsAndSystemBackReturnsToMy() {
+        val restoration = StateRestorationTester(composeRule)
+        restoration.setContent {
+            YappTheme {
+                MainTabScaffold(initialTab = MainTab.My)
+            }
+        }
+        composeRule.onNodeWithText("MY").assertIsDisplayed()
+        composeRule.onNodeWithText("출석 내역").performClick()
+        composeRule.onNodeWithText("MY").assertDoesNotExist()
+        restoration.emulateSavedInstanceStateRestore()
+        composeRule.onNodeWithContentDescription("마이페이지로 돌아가기").assertIsDisplayed()
+        composeRule.onNodeWithText("MY").assertDoesNotExist()
+        Espresso.pressBack()
+        composeRule.onNodeWithText("마이페이지").assertIsDisplayed()
+        composeRule.onNodeWithText("MY").assertIsDisplayed()
     }
 
     private fun assertSessionOperationReturnsToLogin(isLogout: Boolean) {

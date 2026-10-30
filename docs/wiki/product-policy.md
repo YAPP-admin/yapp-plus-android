@@ -59,7 +59,7 @@ last_verified: 2026-10-27
 | Google 로그인 | `POST /api/auth/oidc/google/native-authentications`; `SIGNED_IN` 세션 저장·메인 이동, `SIGNUP_REQUIRED` 가입 토큰을 Signup으로 전달 |
 | 회원가입 | `POST /api/users`; registration token·이름·E.164 전화번호 제출, 성공 응답 세션 저장 |
 | 로그아웃 | `DELETE /api/auth/sessions/current`; 현재 refresh token을 전달하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도 |
-| 공지·My | 사용자용 API 연결은 후속; 현재 준비 중 상태 표시 |
+| 공지·My | 화면 연결은 후속; 공지 목록·상세·읽음의 Data 어댑터 구현, 현재 Feature는 준비 중 상태 표시 |
 | 통합 탈퇴 | `DELETE /api/users/me`; Bearer access token으로 요청하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도. 설정 안내·확인·진행·오류와 App 연결 구현 |
 
 저장된 YAPP 토큰 쌍은 앱 시작과 첫 인증 API 요청 전에 복원합니다. 초기 Google 세션 발급은 YAPP API 계약에 연결했습니다. 로컬 access-token 주입이나 가짜 인증 세션은 만들지 않습니다.
@@ -81,6 +81,7 @@ YAPP 서버의 출석 인증·보고 계약을 따릅니다. 홈의 보고 UI는
 
 - `POST /api/attendance-verifications`는 `sessionId`와 정수 `code`를 받습니다. 서버 응답의 `verified`와 `checkedInAt`으로 검증 성공을 판정하며 출석의 최종 확정과 점수 계산은 서버가 담당합니다.
 - `POST /api/attendance-reports`는 `LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 사유를 받습니다. 응답의 `sessionId`와 `submittedAt`으로 서버의 제출 결과를 확인합니다.
+- 사전 보고 Data는 서버 오류 코드를 Domain 오류로 전달하며 `LATE`와 선택적 사유 계약을 검증합니다. 팀 사진은 SHA-256 체크섬으로 presign을 요청한 뒤 서명된 헤더를 붙여 별도 미인증 client로 업로드·제출합니다. 푸시 기기 등록·해제 Data 어댑터는 `ANDROID`를 사용합니다. App 조립과 본인 membershipId·팀원 목록·Firebase 연결은 후속이며 확인되지 않은 정보를 만들지 않습니다.
 - Domain은 출석 코드 검증·사전 보고 Repository 계약과 보고 종류·코드 오류 표현을 정의합니다. Data의 DTO·YAPP API 어댑터와 App 연결은 구현됐으며 홈의 출석 코드 제출은 이 경로를 사용합니다. 보고 UI 연결은 후속입니다.
 
 ## 일정·출석 정책
@@ -122,6 +123,7 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 ## 기타 화면 정책
 
 - My 화면은 이름, 앱 권한 역할, 최근 활동 이력(기수·직군)을 표시하고 출석 내역·이전 활동 내역·이용 문의·회원탈퇴 메뉴를 제공합니다. 이용 문의는 카카오톡 오픈 채팅방으로 이동합니다. 설정의 회원 탈퇴는 통합 탈퇴 API를 호출하고 확인 문구는 아래 Figma 기준을 따릅니다. 개발 버전의 My 정보는 준비 중 상태이며, 프로필·출석 조회 API는 후속입니다.
+- 공지 사용자 API는 `GET /api/posts`의 유형·커서 목록, `GET /api/posts/{id}`의 상세·과제·이미지, `PUT /api/posts/{id}/read`의 읽음을 제공합니다. Data에서 서버 시각·유형·읽음·첨부를 Domain으로 변환하며 화면 연결은 후속입니다.
 - 게시판은 Figma의 전체·세션·과제·기타 필터와 Markdown 본문, 과제 마감·제출 대상, 첨부 이미지와 읽음 확인 버튼을 제공합니다. 이미지는 서명 URL이며 디스크·메모리 캐시를 사용하지 않습니다. 조회·페이지·읽음 결과는 화면 상태와 콜백으로 받으며 ViewModel API 연결은 후속입니다. 기수별 필터는 출처에서 개선안으로 표시해 확정 정책에 포함하지 않습니다.
 - 설정의 알림은 앱 푸시 전체 설정이며 해제하면 푸시를 보내지 않습니다. 사용자 지시에 따라 Figma의 알림 토글을 표시하되 현재는 화면 상태만 변경·복원합니다. 푸시 전달과 서버 설정 저장은 미연결입니다. 이용약관은 각 약관의 Notion 페이지로 연결하고 Figma에 없는 앱 버전은 표시하지 않습니다.
 - 이전 활동 이력은 기수·직군 조합이며 시작일과 종료일은 비어 있을 수 있습니다. 회원 용어와 공식 직군 범위는 [회원·역할 정책](membership-policy.md)을 따릅니다.
@@ -160,4 +162,4 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 ## 사용자 조회·제출 계약의 분리 반영
 
-[백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c)에서 확인한 출석 점수·커서 이력, 공지 목록·상세·과제·읽음, 인증 응답 이름, 팀 사진과 푸시 기기의 Domain 모델·Repository 계약을 정의했습니다. Data 어댑터와 화면 연결은 이 계약을 소비하는 후속 PR로 반영합니다. 팀원 정보·본인 membershipId·Firebase 설정 및 미확인 회원 필드를 임의의 값으로 채우지 않습니다.
+[백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c)에서 확인한 출석 점수·커서 이력, 공지 목록·상세·과제·읽음, 인증 응답 이름, 팀 사진과 푸시 기기의 Domain 모델·Repository 계약을 정의했습니다. My 출석 점수·이력 조회 Data 어댑터와 인증 응답 이름 저장을 반영했습니다. 점수는 서버 값을 사용하고 이력의 미확정·TEAM 검토 상태를 보존합니다. 문서화된 자격·현재 기수 없음만 값 없는 점수로 처리하며 다른 오류는 실패로 전달합니다. 화면과 나머지 Data 어댑터 연결은 후속 PR입니다. 팀원 정보·본인 membershipId·Firebase 설정 및 미확인 회원 필드를 임의의 값으로 채우지 않습니다.

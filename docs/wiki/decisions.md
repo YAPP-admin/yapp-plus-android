@@ -362,3 +362,12 @@ last_verified: 2026-10-27
 - 반영: [제품 정책](product-policy.md), [모듈 구조](module-structure.md), [회원·역할 정책](membership-policy.md)과 설정 UI·호출부·UI 테스트.
 - 적용 상태: 설정 UI만 독립 PR로 반영합니다. My 화면·출석 API는 후속 PR이며 전체 로컬 구현·검증 기록은 이슈에 보존합니다. 이 변경은 서버의 통합 탈퇴·비식별화·이력 보존과 실패 시 세션 보존을 바꾸지 않습니다.
 - 대체한 결정: DEC-0033/DEC-0038의 앱 버전·확장 안내 유지와 DEC-0041의 화면 문구를 대체합니다. 통합 탈퇴 API 계약은 유지합니다.
+
+## DEC-0044 · 서버에 존재하는 사용자 API의 후속 연결
+
+- 기록일: 2026-10-30
+- 결정: 사용자의 “api 연동 마저해줘”, “서버에있는것만진행해” 요청에 따라 확인된 사용자 API의 Domain 계약부터 분리해 반영합니다. 출석 점수·이력, 인증 응답 이름, 공지, 사전 보고, 팀 사진 및 푸시 기기를 대상으로 하며 사전 보고의 지각은 현재 서버의 `LATE`를 사용합니다.
+- 근거: [이슈 #160](https://github.com/YAPP-admin/yapp-plus-android/issues/160), [이슈 #161](https://github.com/YAPP-admin/yapp-plus-android/issues/161), [백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c).
+- 반영: [제품 정책](product-policy.md)과 Domain 모델·Repository 인터페이스.
+- 적용 상태: 계약 정의까지 반영하며 Data 구현·Feature 연결은 후속 PR입니다. 미확인 팀원 정보·Firebase 설정·회원 정보·알림 설정·문의 URL을 임의로 만들지 않습니다. 통합 로컬 구현의 검증 기록은 이슈에 유지합니다.
+- 대체한 결정: 사전 보고의 이전 시간별 지각 enum 설명을 현재 사용자 API 계약으로 정정합니다. 서버 판정과 미확인 기능의 연결 보류 원칙은 유지합니다.

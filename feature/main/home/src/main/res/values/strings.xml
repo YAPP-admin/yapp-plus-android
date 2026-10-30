@@ -36,4 +36,6 @@
     <string name="home_submit_error">요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="home_code_complete">출석을 완료했어요!</string>
     <string name="home_code_complete_description">출석 내역은 마이페이지에서 확인할 수 있어요</string>
+    <string name="home_report">출결 보고</string>
+    <string name="home_report_before">미리하기</string>
 </resources>

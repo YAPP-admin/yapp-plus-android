@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.core.designsystem.theme.YappTypography
 
 @Composable
 fun YappChip(
@@ -52,6 +53,8 @@ fun YappChip(
 @Composable
 private fun chipTextStyle(size: YappChipSize) =
     when (size) {
+        YappChipSize.Profile -> YappTypography.scaleT3Medium
+
         YappChipSize.Large ->
             MaterialTheme.typography.labelMedium.copy(
                 fontSize = 13.sp,

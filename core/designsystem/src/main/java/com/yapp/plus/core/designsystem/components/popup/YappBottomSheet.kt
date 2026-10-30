@@ -16,9 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,10 +51,16 @@ fun YappBottomSheet(
     showActions: Boolean = true,
     contentDescription: String? = null,
     variant: YappBottomSheetVariant = YappBottomSheetVariant.Default,
+    isDismissible: Boolean = true,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val isHome = variant == YappBottomSheetVariant.Home
-    val actualSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val canDismiss by rememberUpdatedState(isDismissible)
+    val actualSheetState =
+        rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { it != SheetValue.Hidden || canDismiss },
+        )
     val handle: @Composable (() -> Unit)? =
         if (showHandle) {
             { YappBottomSheetHandle(contentDescription = contentDescription, isHome = isHome) }

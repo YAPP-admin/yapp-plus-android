@@ -20,7 +20,7 @@ last_verified: 2026-10-27
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·알림 UI·Figma 로그아웃/회원 탈퇴 확인·진행·오류 재시도 UI; 앱 버전·확장 안내 제거; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 가입 토큰을 받아 이름·휴대폰 입력·검증·서버 제출·완료 상태를 관리; 입력은 복원하고 토큰은 메모리 전용 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증/세션 작업 결과, 일정·출석 계약·가입 입력 값 객체 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증/세션 작업 결과, 일정·출석 계약·가입 입력 값 객체; 사용자 출석 조회·이름·공지·사진·기기 Repository 계약(소비 구현은 후속) |
 | `:data` | `com.yapp.plus.data` | Google OIDC 인증·회원가입·로그아웃·통합 탈퇴·세션 갱신 및 YAPP 일정·출석 어댑터와 Repository, 암호화 저장 연결 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·토큰 복원/교체 조율·401 갱신 및 중복 방지 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |

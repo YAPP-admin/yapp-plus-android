@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.yapp.plus.core.designsystem.theme.YappTheme
@@ -12,7 +11,9 @@ import com.yapp.plus.feature.main.board.BoardScreen
 import com.yapp.plus.feature.main.home.HomeScreen
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
-import com.yapp.plus.feature.main.my.MyRoute
+import com.yapp.plus.feature.main.my.MyScreen
+import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState
+import com.yapp.plus.feature.main.my.model.MyUiState
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,13 +31,17 @@ class UnconnectedFeaturesUiTest {
     }
 
     @Test
-    fun myDoesNotExposeTestProfilesAndKeepsHistoryUnconnected() {
-        composeRule.setContent { YappTheme { MyRoute(onSettingsClick = {}) } }
-        composeRule.onNodeWithText("회원 정보 기능을 준비하고 있어요").assertIsDisplayed()
-        composeRule.onNodeWithText("YAPP 테스트 프로필").assertDoesNotExist()
-        composeRule.onNodeWithText("출석 내역").performClick()
-        composeRule.onNodeWithText("출석 내역 기능을 준비하고 있어요").assertIsDisplayed()
-        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
+    fun myKeepsFigmaUiWithoutInventingUnconnectedValues() {
+        composeRule.setContent {
+            YappTheme { MyScreen(state = MyUiState(score = MyAttendanceScoreState.Ineligible)) }
+        }
+        composeRule.onNodeWithText("김야뿌").assertDoesNotExist()
+        composeRule.onNodeWithText("지각 면제권").assertIsDisplayed()
+        composeRule.onNodeWithText("이용문의").assertIsDisplayed()
+        composeRule.onNodeWithText("내 출석 현황").assertIsDisplayed()
+        composeRule.onNodeWithText("0").assertDoesNotExist()
+        composeRule.onNodeWithText("92점").assertDoesNotExist()
+        composeRule.onNodeWithText("출석 내역").assertIsDisplayed()
     }
 
     @Test

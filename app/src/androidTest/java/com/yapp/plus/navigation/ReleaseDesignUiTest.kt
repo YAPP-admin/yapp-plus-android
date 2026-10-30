@@ -39,10 +39,8 @@ import com.yapp.plus.feature.main.board.model.BoardNoticeUiModel
 import com.yapp.plus.feature.main.board.model.NoticeUiState
 import com.yapp.plus.feature.main.home.AvailableHomePreview
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
+import com.yapp.plus.feature.main.my.MyPreviewData
 import com.yapp.plus.feature.main.my.MyScreen
-import com.yapp.plus.feature.main.my.model.MyProfileUiModel
-import com.yapp.plus.feature.main.my.model.MyProfileUiState
-import com.yapp.plus.feature.main.my.model.MyUiState
 import com.yapp.plus.feature.main.schedule.ScheduleScreen
 import com.yapp.plus.feature.main.schedule.model.ScheduleSessionUiModel
 import com.yapp.plus.feature.main.schedule.model.ScheduleStatusUiModel
@@ -87,7 +85,9 @@ class ReleaseDesignUiTest {
             )
         composeRule.setContent {
             YappTheme(darkTheme = false, dynamicColor = false) {
-                Box(Modifier.requiredSize(393.dp, 756.dp).background(Color.White).testTag("screen")) {
+                Box(
+                    Modifier.requiredSize(393.dp, 756.dp).background(Color.White).testTag("screen"),
+                ) {
                     CompositionLocalProvider(LocalInspectionMode provides true) {
                         key(screen) { ReferenceScreen(screen) }
                     }
@@ -182,14 +182,7 @@ private fun ReferenceScreen(screen: String) {
         "detail" -> BoardScreen(detail = NoticeUiState.Content(referenceNotices().first()))
         "my" ->
             ReferenceTab(MainTab.My) {
-                MyScreen(
-                    MyUiState(
-                        profile =
-                            MyProfileUiState.Content(
-                                MyProfileUiModel("김야뿌", "01012345678"),
-                            ),
-                    ),
-                )
+                MyScreen(MyPreviewData.state, onContactClick = {})
             }
         "settings" ->
             SettingsScreen(

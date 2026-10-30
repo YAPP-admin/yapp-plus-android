@@ -135,7 +135,6 @@ class ReleaseDesignUiTest {
             YappTheme {
                 Box(Modifier.requiredSize(320.dp, 480.dp)) {
                     SettingsScreen(
-                        appVersion = "1.0.1",
                         onBack = {},
                         onLogout = { didLogout = true },
                     )
@@ -143,7 +142,7 @@ class ReleaseDesignUiTest {
             }
         }
         composeRule.onNodeWithText("로그아웃").assertIsDisplayed().performClick()
-        composeRule.onNodeWithText("로그아웃할까요?").assertIsDisplayed()
+        composeRule.onNodeWithText("로그아웃 할까요?").assertIsDisplayed()
         composeRule.onAllNodesWithText("로그아웃").onLast().performClick()
         composeRule.runOnIdle { assertTrue(didLogout) }
     }
@@ -194,7 +193,6 @@ private fun ReferenceScreen(screen: String) {
             }
         "settings" ->
             SettingsScreen(
-                appVersion = "1.0.1",
                 onBack = {},
                 onLogout = {},
             )

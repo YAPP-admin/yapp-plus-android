@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.yapp.plus.BuildConfig
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.home.HomeRoute
@@ -88,7 +87,6 @@ internal fun MainTabScaffold(
                 MainTab.My ->
                     if (isSettingsVisible) {
                         SettingsScreen(
-                            appVersion = BuildConfig.VERSION_NAME,
                             onBack = { isSettingsVisible = false },
                             onLogout = onLogout,
                             isLoggingOut = isLoggingOut,

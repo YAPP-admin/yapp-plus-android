@@ -35,3 +35,11 @@ private fun SettingsLinkRowPreview() {
         SettingsLinkRow(title = "개인정보 처리 방침", onClick = {})
     }
 }
+
+@Preview(widthDp = 393, showBackground = true)
+@Composable
+private fun SettingsNotificationRowPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        SettingsNotificationRow(enabled = true, onEnabledChange = {})
+    }
+}

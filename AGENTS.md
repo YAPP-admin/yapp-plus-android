@@ -10,6 +10,7 @@
 - 실제 개발은 YAPP 서버의 일정·출석 인증·사전 보고 DataSource와 Repository를 App Hilt에서 조립한다. 공지·My 정보·출석 이력은 사용자용 API 계약 연결 전까지 준비 중 UI로 표시한다. 임시 테스트 전용 구현·SQL·운영 문서는 개발 버전에서 제거한다.
 - Google Credential Manager의 ID 토큰·원본 nonce를 YAPP native-authentication API에 교환하고, `SIGNED_IN` 세션 저장과 `SIGNUP_REQUIRED` 가입 흐름을 연결했다. 회원가입은 `POST /api/users` 성공 세션을 저장한다. 로그아웃은 현재 refresh token으로 서버 세션을 종료하고, 통합 탈퇴는 인증된 `DELETE /api/users/me`로 모든 기수 소속·세션을 종료한다. 두 작업은 서버 성공 뒤에만 로컬 세션을 지우고 로그인 화면으로 이동하며, 실패하면 세션을 보존한다. ID 토큰·nonce·가입 토큰은 로그나 영구 저장소에 남기지 않는다. 프로필 조회와 출석 이력은 후속이며 현재 범위는 [제품 정책](docs/wiki/product-policy.md#현재-서버-연결)을 따른다.
 - YAPP access/refresh token 쌍은 Data와 `:core:datastore`를 통해 암호화 저장·복원한다. 앱 시작 시 저장 세션을 복원해 메인 또는 로그인으로 이동하며, App singleton이 Data 저장소와 갱신 API를 Network에 연결한다. 인증 요청의 401은 세션 갱신 뒤 한 번 재시도한다.
+- 설정 UI는 Figma를 기준으로 앱 버전·확장 탈퇴 안내를 제거하고 확인 문구를 유지한다. 미지원 알림 설정 API는 연결만 비우고 토글의 화면 상태를 제공한다. 서버의 통합 탈퇴·이력 보존 계약은 바꾸지 않는다.
 - 홈, 게시판, My, 일정 탭은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리하고 설정 화면은 `:feature:setting`으로 분리한다. 탭·설정 화면 이동 상태는 App이 소유하며 실제 모듈 현황은 [모듈 구조](docs/wiki/module-structure.md)에 기록한다.
 - 프로젝트 Codex 기본 모델은 `.codex/config.toml`의 `gpt-6-luna`, 추론 수준 `max`다. 사용자가 선택한 세션 모델은 존중한다.
 - 구현 요청은 필요한 이슈 작성, 구현, 검증과 리뷰까지 진행한다. 커밋과 PR 생성·갱신은 사용자가 해당 작업을 명시적으로 요청한 경우에만 수행한다. 푸시는 PR 생성·갱신 요청에 필요한 경우에만 한다. 사용자가 범위를 제한하면 그 범위를 따른다. 이미 승인된 작업을 다시 승인받지 않는다.

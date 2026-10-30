@@ -10,7 +10,6 @@ import com.yapp.plus.core.designsystem.theme.YappTheme
 private fun SettingsScreenPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         SettingsScreen(
-            appVersion = "1.0",
             onBack = {},
             onLogout = {},
         )
@@ -21,6 +20,6 @@ private fun SettingsScreenPreview() {
 @Composable
 private fun SettingsUnavailableActionsPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        SettingsScreen(appVersion = "1.0", onBack = {}, onLogout = null)
+        SettingsScreen(onBack = {}, onLogout = null)
     }
 }

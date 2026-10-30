@@ -3,20 +3,13 @@ package com.yapp.plus.feature.main.my.components
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.domain.attendance.AttendanceScore
+import com.yapp.plus.feature.main.my.MyPreviewData
 import com.yapp.plus.feature.main.my.R
-import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState
 import com.yapp.plus.feature.main.my.model.MyAttendanceStatus
 
 @Preview @Composable
 private fun SummaryPreview() {
-    YappTheme {
-        MyAttendanceSummary(
-            MyAttendanceScoreState.Content(AttendanceScore(1, 100, 3, 0, 0, 0)),
-            {},
-            {},
-        )
-    }
+    YappTheme { MyAttendanceSummary(MyPreviewData.score, {}, {}) }
 }
 
 @Preview @Composable
@@ -32,6 +25,26 @@ private fun StatValuePreview() {
 @Preview @Composable
 private fun BadgePreview() {
     YappTheme { MyAttendanceBadge(MyAttendanceStatus.Absent) }
+}
+
+@Preview @Composable
+private fun HistoryRowPreview() {
+    YappTheme { MyHistoryRow(MyPreviewData.history.items.first()) }
+}
+
+@Preview @Composable
+private fun EmptyPreview() {
+    YappTheme { MyHistoryEmpty() }
+}
+
+@Preview @Composable
+private fun WarningPreview() {
+    YappTheme { MyAbsenceWarning() }
+}
+
+@Preview @Composable
+private fun PaginationPreview() {
+    YappTheme { MyHistoryPagination(MyPreviewData.history.copy(hasLoadMoreError = true), {}) }
 }
 
 @Preview @Composable

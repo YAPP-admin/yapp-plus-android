@@ -11,41 +11,28 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
-import com.yapp.plus.feature.main.my.R
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
 fun MyMenuRow(
     title: String,
     onClick: () -> Unit,
-    expanded: Boolean? = null,
     modifier: Modifier = Modifier,
 ) {
-    val expandedDescription =
-        expanded?.let {
-            stringResource(if (it) R.string.my_menu_expanded else R.string.my_menu_collapsed)
-        }
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
                 .height(56.dp)
                 .clickable(role = Role.Button, onClick = onClick)
-                .padding(horizontal = 20.dp)
-                .semantics {
-                    expandedDescription?.let { stateDescription = it }
-                },
+                .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -57,7 +44,7 @@ fun MyMenuRow(
         Icon(
             painter = painterResource(DesignSystemR.drawable.ic_chevron_right),
             contentDescription = null,
-            modifier = Modifier.size(24.dp).rotate(if (expanded == true) 90f else 0f),
+            modifier = Modifier.size(24.dp),
             tint = YappHomeColor.border,
         )
     }

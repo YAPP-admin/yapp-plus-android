@@ -36,6 +36,7 @@ internal fun MainTabScaffold(
 ) {
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
     var isSettingsVisible by rememberSaveable { mutableStateOf(false) }
+    var isMyHistoryVisible by rememberSaveable { mutableStateOf(false) }
     var selectedNoticeId by rememberSaveable { mutableStateOf<Long?>(null) }
     BackHandler(enabled = selectedTab == MainTab.Board && selectedNoticeId != null) {
         selectedNoticeId = null
@@ -43,17 +44,21 @@ internal fun MainTabScaffold(
     BackHandler(enabled = selectedTab == MainTab.My && isSettingsVisible) {
         isSettingsVisible = false
     }
+    BackHandler(enabled = selectedTab == MainTab.My && isMyHistoryVisible) {
+        isMyHistoryVisible = false
+    }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = YappMainColor.surface,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            if (!isSettingsVisible && selectedNoticeId == null) {
+            if (!isSettingsVisible && !isMyHistoryVisible && selectedNoticeId == null) {
                 MainTabNavigation(
                     selectedTab = selectedTab,
                     onTabSelected = {
                         selectedTab = it
                         isSettingsVisible = false
+                        isMyHistoryVisible = false
                         selectedNoticeId = null
                     },
                 )
@@ -98,7 +103,12 @@ internal fun MainTabScaffold(
                             onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
                         )
                     } else {
-                        MyRoute(onSettingsClick = { isSettingsVisible = true })
+                        MyRoute(
+                            onSettingsClick = { isSettingsVisible = true },
+                            onAttendanceHistoryClick = { isMyHistoryVisible = true },
+                            onBack = { isMyHistoryVisible = false },
+                            isHistoryVisible = isMyHistoryVisible,
+                        )
                     }
             }
         }

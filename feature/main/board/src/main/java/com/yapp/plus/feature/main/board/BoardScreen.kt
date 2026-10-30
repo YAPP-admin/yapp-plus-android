@@ -1,17 +1,23 @@
 package com.yapp.plus.feature.main.board
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.main.YappDetailHeader
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappMainColor
@@ -33,8 +39,16 @@ fun BoardScreen(
     onNoticeClick: (Long) -> Unit = {},
     onRetry: () -> Unit = {},
     onBack: () -> Unit = {},
+    nextCursor: String? = null,
+    isLoadingMore: Boolean = false,
+    hasLoadMoreError: Boolean = false,
+    onLoadMore: () -> Unit = {},
+    isMarkingRead: Boolean = false,
+    hasReadError: Boolean = false,
+    onMarkRead: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
+    LaunchedEffect(category) { listState.scrollToItem(0) }
     Column(
         modifier =
             modifier
@@ -60,7 +74,9 @@ fun BoardScreen(
         ) {
             if (detail != null) {
                 BoardNoticeState(detail, onRetry, R.string.board_missing, Modifier.weight(1f)) {
-                    key(it.id) { BoardNoticeDetail(it) }
+                    key(it.id) {
+                        BoardNoticeDetail(it, onMarkRead, isMarkingRead, hasReadError, onRetry)
+                    }
                 }
             } else {
                 BoardCategorySelector(category, onCategorySelected)
@@ -68,6 +84,20 @@ fun BoardScreen(
                     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                         items(it, key = { notice -> notice.id }) { notice ->
                             BoardNoticeCard(notice, { onNoticeClick(notice.id) })
+                        }
+                        if (nextCursor != null) {
+                            item {
+                                LaunchedEffect(nextCursor, hasLoadMoreError) {
+                                    if (!hasLoadMoreError) onLoadMore()
+                                }
+                                Box(Modifier.fillMaxWidth().padding(16.dp), Alignment.Center) {
+                                    if (hasLoadMoreError) {
+                                        YappButton(stringResource(R.string.board_retry), onLoadMore)
+                                    } else if (isLoadingMore) {
+                                        CircularProgressIndicator(color = YappMainColor.brand)
+                                    }
+                                }
+                            }
                         }
                     }
                 }

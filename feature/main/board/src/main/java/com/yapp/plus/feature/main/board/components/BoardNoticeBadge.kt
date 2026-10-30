@@ -18,15 +18,26 @@ internal fun BoardNoticeBadge(
     modifier: Modifier = Modifier,
 ) {
     val isSession = category == BoardCategory.Session
+    val isAssignment = category == BoardCategory.Assignment
     Surface(
         modifier = modifier,
-        color = if (isSession) YappMainColor.sessionWeak else YappMainColor.background,
+        color =
+            when {
+                isSession -> YappMainColor.sessionWeak
+                isAssignment -> YappMainColor.assignmentWeak
+                else -> YappMainColor.background
+            },
         shape = RoundedCornerShape(4.dp),
     ) {
         YappText(
             text = stringResource(category.labelResource),
             style = YappTypography.scaleT2Bold,
-            color = if (isSession) YappMainColor.session else YappMainColor.textSecondary,
+            color =
+                when {
+                    isSession -> YappMainColor.session
+                    isAssignment -> YappMainColor.assignment
+                    else -> YappMainColor.textSecondary
+                },
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
         )
     }

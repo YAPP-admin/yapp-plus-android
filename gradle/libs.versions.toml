@@ -22,8 +22,13 @@ desugarJdkLibs = "2.0.3"
 credentials = "1.6.0"
 googleid = "1.1.1"
 datastore = "1.2.1"
+markwon = "4.6.2"
+coil = "3.3.0"
 
 [libraries]
+markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "markwon" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-compose-gradle-plugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }

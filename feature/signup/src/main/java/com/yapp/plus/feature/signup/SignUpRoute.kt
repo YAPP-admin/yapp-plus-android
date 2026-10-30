@@ -9,7 +9,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.plus.core.designsystem.components.input.YappInputState
-import com.yapp.plus.domain.auth.RegistrationFieldError
 import com.yapp.plus.domain.signup.Name
 import com.yapp.plus.domain.signup.PhoneNumber
 import com.yapp.plus.feature.signup.components.SignUpErrorDialog
@@ -20,23 +19,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignUpRoute(
     onBack: () -> Unit,
-    registrationToken: String?,
-    onRegistrationCompleted: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    SignUpRoute(
-        onBack = onBack,
-        registrationToken = null,
-        onRegistrationCompleted = {},
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun SignUpRoute(
-    onBack: () -> Unit,
-    registrationToken: String?,
-    onRegistrationCompleted: () -> Unit,
+    registrationToken: String? = null,
+    onRegistrationCompleted: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
@@ -89,9 +73,9 @@ fun SignUpRoute(
                 inputError?.let { reason ->
                     stringResource(
                         if (isNameStep) {
-                            nameErrorMessage(reason)
+                            reason.toNameErrorMessageRes()
                         } else {
-                            phoneNumberErrorMessage(reason)
+                            reason.toPhoneNumberErrorMessageRes()
                         },
                     )
                 },
@@ -117,17 +101,3 @@ fun SignUpRoute(
         }
     }
 }
-
-private fun nameErrorMessage(reason: RegistrationFieldError.Reason): Int =
-    when (reason) {
-        RegistrationFieldError.Reason.Required -> R.string.auth_name_required
-        RegistrationFieldError.Reason.TooLong -> R.string.auth_name_too_long
-        else -> R.string.auth_name_invalid
-    }
-
-private fun phoneNumberErrorMessage(reason: RegistrationFieldError.Reason): Int =
-    when (reason) {
-        RegistrationFieldError.Reason.Required -> R.string.auth_phone_required
-        RegistrationFieldError.Reason.AlreadyExists -> R.string.auth_phone_already_exists
-        else -> R.string.auth_phone_invalid
-    }

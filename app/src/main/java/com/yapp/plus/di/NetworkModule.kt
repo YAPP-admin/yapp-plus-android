@@ -8,17 +8,35 @@ import com.yapp.plus.core.network.auth.TokenStore
 import com.yapp.plus.data.attendance.AttendanceDataSource
 import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
+import com.yapp.plus.data.attendance.read.AttendanceReadDataSource
+import com.yapp.plus.data.attendance.read.AttendanceReadRemoteDataSource
+import com.yapp.plus.data.attendance.read.AttendanceReadRepositoryImpl
+import com.yapp.plus.data.attendance.team.TeamAttendanceRepositoryImpl
+import com.yapp.plus.data.attendance.team.TeamPhotoDataSource
+import com.yapp.plus.data.attendance.team.TeamPhotoRemoteDataSource
 import com.yapp.plus.data.auth.datasource.auth.AuthDataSource
 import com.yapp.plus.data.auth.datasource.auth.AuthRemoteDataSource
 import com.yapp.plus.data.auth.datasource.session.SessionProfileDataSource
 import com.yapp.plus.data.auth.datasource.session.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.datasource.session.SessionTokenRemoteDataSource
 import com.yapp.plus.data.auth.repository.AuthRepositoryImpl
+import com.yapp.plus.data.auth.repository.UserProfileRepositoryImpl
+import com.yapp.plus.data.notice.NoticeDataSource
+import com.yapp.plus.data.notice.NoticeRemoteDataSource
+import com.yapp.plus.data.notice.NoticeRepositoryImpl
+import com.yapp.plus.data.notification.NotificationDeviceDataSource
+import com.yapp.plus.data.notification.NotificationDeviceRemoteDataSource
+import com.yapp.plus.data.notification.NotificationDeviceRepositoryImpl
 import com.yapp.plus.data.session.SessionScheduleDataSource
 import com.yapp.plus.data.session.SessionScheduleRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
+import com.yapp.plus.domain.attendance.AttendanceReadRepository
 import com.yapp.plus.domain.attendance.AttendanceRepository
+import com.yapp.plus.domain.attendance.TeamAttendanceRepository
 import com.yapp.plus.domain.auth.AuthRepository
+import com.yapp.plus.domain.auth.UserProfileRepository
+import com.yapp.plus.domain.notice.NoticeRepository
+import com.yapp.plus.domain.notification.NotificationDeviceRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
 import dagger.Provides
@@ -26,6 +44,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
 import javax.inject.Named
 import javax.inject.Singleton
 import com.yapp.plus.core.network.BuildConfig as NetworkBuildConfig
@@ -50,6 +69,10 @@ object NetworkModule {
     fun provideProfileSource(source: SessionTokenLocalDataSource): SessionProfileDataSource = source
 
     @Provides
+    fun provideUserProfileRepository(source: SessionProfileDataSource): UserProfileRepository =
+        UserProfileRepositoryImpl(source)
+
+    @Provides
     @Singleton
     fun provideSessionTokenStore(tokenPersistence: TokenPersistence): TokenStore =
         TokenStore(persistence = tokenPersistence)
@@ -57,7 +80,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named(UNAUTHENTICATED_CLIENT)
-    fun provideUnauthenticatedApiHttpClient(): HttpClient = ApiHttpClientFactory.createUnauthenticated()
+    fun provideUnauthenticatedClient(): HttpClient = ApiHttpClientFactory.createUnauthenticated()
 
     @Provides
     @Singleton
@@ -111,5 +134,54 @@ object NetworkModule {
     fun provideAttendance(dataSource: AttendanceDataSource): AttendanceRepository =
         AttendanceRepositoryImpl(dataSource = dataSource)
 
+    @Provides
+    @Singleton
+    fun provideAttendanceReadDataSource(client: HttpClient): AttendanceReadDataSource =
+        AttendanceReadRemoteDataSource(client)
+
+    @Provides
+    @Singleton
+    fun provideAttendanceRead(source: AttendanceReadDataSource): AttendanceReadRepository =
+        AttendanceReadRepositoryImpl(source)
+
     private const val UNAUTHENTICATED_CLIENT = "unauthenticated"
+
+    @Provides
+    @Singleton
+    @Named("photo-upload")
+    fun providePhotoUploadClient(): HttpClient =
+        HttpClient(Android) {
+            expectSuccess = true
+            followRedirects = false
+        }
+
+    @Provides
+    @Singleton
+    fun provideTeamPhotoSource(
+        client: HttpClient,
+        @Named("photo-upload") uploadClient: HttpClient,
+    ): TeamPhotoDataSource = TeamPhotoRemoteDataSource(client, uploadClient)
+
+    @Provides
+    @Singleton
+    fun provideTeamAttendanceRepository(source: TeamPhotoDataSource): TeamAttendanceRepository =
+        TeamAttendanceRepositoryImpl(source)
+
+    @Provides
+    @Singleton
+    fun provideNotificationDeviceSource(client: HttpClient): NotificationDeviceDataSource =
+        NotificationDeviceRemoteDataSource(client)
+
+    @Provides
+    @Singleton
+    fun provideDeviceRepo(source: NotificationDeviceDataSource): NotificationDeviceRepository =
+        NotificationDeviceRepositoryImpl(source)
+
+    @Provides
+    @Singleton
+    fun provideNoticeSource(client: HttpClient): NoticeDataSource = NoticeRemoteDataSource(client)
+
+    @Provides
+    @Singleton
+    fun provideNotice(source: NoticeDataSource): NoticeRepository = NoticeRepositoryImpl(source)
 }

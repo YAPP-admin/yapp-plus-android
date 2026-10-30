@@ -9,6 +9,7 @@ internal data class AuthenticationResponse(
     val result: String,
     val session: AuthTokensResponse? = null,
     val registrationToken: String? = null,
+    val user: AuthenticatedUserResponse? = null,
 ) {
     fun toResult(): AuthResponseResult =
         when (result) {
@@ -24,7 +25,11 @@ internal data class AuthenticationResponse(
         return if (accessToken == null || refreshToken == null) {
             AuthResponseResult.Failed(AuthFailure.Unavailable)
         } else {
-            AuthResponseResult.SignedIn(accessToken, refreshToken)
+            AuthResponseResult.SignedIn(
+                accessToken,
+                refreshToken,
+                user?.name?.takeIf(String::isNotBlank),
+            )
         }
     }
 

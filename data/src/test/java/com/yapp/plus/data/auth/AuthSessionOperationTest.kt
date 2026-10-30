@@ -39,14 +39,26 @@ class AuthSessionOperationTest {
                     assertEquals(HttpMethod.Delete, request.method)
                     assertEquals("/api/auth/sessions/current", request.url.encodedPath)
                     assertNull(request.headers[HttpHeaders.Authorization])
-                    val body = Json.parseToJsonElement((request.body as TextContent).text).jsonObject
+                    val body =
+                        Json
+                            .parseToJsonElement(
+                                (request.body as TextContent).text,
+                            ).jsonObject
                     assertEquals(setOf("refreshToken"), body.keys)
-                    assertEquals("test-refresh", body.getValue("refreshToken").jsonPrimitive.content)
+                    assertEquals(
+                        "test-refresh",
+                        body.getValue("refreshToken").jsonPrimitive.content,
+                    )
                     assertSame(initialTokens, tokenStore.currentTokens())
                     respond("", HttpStatusCode.NoContent)
                 }
             createClient(engine).use { client ->
-                val repository = AuthRepositoryImpl(AuthRemoteDataSource(client), tokenStore)
+                val repository =
+                    AuthRepositoryImpl(
+                        AuthRemoteDataSource(client),
+                        tokenStore,
+                        FakeSessionProfileDataSource(),
+                    )
                 assertEquals(AuthOperationResult.Success, repository.logout())
                 assertNull(tokenStore.currentTokens())
                 assertNull(persistence.tokens)
@@ -76,7 +88,8 @@ class AuthSessionOperationTest {
                             unauthenticatedClient = unauthenticatedClient,
                             authenticatedClient = authenticatedClient,
                         )
-                    val repository = AuthRepositoryImpl(source, tokenStore)
+                    val repository =
+                        AuthRepositoryImpl(source, tokenStore, FakeSessionProfileDataSource())
                     assertEquals(AuthOperationResult.Success, repository.withdraw())
                     assertNull(tokenStore.currentTokens())
                     assertNull(persistence.tokens)
@@ -99,7 +112,12 @@ class AuthSessionOperationTest {
                 val persistence = FakeAuthTokenPersistence(initialTokens)
                 val tokenStore = TokenStore(persistence = persistence)
                 createClient(MockEngine { respond("", status) }).use { client ->
-                    val repository = AuthRepositoryImpl(AuthRemoteDataSource(client), tokenStore)
+                    val repository =
+                        AuthRepositoryImpl(
+                            AuthRemoteDataSource(client),
+                            tokenStore,
+                            FakeSessionProfileDataSource(),
+                        )
                     assertEquals(AuthOperationResult.Failure, repository.logout())
                     assertEquals(AuthOperationResult.Failure, repository.withdraw())
                     assertSame(initialTokens, tokenStore.currentTokens())
@@ -115,7 +133,7 @@ class AuthSessionOperationTest {
             val source = FakeAuthDataSource().apply { operation = { throw IOException("offline") } }
             val persistence = FakeAuthTokenPersistence(initialTokens)
             val tokenStore = TokenStore(persistence = persistence)
-            val repository = AuthRepositoryImpl(source, tokenStore)
+            val repository = AuthRepositoryImpl(source, tokenStore, FakeSessionProfileDataSource())
 
             assertEquals(AuthOperationResult.Failure, repository.logout())
             assertEquals(AuthOperationResult.Failure, repository.withdraw())
@@ -132,7 +150,8 @@ class AuthSessionOperationTest {
     fun noStoredSessionRejectsBothOperationsWithoutCallingServer() =
         runTest {
             val source = FakeAuthDataSource()
-            val repository = AuthRepositoryImpl(source, TokenStore())
+            val repository =
+                AuthRepositoryImpl(source, TokenStore(), FakeSessionProfileDataSource())
             assertEquals(AuthOperationResult.Failure, repository.logout())
             assertEquals(AuthOperationResult.Failure, repository.withdraw())
             assertEquals(0, source.logoutRequestCount)
@@ -143,7 +162,12 @@ class AuthSessionOperationTest {
     fun logoutWithoutRefreshTokenDoesNotCallServer() =
         runTest {
             val source = FakeAuthDataSource()
-            val repository = AuthRepositoryImpl(source, TokenStore(Tokens("test-access", null)))
+            val repository =
+                AuthRepositoryImpl(
+                    source,
+                    TokenStore(Tokens("test-access", null)),
+                    FakeSessionProfileDataSource(),
+                )
             assertEquals(AuthOperationResult.Failure, repository.logout())
             assertEquals(0, source.logoutRequestCount)
         }
@@ -157,10 +181,14 @@ class AuthSessionOperationTest {
                 }
             val persistence = FakeAuthTokenPersistence(initialTokens)
             val tokenStore = TokenStore(persistence = persistence)
-            val repository = AuthRepositoryImpl(source, tokenStore)
+            val repository = AuthRepositoryImpl(source, tokenStore, FakeSessionProfileDataSource())
 
-            assertTrue(runCatching { repository.logout() }.exceptionOrNull() is CancellationException)
-            assertTrue(runCatching { repository.withdraw() }.exceptionOrNull() is CancellationException)
+            assertTrue(
+                runCatching { repository.logout() }.exceptionOrNull() is CancellationException,
+            )
+            assertTrue(
+                runCatching { repository.withdraw() }.exceptionOrNull() is CancellationException,
+            )
             assertSame(initialTokens, tokenStore.currentTokens())
             assertEquals(0, persistence.updateCount)
         }
@@ -173,7 +201,8 @@ class AuthSessionOperationTest {
                     updateFailure = IOException("storage unavailable")
                 }
             val tokenStore = TokenStore(persistence = persistence)
-            val repository = AuthRepositoryImpl(FakeAuthDataSource(), tokenStore)
+            val repository =
+                AuthRepositoryImpl(FakeAuthDataSource(), tokenStore, FakeSessionProfileDataSource())
             assertEquals(AuthOperationResult.Failure, repository.logout())
             assertEquals(AuthOperationResult.Failure, repository.withdraw())
             assertSame(initialTokens, tokenStore.currentTokens())
@@ -189,7 +218,11 @@ class AuthSessionOperationTest {
             expectSuccess = true
             install(DefaultRequest) {
                 url("https://api.example.test/api/")
-                if (accessToken != null) headers.append(HttpHeaders.Authorization, "Bearer $accessToken")
+                if (accessToken !=
+                    null
+                ) {
+                    headers.append(HttpHeaders.Authorization, "Bearer $accessToken")
+                }
             }
             install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
         }

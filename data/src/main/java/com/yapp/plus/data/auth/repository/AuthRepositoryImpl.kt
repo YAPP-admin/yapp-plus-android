@@ -6,6 +6,7 @@ import com.yapp.plus.core.network.auth.Tokens
 import com.yapp.plus.core.network.invokeRequest
 import com.yapp.plus.data.auth.datasource.auth.AuthDataSource
 import com.yapp.plus.data.auth.datasource.auth.AuthResponseResult
+import com.yapp.plus.data.auth.datasource.session.SessionProfileDataSource
 import com.yapp.plus.domain.auth.AuthFailure
 import com.yapp.plus.domain.auth.AuthOperationResult
 import com.yapp.plus.domain.auth.AuthRepository
@@ -18,6 +19,7 @@ import kotlinx.coroutines.CancellationException
 class AuthRepositoryImpl(
     private val dataSource: AuthDataSource,
     private val tokenStore: TokenStore,
+    private val profileSource: SessionProfileDataSource,
 ) : AuthRepository {
     override suspend fun authenticateWithGoogle(credential: GoogleLoginCredential): AuthResult =
         execute {
@@ -46,7 +48,7 @@ class AuthRepositoryImpl(
     override suspend fun hasStoredSession(): Boolean = tokenStore.currentTokens() != null
 
     override suspend fun logout(): AuthOperationResult =
-        executeSessionOperation {
+        runSessionOperation {
             val refreshToken =
                 checkNotNull(tokenStore.currentTokens()?.refreshToken) {
                     "Cannot log out without a stored refresh token"
@@ -56,7 +58,7 @@ class AuthRepositoryImpl(
         }
 
     override suspend fun withdraw(): AuthOperationResult =
-        executeSessionOperation {
+        runSessionOperation {
             checkNotNull(tokenStore.currentTokens()) {
                 "Cannot withdraw without a stored session"
             }
@@ -74,7 +76,7 @@ class AuthRepositoryImpl(
         return try {
             when (val result = responseResult) {
                 is AuthResponseResult.SignedIn -> {
-                    tokenStore.updateTokens(Tokens(result.accessToken, result.refreshToken))
+                    saveSession(result)
                     AuthResult.SignedIn
                 }
 
@@ -90,7 +92,20 @@ class AuthRepositoryImpl(
         }
     }
 
-    private suspend fun executeSessionOperation(operation: suspend () -> Unit): AuthOperationResult =
+    private suspend fun saveSession(result: AuthResponseResult.SignedIn) {
+        val tokens = Tokens(result.accessToken, result.refreshToken)
+        tokenStore.updateTokens(tokens)
+        try {
+            check(profileSource.updateName(tokens.storageKey, result.userName))
+        } catch (exception: Exception) {
+            kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {
+                tokenStore.replaceTokens(tokens, null)
+            }
+            throw exception
+        }
+    }
+
+    private suspend fun runSessionOperation(operation: suspend () -> Unit): AuthOperationResult =
         when (invokeRequest(operation)) {
             is NetworkRequestResult.Success -> AuthOperationResult.Success
             is NetworkRequestResult.Error -> AuthOperationResult.Failure

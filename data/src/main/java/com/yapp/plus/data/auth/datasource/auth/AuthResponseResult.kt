@@ -7,6 +7,7 @@ sealed interface AuthResponseResult {
     class SignedIn(
         val accessToken: String,
         val refreshToken: String,
+        val userName: String? = null,
     ) : AuthResponseResult
 
     class SignupRequired(

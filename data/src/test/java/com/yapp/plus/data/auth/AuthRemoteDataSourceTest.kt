@@ -37,13 +37,20 @@ class AuthRemoteDataSourceTest {
             val engine =
                 MockEngine { request ->
                     assertEquals(HttpMethod.Post, request.method)
-                    assertEquals("/api/auth/oidc/google/native-authentications", request.url.encodedPath)
+                    assertEquals(
+                        "/api/auth/oidc/google/native-authentications",
+                        request.url.encodedPath,
+                    )
                     val content = (request.body as TextContent).text
                     val body = Json.parseToJsonElement(content).jsonObject
                     assertEquals("test-id-token", body.getValue("idToken").jsonPrimitive.content)
                     assertEquals("test-nonce", body.getValue("nonce").jsonPrimitive.content)
                     respond(
-                        """{"result":"SIGNED_IN","session":{"accessToken":"acc","refreshToken":"ref"}}""",
+                        """
+{"result":"SIGNED_IN",
+"user":{"id":1,"name":"김야뿌"},
+"session":{"accessToken":"acc","refreshToken":"ref"}}
+""",
                         HttpStatusCode.OK,
                         jsonHeaders,
                     )
@@ -51,11 +58,14 @@ class AuthRemoteDataSourceTest {
 
             createClient(engine).use { client ->
                 val result =
-                    AuthRemoteDataSource(client).authenticateWithGoogle("test-id-token", "test-nonce")
+                    AuthRemoteDataSource(
+                        client,
+                    ).authenticateWithGoogle("test-id-token", "test-nonce")
                 assertTrue(result is AuthResponseResult.SignedIn)
                 val signedIn = result as AuthResponseResult.SignedIn
                 assertEquals("acc", signedIn.accessToken)
                 assertEquals("ref", signedIn.refreshToken)
+                assertEquals("김야뿌", signedIn.userName)
             }
         }
 
@@ -89,7 +99,10 @@ class AuthRemoteDataSourceTest {
                     assertEquals("/api/users", request.url.encodedPath)
                     val content = (request.body as TextContent).text
                     val body = Json.parseToJsonElement(content).jsonObject
-                    assertEquals("reg-token", body.getValue("registrationToken").jsonPrimitive.content)
+                    assertEquals(
+                        "reg-token",
+                        body.getValue("registrationToken").jsonPrimitive.content,
+                    )
                     assertEquals("홍길동", body.getValue("name").jsonPrimitive.content)
                     assertEquals("01012345678", body.getValue("phoneNumber").jsonPrimitive.content)
                     respond(
@@ -160,9 +173,17 @@ class AuthRemoteDataSourceTest {
             val testCases =
                 listOf(
                     Triple("name", "REQUIRED", RegistrationFieldError.Name(Reason.Required)),
-                    Triple("name", "INVALID_FORMAT", RegistrationFieldError.Name(Reason.InvalidFormat)),
+                    Triple(
+                        "name",
+                        "INVALID_FORMAT",
+                        RegistrationFieldError.Name(Reason.InvalidFormat),
+                    ),
                     Triple("name", "TOO_LONG", RegistrationFieldError.Name(Reason.TooLong)),
-                    Triple("phoneNumber", "REQUIRED", RegistrationFieldError.PhoneNumber(Reason.Required)),
+                    Triple(
+                        "phoneNumber",
+                        "REQUIRED",
+                        RegistrationFieldError.PhoneNumber(Reason.Required),
+                    ),
                     Triple(
                         "phoneNumber",
                         "INVALID_FORMAT",
@@ -173,7 +194,11 @@ class AuthRemoteDataSourceTest {
                         "ALREADY_EXISTS",
                         RegistrationFieldError.PhoneNumber(Reason.AlreadyExists),
                     ),
-                    Triple("phoneNumber", "FUTURE_CODE", RegistrationFieldError.PhoneNumber(Reason.Unknown)),
+                    Triple(
+                        "phoneNumber",
+                        "FUTURE_CODE",
+                        RegistrationFieldError.PhoneNumber(Reason.Unknown),
+                    ),
                 )
             for ((field, code, expectedError) in testCases) {
                 val isConflict = code == "ALREADY_EXISTS"
@@ -194,7 +219,12 @@ class AuthRemoteDataSourceTest {
                     }
                 createClient(engine).use { client ->
                     val tokenStore = TokenStore()
-                    val repository = AuthRepositoryImpl(AuthRemoteDataSource(client), tokenStore)
+                    val repository =
+                        AuthRepositoryImpl(
+                            AuthRemoteDataSource(client),
+                            tokenStore,
+                            FakeSessionProfileDataSource(),
+                        )
                     val result =
                         repository.register("reg-token", Name("이름"), PhoneNumber("01012345678"))
                     assertEquals(AuthResult.Failed(failure, listOf(expectedError)), result)

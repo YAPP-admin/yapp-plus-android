@@ -160,4 +160,4 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 ## 사용자 조회·제출 계약의 분리 반영
 
-[백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c)에서 확인한 출석 점수·커서 이력, 공지 목록·상세·과제·읽음, 인증 응답 이름, 팀 사진과 푸시 기기의 Domain 모델·Repository 계약을 정의했습니다. Data 어댑터와 화면 연결은 이 계약을 소비하는 후속 PR로 반영합니다. 팀원 정보·본인 membershipId·Firebase 설정 및 미확인 회원 필드를 임의의 값으로 채우지 않습니다.
+[백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c)에서 확인한 출석 점수·커서 이력, 공지 목록·상세·과제·읽음, 인증 응답 이름, 팀 사진과 푸시 기기의 Domain 모델·Repository 계약을 정의했습니다. My 출석 점수·이력 조회 Data 어댑터와 인증 응답 이름 저장을 반영했습니다. 점수는 서버 값을 사용하고 이력의 미확정·TEAM 검토 상태를 보존합니다. 문서화된 자격·현재 기수 없음만 값 없는 점수로 처리하며 다른 오류는 실패로 전달합니다. 화면과 나머지 Data 어댑터 연결은 후속 PR입니다. 팀원 정보·본인 membershipId·Firebase 설정 및 미확인 회원 필드를 임의의 값으로 채우지 않습니다.

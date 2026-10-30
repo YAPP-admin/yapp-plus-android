@@ -3,6 +3,7 @@ package com.yapp.plus.feature.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.attendance.AttendanceException
+import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
@@ -22,6 +23,62 @@ internal class HomeInteractionViewModel
     ) : ViewModel() {
         private val mutableUiState = MutableStateFlow(HomeInteractionUiState())
         val uiState = mutableUiState.asStateFlow()
+
+        fun openReport() {
+            if (mutableUiState.value.isSubmitting) return
+            mutableUiState.update {
+                it.copy(
+                    sheet = HomeSheet.ReportType,
+                    reportType = null,
+                    reportReason = "",
+                    errorResource = null,
+                    isInvalidCode = false,
+                )
+            }
+        }
+
+        fun selectReportType(type: AttendanceReportType) {
+            if (mutableUiState.value.isSubmitting) return
+            mutableUiState.update { it.copy(reportType = type, errorResource = null) }
+        }
+
+        fun updateReportReason(value: String) {
+            if (mutableUiState.value.isSubmitting) return
+            val truncated = value.take(MAX_REASON_LENGTH)
+            val reason =
+                if (truncated.lastOrNull()?.isHighSurrogate() ==
+                    true
+                ) {
+                    truncated.dropLast(1)
+                } else {
+                    truncated
+                }
+            mutableUiState.update { it.copy(reportReason = reason, errorResource = null) }
+        }
+
+        fun confirmReport() {
+            val state = mutableUiState.value
+            val type = state.reportType ?: return
+            if (state.isSubmitting) return
+            if (state.sheet == HomeSheet.ReportType) {
+                mutableUiState.update { it.copy(sheet = HomeSheet.ReportReason) }
+                return
+            }
+            if (state.sheet != HomeSheet.ReportReason) return
+            submit(
+                operation = { attendanceRepository.submitReport(type, state.reportReason.trim()) },
+                onSuccess = {
+                    current,
+                    _,
+                    ->
+                    current.copy(sheet = HomeSheet.None, isReportComplete = true)
+                },
+            )
+        }
+
+        fun acknowledgeReportComplete() {
+            mutableUiState.update { it.copy(isReportComplete = false) }
+        }
 
         fun openAttendanceCode() {
             if (mutableUiState.value.isSubmitting) return
@@ -99,7 +156,7 @@ internal class HomeInteractionViewModel
                 if (isInvalidCode) {
                     R.string.home_code_invalid
                 } else {
-                    R.string.home_submit_error
+                    reportErrorResource((exception as? AttendanceException)?.code)
                 }
             mutableUiState.update {
                 it.copy(isInvalidCode = isInvalidCode, errorResource = errorResource)
@@ -112,5 +169,17 @@ internal class HomeInteractionViewModel
 
         private companion object {
             const val CODE_LENGTH = 4
+            const val MAX_REASON_LENGTH = 30
         }
+    }
+
+private fun reportErrorResource(code: String?): Int =
+    when (code) {
+        "ATTENDANCE_REPORT_NOT_ELIGIBLE" -> R.string.home_report_not_eligible
+        "ATTENDANCE_SESSION_NOT_FOUND" -> R.string.home_report_no_session
+        "ATTENDANCE_REPORT_UNAVAILABLE" -> R.string.home_report_unavailable
+        "ATTENDANCE_REPORT_SESSION_CHANGED", "ATTENDANCE_REPORT_SESSION_CONFLICT" ->
+            R.string.home_report_session_changed
+        "INVALID_ATTENDANCE_REPORT" -> R.string.home_report_invalid
+        else -> R.string.home_submit_error
     }

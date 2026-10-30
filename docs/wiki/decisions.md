@@ -353,3 +353,13 @@ last_verified: 2026-10-27
 - 반영: [제품 정책](product-policy.md)의 `앱 기능 명세서 ver 2` 절.
 - 적용 상태: 문서에 목표와 현재 구현을 구분해 기록했습니다. DEC-0039의 YAPP 서버 인증·가입 결정은 현재 구현 기준으로 유지합니다. 멤버십 연결·승인, 팀 사진 출석·검수, 공식 회원·출석 조회, 공지·알림 서버 연결은 후속입니다. 탈퇴 보존 문구의 범위와 기간은 미확정으로 유지합니다.
 - 대체한 결정: 없음.
+
+
+## DEC-0044 · 서버에 존재하는 사용자 API의 후속 연결
+
+- 기록일: 2026-10-30
+- 결정: 사용자의 “api 연동 마저해줘”, “서버에있는것만진행해” 요청에 따라 확인된 사용자 API의 Domain 계약부터 분리해 반영합니다. 출석 점수·이력, 인증 응답 이름, 공지, 사전 보고, 팀 사진 및 푸시 기기를 대상으로 하며 사전 보고의 지각은 현재 서버의 `LATE`를 사용합니다.
+- 근거: [이슈 #160](https://github.com/YAPP-admin/yapp-plus-android/issues/160), [이슈 #161](https://github.com/YAPP-admin/yapp-plus-android/issues/161), [백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c).
+- 반영: [제품 정책](product-policy.md)과 Domain 모델·Repository 인터페이스.
+- 적용 상태: 계약 정의까지 반영하며 Data 구현·Feature 연결은 후속 PR입니다. 미확인 팀원 정보·Firebase 설정·회원 정보·알림 설정·문의 URL을 임의로 만들지 않습니다. 통합 로컬 구현의 검증 기록은 이슈에 유지합니다.
+- 대체한 결정: 사전 보고의 이전 시간별 지각 enum 설명을 현재 사용자 API 계약으로 정정합니다. 서버 판정과 미확인 기능의 연결 보류 원칙은 유지합니다.

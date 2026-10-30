@@ -71,8 +71,8 @@ YAPP 서버의 출석 인증·보고 계약을 따릅니다. 홈의 보고 UI는
 - 기준은 사용자가 변경을 확정한 [Figma 홈 섹션](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284)과 [이슈 #82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)입니다. 홈 메인·알림·출석 코드 입력/완료·출결 보고 화면까지 적용합니다.
 - 홈은 이번 주 세션의 장소·제목, 일요일부터 토요일까지의 달력, 출석 상태와 빠른 메뉴, 이번 주 공지를 표시합니다. 오늘은 원형으로, 세션 날짜는 브랜드 색상으로 구분합니다. 서버의 `AVAILABLE` 상태에서만 출석 버튼을 활성화합니다.
 - 4자리 숫자 입력은 붙여넣기와 숫자 키보드를 지원합니다. 입력 형식 검증 뒤 `POST /api/attendance-verifications`에 `sessionId`와 정수 `code`를 전달합니다. `verified=true`와 유효한 `checkedInAt`을 받은 뒤에만 완료 화면과 해당 세션의 출석 완료 상태를 표시합니다. 조회 API에는 완료 상태가 없어 이 상태는 현재 ViewModel 생명주기 안에서만 유지합니다.
-- 보고는 지각·조퇴·결석 선택 후 30자 이내의 공백 아닌 사유를 입력합니다. 서버의 `POST /api/attendance-reports`에는 `ONE_HOUR_LATE`, `THREE_HOUR_LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 사유를 보냅니다. 응답의 `sessionId`·`submittedAt`을 확인한 뒤 완료 안내를 표시합니다. 서버의 허용 시간과 점수를 클라이언트에서 재판정하지 않습니다.
-- Figma의 지각 한 항목과 서버의 1시간/3시간 구분 차이는 사용자 지시에 따라 지각 선택 뒤 추가 선택 단계로 우선 처리합니다. **디자이너 확인 전 임시 UI**이며, 일반 `LATE` 값은 서버가 거절하므로 보내지 않습니다.
+- 보고는 지각·조퇴·결석 선택 후 30자 이내의 선택적 사유를 입력합니다. 서버의 `POST /api/attendance-reports`에는 `LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 사유를 보냅니다. 응답의 `sessionId`·`submittedAt`을 확인한 뒤 완료 안내를 표시합니다. 서버의 허용 시간과 점수를 클라이언트에서 재판정하지 않습니다.
+- 2026-10-30 확인한 사용자 Controller는 `LATE`를 허용합니다. 지각의 추가 시간 선택 없이 서버 계약을 사용하며 사유 길이는 Kotlin `String.length` 기준 최대 30입니다. 사유 생략과 빈 문자열을 허용합니다.
 - 홈의 이번 주 공지는 한국 시간의 일요일 00:00부터 다음 일요일 전까지의 게시 시각을 기준으로 합니다. 공지 API 연결 전에는 준비 중 상태를 표시합니다. 알림 조회·읽음 처리와 푸시 연동 전까지 홈 알림 진입을 숨깁니다. 알림 컴포넌트와 debug Preview는 보존합니다.
 - 전체 세션은 일정 탭으로 연결합니다. 미연동된 출석 점수 메뉴는 숨깁니다. My의 회원 정보·점수·기록 API 연결은 후속입니다.
 - API 실패 시 입력을 보존하고 오류·재시도를 제공합니다. 제출 중에는 중복 확인·입력 수정·시트 닫기를 막습니다. 코드 불일치와 일반 요청 실패를 구분하며 성공 상태를 낙관적으로 만들지 않습니다.
@@ -80,7 +80,7 @@ YAPP 서버의 출석 인증·보고 계약을 따릅니다. 홈의 보고 UI는
 ## 출석 인증과 사전 보고 API 계약
 
 - `POST /api/attendance-verifications`는 `sessionId`와 정수 `code`를 받습니다. 서버 응답의 `verified`와 `checkedInAt`으로 검증 성공을 판정하며 출석의 최종 확정과 점수 계산은 서버가 담당합니다.
-- `POST /api/attendance-reports`는 `ONE_HOUR_LATE`, `THREE_HOUR_LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 사유를 받습니다. 응답의 `sessionId`와 `submittedAt`으로 서버의 제출 결과를 확인합니다.
+- `POST /api/attendance-reports`는 `LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 사유를 받습니다. 응답의 `sessionId`와 `submittedAt`으로 서버의 제출 결과를 확인합니다.
 - Domain은 출석 코드 검증·사전 보고 Repository 계약과 보고 종류·코드 오류 표현을 정의합니다. Data의 DTO·YAPP API 어댑터와 App 연결은 구현됐으며 홈의 출석 코드 제출은 이 경로를 사용합니다. 보고 UI 연결은 후속입니다.
 
 ## 일정·출석 정책
@@ -150,3 +150,7 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 | 로컬 저장 | 미정 | 보존할 데이터와 기간, 동기화·삭제 규칙 |
 
 미확정 항목을 임의의 클라이언트 규칙이나 DTO로 구현하지 않습니다. 계약이 확정되면 이 표와 결정 기록을 함께 갱신합니다.
+
+## 사용자 조회·제출 계약의 분리 반영
+
+[백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c)에서 확인한 출석 점수·커서 이력, 공지 목록·상세·과제·읽음, 인증 응답 이름, 팀 사진과 푸시 기기의 Domain 모델·Repository 계약을 정의했습니다. Data 어댑터와 화면 연결은 이 계약을 소비하는 후속 PR로 반영합니다. 팀원 정보·본인 membershipId·Firebase 설정 및 미확인 회원 필드를 임의의 값으로 채우지 않습니다.

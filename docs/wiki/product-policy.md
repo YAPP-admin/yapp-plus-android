@@ -63,7 +63,7 @@ last_verified: 2026-10-30
 | My 출석 이력 | `GET /api/attendance-history`; 총/시작 세션 수와 최종 출석 상태·TEAM 검토 상태·cursor 연결 |
 | 공지 | `GET /api/posts`, `GET /api/posts/{id}`, `PUT /api/posts/{id}/read`; 분류·커서·Markdown·첨부 이미지·과제·명시적 읽음 확인과 홈 주간 최대 3개 공지 연결 |
 | My 이름 | 인증·가입 성공 응답 `user.name`을 세션과 함께 암호화 저장·복원. 토큰 갱신 시 유지, 새 계정·로그아웃·탈퇴 시 제거. 기존 저장 세션은 다음 로그인 성공부터 이름을 표시 |
-| 팀 사진 출석 | `POST /api/sessions/{id}/team-attendance-photos/presign` → 서명 URL PUT → `POST /api/sessions/{id}/team-attendance-photos`; 어댑터 구현. 팀원 목록·본인 membershipId 확인 전 UI 제출은 후속 |
+| 팀 사진 출석 | `POST /api/sessions/{id}/team-attendance-photos/presign` → 서명 URL PUT → `POST /api/sessions/{id}/team-attendance-photos`; 어댑터와 안내·사진 미리보기·팀원 선택 UI를 구현했습니다. 화면은 debug Preview에서 확인할 수 있으며 실제 제출 연결은 팀원 목록과 본인 membershipId 계약 확인 후 진행합니다. |
 | 푸시 기기 | `PUT/DELETE /api/users/me/notification-devices/{installationId}`; ANDROID 기기 어댑터 구현. Firebase 설정·FID·FCM 토큰 공급 연결은 후속 |
 | 통합 탈퇴 | `DELETE /api/users/me`; Bearer access token으로 요청하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도. Figma 확인·요청 진행·오류와 App 연결 구현 |
 

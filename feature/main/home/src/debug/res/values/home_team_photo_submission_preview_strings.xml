@@ -1,0 +1,13 @@
+<resources>
+    <string name="home_team_photo_preview_time">14:00 - 18:00</string>
+    <string name="home_team_photo_preview_pm_name">강야뿌</string>
+    <string name="home_team_photo_preview_pm_role">PM</string>
+    <string name="home_team_photo_preview_design_name">김야뿌</string>
+    <string name="home_team_photo_preview_design_role">Design</string>
+    <string name="home_team_photo_preview_android_name">이야뿌</string>
+    <string name="home_team_photo_preview_android_role">Android</string>
+    <string name="home_team_photo_preview_ios_name">박야뿌</string>
+    <string name="home_team_photo_preview_ios_role">iOS</string>
+    <string name="home_team_photo_preview_server_name">최야뿌</string>
+    <string name="home_team_photo_preview_server_role">Server</string>
+</resources>

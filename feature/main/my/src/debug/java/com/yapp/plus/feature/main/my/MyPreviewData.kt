@@ -11,7 +11,7 @@ import com.yapp.plus.feature.main.my.model.MySessionSummary
 import com.yapp.plus.feature.main.my.model.MyUiState
 
 object MyPreviewData {
-    val profile = MyProfileUiModel("김야뿌", "활동회원", "28기", "Designer")
+    val profile = MyProfileUiModel("김야뿌", "활동회원", "28기", "Design")
     val score = MyAttendanceScoreState.Content(AttendanceScore(1, 92, 3, 1, 0, 0), 1)
     val history =
         MyAttendanceHistoryState.Content(

@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
@@ -34,15 +35,19 @@ internal fun HomeWeekCalendar(
     sessionDate: LocalDate?,
     today: LocalDate,
     modifier: Modifier = Modifier,
+    dayHeight: Dp = 54.dp,
+    sessionDayContent: (@Composable (Int) -> Unit)? = null,
 ) {
     Row(modifier = modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
         repeat(DAYS_IN_WEEK) { index ->
+            val date = weekStartDate.plusDays(index.toLong())
             HomeCalendarDay(
-                date = weekStartDate.plusDays(index.toLong()),
+                date = date,
                 sessionDate = sessionDate,
                 today = today,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).height(dayHeight),
                 hasLeadingBorder = index == 0,
+                dateContent = if (date == sessionDate) sessionDayContent else null,
             )
         }
     }
@@ -55,6 +60,7 @@ internal fun HomeCalendarDay(
     today: LocalDate,
     modifier: Modifier = Modifier,
     hasLeadingBorder: Boolean = false,
+    dateContent: (@Composable (Int) -> Unit)? = null,
 ) {
     val isToday = date == today
     val color =
@@ -72,9 +78,13 @@ internal fun HomeCalendarDay(
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(if (dateContent == null) 4.dp else 2.dp),
         ) {
             YappText(date.format(dayFormatter), YappHomeTypography.day, YappHomeColor.subtle)
+            if (dateContent != null) {
+                dateContent(date.dayOfMonth)
+                return@Column
+            }
             Box(
                 modifier =
                     Modifier.size(20.dp).background(

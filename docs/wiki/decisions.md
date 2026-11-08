@@ -383,3 +383,12 @@ last_verified: 2026-10-30
 - 반영: [설계 패턴](design-patterns.md), 출석 점수·이력 DTO와 Data 모델. 같은 작업의 공지 매핑에도 적용합니다.
 - 적용 상태: 출석 점수·이력과 공지 매핑에 반영했으며 기존 검증·변환 동작을 유지합니다.
 - 대체한 결정: 없음. Data의 DTO·Domain 변환 소유권과 계층 의존성은 유지합니다.
+
+## DEC-0047 · Android 런처와 푸시의 YAPP 아이콘
+
+- 기록일: 2026-11-09
+- 결정: Android 앱 표시 이름은 `Yapp`입니다. Figma 앱 아이콘의 주황색 그라데이션과 흰색 Y 심볼을 Android 런처에 사용합니다. 푸시의 작은 아이콘에는 같은 심볼을 투명 배경의 단색 벡터로 사용합니다.
+- 근거: 사용자의 앱 아이콘 교체와 푸시 아이콘 적용 요청, [Figma 앱 아이콘](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-25275).
+- 반영: [디자인시스템](design-system.md#yapp-로고), App 런처 및 푸시 리소스.
+- 적용 상태: Android 7 계열의 기본·원형 아이콘, Android 8 이상의 적응형 아이콘, 푸시 아이콘을 XML 리소스로 연결했습니다.
+- 대체한 결정: 없음.

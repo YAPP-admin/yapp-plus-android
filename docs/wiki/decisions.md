@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-30
+last_verified: 2026-11-09
 ---
 
 # 결정 기록
@@ -383,3 +383,11 @@ last_verified: 2026-10-30
 - 반영: [설계 패턴](design-patterns.md), 출석 점수·이력 DTO와 Data 모델. 같은 작업의 공지 매핑에도 적용합니다.
 - 적용 상태: 출석 점수·이력과 공지 매핑에 반영했으며 기존 검증·변환 동작을 유지합니다.
 - 대체한 결정: 없음. Data의 DTO·Domain 변환 소유권과 계층 의존성은 유지합니다.
+
+## DEC-0046 · My 본인 프로필 조회 계약과 표시
+
+2026-11-09. My에서 변경된 이름과 소속 정보를 확인할 수 있도록 본인 프로필 조회를 추가하기로 했습니다.
+
+- My는 `GET /api/users/me`에서 서버가 선택한 소속과 이름을 조회합니다. 정상 무소속을 조회 실패와 구분하며, 지원하지 않는 회원 구분·직군은 해당 항목만 `—`로 표시합니다. [이슈 #185](https://github.com/YAPP-admin/yapp-plus-android/issues/185), [백엔드 프로필 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/c26950683839f46d6778c2ba0e651a77cec27146/APIDOC.md#L1235-L1258)
+- 소속 유무와 미기록 직군은 Domain에서 각각 표현합니다. 아직 지원하지 않는 회원 구분·직군 값은 `UNKNOWN`으로 표현합니다. 표시 문구와 세션 이름을 사용하는 조건은 [회원·역할 정책](membership-policy.md#my-프로필의-회원-구분과-직군)과 [제품 정책](product-policy.md#my-본인-프로필-조회)에 반영했습니다.
+- Domain 계약을 구현했습니다. Data 어댑터와 UI·Feature 연결은 후속입니다. DEC-0043과 DEC-0044의 My 프로필 계약 미확인 범위를 갱신합니다.

@@ -1,0 +1,30 @@
+<resources>
+    <string name="home_team_result_submitted_title">인증 사진을 올렸어요!</string>
+    <string name="home_team_result_submitted_description">운영진이 승인하면 출석이 완료돼요</string>
+    <string name="home_team_result_receipt_team">팀</string>
+    <string name="home_team_result_receipt_time">업로드 시간</string>
+    <string name="home_team_result_receipt_count">참석 인원</string>
+    <string name="home_team_result_receipt_members">참석자</string>
+    <string name="home_team_result_count">%1$d / %2$d명</string>
+    <string name="home_team_result_approved_title">팀 세션 출석이 완료됐어요!</string>
+    <string name="home_team_result_approved_description">운영진이 출석을 승인했어요</string>
+    <string name="home_team_result_rejected_title">팀 세션 인증이 반려됐어요</string>
+    <string name="home_team_result_rejected_deadline">%1$s 전까지 다시 업로드해 주세요</string>
+    <string name="home_team_result_rejected_description">다시 업로드해 주세요</string>
+    <string name="home_team_result_absent_title">결석으로 처리됐어요</string>
+    <string name="home_team_result_absent_description">확인이 필요하면 운영진에게 문의해 주세요</string>
+    <string name="home_team_result_upload_failed_title">인증 사진을 업로드하지 못했어요</string>
+    <string name="home_team_result_upload_failed_description">네트워크 상태를 확인하고 다시 시도해 주세요</string>
+    <string name="home_team_result_size_notice">10MB 이하의 사진만 업로드할 수 있어요</string>
+    <string name="home_team_result_reason">사유: %1$s</string>
+    <string name="home_team_result_retry">다시 업로드하기</string>
+    <string name="home_team_result_contact_staff">운영진에게 문의하기</string>
+    <string name="home_team_result_session_title">이번 주는 팀 세션이에요</string>
+    <string name="home_team_result_session_location">팀별 자율 장소</string>
+    <string name="home_team_result_upload">인증 사진 업로드하기</string>
+    <string name="home_team_result_pending_title">운영진이 확인하고 있어요</string>
+    <string name="home_team_result_pending_details">%1$s %2$s 업로드 (참석 %3$d명)</string>
+    <string name="home_team_result_pending_action">출석 확인 중이에요</string>
+    <string name="home_team_result_view_photo">인증 사진 보기</string>
+    <string name="home_team_result_attended_marker">출석</string>
+</resources>

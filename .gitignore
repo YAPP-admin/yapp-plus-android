@@ -13,3 +13,7 @@ mock-api/mock-openapi.json
 .cxx
 __pycache__/
 *.py[cod]
+
+# Firebase Android settings are supplied per build type.
+/app/google-services.json
+/app/src/**/google-services.json

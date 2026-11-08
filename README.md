@@ -42,6 +42,15 @@ Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합
 ./gradlew :app:assembleDebug
 ```
 
+FCM 연동에 사용할 Android 설정은 Firebase 콘솔에서 앱 ID `com.yapp.plus`로 받아 아래 경로에 둡니다. 설정 파일은 Git에서 제외합니다.
+
+| 빌드 | Firebase 프로젝트 | 설정 파일 |
+| --- | --- | --- |
+| Debug | `yappplus-dev` | `app/src/debug/google-services.json` |
+| Release | `yappplus-prod` | `app/src/release/google-services.json` |
+
+설정 파일이 없어도 경고와 함께 빌드할 수 있습니다.
+
 전체 모듈 설정과 연결을 검증합니다.
 
 ```bash

@@ -54,6 +54,8 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 
 스플래시 화면의 흰색 Y 심볼은 [Figma splash](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-14582)의 벡터 경로를 `:app`의 `drawable/ic_yapp_splash_symbol.xml`로 변환해 사용합니다. 리소스의 50dp×70dp 영역과 원본 경로의 내부 여백을 유지합니다.
 
+Android 앱 표시 이름은 `Yapp`입니다. 런처 아이콘은 [Figma의 512×512 앱 아이콘](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-25275)을 기준으로 합니다. 주황색 그라데이션과 흰색 Y 심볼을 벡터로 제공하며 Android 8 이상은 런처 모양에 맞춰 아이콘을 표시합니다. 상태 표시줄과 알림창의 작은 푸시 아이콘은 동일한 Y 경로를 24dp 투명 배경에 흰색으로 표시합니다.
+
 ## 그래픽과 UI 에셋
 
 [Figma Graphic 페이지](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-26431)의 Hero 8종, Point 6종, None 1종은 Figma 벡터 레이어를 Android VectorDrawable `res/drawable/graphic_*.xml`로 변환해 제공합니다. 드롭다운 방향 표시 2종과 인증 화면 뒤로가기 아이콘도 [Figma Components](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-17002) 및 [Icons](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816)의 벡터 레이어를 사용합니다. Compose에서는 `painterResource(R.drawable.*)`로 표시하고 컴포넌트가 기존 표시 크기를 지정합니다.

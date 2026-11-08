@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-09
+last_verified: 2026-10-30
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0046`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0048`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -391,3 +391,12 @@ last_verified: 2026-11-09
 - My는 `GET /api/users/me`에서 서버가 선택한 소속과 이름을 조회합니다. 정상 무소속을 조회 실패와 구분하며, 지원하지 않는 회원 구분·직군은 해당 항목만 `—`로 표시합니다. [이슈 #185](https://github.com/YAPP-admin/yapp-plus-android/issues/185), [백엔드 프로필 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/c26950683839f46d6778c2ba0e651a77cec27146/APIDOC.md#L1235-L1258)
 - 소속 유무와 미기록 직군은 Domain에서 각각 표현합니다. 아직 지원하지 않는 회원 구분·직군 값은 `UNKNOWN`으로 표현합니다. 표시 문구와 세션 이름을 사용하는 조건은 [회원·역할 정책](membership-policy.md#my-프로필의-회원-구분과-직군)과 [제품 정책](product-policy.md#my-본인-프로필-조회)에 반영했습니다.
 - Domain 계약을 구현했습니다. Data 어댑터와 UI·Feature 연결은 후속입니다. DEC-0043과 DEC-0044의 My 프로필 계약 미확인 범위를 갱신합니다.
+
+## DEC-0047 · Android 런처와 푸시의 YAPP 아이콘
+
+- 기록일: 2026-11-09
+- 결정: Android 앱 표시 이름은 `Yapp`입니다. Figma 앱 아이콘의 주황색 그라데이션과 흰색 Y 심볼을 Android 런처에 사용합니다. 푸시의 작은 아이콘에는 같은 심볼을 투명 배경의 단색 벡터로 사용합니다.
+- 근거: 사용자의 앱 아이콘 교체와 푸시 아이콘 적용 요청, [Figma 앱 아이콘](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-25275).
+- 반영: [디자인시스템](design-system.md#yapp-로고), App 런처 및 푸시 리소스.
+- 적용 상태: Android 7 계열의 기본·원형 아이콘, Android 8 이상의 적응형 아이콘, 푸시 아이콘을 XML 리소스로 연결했습니다.
+- 대체한 결정: 없음.

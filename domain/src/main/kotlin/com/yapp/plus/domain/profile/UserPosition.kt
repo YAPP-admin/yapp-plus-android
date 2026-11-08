@@ -9,7 +9,5 @@ enum class UserPosition {
     IOS,
     SERVER,
     AI_NATIVE,
-
-    /** A recorded position this app version does not recognize. */
     UNKNOWN,
 }

@@ -1,7 +1,14 @@
+import com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy
+
 plugins {
     id("yapp.android.application")
     id("yapp.hilt")
     id("yapp.kotlin.serialization")
+    alias(libs.plugins.google.services)
+}
+
+googleServices {
+    missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN
 }
 
 android {

@@ -20,8 +20,7 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.my.components.MyAttendanceRulesDialog
 import com.yapp.plus.feature.main.my.components.MyAttendanceSummary
 import com.yapp.plus.feature.main.my.components.MyMenuRow
-import com.yapp.plus.feature.main.my.components.MyProfile
-import com.yapp.plus.feature.main.my.model.MyProfileUiState
+import com.yapp.plus.feature.main.my.components.MyProfileSection
 import com.yapp.plus.feature.main.my.model.MyUiState
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
@@ -33,6 +32,7 @@ fun MyScreen(
     onAttendanceHistoryClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onContactClick: () -> Unit = {},
+    onRetryProfile: () -> Unit = {},
 ) {
     var showRules by rememberSaveable { mutableStateOf(false) }
     Column(modifier.fillMaxSize().background(YappMainColor.surface)) {
@@ -45,7 +45,7 @@ fun MyScreen(
         )
         LazyColumn(Modifier.weight(1f)) {
             item {
-                MyProfile((state.profile as? MyProfileUiState.Content)?.profile)
+                MyProfileSection(state = state.profile, onRetry = onRetryProfile)
                 Spacer(Modifier.height(2.dp))
                 MyAttendanceSummary(state.score, { showRules = true }, onRetryScore)
                 Spacer(Modifier.height(28.dp))

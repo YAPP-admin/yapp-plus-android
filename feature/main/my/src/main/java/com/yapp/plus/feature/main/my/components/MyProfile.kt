@@ -25,6 +25,39 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.my.R
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
+import com.yapp.plus.feature.main.my.model.MyProfileUiState
+
+@Composable
+internal fun MyProfileSection(
+    state: MyProfileUiState,
+    onRetry: () -> Unit,
+) {
+    val savedName =
+        when (state) {
+            is MyProfileUiState.Loading -> state.savedName
+            is MyProfileUiState.Error -> state.savedName
+            MyProfileUiState.Unavailable, is MyProfileUiState.Content -> null
+        }
+    val profile =
+        (state as? MyProfileUiState.Content)?.profile
+            ?: savedName?.takeIf(String::isNotBlank)?.let { MyProfileUiModel(name = it) }
+    Column {
+        MyProfile(profile)
+        when (state) {
+            is MyProfileUiState.Loading ->
+                MyRequestState(
+                    message = stringResource(R.string.my_profile_loading),
+                    isLoading = true,
+                )
+            is MyProfileUiState.Error ->
+                MyRequestState(
+                    message = stringResource(R.string.my_profile_error),
+                    onRetry = onRetry,
+                )
+            MyProfileUiState.Unavailable, is MyProfileUiState.Content -> Unit
+        }
+    }
+}
 
 @Composable
 internal fun MyProfile(

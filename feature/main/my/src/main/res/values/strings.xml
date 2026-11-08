@@ -4,6 +4,8 @@
     <string name="my_settings">설정</string>
     <string name="my_back">마이페이지로 돌아가기</string>
     <string name="my_contact">이용문의</string>
+    <string name="my_profile_loading">프로필을 불러오는 중이에요</string>
+    <string name="my_profile_error">프로필을 불러오지 못했어요</string>
     <string name="my_attendance_history_title">출석 내역</string>
     <string name="my_attendance_summary">내 출석 현황</string>
     <string name="my_total_score">총 점수</string>

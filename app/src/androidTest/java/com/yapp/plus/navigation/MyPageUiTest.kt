@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -139,6 +141,43 @@ class MyPageUiTest {
         composeRule.onNodeWithText("아직 출석 내역이 없어요").assertDoesNotExist()
         composeRule.onNodeWithText("다시 시도").performClick()
         composeRule.runOnIdle { assertEquals(1, retries) }
+    }
+
+    @Test
+    fun profileRetryKeepsSavedNameAndAttendanceScore() {
+        val savedName = "저장된 이름"
+        var profile by mutableStateOf<MyProfileUiState>(MyProfileUiState.Loading())
+        var profileRetries = 0
+        var scoreRetries = 0
+        composeRule.setContent {
+            YappTheme {
+                MyScreen(
+                    state = MyPreviewData.state.copy(profile = profile),
+                    onRetryScore = { scoreRetries++ },
+                    onRetryProfile = {
+                        profileRetries++
+                        profile = MyProfileUiState.Loading(savedName = savedName)
+                    },
+                )
+            }
+        }
+        composeRule.onNodeWithText("프로필을 불러오는 중이에요").assertIsDisplayed()
+        composeRule.onAllNodesWithText("—").assertCountEquals(4)
+        composeRule.runOnIdle { profile = MyProfileUiState.Loading(savedName = savedName) }
+        composeRule.onNodeWithText(savedName).assertIsDisplayed()
+        composeRule.onAllNodesWithText("—").assertCountEquals(3)
+        composeRule.runOnIdle { profile = MyProfileUiState.Error(savedName = savedName) }
+        composeRule.onNodeWithText("프로필을 불러오는 중이에요").assertDoesNotExist()
+        composeRule.onNodeWithText("프로필을 불러오지 못했어요").assertIsDisplayed()
+        composeRule.onNodeWithText(savedName).assertIsDisplayed()
+        composeRule.onNodeWithText("92점").assertIsDisplayed()
+        composeRule.onNodeWithText("다시 시도").performClick()
+        composeRule.onNodeWithText("프로필을 불러오는 중이에요").assertIsDisplayed()
+        composeRule.onNodeWithText("92점").assertIsDisplayed()
+        composeRule.runOnIdle {
+            assertEquals(1, profileRetries)
+            assertEquals(0, scoreRetries)
+        }
     }
 
     private fun saveScreenshot(name: String) {

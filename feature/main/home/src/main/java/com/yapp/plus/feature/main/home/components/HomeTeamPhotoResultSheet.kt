@@ -3,7 +3,6 @@ package com.yapp.plus.feature.main.home.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -120,17 +119,13 @@ internal fun HomeTeamPhotoResultSheet(
                         shape = RoundedCornerShape(8.dp),
                         color = YappHomeColor.background,
                     ) {
-                        Box(
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 15.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            YappText(
-                                text = stringResource(R.string.home_team_result_contact_staff),
-                                style = YappTypography.scaleT5Bold,
-                                color = YappHomeColor.subtle,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
+                        YappText(
+                            text = stringResource(R.string.home_team_result_contact_staff),
+                            style = YappTypography.scaleT5Bold,
+                            color = YappHomeColor.subtle,
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp),
+                            textAlign = TextAlign.Center,
+                        )
                     }
                 }
                 YappButton(

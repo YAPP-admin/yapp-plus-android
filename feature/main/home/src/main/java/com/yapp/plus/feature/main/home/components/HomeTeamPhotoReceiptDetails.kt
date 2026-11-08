@@ -53,19 +53,14 @@ internal fun HomeTeamPhotoReceiptDetails(receipt: HomeTeamPhotoReceiptUiModel) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    YappText(
-                        stringResource(label),
-                        YappTypography.scaleT4Medium,
-                        YappHomeColor.muted,
-                    )
+                    YappText(stringResource(label), YappTypography.scaleT4Medium, YappHomeColor.muted)
                     Canvas(Modifier.weight(1f).height(1.dp)) {
                         drawLine(
                             color = YappHomeColor.border,
                             start = Offset(0f, center.y),
                             end = Offset(size.width, center.y),
                             strokeWidth = 1.dp.toPx(),
-                            pathEffect =
-                                PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 2.dp.toPx())),
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 2.dp.toPx())),
                         )
                     }
                     YappText(

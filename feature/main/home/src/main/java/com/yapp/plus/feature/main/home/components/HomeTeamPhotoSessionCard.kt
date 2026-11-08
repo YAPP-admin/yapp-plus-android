@@ -99,17 +99,11 @@ internal fun HomeTeamPhotoSessionCard(
                         modifier = Modifier.size(14.dp),
                         tint = YappHomeColor.placeholder,
                     )
-                    YappText(
-                        stringResource(R.string.home_team_result_session_location),
-                        YappTypography.scaleT3Medium,
-                        YappHomeColor.subtle,
-                    )
+                    val location = stringResource(R.string.home_team_result_session_location)
+                    YappText(location, YappTypography.scaleT3Medium, YappHomeColor.subtle)
                 }
-                YappText(
-                    stringResource(R.string.home_team_result_session_title),
-                    YappTypography.scaleT7Bold,
-                    YappHomeColor.text,
-                )
+                val title = stringResource(R.string.home_team_result_session_title)
+                YappText(title, YappTypography.scaleT7Bold, YappHomeColor.text)
             }
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 HomeWeekCalendar(
@@ -167,11 +161,8 @@ internal fun HomeTeamPhotoPendingDetails(
             )
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            YappText(
-                stringResource(R.string.home_team_result_pending_title),
-                YappTypography.scaleT4Bold,
-                YappHomeColor.text,
-            )
+            val title = stringResource(R.string.home_team_result_pending_title)
+            YappText(title, YappTypography.scaleT4Bold, YappHomeColor.text)
             YappText(
                 stringResource(
                     R.string.home_team_result_pending_details,

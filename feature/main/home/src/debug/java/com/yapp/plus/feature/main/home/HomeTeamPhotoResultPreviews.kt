@@ -17,6 +17,9 @@ import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.feature.main.home.components.HomeQuickActions
+import com.yapp.plus.feature.main.home.components.HomeTeamPhotoPendingDetails
+import com.yapp.plus.feature.main.home.components.HomeTeamPhotoReceiptDetails
+import com.yapp.plus.feature.main.home.components.HomeTeamPhotoResultNotice
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoResultSheet
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoSessionCard
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoReceiptUiModel
@@ -64,13 +67,10 @@ fun TeamPhotoRejectedPreview() =
 
 @Preview(widthDp = 393, heightDp = 756)
 @Composable
-fun TeamPhotoNotSelectedPreview() =
-    TeamPhotoHomePreview(
-        sheet =
-            HomeTeamPhotoResultSheetState.ConfirmedAbsent(
-                reason = stringResource(R.string.home_team_result_preview_reason),
-            ),
-    )
+fun TeamPhotoNotSelectedPreview() {
+    val reason = stringResource(R.string.home_team_result_preview_reason)
+    TeamPhotoHomePreview(sheet = HomeTeamPhotoResultSheetState.ConfirmedAbsent(reason))
+}
 
 @Preview(widthDp = 393, heightDp = 756)
 @Composable
@@ -123,7 +123,7 @@ private fun TeamPhotoHomePreview(
 }
 
 @Composable
-internal fun teamPhotoPreviewReceipt() =
+private fun teamPhotoPreviewReceipt() =
     HomeTeamPhotoReceiptUiModel(
         teamName = stringResource(R.string.home_team_result_preview_team),
         uploadTimeLabel = stringResource(R.string.home_team_result_preview_time),
@@ -133,9 +133,31 @@ internal fun teamPhotoPreviewReceipt() =
     )
 
 @Composable
-internal fun teamPhotoPreviewPending() =
+private fun teamPhotoPreviewPending() =
     HomeTeamPhotoSessionUiState.Pending(
         uploadTimeLabel = stringResource(R.string.home_team_result_preview_time),
         uploaderName = stringResource(R.string.home_team_result_preview_uploader),
         attendeeCount = 4,
     )
+
+@Preview(widthDp = 353, showBackground = true)
+@Composable
+fun TeamPhotoReceiptDetailsPreview() {
+    HomeTeamPhotoReceiptDetails(teamPhotoPreviewReceipt())
+}
+
+@Preview(widthDp = 321, showBackground = true)
+@Composable
+fun TeamPhotoPendingDetailsPreview() {
+    HomeTeamPhotoPendingDetails(
+        state = teamPhotoPreviewPending(),
+        thumbnail = painterResource(R.drawable.home_team_result_thumbnail),
+        onViewPhoto = {},
+    )
+}
+
+@Preview(widthDp = 337, showBackground = true)
+@Composable
+fun TeamPhotoResultNoticePreview() {
+    HomeTeamPhotoResultNotice(stringResource(R.string.home_team_result_size_notice))
+}

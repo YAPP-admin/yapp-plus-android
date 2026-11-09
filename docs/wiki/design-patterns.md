@@ -41,6 +41,8 @@ last_verified: 2026-11-09
 - Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
 
+알림 선택은 `NotificationPreferenceRepository` → DataSource → 백업 제외 DataStore로 조회·저장합니다. 세션 저장소와 분리하고 손상된 값은 OFF로 복구합니다. 저장 구현의 App 조립과 서버 성공 뒤 확정은 후속입니다.
+
 ## 객체 조립과 화면 이동
 
 - 각 모듈은 자신의 객체 구성 정보를 제공하고 전체 조립은 App에서 담당합니다. Android DI는 Hilt를 사용하며 App이 `@HiltAndroidApp` 진입점을 소유합니다.

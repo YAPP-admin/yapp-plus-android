@@ -44,14 +44,19 @@ fun SettingsNotificationRow(
     enabled: Boolean,
     onEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    isInteractive: Boolean = true,
 ) {
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
                 .height(60.dp)
-                .toggleable(value = enabled, role = Role.Switch, onValueChange = onEnabledChange)
-                .padding(horizontal = 20.dp),
+                .toggleable(
+                    value = enabled,
+                    enabled = isInteractive,
+                    role = Role.Switch,
+                    onValueChange = onEnabledChange,
+                ).padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

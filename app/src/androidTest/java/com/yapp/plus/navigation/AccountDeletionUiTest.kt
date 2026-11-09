@@ -9,8 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -66,11 +64,8 @@ class AccountDeletionUiTest {
         composeRule.onNodeWithText("yappplus.official@gmail.com").assertDoesNotExist()
         composeRule.onNodeWithText("앱 버전", substring = true).assertDoesNotExist()
         saveWindowScreenshot("settings")
-        composeRule.onNodeWithText("알림").assertIsOn().performClick()
-        composeRule.onNodeWithText("알림").assertIsOff()
         composeRule.onNodeWithText("회원 탈퇴").performClick()
         restoration.emulateSavedInstanceStateRestore()
-        composeRule.onNodeWithText("알림").assertIsOff()
         composeRule.onNodeWithText("정말 탈퇴하시겠어요?").assertIsDisplayed()
         composeRule
             .onNodeWithText(

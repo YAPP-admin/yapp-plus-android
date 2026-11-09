@@ -40,9 +40,11 @@ fun SettingsScreen(
     isDeletingAccount: Boolean = false,
     hasDeleteAccountError: Boolean = false,
     onDeleteAccountErrorDismissed: () -> Unit = {},
+    notificationSettings: @Composable () -> Unit = {
+        SettingsNotificationRow(enabled = false, onEnabledChange = {}, isInteractive = false)
+    },
 ) {
     var activeDialog by rememberSaveable { mutableStateOf<SettingsDialog?>(null) }
-    var notificationsEnabled by rememberSaveable { mutableStateOf(true) }
     val uriHandler = LocalUriHandler.current
     val privacyPolicyUri = stringResource(R.string.settings_privacy_policy_url)
     val termsUri = stringResource(R.string.settings_terms_url)
@@ -55,10 +57,7 @@ fun SettingsScreen(
     ) {
         SettingsHeader(onBackClick = onBack)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            SettingsNotificationRow(
-                enabled = notificationsEnabled,
-                onEnabledChange = { notificationsEnabled = it },
-            )
+            notificationSettings()
             SettingsLinkRow(
                 title = stringResource(R.string.settings_privacy_policy),
                 onClick = { runCatching { uriHandler.openUri(privacyPolicyUri) } },

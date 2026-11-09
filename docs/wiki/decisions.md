@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-30
+last_verified: 2026-11-09
 ---
 
 # 결정 기록
@@ -409,3 +409,13 @@ last_verified: 2026-10-30
 - 반영: [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), App의 My 탭 이동 연결.
 - 적용 상태: My 이용 문의의 콜백에서 채널 주소를 엽니다.
 - 대체한 결정: DEC-0043의 문의 링크 연결 대기 상태를 갱신합니다.
+
+## DEC-0051 · 알림 조회 실패의 원형 재시도 버튼
+
+- 기록일: 2026-11-09
+- 결정: 조회 실패 시 스위치 자리에 restart_alt 원형 버튼을 표시합니다. 재조회 중에는 비활성화하고 성공하면 스위치로 복원합니다. 조회 실패의 별도 텍스트 재시도 행을 제거하며 ON/OFF 변경 실패의 재시도는 유지합니다.
+- 이유: 알림 제어 위치에서 조회를 다시 시도할 수 있도록 합니다.
+- 근거: 사용자의 디자인 변경 요청, [Google restart_alt 아이콘](https://fonts.google.com/icons?icon.query=restart_alt), [PR #201](https://github.com/YAPP-admin/yapp-plus-android/pull/201).
+- 반영: [제품 정책](product-policy.md#알림-조회-실패의-재시도-버튼), 설정 UI·Preview·UI 테스트. 아이콘은 공식 SVG에서 변환하고 Apache-2.0 라이선스를 앱 assets에 포함합니다.
+- 적용 상태: UI는 PR #201에 반영하며 실제 재조회 연결은 후속 App 연결 범위를 따릅니다.
+- 대체한 결정: 기존 알림 조회 실패의 텍스트 재시도 행을 원형 버튼으로 변경합니다.

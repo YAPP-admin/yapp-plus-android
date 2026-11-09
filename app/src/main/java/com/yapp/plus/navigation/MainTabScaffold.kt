@@ -22,6 +22,7 @@ import com.yapp.plus.feature.main.home.HomeRoute
 import com.yapp.plus.feature.main.my.MyRoute
 import com.yapp.plus.feature.main.schedule.ScheduleRoute
 import com.yapp.plus.feature.setting.SettingsScreen
+import com.yapp.plus.notification.NotificationSettingsRoute
 
 @Composable
 internal fun MainTabScaffold(
@@ -106,6 +107,7 @@ internal fun MainTabScaffold(
                             isDeletingAccount = isDeletingAccount,
                             hasDeleteAccountError = hasDeleteAccountError,
                             onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
+                            notificationSettings = { NotificationSettingsRoute() },
                         )
                     } else {
                         val uriHandler = LocalUriHandler.current

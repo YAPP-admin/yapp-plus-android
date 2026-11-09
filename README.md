@@ -8,19 +8,17 @@
 
 로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager ID Token과 원본 nonce를 YAPP native-authentication API에 보내고, `SIGNED_IN` 세션을 암호화 저장하거나 `SIGNUP_REQUIRED` 토큰으로 기존 회원가입 입력 흐름을 진행합니다. 가입 성공 시 세션을 저장하고, 앱 시작 시 저장 세션을 복원해 메인 또는 로그인 화면을 엽니다.
 
-홈 주간 공지와 게시판 목록·상세·읽음 확인은 사용자 공지 API에 연결했습니다. My는 사용자 출석 점수·커서 기반 이력 API를 연결했고, 이름은 인증 성공 응답에서 저장·복원하며 기수·역할·직군·지각 면제권·문의·알림 설정은 Figma UI를 유지하고 API·URL 연결만 비워 둡니다. 미확인 조회값과 진행률은 `—`로 표시하며 알림 토글은 화면 상태만 변경합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정·출석 내역 이동 상태를 관리합니다.
+홈 주간 공지와 게시판 목록·상세·읽음 확인은 사용자 공지 API에 연결했습니다. My는 사용자 출석 점수·커서 기반 이력 API를 연결했고, 이름은 인증 성공 응답에서 저장·복원하며 본인 프로필은 사용자 API를 조회합니다. 지각 면제권은 Figma UI를 유지하고 API 연결을 기다립니다. 문의는 YAPP 카카오톡 채널을 엽니다. 미확인 조회값과 진행률은 `—`로 표시하며 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정·출석 내역 이동 상태를 관리합니다.
 
 인증 세션의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 Google 로그인·가입·세션 갱신 API를 연결하고, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다.
 
 YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요청의 401은 세션 갱신 뒤 한 번 재시도합니다. 임시 테스트 백엔드·데이터 어댑터·SQL은 개발 버전에서 제거했습니다. 일정·출석 인증·세션 갱신·로그아웃·통합 탈퇴는 확인된 YAPP API 계약을 사용합니다. Firebase 푸시 기기 등록·수신을 연결했습니다. 팀 사진의 실제 제출에는 사용자용 팀원 목록과 본인 membershipId가 필요합니다.
 
-설정의 로그아웃과 회원 탈퇴는 Figma 확인 문구·진행·오류·재시도 흐름을 사용합니다. Figma에 없는 앱 버전·탈퇴 문의 이메일·확장 안내를 제거했고 알림 토글은 API 연결 전까지 화면 상태만 변경합니다. 탈퇴 API는 모든 기수 회원 자격과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 서버 응답이 성공한 경우에만 로컬 세션을 지우고 로그인 화면으로 이동합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#계정-기수-통합-탈퇴)입니다.
-
-알림 선택의 Data·DataStore 저장과 App 서버 동기화를 연결했습니다. 설정 화면의 토글·조회·재시도 연결은 후속입니다.
+설정의 로그아웃과 회원 탈퇴는 Figma 확인 문구·진행·오류·재시도 흐름을 사용합니다. Figma에 없는 앱 버전·탈퇴 문의 이메일·확장 안내를 제거했고 알림 토글은 현재 기기의 수신 선택을 저장하며 서버 성공 뒤 반영합니다. 계정 전체 설정이나 다른 기기의 수신 여부는 바꾸지 않습니다. 탈퇴 API는 모든 기수 회원 자격과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 서버 응답이 성공한 경우에만 로컬 세션을 지우고 로그인 화면으로 이동합니다. 기준은 [제품 정책](docs/wiki/product-policy.md#계정-기수-통합-탈퇴)입니다.
 
 ## 아키텍처와 모듈
 
-인증된 API의 401 갱신과 원래 요청 1회 재시도, 동시 갱신 공유를 구현했습니다. Data의 인증·가입·갱신 API와 DTO, DataStore 토큰 저장소를 App singleton으로 조립하며, `:core:datastore`는 토큰 쌍을 암호화해 저장·복원합니다. 저장소 프로세스 재시작 검증 방법은 [모듈 구조](docs/wiki/module-structure.md#인증-저장소-자동-검증)에 있습니다.
+인증된 API의 401 갱신과 원래 요청 1회 재시도, 동시 갱신 공유를 구현했습니다. Data의 인증·가입·갱신 API와 DTO, DataStore 토큰 저장소를 App singleton으로 조립하며, `:core:datastore`는 토큰 쌍을 암호화해 저장·복원합니다. 저장소 프로세스 재시작 검증 방법은 [모듈 구조](docs/wiki/module-structure.md#인증-세션-자동-검증)에 있습니다.
 
 MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
 현재 14개 Gradle 모듈과 build-logic 설정, 디자인시스템 공통 표현, `:core:preview`의 재사용 Preview 데이터가 준비되어 있습니다. 로그인은 `:feature:login`, 가입 입력·단계·상태는 `:feature:signup`이 소유합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지와 Google ID 토큰 콜백을 조립하고, 메인 탭 내비게이션·선택 상태와 설정 화면 이동 상태도 소유합니다. 가입 단계와 입력값은 Feature의 `SignUpViewModel` 및 `SavedStateHandle`로 유지·복원합니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.

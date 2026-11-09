@@ -6,9 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -41,6 +43,23 @@ class SessionOperationNavigationUiTest {
     @Test
     fun withdrawalSuccessClearsMainBackStackAndShowsLogin() {
         assertSessionOperationReturnsToLogin(isLogout = false)
+    }
+
+    @Test
+    fun settingsLoadsNotificationChoiceThroughAppRoute() {
+        composeRule.setContent {
+            YappTheme {
+                MainTabScaffold(initialTab = MainTab.My)
+            }
+        }
+        composeRule.onNodeWithContentDescription("설정").performClick()
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodes(hasText("알림") and isEnabled()).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText("알림").assertIsEnabled()
+        composeRule.onNodeWithText("알림 설정을 불러오고 있어요").assertDoesNotExist()
+        Espresso.pressBack()
+        composeRule.onNodeWithText("마이페이지").assertIsDisplayed()
     }
 
     @Test

@@ -17,7 +17,7 @@ last_verified: 2026-11-09
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 분류·커서 목록·Markdown 상세·과제·첨부 이미지·읽음 확인 API 연결 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | Figma 요약·규칙·별도 이력 UI, 출석 점수·커서 조회 ViewModel·오류 재시도; 본인 프로필 조회·세션 이름 대체 표시; 미확인 면제권 UI 유지; 이용 문의는 App에서 카카오톡 채널 연결 |
-| `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·알림 UI·Figma 로그아웃/회원 탈퇴 확인·진행·오류 재시도 UI; 앱 버전·확장 안내 제거; 인증 요청은 App 콜백 사용 |
+| `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·외부 상태 기반 알림 UI(연결 전 기본 행 비활성화)·Figma 로그아웃/회원 탈퇴 확인·진행·오류 재시도 UI; 앱 버전·확장 안내 제거; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 가입 토큰을 받아 이름·휴대폰 입력·검증·서버 제출·완료 상태를 관리; 입력은 복원하고 토큰은 메모리 전용 |
 | `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증/세션 작업 결과, 일정·출석 계약·가입 입력 값 객체; 사용자 출석 조회·이름·공지·사진·기기 Repository 계약과 Data 구현 연결; 기기별 알림 선택 저장 계약 추가, 구현은 후속 |

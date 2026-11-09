@@ -1,6 +1,8 @@
 package com.yapp.plus.feature.main.my
 
 import com.yapp.plus.domain.attendance.AttendanceScore
+import com.yapp.plus.domain.profile.MembershipStatus
+import com.yapp.plus.domain.profile.UserPosition
 import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryItem
 import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryState
 import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState
@@ -11,7 +13,7 @@ import com.yapp.plus.feature.main.my.model.MySessionSummary
 import com.yapp.plus.feature.main.my.model.MyUiState
 
 object MyPreviewData {
-    val profile = MyProfileUiModel("김야뿌", "활동회원", "28기", "Design")
+    val profile = MyProfileUiModel("김야뿌", MembershipStatus.PLAYER, 28, UserPosition.DESIGN)
     val score = MyAttendanceScoreState.Content(AttendanceScore(1, 92, 3, 1, 0, 0), 1)
     val history =
         MyAttendanceHistoryState.Content(

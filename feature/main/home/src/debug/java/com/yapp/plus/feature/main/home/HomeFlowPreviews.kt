@@ -7,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
+import com.yapp.plus.feature.main.home.model.HomeNotificationsUiState
 
 @Preview(name = "Home updated", widthDp = 393, heightDp = 692)
 @Composable
@@ -44,14 +45,19 @@ fun AttendedHomePreview() {
 @Preview(name = "Notifications empty", widthDp = 393, heightDp = 692)
 @Composable
 fun EmptyNotificationsPreview() {
-    YappTheme(darkTheme = false, dynamicColor = false) { HomeNotificationsScreen(onBack = {}) }
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeNotificationsScreen(state = HomeNotificationsUiState.Content(), onBack = {})
+    }
 }
 
 @Preview(name = "Notifications", widthDp = 393, heightDp = 692)
 @Composable
 fun NotificationsPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeNotificationsScreen(onBack = {}, notifications = HomePreviewData.notifications())
+        HomeNotificationsScreen(
+            state = HomeNotificationsUiState.Content(HomePreviewData.notifications()),
+            onBack = {},
+        )
     }
 }
 

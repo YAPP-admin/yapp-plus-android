@@ -10,7 +10,7 @@ last_verified: 2026-11-09
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션·Firebase 푸시 등록과 공지 이동 |
+| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션·Firebase 푸시 등록과 공지 이동·저장된 알림 선택을 따르는 기기 동기화 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증·사전 보고·주간 공지·알림함 연결; 별도 점수 진입 숨김 |
@@ -20,8 +20,8 @@ last_verified: 2026-11-09
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·외부 상태 기반 알림 UI(연결 전 기본 행 비활성화)·Figma 로그아웃/회원 탈퇴 확인·진행·오류 재시도 UI; 앱 버전·확장 안내 제거; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
 | `:feature:signup` | `com.yapp.plus.feature.signup` | 가입 토큰을 받아 이름·휴대폰 입력·검증·서버 제출·완료 상태를 관리; 입력은 복원하고 토큰은 메모리 전용 |
-| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증/세션 작업 결과, 일정·출석 계약·가입 입력 값 객체; 사용자 출석 조회·이름·공지·사진·기기 Repository 계약과 Data 구현 연결; 기기별 알림 선택 저장 계약과 Data 구현 준비, App 연결은 후속 |
-| `:data` | `com.yapp.plus.data` | Google OIDC 인증·회원가입·로그아웃·통합 탈퇴·세션 갱신 및 YAPP 일정·출석·공지·팀 사진·푸시 기기 어댑터와 Repository, 이름·토큰 암호화 저장 및 알림 선택 로컬 저장 구현; App 연결은 후속 |
+| `:domain` | `com.yapp.plus.domain` | 순수 Kotlin/JVM; 인증·세션 Repository 계약과 인증/세션 작업 결과, 일정·출석 계약·가입 입력 값 객체; 사용자 출석 조회·이름·공지·사진·기기 Repository 계약과 Data 구현 연결; 기기별 알림 선택 저장 계약과 Data·App 동기화 연결 |
+| `:data` | `com.yapp.plus.data` | Google OIDC 인증·회원가입·로그아웃·통합 탈퇴·세션 갱신 및 YAPP 일정·출석·공지·팀 사진·푸시 기기 어댑터와 Repository, 이름·토큰 암호화 저장 및 알림 선택 로컬 저장과 App 연결 |
 | `:core:network` | `com.yapp.plus.core.network` | Ktor HTTP client·JSON·환경별 base URL·debug 로그·토큰 복원/교체 조율·401 갱신 및 중복 방지 구현; API DTO는 `:data` 소유 |
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | DataStore 세션 레코드·Keystore 암호화·백업 제외 파일 저장과 별도 알림 선택 저장 구현됨; Data에서 사용 |

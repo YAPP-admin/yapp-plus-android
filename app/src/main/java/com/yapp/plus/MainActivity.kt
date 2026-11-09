@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.navigation.AppNavigationRoute
 import com.yapp.plus.notification.PUSH_POST_ID
@@ -23,6 +24,8 @@ import com.yapp.plus.notification.PUSH_SOURCE
 import com.yapp.plus.notification.PushRegistration
 import com.yapp.plus.notification.pushPostId
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -69,6 +72,20 @@ class MainActivity : ComponentActivity() {
 
     private fun onSessionReady() {
         if (!pushRegistration.isConfigured()) return
+        lifecycleScope.launch {
+            try {
+                if (pushRegistration.fetchEnabled()) requestNotificationPermission()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                // Settings offers a retry if the saved choice cannot be read.
+            } finally {
+                pushRegistration.synchronize()
+            }
+        }
+    }
+
+    private fun requestNotificationPermission() {
         val preferences = getPreferences(MODE_PRIVATE)
         if (
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -78,8 +95,6 @@ class MainActivity : ComponentActivity() {
         ) {
             preferences.edit().putBoolean(NOTIFICATION_PERMISSION_REQUESTED, true).apply()
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            pushRegistration.synchronize()
         }
     }
 

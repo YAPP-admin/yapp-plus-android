@@ -13,6 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
+import com.yapp.plus.R
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.home.HomeRoute
@@ -103,11 +106,14 @@ internal fun MainTabScaffold(
                             onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
                         )
                     } else {
+                        val uriHandler = LocalUriHandler.current
+                        val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
                         MyRoute(
                             onSettingsClick = { isSettingsVisible = true },
                             onAttendanceHistoryClick = { isMyHistoryVisible = true },
                             onBack = { isMyHistoryVisible = false },
                             isHistoryVisible = isMyHistoryVisible,
+                            onContactClick = { runCatching { uriHandler.openUri(contactChannelUrl) } },
                         )
                     }
             }

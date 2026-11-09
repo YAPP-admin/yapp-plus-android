@@ -23,6 +23,8 @@ import com.yapp.plus.core.designsystem.components.chip.YappChipStyle
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.domain.profile.MembershipStatus
+import com.yapp.plus.domain.profile.UserPosition
 import com.yapp.plus.feature.main.my.R
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
@@ -90,7 +92,7 @@ internal fun MyProfile(
                     modifier = Modifier.weight(1f, fill = false),
                 )
                 YappChip(
-                    text = profile?.role ?: emptyValue,
+                    text = stringResource(profile?.role.labelResource()),
                     color = YappChipColor.Brand,
                     size = YappChipSize.Profile,
                     style = YappChipStyle.Fill,
@@ -101,7 +103,8 @@ internal fun MyProfile(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 YappText(
-                    profile?.generation ?: emptyValue,
+                    profile?.generation?.let { stringResource(R.string.my_profile_generation, it) }
+                        ?: emptyValue,
                     YappTypography.scaleT4Medium,
                     YappMainColor.textSecondary,
                 )
@@ -109,7 +112,7 @@ internal fun MyProfile(
                     Modifier.width(1.dp).height(10.dp).background(YappMainColor.textSecondary),
                 )
                 YappText(
-                    profile?.position ?: emptyValue,
+                    stringResource(profile?.position.labelResource()),
                     YappTypography.scaleT4Medium,
                     YappMainColor.textSecondary,
                 )
@@ -117,3 +120,25 @@ internal fun MyProfile(
         }
     }
 }
+
+private fun MembershipStatus?.labelResource(): Int =
+    when (this) {
+        MembershipStatus.PLAYER -> R.string.my_profile_role_player
+        MembershipStatus.OB -> R.string.my_profile_role_ob
+        MembershipStatus.COMPLETED_MEMBER -> R.string.my_profile_role_completed
+        MembershipStatus.DEFERRED -> R.string.my_profile_role_deferred
+        MembershipStatus.UNKNOWN, null -> R.string.my_empty_value
+    }
+
+private fun UserPosition?.labelResource(): Int =
+    when (this) {
+        UserPosition.PM -> R.string.my_profile_position_pm
+        UserPosition.DESIGN -> R.string.my_profile_position_design
+        UserPosition.WEB -> R.string.my_profile_position_web
+        UserPosition.MOBILE -> R.string.my_profile_position_mobile
+        UserPosition.ANDROID -> R.string.my_profile_position_android
+        UserPosition.IOS -> R.string.my_profile_position_ios
+        UserPosition.SERVER -> R.string.my_profile_position_server
+        UserPosition.AI_NATIVE -> R.string.my_profile_position_ai_native
+        UserPosition.UNKNOWN, null -> R.string.my_empty_value
+    }

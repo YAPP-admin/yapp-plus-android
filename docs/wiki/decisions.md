@@ -400,3 +400,12 @@ last_verified: 2026-10-30
 - 반영: [디자인시스템](design-system.md#yapp-로고), App 런처 및 푸시 리소스.
 - 적용 상태: Android 7 계열의 기본·원형 아이콘, Android 8 이상의 적응형 아이콘, 푸시 아이콘을 XML 리소스로 연결했습니다.
 - 대체한 결정: 없음.
+
+## DEC-0049 · My 이용 문의 채널
+
+- 기록일: 2026-11-09
+- 결정: My의 이용 문의를 선택하면 YAPP 카카오톡 채널을 엽니다.
+- 근거: 사용자가 제공한 [YAPP 카카오톡 채널](https://pf.kakao.com/_aGxofd).
+- 반영: [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), App의 My 탭 이동 연결.
+- 적용 상태: My 이용 문의의 콜백에서 채널 주소를 엽니다.
+- 대체한 결정: DEC-0043의 문의 링크 연결 대기 상태를 갱신합니다.

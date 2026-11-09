@@ -3,6 +3,7 @@ package com.yapp.plus.feature.setting
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.setting.components.SettingsNotificationSection
 
 @Preview(name = "Settings", widthDp = 393, heightDp = 852)
 @Preview(name = "Compact settings", widthDp = 320, heightDp = 560)
@@ -12,6 +13,14 @@ private fun SettingsScreenPreview() {
         SettingsScreen(
             onBack = {},
             onLogout = {},
+            notificationSettings = {
+                SettingsNotificationSection(
+                    state = NotificationSettingsUiState(isEnabled = true),
+                    onEnabledChange = {},
+                    onRetry = {},
+                    onOpenSettings = {},
+                )
+            },
         )
     }
 }

@@ -21,4 +21,10 @@
     <string name="settings_confirm">확인</string>
     <string name="settings_privacy_policy_url">https://app.notion.com/p/yapp-workspace/3db2106a0e8480899e28c3788ebeaa6f</string>
     <string name="settings_terms_url">https://app.notion.com/p/yapp-workspace/3db2106a0e84806f91f8d6c4ac97af5f</string>
+    <string name="settings_notifications_loading">알림 설정을 불러오고 있어요</string>
+    <string name="settings_notifications_updating">알림 설정을 변경하고 있어요</string>
+    <string name="settings_notifications_error">설정을 변경하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="settings_notifications_load_error">알림 설정을 불러오지 못했어요. 다시 시도해 주세요.</string>
+    <string name="settings_notifications_retry">다시 시도</string>
+    <string name="settings_notifications_permission">휴대폰 설정에서 알림 허용하기</string>
 </resources>

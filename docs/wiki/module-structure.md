@@ -10,7 +10,7 @@ last_verified: 2026-10-30
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션 |
+| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션·Firebase 푸시 등록과 공지 이동 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증·사전 보고·주간 공지 연결; 알림·점수 진입 숨김 |
@@ -28,7 +28,7 @@ last_verified: 2026-10-30
 
 14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
-개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·로그아웃·통합 탈퇴·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. My 출석 점수·이력 조회를 인증 client에 연결했습니다. 공지와 사전 보고 화면 및 인증 응답 이름을 연결했습니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제는 어댑터·Hilt 조립까지 완료했고 실제 팀원 선택·Firebase 연결은 후속입니다. My 기수·역할·직군·지각 면제권·알림·문의는 UI를 유지하고 미확인 계약의 연결만 비워 둡니다.
+개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·로그아웃·통합 탈퇴·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. My 출석 점수·이력 조회를 인증 client에 연결했습니다. 공지와 사전 보고 화면 및 인증 응답 이름을 연결했습니다. Firebase 푸시의 기기 등록·수신은 App에 연결했습니다. 팀 사진 업로드·제출 어댑터를 조립했으며 팀원 선택에는 사용자용 팀원 계약이 필요합니다. My 기수·역할·직군·지각 면제권·알림·문의는 UI를 유지하고 미확인 계약의 연결만 비워 둡니다.
 
 Login Feature는 Google Credential Manager의 ID 토큰과 nonce를 메모리의 App 콜백으로 전달합니다. App은 YAPP 인증 결과를 해석해 세션을 저장하거나 Signup Feature로 이동합니다. Signup Feature는 가입 토큰을 저장하지 않고 이름·휴대폰 입력, E.164 검증, 서버 제출·완료 전환과 내부 뒤로 가기·입력 복원을 소유합니다. 시작 시 세션 복원은 App이 소유합니다.
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -21,9 +22,15 @@ internal fun AppNavigationRoute(
     registrationToken: String? = null,
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination? = null,
+    onSessionReady: () -> Unit = {},
+    pushPostId: Long? = null,
+    onPushPostOpened: () -> Unit = {},
 ) {
     val authViewModel: AppAuthViewModel = hiltViewModel()
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(authUiState.hasSession) {
+        if (authUiState.hasSession) onSessionReady()
+    }
     if (authUiState.isCheckingSession && startDestination == null) {
         YappSplashScreen(modifier = modifier)
     } else {
@@ -48,6 +55,8 @@ internal fun AppNavigationRoute(
                 },
                 registrationToken = registrationToken ?: authUiState.registrationToken,
                 sessionAuthenticated = authUiState.hasSession,
+                pushPostId = pushPostId.takeIf { authUiState.hasSession },
+                onPushPostOpened = onPushPostOpened,
                 startDestination =
                     startDestination
                         ?: if (authUiState.hasSession) {

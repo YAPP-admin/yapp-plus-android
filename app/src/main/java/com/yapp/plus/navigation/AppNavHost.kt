@@ -8,15 +8,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
 import com.yapp.plus.feature.login.LoginRoute
+import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.signup.SignUpRoute
 import kotlinx.coroutines.Dispatchers
@@ -42,13 +45,15 @@ internal fun AppNavHost(
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
     navController: NavHostController = rememberNavController(),
+    pushPostId: Long? = null,
+    onPushPostOpened: () -> Unit = {},
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     LaunchedEffect(sessionAuthenticated, registrationToken, currentEntry) {
+        val isAuthenticatedDestination =
+            currentEntry?.destination?.isAuthenticatedDestination() == true
         when {
-            sessionAuthenticated == true &&
-                currentEntry?.destination?.hasRoute<AppNavigationDestination.Main>() != true &&
-                currentEntry?.destination?.hasRoute<AppNavigationDestination.AttendanceComplete>() != true -> {
+            sessionAuthenticated == true && !isAuthenticatedDestination -> {
                 navController.navigate(AppNavigationDestination.Main) {
                     popUpTo<AppNavigationDestination.Login> { inclusive = true }
                     launchSingleTop = true
@@ -64,17 +69,26 @@ internal fun AppNavHost(
                 }
             }
 
-            sessionAuthenticated == false &&
-                (
-                    currentEntry?.destination?.hasRoute<AppNavigationDestination.Main>() == true ||
-                        currentEntry?.destination?.hasRoute<AppNavigationDestination.AttendanceComplete>() == true
-                ) -> {
+            sessionAuthenticated == false && isAuthenticatedDestination -> {
                 navController.navigate(AppNavigationDestination.Login) {
                     popUpTo<AppNavigationDestination.Main> { inclusive = true }
                     launchSingleTop = true
                 }
             }
         }
+    }
+    LaunchedEffect(sessionAuthenticated, pushPostId, currentEntry) {
+        val entry = currentEntry ?: return@LaunchedEffect
+        if (sessionAuthenticated != true || pushPostId == null) return@LaunchedEffect
+        if (!entry.destination.isAuthenticatedDestination()) return@LaunchedEffect
+        val destination = AppNavigationDestination.NotificationPost(pushPostId)
+        val isAlreadyOpen =
+            entry.destination.hasRoute<AppNavigationDestination.NotificationPost>() &&
+                entry.toRoute<AppNavigationDestination.NotificationPost>() == destination
+        if (!isAlreadyOpen) {
+            navController.navigate(destination) { launchSingleTop = true }
+        }
+        onPushPostOpened()
     }
     BackHandler(
         enabled = currentEntry != null && navController.previousBackStackEntry == null,
@@ -139,8 +153,20 @@ internal fun AppNavHost(
                 onConfirm = { navController.navigateBackFrom(entry, onExit) },
             )
         }
+        composable<AppNavigationDestination.NotificationPost> { entry ->
+            BoardRoute(
+                noticeId = entry.toRoute<AppNavigationDestination.NotificationPost>().postId,
+                onNoticeClick = {},
+                onBack = { navController.navigateBackFrom(entry, onExit) },
+            )
+        }
     }
 }
+
+private fun NavDestination.isAuthenticatedDestination(): Boolean =
+    hasRoute<AppNavigationDestination.Main>() ||
+        hasRoute<AppNavigationDestination.AttendanceComplete>() ||
+        hasRoute<AppNavigationDestination.NotificationPost>()
 
 private fun NavHostController.navigateToAuthenticatedMain(entry: NavBackStackEntry) {
     if (!canNavigateFrom(entry)) return

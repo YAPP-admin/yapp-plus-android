@@ -26,7 +26,7 @@ last_verified: 2026-11-09
 - **My:** 이름·앱 권한·기수·직군과 공식 출석 점수·출석 결과 집계·세션 진행 현황·기록을 보여 줍니다. 10회 이상 결석 시 안내를 표시합니다. 명세서의 직군 선택지는 PM / Design / Mobile / Web / Server / AI Native입니다. 본인 프로필의 표시 기준은 [회원·역할 정책](membership-policy.md#my-프로필의-회원-구분과-직군)을 따릅니다. 진행률 산식은 기존 미확정 항목을 따릅니다.
 - **미확정 항목:** 공지 질문 기능과 오류 제보 이동 위치는 미확정입니다. 탈퇴 문구는 모든 정보 삭제를 안내하면서 개인정보 일부를 3년, 나머지를 1년 보관한다고 함께 적고 있어 UI 문구는 아래 Figma 결정에 따라 표시하되, 이 문구를 서버의 전체 이력 삭제 정책으로 해석하지 않습니다.
 
-**현재 구현 상태:** 개발 앱은 YAPP 서버의 Google 인증·가입, 세션·출석 인증·사전 보고, 공지 목록·상세·읽음 API를 사용합니다. My는 출석 점수·이력과 인증 성공 응답의 이름을 표시합니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현했습니다. 팀원 목록·본인 membershipId 및 Android Firebase 설정은 미확인이라 실제 제출·수신 UI 연결은 후속입니다. 가입 완료 뒤 멤버십 연결·운영진 승인은 별도입니다. My 본인 프로필 API를 연결하기 전까지 기수·회원 구분·직군은 `—`로 표시합니다. 지각 면제권은 `—`로 표시하고 알림 토글은 화면 상태만 변경합니다.
+**현재 구현 상태:** 개발 앱은 YAPP 서버의 Google 인증·가입, 세션·출석 인증·사전 보고, 공지 목록·상세·읽음 API를 사용합니다. My는 출석 점수·이력과 인증 성공 응답의 이름을 표시합니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현했습니다. Firebase 설정을 적용한 Android 앱은 푸시를 수신하고 공지 상세를 열 수 있습니다. 팀 사진 제출은 사용자용 팀원 목록과 본인 membershipId 계약 확인 후 연결합니다. 가입 완료 뒤 멤버십 연결·운영진 승인은 별도입니다. My 본인 프로필 API를 연결하기 전까지 기수·회원 구분·직군은 `—`로 표시합니다. 지각 면제권은 `—`로 표시하고 알림 토글은 화면 상태만 변경합니다.
 
 ## 개발과 비공개 테스트 배포
 
@@ -65,7 +65,7 @@ last_verified: 2026-11-09
 | My 이름 | 인증·가입 성공 응답 `user.name`을 세션과 함께 암호화 저장·복원. 토큰 갱신 시 유지, 새 계정·로그아웃·탈퇴 시 제거. 기존 저장 세션은 다음 로그인 성공부터 이름을 표시 |
 | My 본인 프로필 | `GET /api/users/me`. 이름·회원 구분·기수·직군의 Domain 조회 계약 정의. Data와 화면 연결은 후속 |
 | 팀 사진 출석 | `POST /api/sessions/{id}/team-attendance-photos/presign` → 서명 URL PUT → `POST /api/sessions/{id}/team-attendance-photos`; 어댑터와 안내·사진 미리보기·팀원 선택 UI를 구현했습니다. 화면은 debug Preview에서 확인할 수 있으며 실제 제출 연결은 팀원 목록과 본인 membershipId 계약 확인 후 진행합니다. |
-| 푸시 기기 | `PUT/DELETE /api/users/me/notification-devices/{installationId}`; ANDROID 기기 어댑터 구현. Firebase 설정·FID·FCM 토큰 공급 연결은 후속 |
+| 푸시 기기 | `PUT/DELETE /api/users/me/notification-devices/{installationId}`; ANDROID 기기 어댑터 구현. Firebase FID·FCM 토큰을 사용해 로그인한 Android 기기를 등록 |
 | 통합 탈퇴 | `DELETE /api/users/me`; Bearer access token으로 요청하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도. Figma 확인·요청 진행·오류와 App 연결 구현 |
 
 저장된 YAPP 토큰 쌍은 앱 시작과 첫 인증 API 요청 전에 복원합니다. 초기 Google 세션 발급은 YAPP API 계약에 연결했습니다. 로컬 access-token 주입이나 가짜 인증 세션은 만들지 않습니다.
@@ -86,7 +86,7 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 
 - `POST /api/attendance-verifications`는 `sessionId`와 정수 `code`를 받습니다. 서버 응답의 `verified`와 `checkedInAt`으로 검증 성공을 판정하며 출석의 최종 확정과 점수 계산은 서버가 담당합니다.
 - `POST /api/attendance-reports`는 `LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 선택적 30자 이내 사유를 받습니다. 응답의 `sessionId`와 `submittedAt`으로 서버의 제출 결과를 확인합니다.
-- 사전 보고 Data는 서버 오류 코드를 Domain 오류로 전달하며 `LATE`와 선택적 사유 계약을 검증합니다. 팀 사진은 SHA-256 체크섬으로 presign을 요청한 뒤 서명된 헤더를 붙여 별도 미인증 client로 업로드·제출합니다. 푸시 기기 등록·해제 Data 어댑터는 `ANDROID`를 사용합니다. App 조립까지 구현했고 본인 membershipId·팀원 목록·Firebase 연결은 후속이며 확인되지 않은 정보를 만들지 않습니다.
+- 사전 보고 Data는 서버 오류 코드를 Domain 오류로 전달하며 `LATE`와 선택적 사유 계약을 검증합니다. 팀 사진은 SHA-256 체크섬으로 presign을 요청한 뒤 서명된 헤더를 붙여 별도 미인증 client로 업로드·제출합니다. 푸시 기기 등록·해제 Data 어댑터는 `ANDROID`를 사용합니다. 팀 사진 제출은 본인 membershipId와 팀원 목록 계약 확인 후 연결합니다. Android 푸시는 로그인 상태와 기기 알림 권한을 확인해 등록합니다.
 - Domain은 출석 코드 검증·사전 보고 Repository 계약과 보고 종류·코드 오류 표현을 정의합니다. Data의 DTO·YAPP API 어댑터와 App 연결은 구현됐으며 홈의 출석 코드 제출은 이 경로를 사용합니다. 홈의 보고 UI도 같은 경로를 사용합니다.
 
 ## 일정·출석 정책
@@ -142,6 +142,11 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 - 출석 규칙의 설명·10회 결석 안내는 Figma 원문을 표시합니다. 규칙 팝업의 감점은 1시간 지각/조퇴 -4점(무단 -10), 3시간 -8점(무단 -14), 결석 -12점(무단 -20)입니다. 이 표현을 클라이언트 판정 로직으로 추가하거나 앞선 정관 정책의 의미를 임의로 바꾸지 않습니다.
 - 탈퇴 팝업은 “정말 탈퇴하시겠어요?”, “탈퇴하시면 모든 정보가 삭제돼요.”, “취소 / 탈퇴하기” 원문을 사용합니다. 서버의 비식별화·이력 보존과 문구가 다르다는 사실을 설명한 뒤 사용자가 Figma를 따르도록 명시했습니다. 이 UI 결정은 서버의 보존·삭제 계약 변경을 뜻하지 않습니다.
 - 근거: [이슈 #160](https://github.com/YAPP-admin/yapp-plus-android/issues/160), [백엔드 API 문서](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md). 실제 서버 E2E 검증과 이름 외 프로필·문의·알림 연결은 별도 완료 조건입니다.
+
+## Firebase 푸시
+
+- Android 설정 파일은 debug에 `yappplus-dev`, release에 `yappplus-prod`를 사용합니다. App은 프로젝트, 로그인 세션, 시스템 알림 권한을 확인해 기기를 등록합니다. 서버는 로그아웃 시 해당 세션의 기기 등록을 삭제합니다.
+- 푸시의 `source=POST`와 양의 `postId`가 있을 때 공지 상세를 엽니다. 로그인하지 않은 경우 세션이 생긴 뒤 이동합니다. 공지 상세의 조회 실패는 게시판의 기존 오류 처리를 따릅니다. [서버 알림 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/e2c2612a8652dc9c76f6ce7b6c26e97dbe8348c6/APIDOC.md#운영진-알림과-기기-등록)
 
 ## My 본인 프로필 조회
 

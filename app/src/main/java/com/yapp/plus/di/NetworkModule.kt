@@ -24,9 +24,12 @@ import com.yapp.plus.data.auth.repository.UserProfileRepositoryImpl
 import com.yapp.plus.data.notice.NoticeDataSource
 import com.yapp.plus.data.notice.NoticeRemoteDataSource
 import com.yapp.plus.data.notice.NoticeRepositoryImpl
+import com.yapp.plus.data.notification.NotificationDataSource
 import com.yapp.plus.data.notification.NotificationDeviceDataSource
 import com.yapp.plus.data.notification.NotificationDeviceRemoteDataSource
 import com.yapp.plus.data.notification.NotificationDeviceRepositoryImpl
+import com.yapp.plus.data.notification.NotificationRemoteDataSource
+import com.yapp.plus.data.notification.NotificationRepositoryImpl
 import com.yapp.plus.data.profile.UserProfileDataSource
 import com.yapp.plus.data.profile.UserProfileReadRepositoryImpl
 import com.yapp.plus.data.profile.UserProfileRemoteDataSource
@@ -40,6 +43,7 @@ import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.UserProfileRepository
 import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.notification.NotificationDeviceRepository
+import com.yapp.plus.domain.notification.NotificationRepository
 import com.yapp.plus.domain.profile.UserProfileReadRepository
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import dagger.Module
@@ -180,6 +184,15 @@ object NetworkModule {
     @Singleton
     fun provideDeviceRepo(source: NotificationDeviceDataSource): NotificationDeviceRepository =
         NotificationDeviceRepositoryImpl(source)
+
+    @Provides
+    @Singleton
+    fun provideNotificationSource(client: HttpClient): NotificationDataSource = NotificationRemoteDataSource(client)
+
+    @Provides
+    @Singleton
+    fun provideNotifications(source: NotificationDataSource): NotificationRepository =
+        NotificationRepositoryImpl(source)
 
     @Provides
     @Singleton

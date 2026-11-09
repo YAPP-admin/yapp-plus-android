@@ -25,6 +25,7 @@ internal fun MainTabScaffold(
     modifier: Modifier = Modifier,
     initialTab: MainTab = MainTab.Home,
     onAttendanceComplete: () -> Unit = {},
+    onNotificationsClick: (() -> Unit)? = null,
     onLogout: (() -> Unit)? = null,
     isLoggingOut: Boolean = false,
     hasLogoutError: Boolean = false,
@@ -75,6 +76,7 @@ internal fun MainTabScaffold(
             when (selectedTab) {
                 MainTab.Home ->
                     HomeRoute(
+                        onNotificationsClick = onNotificationsClick,
                         onSessionsClick = { selectedTab = MainTab.Schedule },
                         onNoticeClick = {
                             selectedNoticeId = it

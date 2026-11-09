@@ -104,6 +104,25 @@ class AppNavHostTest {
     }
 
     @Test
+    fun opensInboxFromHomeAndReturnsToItFromTheNoticeDetail() {
+        composeRule.runOnIdle { authenticated.value = true }
+        assertCurrentRoute<AppNavigationDestination.Main>()
+        composeRule.onNodeWithContentDescription("알림").performClick()
+        assertCurrentRoute<AppNavigationDestination.Notifications>()
+
+        navigateRepeatedly(AppNavigationDestination.NotificationPost(postId = 42))
+        assertCurrentRoute<AppNavigationDestination.NotificationPost>()
+        composeRule.runOnIdle {
+            val route =
+                checkNotNull(navController.currentBackStackEntry)
+                    .toRoute<AppNavigationDestination.NotificationPost>()
+            assertEquals(42L, route.postId)
+        }
+        popAndAssert<AppNavigationDestination.Notifications>()
+        popAndAssert<AppNavigationDestination.Main>()
+    }
+
+    @Test
     fun waitsForLoginBeforeOpeningThePushNotice() {
         composeRule.runOnIdle {
             authenticated.value = false

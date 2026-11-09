@@ -5,12 +5,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -67,9 +71,12 @@ class NotificationSettingsUiTest {
     }
 
     @Test
-    fun loadFailureDisablesToggleAndOffersRetryAndSystemSettings() {
+    fun loadFailureReplacesSwitchWithRetryUntilQuerySucceeds() {
         var retries = 0
         var settings = 0
+        var state by mutableStateOf(
+            NotificationSettingsUiState(hasLoadError = true, isPermissionGranted = false),
+        )
         composeRule.setContent {
             YappTheme {
                 SettingsScreen(
@@ -77,13 +84,12 @@ class NotificationSettingsUiTest {
                     onLogout = {},
                     notificationSettings = {
                         SettingsNotificationSection(
-                            state =
-                                NotificationSettingsUiState(
-                                    hasError = true,
-                                    isPermissionGranted = false,
-                                ),
+                            state = state,
                             onEnabledChange = { error("Toggle is unavailable while loading") },
-                            onRetry = { retries++ },
+                            onRetry = {
+                                retries++
+                                state = state.copy(isLoading = true)
+                            },
                             onOpenSettings = { settings++ },
                         )
                     },
@@ -91,13 +97,39 @@ class NotificationSettingsUiTest {
             }
         }
         saveScreenshot("notification-error")
-        composeRule.onNodeWithText("알림").assertIsNotEnabled()
-        composeRule.onNodeWithText("다시 시도").performClick()
+        composeRule.onAllNodes(isToggleable()).assertCountEquals(0)
+        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
         composeRule.onNodeWithText("휴대폰 설정에서 알림 허용하기").performClick()
+        val retry = composeRule.onNodeWithContentDescription("알림 설정 다시 불러오기")
+        retry.assertIsEnabled().performClick()
+        retry.assertIsNotEnabled()
+        composeRule.onAllNodes(isToggleable()).assertCountEquals(0)
         composeRule.runOnIdle {
             assertEquals(1, retries)
             assertEquals(1, settings)
+            state = NotificationSettingsUiState(isEnabled = false)
         }
+        retry.assertDoesNotExist()
+        composeRule.onNodeWithText("알림").assertIsOff()
+    }
+
+    @Test
+    fun updateFailureKeepsSwitchAndRetriesTheSelection() {
+        var retries = 0
+        composeRule.setContent {
+            YappTheme {
+                SettingsNotificationSection(
+                    state = NotificationSettingsUiState(isEnabled = true, hasUpdateError = true),
+                    onEnabledChange = {},
+                    onRetry = { retries++ },
+                    onOpenSettings = {},
+                )
+            }
+        }
+        composeRule.onNodeWithText("알림").assertIsOn()
+        composeRule.onNodeWithContentDescription("알림 설정 다시 불러오기").assertDoesNotExist()
+        composeRule.onNodeWithText("다시 시도").performClick()
+        composeRule.runOnIdle { assertEquals(1, retries) }
     }
 
     private fun saveScreenshot(name: String) {

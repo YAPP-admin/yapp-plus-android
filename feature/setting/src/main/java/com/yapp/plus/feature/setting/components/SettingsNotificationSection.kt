@@ -20,16 +20,21 @@ fun SettingsNotificationSection(
     onOpenSettings: () -> Unit,
 ) {
     Column {
-        SettingsNotificationRow(
-            enabled = state.isEnabled == true,
-            onEnabledChange = onEnabledChange,
-            isInteractive = state.isEnabled != null && !state.isUpdating,
-        )
+        if (state.hasLoadError) {
+            SettingsNotificationRetryRow(onRetry = onRetry, isRetrying = state.isLoading)
+        } else {
+            SettingsNotificationRow(
+                enabled = state.isEnabled == true,
+                onEnabledChange = onEnabledChange,
+                isInteractive = state.isEnabled != null && !state.isUpdating && !state.isLoading,
+            )
+        }
         val statusMessage =
             when {
+                state.isLoading -> R.string.settings_notifications_loading
+                state.hasLoadError -> R.string.settings_notifications_load_error
                 state.isUpdating -> R.string.settings_notifications_updating
-                state.hasError && state.isEnabled == null -> R.string.settings_notifications_load_error
-                state.hasError -> R.string.settings_notifications_error
+                state.hasUpdateError -> R.string.settings_notifications_error
                 state.isEnabled == null -> R.string.settings_notifications_loading
                 else -> null
             }
@@ -41,18 +46,18 @@ fun SettingsNotificationSection(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
             )
         }
-        if (state.hasError) {
+        if (state.hasUpdateError && !state.hasLoadError) {
             SettingsLinkRow(
                 stringResource(R.string.settings_notifications_retry),
                 onRetry,
-                enabled = !state.isUpdating,
+                enabled = !state.isUpdating && !state.isLoading,
             )
         }
         if (!state.isPermissionGranted) {
             SettingsLinkRow(
                 stringResource(R.string.settings_notifications_permission),
                 onOpenSettings,
-                enabled = !state.isUpdating,
+                enabled = !state.isUpdating && !state.isLoading,
             )
         }
     }

@@ -26,5 +26,6 @@
     <string name="settings_notifications_error">설정을 변경하지 못했어요. 다시 시도해 주세요.</string>
     <string name="settings_notifications_load_error">알림 설정을 불러오지 못했어요. 다시 시도해 주세요.</string>
     <string name="settings_notifications_retry">다시 시도</string>
+    <string name="settings_notifications_reload">알림 설정 다시 불러오기</string>
     <string name="settings_notifications_permission">휴대폰 설정에서 알림 허용하기</string>
 </resources>

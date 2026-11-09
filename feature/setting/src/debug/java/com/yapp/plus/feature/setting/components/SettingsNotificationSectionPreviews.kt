@@ -29,16 +29,27 @@ private fun NotificationUpdatingPreview() {
     NotificationPreview(NotificationSettingsUiState(isEnabled = true, isUpdating = true))
 }
 
-@Preview(name = "Notification error and blocked permission", widthDp = 320)
+@Preview(name = "Notification load failure", widthDp = 320)
 @Composable
 private fun NotificationErrorPreview() {
     NotificationPreview(
         NotificationSettingsUiState(
-            isEnabled = false,
-            hasError = true,
+            hasLoadError = true,
             isPermissionGranted = false,
         ),
     )
+}
+
+@Preview(name = "Notification retry in progress", widthDp = 393)
+@Composable
+private fun NotificationRetryingPreview() {
+    NotificationPreview(NotificationSettingsUiState(hasLoadError = true, isLoading = true))
+}
+
+@Preview(name = "Notification update failure", widthDp = 393)
+@Composable
+private fun NotificationUpdateErrorPreview() {
+    NotificationPreview(NotificationSettingsUiState(isEnabled = true, hasUpdateError = true))
 }
 
 @Composable

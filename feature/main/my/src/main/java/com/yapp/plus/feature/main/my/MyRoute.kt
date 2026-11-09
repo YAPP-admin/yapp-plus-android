@@ -1,6 +1,7 @@
 package com.yapp.plus.feature.main.my
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,9 +21,14 @@ fun MyRoute(
     val viewModel: MyViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(isHistoryVisible) {
-        viewModel.fetchProfile()
         viewModel.fetchScore()
         if (isHistoryVisible) viewModel.fetchHistory()
+    }
+    if (!isHistoryVisible) {
+        DisposableEffect(viewModel) {
+            viewModel.fetchProfile()
+            onDispose(viewModel::cancelProfileRequest)
+        }
     }
     if (isHistoryVisible) {
         MyAttendanceHistoryScreen(
@@ -37,6 +43,7 @@ fun MyRoute(
         MyScreen(
             state = state,
             onRetryScore = viewModel::fetchScore,
+            onRetryProfile = viewModel::fetchProfile,
             onAttendanceHistoryClick = onAttendanceHistoryClick,
             onSettingsClick = onSettingsClick,
             onContactClick = onContactClick,

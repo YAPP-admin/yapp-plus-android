@@ -6,14 +6,21 @@ import com.yapp.plus.domain.attendance.AttendanceHistoryPage
 import com.yapp.plus.domain.attendance.AttendanceResultStatus
 import com.yapp.plus.domain.attendance.AttendanceStaffDecision
 import com.yapp.plus.domain.auth.UserProfileRepository
+import com.yapp.plus.domain.profile.MembershipStatus
+import com.yapp.plus.domain.profile.UserMembership
+import com.yapp.plus.domain.profile.UserPosition
+import com.yapp.plus.domain.profile.UserProfile
+import com.yapp.plus.domain.profile.UserProfileReadRepository
 import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryState
 import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState
 import com.yapp.plus.feature.main.my.model.MyAttendanceStatus
+import com.yapp.plus.feature.main.my.model.MyProfileUiModel
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
 import com.yapp.plus.feature.main.my.model.toUiState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -32,6 +39,7 @@ import org.junit.Test
 class MyViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val repository = FakeAttendanceReadRepository()
+    private val noMembership = UserProfileReadRepository { UserProfile(1, "서버 이름", null) }
 
     @Before
     fun setUp() {
@@ -44,15 +52,90 @@ class MyViewModelTest {
     }
 
     @Test
-    fun profileUsesSavedNameAndMissingMembershipFieldsStayEmpty() =
+    fun profileLoadsServerNameAndMembership() =
         runTest(dispatcher) {
-            val model = MyViewModel(repository, UserProfileRepository { "서버 이름" })
+            val remote =
+                UserProfileReadRepository {
+                    UserProfile(
+                        userId = 1,
+                        name = "서버 이름",
+                        membership = UserMembership(MembershipStatus.DEFERRED, 12, 29, UserPosition.IOS),
+                    )
+                }
+            val model = MyViewModel(repository, UserProfileRepository { "저장 이름" }, remote)
+
             model.fetchProfile()
             advanceUntilIdle()
-            val profile = model.uiState.value.profile as MyProfileUiState.Content
-            assertEquals("서버 이름", profile.profile.name)
-            assertEquals(null, profile.profile.generation)
-            assertEquals(null, profile.profile.role)
+
+            assertEquals(
+                MyProfileUiState.Content(
+                    MyProfileUiModel("서버 이름", MembershipStatus.DEFERRED, 29, UserPosition.IOS),
+                ),
+                model.uiState.value.profile,
+            )
+        }
+
+    @Test
+    fun profileFailureKeepsSessionNameAndCanRetryToValidNoMembership() =
+        runTest(dispatcher) {
+            var calls = 0
+            val gate = CompletableDeferred<Unit>()
+            val remote =
+                UserProfileReadRepository {
+                    if (++calls == 1) {
+                        gate.await()
+                        error("Unavailable")
+                    }
+                    noMembership.fetchProfile()
+                }
+            val model = MyViewModel(repository, UserProfileRepository { "저장 이름" }, remote)
+
+            repeat(2) { model.fetchProfile() }
+            runCurrent()
+            assertEquals(1, calls)
+            assertEquals(MyProfileUiState.Loading("저장 이름"), model.uiState.value.profile)
+            gate.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(MyProfileUiState.Error("저장 이름"), model.uiState.value.profile)
+
+            model.fetchProfile()
+            advanceUntilIdle()
+            assertEquals(
+                MyProfileUiState.Content(MyProfileUiModel("서버 이름")),
+                model.uiState.value.profile,
+            )
+        }
+
+    @Test
+    fun profileRequestCancelsOnExitAndReloadsOnReturn() =
+        runTest(dispatcher) {
+            var calls = 0
+            var wasCancelled = false
+            val remote =
+                UserProfileReadRepository {
+                    if (++calls == 1) {
+                        try {
+                            awaitCancellation()
+                        } finally {
+                            wasCancelled = true
+                        }
+                    }
+                    noMembership.fetchProfile()
+                }
+            val model = MyViewModel(repository, UserProfileRepository { null }, remote)
+
+            model.fetchProfile()
+            runCurrent()
+            model.cancelProfileRequest()
+            model.fetchProfile()
+            advanceUntilIdle()
+
+            assertTrue(wasCancelled)
+            assertEquals(2, calls)
+            assertEquals(
+                MyProfileUiState.Content(MyProfileUiModel("서버 이름")),
+                model.uiState.value.profile,
+            )
         }
 
     @Test
@@ -63,6 +146,7 @@ class MyViewModelTest {
                 MyViewModel(
                     repository,
                     UserProfileRepository { null },
+                    noMembership,
                 )
             model.fetchScore()
             model.fetchHistory()
@@ -87,6 +171,7 @@ class MyViewModelTest {
                 MyViewModel(
                     repository,
                     UserProfileRepository { null },
+                    noMembership,
                 )
             model.fetchScore()
             advanceUntilIdle()
@@ -101,6 +186,7 @@ class MyViewModelTest {
                 MyViewModel(
                     repository,
                     UserProfileRepository { null },
+                    noMembership,
                 )
             repeat(3) {
                 model.fetchScore()
@@ -122,6 +208,7 @@ class MyViewModelTest {
                 MyViewModel(
                     repository,
                     UserProfileRepository { null },
+                    noMembership,
                 )
             model.fetchHistory()
             advanceUntilIdle()
@@ -148,6 +235,7 @@ class MyViewModelTest {
                 MyViewModel(
                     repository,
                     UserProfileRepository { null },
+                    noMembership,
                 )
             model.fetchHistory()
             advanceUntilIdle()
@@ -169,6 +257,7 @@ class MyViewModelTest {
                 MyViewModel(
                     repository,
                     UserProfileRepository { null },
+                    noMembership,
                 )
             model.fetchHistory()
             advanceUntilIdle()
@@ -186,6 +275,7 @@ class MyViewModelTest {
                 MyViewModel(
                     repository,
                     UserProfileRepository { null },
+                    noMembership,
                 )
             model.fetchHistory()
             advanceUntilIdle()

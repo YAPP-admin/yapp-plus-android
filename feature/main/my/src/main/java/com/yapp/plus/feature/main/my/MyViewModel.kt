@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.attendance.AttendanceReadRepository
 import com.yapp.plus.domain.auth.UserProfileRepository
+import com.yapp.plus.domain.profile.UserProfileReadRepository
 import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryState
 import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
@@ -24,32 +25,50 @@ internal class MyViewModel
     @Inject
     constructor(
         private val repository: AttendanceReadRepository,
-        private val profileRepository: UserProfileRepository,
+        private val savedProfileRepository: UserProfileRepository,
+        private val profileRepository: UserProfileReadRepository,
     ) : ViewModel() {
         private val mutableState = MutableStateFlow(MyUiState())
         val uiState = mutableState.asStateFlow()
+        private var profileJob: Job? = null
         private var scoreJob: Job? = null
         private var historyJob: Job? = null
         private val loadedCursors = mutableSetOf<String>()
 
         fun fetchProfile() {
-            viewModelScope.launch {
-                val name =
+            if (profileJob?.isActive == true) return
+            profileJob =
+                viewModelScope.launch {
+                    updateProfile(MyProfileUiState.Loading())
+                    val savedName = fetchSavedName()
+                    updateProfile(MyProfileUiState.Loading(savedName))
                     try {
-                        profileRepository.fetchName()
+                        val profile = profileRepository.fetchProfile()
+                        updateProfile(MyProfileUiState.Content(MyProfileUiModel.from(profile)))
                     } catch (exception: CancellationException) {
                         throw exception
                     } catch (_: Exception) {
-                        null
+                        updateProfile(MyProfileUiState.Error(savedName))
                     }
-                mutableState.update {
-                    it.copy(
-                        profile =
-                            name?.let { MyProfileUiState.Content(MyProfileUiModel(it)) }
-                                ?: MyProfileUiState.Unavailable,
-                    )
                 }
+        }
+
+        fun cancelProfileRequest() {
+            profileJob?.cancel()
+            profileJob = null
+        }
+
+        private suspend fun fetchSavedName(): String? =
+            try {
+                savedProfileRepository.fetchName()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                null
             }
+
+        private fun updateProfile(profile: MyProfileUiState) {
+            mutableState.update { it.copy(profile = profile) }
         }
 
         fun fetchScore() {

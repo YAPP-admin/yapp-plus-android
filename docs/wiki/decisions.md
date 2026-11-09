@@ -417,8 +417,8 @@ last_verified: 2026-11-09
 - UI 보완(2026-11-09 사용자 지적): 기기별 동작의 의미를 화면 문구 추가 승인으로 해석하지 않습니다. 임의로 추가했던 상시 설명 문구를 제거하고 Figma의 알림 행을 유지합니다.
 - 이유: 서버에 확인된 기기 등록·해제 계약으로 사용자가 선택한 기기의 푸시 수신을 제어하기 위해서입니다. 서버에 없는 계정별 boolean 계약은 만들지 않습니다.
 - 근거: 사용자의 기기별 알림 구현 승인(세션 합의), [이슈 #199](https://github.com/YAPP-admin/yapp-plus-android/issues/199), [백엔드 API 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/e2c2612a8652dc9c76f6ce7b6c26e97dbe8348c6/APIDOC.md).
-- 반영: [제품 정책](product-policy.md#기기별-알림-설정), [모듈 구조](module-structure.md), Domain의 NotificationPreferenceRepository 계약. 설정 UI는 PR #201에서 반영했고 Data·DataStore 저장 구현을 준비했습니다. App 연결은 후속입니다.
-- 적용 상태: 설정 UI와 저장 계약·DataStore 구현을 반영했습니다. App 연결은 후속 PR에서 적용합니다. 실제 서버와 Firebase를 통한 발송·수신 E2E는 별도 확인이 필요합니다.
+- 반영: [제품 정책](product-policy.md#기기별-알림-설정), [모듈 구조](module-structure.md), Domain의 NotificationPreferenceRepository 계약. 설정 UI·DataStore 저장과 App 기기 등록·해제 조율자를 반영했습니다. 화면의 토글·조회·재시도 연결은 후속입니다.
+- 적용 상태: 저장소를 App에 조립하고 자동 동기화와 선택 변경 요청을 연결했습니다. 설정 화면 연결은 후속 PR에서 적용합니다. 실제 서버와 Firebase를 통한 발송·수신 E2E는 별도 확인이 필요합니다.
 - 대체한 결정: DEC-0043의 알림 토글 화면 상태 및 API 연결 대기 정책을 기기별 연결로 갱신합니다. 탈퇴 문구·이력 보존·면제권 계약의 범위는 유지합니다.
 
 ## DEC-0051 · 알림 조회 실패의 원형 재시도 버튼

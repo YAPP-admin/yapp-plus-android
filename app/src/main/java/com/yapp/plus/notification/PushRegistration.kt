@@ -1,89 +1,104 @@
 package com.yapp.plus.notification
 
-import android.content.Context
-import com.google.firebase.FirebaseApp
-import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.messaging.FirebaseMessaging
-import com.yapp.plus.BuildConfig
 import com.yapp.plus.core.network.auth.TokenStore
 import com.yapp.plus.domain.notification.NotificationDeviceRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.yapp.plus.domain.notification.NotificationPreferenceRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.yapp.plus.core.network.BuildConfig as NetworkBuildConfig
+import kotlinx.coroutines.withContext
 
-@Singleton
-internal class PushRegistration
-    @Inject
-    constructor(
-        @param:ApplicationContext private val context: Context,
-        private val tokenStore: TokenStore,
-        private val repository: NotificationDeviceRepository,
-    ) {
-        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        private val mutex = Mutex()
-        private var registered: PushDeviceRegistration? = null
+internal class PushRegistration(
+    private val environment: PushEnvironment,
+    private val tokenStore: TokenStore,
+    private val repository: NotificationDeviceRepository,
+    private val preferences: NotificationPreferenceRepository,
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+) {
+    private val mutex = Mutex()
+    private var registered: PushDeviceRegistration? = null
 
-        fun isConfigured(): Boolean {
-            if (NetworkBuildConfig.MOCK_API_ENABLED) return false
-            val expectedProject = if (BuildConfig.DEBUG) "yappplus-dev" else "yappplus-prod"
-            return FirebaseApp.getApps(context).any {
-                it.name == FirebaseApp.DEFAULT_APP_NAME && it.options.projectId == expectedProject
+    fun isConfigured(): Boolean = environment.isConfigured()
+
+    fun hasPermission(): Boolean = environment.hasPermission()
+
+    suspend fun fetchEnabled(): Boolean = preferences.fetchEnabled()
+
+    fun synchronize() {
+        if (!isConfigured()) return
+        scope.launch {
+            try {
+                synchronizeNow()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                // Retry on resume, login, or token refresh.
             }
         }
+    }
 
-        fun synchronize() {
+    internal suspend fun synchronizeNow() {
+        mutex.withLock {
             if (!isConfigured()) return
-            scope.launch {
-                mutex.withLock {
-                    try {
-                        synchronizeDevice()
-                    } catch (exception: CancellationException) {
-                        throw exception
-                    } catch (_: Exception) {
-                        // Retry when the app resumes or Firebase refreshes the token.
-                    }
-                }
-            }
-        }
-
-        private suspend fun synchronizeDevice() {
             val sessionKey = tokenStore.currentTokens()?.storageKey
             if (sessionKey == null) {
                 registered = null
                 return
             }
-            if (!canShowPushNotifications(context)) {
-                unregisterDevice(sessionKey)
-                return
-            }
-
-            val installationId = FirebaseInstallations.getInstance().id.await()
-
-            // The YAPP sender targets FCM registration tokens.
-            @Suppress("DEPRECATION")
-            val fcmToken = FirebaseMessaging.getInstance().token.await()
-            if (tokenStore.currentTokens()?.storageKey != sessionKey) return
-            if (!canShowPushNotifications(context)) return
-            val registration = PushDeviceRegistration(sessionKey, installationId, fcmToken)
-            if (registered == registration) return
-            repository.register(installationId, fcmToken)
-            registered = registration
-        }
-
-        private suspend fun unregisterDevice(sessionKey: String) {
-            val registration = registered ?: return
-            if (registration.sessionKey == sessionKey) {
-                repository.unregister(registration.installationId)
-            }
-            registered = null
+            applyRegistration(
+                enabled = preferences.fetchEnabled() && hasPermission(),
+                sessionKey = sessionKey,
+            )
         }
     }
+
+    suspend fun updateEnabled(enabled: Boolean) {
+        mutex.withLock {
+            check(isConfigured())
+            check(!enabled || hasPermission())
+            val sessionKey = checkNotNull(tokenStore.currentTokens()?.storageKey)
+            try {
+                applyRegistration(enabled, sessionKey)
+                requireCurrentSession(sessionKey)
+                withContext(NonCancellable) { preferences.updateEnabled(enabled) }
+            } catch (exception: Exception) {
+                registered = null
+                // Reconcile with the last persisted choice if the request or local save failed.
+                synchronize()
+                throw exception
+            }
+        }
+    }
+
+    private suspend fun applyRegistration(
+        enabled: Boolean,
+        sessionKey: String,
+    ) {
+        val installationId = environment.fetchInstallationId()
+        requireCurrentSession(sessionKey)
+        if (!enabled) {
+            // After process death the server may still have a registration.
+            repository.unregister(installationId)
+            requireCurrentSession(sessionKey)
+            registered = null
+            return
+        }
+        val token = environment.fetchToken()
+        requireCurrentSession(sessionKey)
+        check(hasPermission())
+        val registration = PushDeviceRegistration(sessionKey, installationId, token)
+        if (registered == registration) return
+        repository.register(installationId, token)
+        requireCurrentSession(sessionKey)
+        registered = registration
+    }
+
+    private suspend fun requireCurrentSession(sessionKey: String) {
+        check(tokenStore.currentTokens()?.storageKey == sessionKey)
+    }
+}

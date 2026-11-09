@@ -38,7 +38,7 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 fun HomeScreen(
     state: AttendanceUiState<CurrentWeekSessionUiModel>,
     modifier: Modifier = Modifier,
-    onNotificationsClick: () -> Unit = {},
+    onNotificationsClick: (() -> Unit)? = null,
     onAttendanceClick: () -> Unit = {},
     onRetry: () -> Unit = {},
     onSessionsClick: () -> Unit = {},
@@ -53,6 +53,9 @@ fun HomeScreen(
     Column(modifier.fillMaxSize().background(YappHomeColor.background)) {
         YappMainHeader(
             title = stringResource(R.string.attendance_home_title),
+            iconResource = onNotificationsClick?.let { DesignSystemR.drawable.ic_notification },
+            iconDescription = stringResource(R.string.attendance_home_notifications),
+            onIconClick = onNotificationsClick ?: {},
             horizontalPadding = 16.dp,
             iconTint = YappHomeColor.subtle,
             leadingContent = {

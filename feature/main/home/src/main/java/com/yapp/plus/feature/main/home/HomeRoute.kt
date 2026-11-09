@@ -25,7 +25,7 @@ import com.yapp.plus.feature.main.home.model.HomeSheet
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
-    onNotificationsClick: () -> Unit = {},
+    onNotificationsClick: (() -> Unit)? = null,
     onSessionsClick: () -> Unit = {},
     onScoreClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},

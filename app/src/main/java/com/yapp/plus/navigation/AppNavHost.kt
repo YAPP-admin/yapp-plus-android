@@ -21,6 +21,7 @@ import com.yapp.plus.domain.auth.GoogleLoginCredential
 import com.yapp.plus.feature.login.LoginRoute
 import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
+import com.yapp.plus.feature.main.home.HomeNotificationsRoute
 import com.yapp.plus.feature.signup.SignUpRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -135,6 +136,9 @@ internal fun AppNavHost(
         }
         composable<AppNavigationDestination.Main> { entry ->
             MainTabScaffold(
+                onNotificationsClick = {
+                    navController.navigateFrom(entry, AppNavigationDestination.Notifications)
+                },
                 onAttendanceComplete = {
                     navController.navigateFrom(entry, AppNavigationDestination.AttendanceComplete)
                 },
@@ -153,6 +157,14 @@ internal fun AppNavHost(
                 onConfirm = { navController.navigateBackFrom(entry, onExit) },
             )
         }
+        composable<AppNavigationDestination.Notifications> { entry ->
+            HomeNotificationsRoute(
+                onBack = { navController.navigateBackFrom(entry, onExit) },
+                onPostClick = {
+                    navController.navigateFrom(entry, AppNavigationDestination.NotificationPost(it))
+                },
+            )
+        }
         composable<AppNavigationDestination.NotificationPost> { entry ->
             BoardRoute(
                 noticeId = entry.toRoute<AppNavigationDestination.NotificationPost>().postId,
@@ -166,6 +178,7 @@ internal fun AppNavHost(
 private fun NavDestination.isAuthenticatedDestination(): Boolean =
     hasRoute<AppNavigationDestination.Main>() ||
         hasRoute<AppNavigationDestination.AttendanceComplete>() ||
+        hasRoute<AppNavigationDestination.Notifications>() ||
         hasRoute<AppNavigationDestination.NotificationPost>()
 
 private fun NavHostController.navigateToAuthenticatedMain(entry: NavBackStackEntry) {

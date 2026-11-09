@@ -17,6 +17,9 @@ internal sealed interface AppNavigationDestination {
     data object AttendanceComplete : AppNavigationDestination
 
     @Serializable
+    data object Notifications : AppNavigationDestination
+
+    @Serializable
     data class NotificationPost(
         val postId: Long,
     ) : AppNavigationDestination

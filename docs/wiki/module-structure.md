@@ -13,7 +13,7 @@ last_verified: 2026-10-30
 | `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션·Firebase 푸시 등록과 공지 이동 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
-| `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증·사전 보고·주간 공지 연결; 알림·점수 진입 숨김 |
+| `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증·사전 보고·주간 공지·알림함 연결; 별도 점수 진입 숨김 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 분류·커서 목록·Markdown 상세·과제·첨부 이미지·읽음 확인 API 연결 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | Figma 요약·규칙·별도 이력 UI, 출석 점수·커서 조회 ViewModel·오류 재시도; 본인 프로필 조회·세션 이름 대체 표시; 미확인 면제권·문의 UI 유지 |

@@ -108,4 +108,4 @@ OpenAI Docs는 사용자 정의 프롬프트를 더 이상 권장하지 않지�
 
 ### 수정된 홈 화면
 
-홈은 이번 주 세션·달력·출석 코드 입력/완료 흐름을 표시하고, 출석 검증은 YAPP API를 사용합니다. 보고 UI와 주간 공지·게시판 목록·상세·읽음은 서버 API를 사용합니다. 알림함 진입과 별도 출석 점수 메뉴는 숨깁니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.
+홈은 이번 주 세션·달력·출석 코드 입력/완료 흐름을 표시하고, 출석 검증은 YAPP API를 사용합니다. 보고 UI와 주간 공지·게시판 목록·상세·읽음은 서버 API를 사용합니다. 홈 알림함에서 받은 알림을 확인하고 공지 상세를 열 수 있습니다. 별도 출석 점수 메뉴는 숨깁니다. 상태와 적용 범위는 [제품 정책](docs/wiki/product-policy.md), 작업 기록은 [#82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)를 참고합니다.

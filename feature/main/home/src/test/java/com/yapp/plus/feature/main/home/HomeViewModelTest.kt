@@ -1,15 +1,8 @@
 package com.yapp.plus.feature.main.home
 
-import com.yapp.plus.domain.notice.NoticeDetail
 import com.yapp.plus.domain.notice.NoticePage
-import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.notice.NoticeSummary
 import com.yapp.plus.domain.notice.NoticeType
-import com.yapp.plus.domain.session.AttendanceStatus
-import com.yapp.plus.domain.session.CurrentGenerationSchedule
-import com.yapp.plus.domain.session.CurrentWeekSchedule
-import com.yapp.plus.domain.session.CurrentWeekSession
-import com.yapp.plus.domain.session.SessionScheduleRepository
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
@@ -85,8 +78,6 @@ class HomeViewModelTest {
 
             repeat(2) { viewModel.loadHomeData() }
             runCurrent()
-            assertTrue(scheduleRepository.requestStarted.isCompleted)
-            assertTrue(noticeRepository.requestStarted.isCompleted)
             assertEquals(1, scheduleRepository.currentWeekRequestCount)
             assertEquals(1, noticeRepository.requestCount)
             assertTrue(viewModel.uiState.value.isLoading)
@@ -139,61 +130,4 @@ class HomeViewModelTest {
             assertTrue(notices.notices.all { it.isAssignmentNotice })
             assertEquals(2, noticeRepository.requestCount)
         }
-}
-
-private class FakeSessionScheduleRepository : SessionScheduleRepository {
-    var currentWeekError: Exception? = null
-    var currentWeekRequestCount = 0
-    var gate: CompletableDeferred<Unit>? = null
-    val requestStarted = CompletableDeferred<Unit>()
-
-    override suspend fun fetchCurrentWeekSchedule(): CurrentWeekSchedule {
-        currentWeekRequestCount += 1
-        requestStarted.complete(Unit)
-        gate?.await()
-        currentWeekError?.let { throw it }
-        return CurrentWeekSchedule(
-            weekStartDate = LocalDate.of(2026, 10, 18),
-            weekEndDate = LocalDate.of(2026, 10, 24),
-            session =
-                CurrentWeekSession(
-                    sessionId = 1,
-                    name = "개발 세션",
-                    date = LocalDate.of(2026, 10, 24),
-                    startTime = LocalTime.of(14, 0),
-                    location = null,
-                    attendanceStatus = AttendanceStatus.NOT_OPEN,
-                ),
-        )
-    }
-
-    override suspend fun fetchCurrentGenerationSchedule() =
-        CurrentGenerationSchedule(
-            generationId = 19,
-            generationNumber = 19,
-            sessions = emptyList(),
-        )
-}
-
-private class FakeHomeNoticeRepository : NoticeRepository {
-    var noticeError: Exception? = null
-    var requestCount = 0
-    var gate: CompletableDeferred<Unit>? = null
-    var page = NoticePage(0, emptyList(), null)
-    val requestStarted = CompletableDeferred<Unit>()
-
-    override suspend fun fetchNotices(
-        type: NoticeType?,
-        cursor: String?,
-    ): NoticePage {
-        requestCount += 1
-        requestStarted.complete(Unit)
-        gate?.await()
-        noticeError?.let { throw it }
-        return page
-    }
-
-    override suspend fun fetchNotice(id: Long): NoticeDetail = error("unused")
-
-    override suspend fun markRead(id: Long) = error("unused")
 }

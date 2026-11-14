@@ -52,6 +52,78 @@ class MyViewModelTest {
     }
 
     @Test
+    fun profileAndScoreStartTogetherAndShareInitialLoading() =
+        runTest(dispatcher) {
+            val profileResponse = CompletableDeferred<UserProfile>()
+            val scoreGate = CompletableDeferred<Unit>()
+            repository.gate = scoreGate
+            var profileRequests = 0
+            val remote =
+                UserProfileReadRepository {
+                    profileRequests++
+                    profileResponse.await()
+                }
+            val model = MyViewModel(repository, UserProfileRepository { "저장 이름" }, remote)
+
+            repeat(2) { model.loadInitialData(loadHistory = false) }
+            runCurrent()
+            assertEquals(1, profileRequests)
+            assertEquals(1, repository.scoreRequests)
+            assertTrue(repository.historyCursors.isEmpty())
+            assertEquals(MyProfileUiState.Loading("저장 이름"), model.uiState.value.profile)
+            assertTrue(model.uiState.value.isLoading)
+
+            scoreGate.complete(Unit)
+            runCurrent()
+            assertTrue(model.uiState.value.isLoading)
+
+            profileResponse.complete(noMembership.fetchProfile())
+            advanceUntilIdle()
+            assertFalse(model.uiState.value.isLoading)
+            assertEquals(
+                MyProfileUiState.Content(MyProfileUiModel("서버 이름")),
+                model.uiState.value.profile,
+            )
+        }
+
+    @Test
+    fun enteringHistoryAddsFirstPageToRequestsAlreadyInProgress() =
+        runTest(dispatcher) {
+            val scoreGate = CompletableDeferred<Unit>()
+            val historyGate = CompletableDeferred<Unit>()
+            repository.gate = scoreGate
+            repository.historyGate = historyGate
+            val profileResponse = CompletableDeferred<UserProfile>()
+            var profileRequests = 0
+            val remote =
+                UserProfileReadRepository {
+                    profileRequests++
+                    profileResponse.await()
+                }
+            val model = MyViewModel(repository, UserProfileRepository { null }, remote)
+
+            model.loadInitialData(loadHistory = false)
+            runCurrent()
+            model.loadInitialData(loadHistory = true)
+            runCurrent()
+
+            assertEquals(1, profileRequests)
+            assertEquals(1, repository.scoreRequests)
+            assertEquals(listOf<String?>(null), repository.historyCursors)
+            assertTrue(model.uiState.value.isLoading)
+
+            scoreGate.complete(Unit)
+            profileResponse.complete(noMembership.fetchProfile())
+            runCurrent()
+            assertTrue(model.uiState.value.isLoading)
+
+            historyGate.complete(Unit)
+            advanceUntilIdle()
+            assertFalse(model.uiState.value.isLoading)
+            assertTrue(model.uiState.value.attendanceHistory is MyAttendanceHistoryState.Content)
+        }
+
+    @Test
     fun profileLoadsServerNameAndMembership() =
         runTest(dispatcher) {
             val remote =
@@ -246,6 +318,29 @@ class MyViewModelTest {
             advanceUntilIdle()
             assertEquals(listOf(4L), history(model).items.map { it.sessionId })
             assertEquals(listOf(null, "next", null), repository.historyCursors)
+        }
+
+    @Test
+    fun reopeningHistoryRefreshesFirstPageEvenWhenPaginationIsPending() =
+        runTest(dispatcher) {
+            repository.pages[null] = page(listOf(3), "next")
+            val model = MyViewModel(repository, UserProfileRepository { null }, noMembership)
+            model.loadInitialData(loadHistory = true)
+            advanceUntilIdle()
+
+            repository.historyGate = CompletableDeferred()
+            model.fetchNextPage()
+            runCurrent()
+            assertTrue(history(model).isLoadingMore)
+
+            repository.historyGate = null
+            repository.pages[null] = page(listOf(4), null)
+            model.loadInitialData(loadHistory = true)
+            advanceUntilIdle()
+
+            assertEquals(listOf(null, "next", null), repository.historyCursors)
+            assertEquals(listOf(4L), history(model).items.map { it.sessionId })
+            assertFalse(model.uiState.value.isLoading)
         }
 
     @Test

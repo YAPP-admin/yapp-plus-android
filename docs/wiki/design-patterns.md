@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-09
+last_verified: 2026-11-14
 ---
 
 # 설계 패턴
@@ -26,6 +26,7 @@ last_verified: 2026-11-09
 - 흐름은 `사용자 입력 → ViewModel → Repository/UseCase → UiState → Compose`입니다.
 - ViewModel은 읽기 전용 `StateFlow<UiState>`를 노출하고 Activity·Context를 보관하지 않습니다.
 - 로딩·실패·재시도 상태를 명시합니다. 여러 요청이 있는 화면에서는 요청별 상태와 중복 요청 처리 방식을 정합니다.
+- 홈 초기 조회는 이번 주 세션과 주간 공지를 병렬로 요청합니다. My는 본인 프로필과 출석 점수를 병렬로 요청하고, 출석 내역 화면에 진입할 때 첫 이력 페이지를 함께 조회합니다. 각 화면은 초기 요청이 끝날 때까지 로딩 표시를 하나만 보여 줍니다. 요청별 실패·재시도와 이력 페이지 조회 상태는 각각 유지합니다.
 - 중요한 처리 결과는 UI 상태로 표현합니다. 화면 이동·Snackbar 같은 일회성 효과와 구분하고 유실 가능한 효과만으로 전달하지 않습니다.
 - 업무 정책은 Domain에서 처리하고 ViewModel은 화면 상태와 요청을 조율합니다.
 - 비동기 작업은 Coroutines·Flow를 사용하며 코루틴 취소 예외를 전파합니다.

@@ -31,3 +31,11 @@ private fun HomeScreenPreview() {
         )
     YappTheme(darkTheme = false, dynamicColor = false) { HomeScreen(state = state) }
 }
+
+@Preview(name = "Home loading", widthDp = 393, heightDp = 692)
+@Composable
+private fun HomeLoadingPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeScreen(state = AttendanceUiState.Loading, isLoading = true)
+    }
+}

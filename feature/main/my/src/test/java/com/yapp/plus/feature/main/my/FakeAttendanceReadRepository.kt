@@ -10,6 +10,7 @@ internal class FakeAttendanceReadRepository : AttendanceReadRepository {
     var scoreError: Exception? = null
     var historyError: Exception? = null
     var gate: CompletableDeferred<Unit>? = null
+    var historyGate: CompletableDeferred<Unit>? = null
     var scoreRequests = 0
     val historyCursors = mutableListOf<String?>()
     val pages = mutableMapOf<String?, AttendanceHistoryPage>()
@@ -23,6 +24,7 @@ internal class FakeAttendanceReadRepository : AttendanceReadRepository {
 
     override suspend fun fetchHistory(cursor: String?): AttendanceHistoryPage {
         historyCursors.add(cursor)
+        historyGate?.await()
         gate?.await()
         historyError?.let { throw it }
         return pages[cursor] ?: AttendanceHistoryPage(0, 0, emptyList(), null)

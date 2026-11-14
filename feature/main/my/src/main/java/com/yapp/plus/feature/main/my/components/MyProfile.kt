@@ -33,6 +33,7 @@ import com.yapp.plus.feature.main.my.model.MyProfileUiState
 internal fun MyProfileSection(
     state: MyProfileUiState,
     onRetry: () -> Unit,
+    showRequestState: Boolean = true,
 ) {
     val savedName =
         when (state) {
@@ -45,6 +46,7 @@ internal fun MyProfileSection(
             ?: savedName?.takeIf(String::isNotBlank)?.let { MyProfileUiModel(name = it) }
     Column {
         MyProfile(profile)
+        if (!showRequestState) return@Column
         when (state) {
             is MyProfileUiState.Loading ->
                 MyRequestState(

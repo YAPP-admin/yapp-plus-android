@@ -20,15 +20,11 @@ fun MyRoute(
 ) {
     val viewModel: MyViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(isHistoryVisible) {
-        viewModel.fetchScore()
-        if (isHistoryVisible) viewModel.fetchHistory()
+    LaunchedEffect(viewModel, isHistoryVisible) {
+        viewModel.loadInitialData(loadHistory = isHistoryVisible)
     }
-    if (!isHistoryVisible) {
-        DisposableEffect(viewModel) {
-            viewModel.fetchProfile()
-            onDispose(viewModel::cancelProfileRequest)
-        }
+    DisposableEffect(viewModel) {
+        onDispose(viewModel::cancelInitialLoad)
     }
     if (isHistoryVisible) {
         MyAttendanceHistoryScreen(
@@ -38,6 +34,7 @@ fun MyRoute(
             onRetry = viewModel::fetchHistory,
             onLoadMore = viewModel::fetchNextPage,
             modifier = modifier,
+            isScreenLoading = state.isLoading,
         )
     } else {
         MyScreen(

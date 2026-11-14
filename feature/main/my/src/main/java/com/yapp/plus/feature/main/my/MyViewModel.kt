@@ -17,6 +17,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,12 +29,27 @@ internal class MyViewModel
         private val savedProfileRepository: UserProfileRepository,
         private val profileRepository: UserProfileReadRepository,
     ) : ViewModel() {
-        private val mutableState = MutableStateFlow(MyUiState())
+        private val mutableState = MutableStateFlow(MyUiState(isLoading = true))
         val uiState = mutableState.asStateFlow()
+        private var initialLoadJob: Job? = null
         private var profileJob: Job? = null
         private var scoreJob: Job? = null
         private var historyJob: Job? = null
         private val loadedCursors = mutableSetOf<String>()
+
+        fun loadInitialData(loadHistory: Boolean) {
+            initialLoadJob?.cancel()
+            mutableState.update { it.copy(isLoading = true) }
+            fetchProfile()
+            fetchScore()
+            if (loadHistory) fetchHistory()
+            val requests = listOfNotNull(profileJob, scoreJob, historyJob.takeIf { loadHistory })
+            initialLoadJob =
+                viewModelScope.launch {
+                    requests.joinAll()
+                    mutableState.update { it.copy(isLoading = false) }
+                }
+        }
 
         fun fetchProfile() {
             if (profileJob?.isActive == true) return
@@ -56,6 +72,12 @@ internal class MyViewModel
         fun cancelProfileRequest() {
             profileJob?.cancel()
             profileJob = null
+        }
+
+        fun cancelInitialLoad() {
+            initialLoadJob?.cancel()
+            initialLoadJob = null
+            cancelProfileRequest()
         }
 
         private suspend fun fetchSavedName(): String? =
@@ -94,7 +116,10 @@ internal class MyViewModel
         }
 
         fun fetchHistory() {
-            if (historyJob?.isActive == true) return
+            val history = mutableState.value.attendanceHistory
+            val isPaging = history is MyAttendanceHistoryState.Content && history.isLoadingMore
+            if (historyJob?.isActive == true && !isPaging) return
+            historyJob?.cancel()
             historyJob =
                 viewModelScope.launch {
                     updateHistory(MyAttendanceHistoryState.Loading)
@@ -132,7 +157,7 @@ internal class MyViewModel
                             ),
                         )
                     } catch (exception: CancellationException) {
-                        updateHistory(current)
+                        if (historyJob == coroutineContext[Job]) updateHistory(current)
                         throw exception
                     } catch (_: Exception) {
                         updateHistory(current.copy(hasLoadMoreError = true))

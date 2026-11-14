@@ -20,6 +20,7 @@ fun MyAttendanceHistoryScreen(
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
     absentCount: Int? = null,
+    isScreenLoading: Boolean = false,
 ) {
     Column(modifier.fillMaxSize().background(YappMainColor.surface)) {
         YappDetailHeader(
@@ -27,7 +28,8 @@ fun MyAttendanceHistoryScreen(
             backDescription = stringResource(R.string.my_back),
             onBack = onBack,
         )
-        when (state) {
+        val visibleState = if (isScreenLoading) MyAttendanceHistoryState.Loading else state
+        when (visibleState) {
             MyAttendanceHistoryState.NotRequested, MyAttendanceHistoryState.Loading ->
                 MyRequestState(
                     message = stringResource(R.string.my_attendance_history_loading),
@@ -40,7 +42,7 @@ fun MyAttendanceHistoryScreen(
                 )
             is MyAttendanceHistoryState.Content ->
                 MyAttendanceHistory(
-                    state = state,
+                    state = visibleState,
                     showAbsenceWarning =
                         absentCount != null && absentCount >= ABSENCE_WARNING_COUNT,
                     onLoadMore = onLoadMore,

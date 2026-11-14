@@ -32,14 +32,13 @@ fun HomeRoute(
     onAttendanceComplete: () -> Unit = {},
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
-    val noticeViewModel: HomeNoticeViewModel = hiltViewModel()
-    val notices by noticeViewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(noticeViewModel) { noticeViewModel.fetchNotices() }
-    val interactionViewModel: HomeInteractionViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val interactionViewModel: HomeInteractionViewModel = hiltViewModel()
     val interaction by interactionViewModel.uiState.collectAsStateWithLifecycle()
-    val session = (state as? AttendanceUiState.Content)?.value
+    val session = (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel) { viewModel.loadHomeData() }
 
     LaunchedEffect(interaction.isAttendanceComplete, lifecycleOwner) {
         if (interaction.isAttendanceComplete) {
@@ -51,15 +50,18 @@ fun HomeRoute(
     }
 
     LaunchedEffect(interaction.errorResource) {
-        if (interaction.errorResource == R.string.home_report_session_changed) viewModel.retry()
+        if (interaction.errorResource == R.string.home_report_session_changed) {
+            viewModel.retryCurrentWeekSchedule()
+        }
     }
     Box(modifier.fillMaxSize()) {
         HomeScreen(
-            state = state,
+            state = state.currentWeekSchedule,
+            isLoading = state.isLoading,
             modifier = Modifier.fillMaxSize(),
-            onRetry = viewModel::retry,
-            noticeState = notices,
-            onNoticeRetry = noticeViewModel::fetchNotices,
+            onRetry = viewModel::retryCurrentWeekSchedule,
+            noticeState = state.weeklyNotices,
+            onNoticeRetry = viewModel::retryWeeklyNotices,
             onNotificationsClick = onNotificationsClick,
             onAttendanceClick = interactionViewModel::openAttendanceCode,
             onSessionsClick = onSessionsClick,
@@ -95,7 +97,7 @@ fun HomeRoute(
                     interactionViewModel::selectReportType,
                     interactionViewModel::updateReportReason,
                     interactionViewModel::confirmReport,
-                    canSubmit = state !is AttendanceUiState.Loading,
+                    canSubmit = state.currentWeekSchedule !is AttendanceUiState.Loading,
                 )
             } else {
                 HomeSheetContent(

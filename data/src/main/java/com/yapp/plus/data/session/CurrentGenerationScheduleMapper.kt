@@ -32,6 +32,13 @@ internal object CurrentGenerationScheduleMapper {
             startTime = LocalTime.parse(response.startTime),
             endTime = LocalTime.parse(response.endTime),
             type = SessionType.valueOf(response.type),
+            locationDetails =
+                SessionLocationData(
+                    roadAddress = response.roadAddress,
+                    latitude = response.latitude,
+                    longitude = response.longitude,
+                    detailAddress = response.detailAddress,
+                ).takeIfPresent(),
         )
 
     private fun toDomain(data: ScheduledSessionData): ScheduledSession =
@@ -44,5 +51,6 @@ internal object CurrentGenerationScheduleMapper {
             startTime = data.startTime,
             endTime = data.endTime,
             type = data.type,
+            locationDetails = data.locationDetails?.toDomain(),
         )
 }

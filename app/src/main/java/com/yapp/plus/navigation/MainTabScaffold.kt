@@ -87,6 +87,7 @@ internal fun MainTabScaffold(
                             selectedTab = MainTab.Board
                         },
                         onAttendanceComplete = onAttendanceComplete,
+                        onScoreClick = { selectedTab = MainTab.My },
                     )
                 MainTab.Schedule -> ScheduleRoute()
                 MainTab.Board ->

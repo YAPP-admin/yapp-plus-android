@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.notice.NoticeType
+import com.yapp.plus.domain.session.NoActiveGenerationException
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiMapper
@@ -68,6 +69,10 @@ internal class HomeViewModel
                 }
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
+            } catch (_: NoActiveGenerationException) {
+                mutableUiState.update { it.copy(currentWeekSchedule = AttendanceUiState.Inactive) }
+            } catch (_: NoActiveGenerationException) {
+                mutableUiState.update { it.copy(currentWeekSchedule = AttendanceUiState.Inactive) }
             } catch (_: Exception) {
                 mutableUiState.update { it.copy(currentWeekSchedule = AttendanceUiState.Error) }
             }

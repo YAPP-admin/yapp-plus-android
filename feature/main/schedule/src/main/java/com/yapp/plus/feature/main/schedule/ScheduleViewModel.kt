@@ -2,6 +2,7 @@ package com.yapp.plus.feature.main.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.domain.session.NoActiveGenerationException
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import com.yapp.plus.feature.main.schedule.model.ScheduleSessionUiModel
 import com.yapp.plus.feature.main.schedule.model.ScheduleUiState
@@ -41,6 +42,10 @@ internal class ScheduleViewModel
                     mutableUiState.value = SessionScheduleUiMapper.toUiState(schedule)
                 } catch (cancellationException: CancellationException) {
                     throw cancellationException
+                } catch (_: NoActiveGenerationException) {
+                    mutableUiState.value = ScheduleUiState.Inactive
+                } catch (_: NoActiveGenerationException) {
+                    mutableUiState.value = ScheduleUiState.Inactive
                 } catch (_: Exception) {
                     mutableUiState.value = ScheduleUiState.Error
                 }

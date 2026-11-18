@@ -44,6 +44,7 @@ internal fun HomeReportSheet(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     canSubmit: Boolean = true,
+    unavailableMessage: Int? = null,
 ) {
     val selecting = state.sheet == HomeSheet.ReportType
     Column(
@@ -99,7 +100,7 @@ internal fun HomeReportSheet(
                 },
             )
         }
-        state.errorResource?.let { HomeSubmissionError(stringResource(it)) }
+        (unavailableMessage ?: state.errorResource)?.let { HomeSubmissionError(stringResource(it)) }
         YappButton(
             stringResource(
                 if (state.isSubmitting) R.string.home_submitting else R.string.home_confirm,

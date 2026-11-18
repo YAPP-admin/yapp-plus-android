@@ -16,12 +16,14 @@ internal object CurrentWeekSessionUiMapper {
                 dateLabel = session.date.format(sessionDateFormatter),
                 name = session.name,
                 startTimeLabel = session.startTime.format(timeFormatter),
-                location = session.location,
+                location = session.location?.takeUnless(String::isBlank),
                 attendanceStatus = session.attendanceStatus.toUiModel(),
                 sessionId = session.sessionId,
                 weekStartDate = schedule.weekStartDate,
                 sessionDate = session.date,
                 startTime = session.startTime,
+                address = session.locationDetails?.addressLine,
+                coordinates = session.locationDetails?.coordinates,
             ),
         )
     }

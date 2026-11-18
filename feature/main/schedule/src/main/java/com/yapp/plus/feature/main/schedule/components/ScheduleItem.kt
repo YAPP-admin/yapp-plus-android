@@ -81,9 +81,11 @@ fun ScheduleItem(
                     }
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    val venue = listOfNotNull(session.location, session.address).joinToString("\n")
                     YappIconLabel(
-                        text = session.location ?: stringResource(R.string.schedule_location_missing),
+                        text = venue.ifEmpty { stringResource(R.string.schedule_location_missing) },
                         iconResource = DesignSystemR.drawable.ic_map_pin,
+                        maxLines = if (session.address == null) 1 else Int.MAX_VALUE,
                     )
                     YappIconLabel(
                         text = session.timeLabel,

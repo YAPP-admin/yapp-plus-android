@@ -2,8 +2,10 @@ package com.yapp.plus.feature.main.schedule.model
 
 import com.yapp.plus.domain.session.CurrentGenerationSchedule
 import com.yapp.plus.domain.session.ScheduledSession
+import com.yapp.plus.domain.session.SessionLocationDetails
 import com.yapp.plus.domain.session.SessionType
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -61,6 +63,31 @@ class SessionScheduleUiMapperTest {
             ),
             (state as ScheduleUiState.Content).value.map { it.status },
         )
+    }
+
+    @Test
+    fun scheduleKeepsVenueNameAndOptionalAddress() {
+        val regular =
+            session(
+                date = LocalDate.of(2026, 10, 24),
+                endTime = LocalTime.of(18, 0),
+            ).copy(
+                location = "DMC 첨단산업센터",
+                locationDetails =
+                    SessionLocationDetails(
+                        roadAddress = "서울특별시 마포구 월드컵북로 396",
+                        detailAddress = null,
+                        coordinates = null,
+                    ),
+            )
+        val team = regular.copy(location = null, locationDetails = null, type = SessionType.TEAM)
+        val schedule = CurrentGenerationSchedule(19, 19, listOf(regular, team))
+
+        val state = SessionScheduleUiMapper.toUiState(schedule) as ScheduleUiState.Content
+        assertEquals("DMC 첨단산업센터", state.value[0].location)
+        assertEquals("서울특별시 마포구 월드컵북로 396", state.value[0].address)
+        assertNull(state.value[1].location)
+        assertNull(state.value[1].address)
     }
 
     private fun session(

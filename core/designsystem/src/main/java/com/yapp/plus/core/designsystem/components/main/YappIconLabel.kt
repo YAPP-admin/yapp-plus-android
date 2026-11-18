@@ -3,6 +3,7 @@ package com.yapp.plus.core.designsystem.components.main
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -22,23 +23,28 @@ fun YappIconLabel(
     @DrawableRes iconResource: Int,
     modifier: Modifier = Modifier,
     tint: Color? = null,
+    maxLines: Int = 1,
 ) {
+    val isMultiline = maxLines > 1
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = if (isMultiline) Alignment.Top else Alignment.CenterVertically,
     ) {
         Icon(
             painter = painterResource(iconResource),
             contentDescription = null,
-            modifier = Modifier.size(12.dp),
+            modifier =
+                Modifier
+                    .padding(top = if (isMultiline) 2.dp else 0.dp)
+                    .size(12.dp),
             tint = tint ?: YappMainColor.textFaint,
         )
         YappText(
             text = text,
             style = YappTypography.scaleT2Medium,
             color = tint ?: YappMainColor.textSubtle,
-            maxLines = 1,
+            maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
         )
     }

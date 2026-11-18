@@ -9,12 +9,22 @@ import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
+import com.yapp.plus.feature.main.home.model.SessionDistanceUiState
 
 @Preview(name = "Home session card", widthDp = 361)
 @Composable
 private fun HomeSessionCardPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeSessionCard(state = AttendanceUiState.Content(sampleCurrentWeekSession()))
+        HomeSessionCard(
+            state = AttendanceUiState.Content(sampleCurrentWeekSession()),
+            distanceContent = {
+                HomeSessionDistance(
+                    state = SessionDistanceUiState.Idle,
+                    onMeasure = {},
+                    onOpenSettings = {},
+                )
+            },
+        )
     }
 }
 
@@ -26,6 +36,8 @@ private fun HomeSessionCardStatesPreview() {
             listOf(
                 AttendanceUiState.Loading,
                 AttendanceUiState.Empty,
+                AttendanceUiState.Inactive,
+                AttendanceUiState.Inactive,
                 AttendanceUiState.Error,
             ).forEach { HomeSessionCard(state = it) }
         }
@@ -46,4 +58,16 @@ private fun sampleCurrentWeekSession() =
         weekStartDate = java.time.LocalDate.of(2026, 10, 18),
         sessionDate = java.time.LocalDate.of(2026, 10, 24),
         startTime = java.time.LocalTime.of(14, 0),
+        address = stringResource(R.string.attendance_home_demo_session_address),
     )
+
+@Preview(name = "Home attendance completed", widthDp = 361)
+@Composable
+private fun HomeAttendanceCompletedPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeSessionCard(
+            state = AttendanceUiState.Content(sampleCurrentWeekSession()),
+            hasAttended = true,
+        )
+    }
+}

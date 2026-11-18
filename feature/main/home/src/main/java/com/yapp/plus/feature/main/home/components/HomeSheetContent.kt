@@ -55,7 +55,10 @@ internal fun HomeSheetContent(
                 ),
             onClick = onConfirm,
             modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isSubmitting && state.sheet == HomeSheet.AttendanceCode,
+            enabled =
+                state.code.length == 4 &&
+                    !state.isSubmitting &&
+                    state.sheet == HomeSheet.AttendanceCode,
             variant = YappButtonVariant.SolidBrand,
             size = YappButtonSize.HomePrimary,
         )

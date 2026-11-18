@@ -52,6 +52,7 @@ fun HomeScreen(
     hasAttended: Boolean = false,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     isLoading: Boolean = false,
+    distanceContent: @Composable () -> Unit = {},
 ) {
     if (isLoading) {
         Box(
@@ -91,8 +92,9 @@ fun HomeScreen(
                     state = state,
                     hasAttended = hasAttended,
                     now = now,
-                    onAttendanceClick = onAttendanceClick,
+                    onAttendanceClick = if (hasAttended) onScoreClick else onAttendanceClick,
                     onRetry = onRetry,
+                    distanceContent = distanceContent,
                 )
                 Spacer(Modifier.height(10.dp))
                 HomeQuickActions(

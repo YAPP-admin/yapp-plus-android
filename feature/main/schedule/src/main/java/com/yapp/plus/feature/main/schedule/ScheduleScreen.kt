@@ -46,6 +46,11 @@ fun ScheduleScreen(
         YappMainHeader(title = stringResource(R.string.schedule_title))
         when (state) {
             ScheduleUiState.Loading -> ScheduleLoading(modifier = Modifier.weight(1f))
+            ScheduleUiState.Inactive ->
+                SchedulePlaceholder(
+                    messageResource = R.string.session_inactive,
+                    modifier = Modifier.weight(1f),
+                )
             ScheduleUiState.Empty ->
                 SchedulePlaceholder(
                     messageResource = R.string.schedule_empty,

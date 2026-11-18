@@ -7,4 +7,5 @@ data class ScheduleSessionUiModel(
     val timeLabel: String,
     val type: ScheduleTypeUiModel,
     val status: ScheduleStatusUiModel,
+    val address: String? = null,
 )

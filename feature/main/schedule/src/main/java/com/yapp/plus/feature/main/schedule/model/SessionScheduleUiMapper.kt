@@ -24,10 +24,11 @@ internal object SessionScheduleUiMapper {
                 "${date.format(dateFormatter)} " +
                     "(${dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)})",
             name = name,
-            location = location,
+            location = location?.takeUnless(String::isBlank),
             timeLabel = "${startTime.format(timeFormatter)} ~ ${endTime.format(timeFormatter)}",
             type = type.toUiModel(),
             status = statusAt(now),
+            address = locationDetails?.addressLine,
         )
 
     private fun ScheduledSession.statusAt(now: LocalDateTime): ScheduleStatusUiModel {

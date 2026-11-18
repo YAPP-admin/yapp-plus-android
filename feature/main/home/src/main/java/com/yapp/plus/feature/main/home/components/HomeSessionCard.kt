@@ -41,6 +41,7 @@ fun HomeSessionCard(
     onRetry: () -> Unit = {},
     hasAttended: Boolean = false,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
+    distanceContent: @Composable () -> Unit = {},
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -57,6 +58,13 @@ fun HomeSessionCard(
                         Modifier.fillMaxWidth().height(179.dp),
                         Alignment.Center,
                     ) { CircularProgressIndicator(color = YappHomeColor.brand) }
+                AttendanceUiState.Inactive ->
+                    YappText(
+                        stringResource(R.string.session_inactive),
+                        YappHomeTypography.title,
+                        YappHomeColor.text,
+                        Modifier.padding(vertical = 24.dp),
+                    )
                 AttendanceUiState.Empty ->
                     YappText(
                         stringResource(R.string.attendance_home_session_empty),
@@ -65,13 +73,15 @@ fun HomeSessionCard(
                         Modifier.padding(vertical = 24.dp),
                     )
                 AttendanceUiState.Error -> HomeSessionError(onRetry)
-                is AttendanceUiState.Content ->
+                is AttendanceUiState.Content -> {
                     HomeSessionContent(
                         session = state.value,
                         hasAttended = hasAttended,
                         now = now,
                         onAttendanceClick = onAttendanceClick,
                     )
+                    distanceContent()
+                }
             }
         }
     }
@@ -101,24 +111,7 @@ internal fun HomeSessionContent(
     onAttendanceClick: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            if (session.location != null) {
-                Icon(
-                    painterResource(DesignSystemR.drawable.ic_map_pin),
-                    null,
-                    Modifier.size(14.dp),
-                    YappHomeColor.placeholder,
-                )
-            }
-            YappText(
-                session.location ?: stringResource(R.string.attendance_home_session_label),
-                YappHomeTypography.label,
-                YappHomeColor.subtle,
-            )
-        }
+        HomeSessionVenue(location = session.location, address = session.address)
         val titleResource =
             if (session.sessionDate == now.toLocalDate()) {
                 R.string.home_today_title
@@ -138,10 +131,38 @@ internal fun HomeSessionContent(
         text = attendanceButtonText(session, hasAttended, now),
         onClick = onAttendanceClick,
         modifier = Modifier.fillMaxWidth(),
-        enabled = !hasAttended && session.attendanceStatus == AttendanceStatusUiModel.Available,
+        enabled = hasAttended || session.attendanceStatus == AttendanceStatusUiModel.Available,
         variant = YappButtonVariant.SolidNeutral,
         size = YappButtonSize.HomeSecondary,
     )
+}
+
+@Composable
+internal fun HomeSessionVenue(
+    location: String?,
+    address: String?,
+) {
+    val venue = listOfNotNull(location, address).joinToString("\n")
+    Row(
+        verticalAlignment = if (address == null) Alignment.CenterVertically else Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        if (venue.isNotEmpty()) {
+            Icon(
+                painterResource(DesignSystemR.drawable.ic_map_pin),
+                null,
+                Modifier
+                    .padding(top = if (address == null) 0.dp else 2.dp)
+                    .size(14.dp),
+                YappHomeColor.placeholder,
+            )
+        }
+        YappText(
+            venue.ifEmpty { stringResource(R.string.attendance_home_session_label) },
+            YappHomeTypography.label,
+            YappHomeColor.subtle,
+        )
+    }
 }
 
 @Composable
@@ -151,7 +172,7 @@ internal fun attendanceButtonText(
     now: LocalDateTime,
 ): String =
     when {
-        hasAttended -> stringResource(R.string.home_attended)
+        hasAttended -> stringResource(R.string.home_score_check)
         session.attendanceStatus == AttendanceStatusUiModel.Available ->
             stringResource(R.string.attendance_home_session_action)
         session.attendanceStatus == AttendanceStatusUiModel.NotEligible ->

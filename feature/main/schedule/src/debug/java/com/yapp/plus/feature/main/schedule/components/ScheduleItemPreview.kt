@@ -16,10 +16,11 @@ private fun ScheduleItemPreview() {
                 ScheduleSessionUiModel(
                     dateLabel = "9.19 (토)",
                     name = "기획 세션",
-                    location = "ICT콤플렉스 6층 커뮤니티라운지",
+                    location = "ICT콤플렉스",
                     timeLabel = "오후 12시 ~ 오후 6시",
                     type = ScheduleTypeUiModel.Regular,
                     status = ScheduleStatusUiModel.Upcoming,
+                    address = "서울특별시 마포구 마포대로 122 6층 커뮤니티라운지",
                 ),
         )
     }

@@ -3,6 +3,8 @@ package com.yapp.plus.feature.main.schedule.model
 sealed interface ScheduleUiState<out T> {
     data object Loading : ScheduleUiState<Nothing>
 
+    data object Inactive : ScheduleUiState<Nothing>
+
     data object Empty : ScheduleUiState<Nothing>
 
     data object Error : ScheduleUiState<Nothing>

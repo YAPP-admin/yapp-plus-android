@@ -14,4 +14,5 @@ data class ScheduledSessionData(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val type: SessionType,
+    val locationDetails: SessionLocationData? = null,
 )

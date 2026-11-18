@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core:network"))
     implementation(project(":core:datastore"))
+    implementation(libs.androidx.core.ktx)
     implementation(libs.ktor.client.core)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)

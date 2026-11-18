@@ -29,6 +29,13 @@ internal object CurrentWeekScheduleMapper {
             startTime = LocalTime.parse(response.startTime),
             location = response.location,
             attendanceStatus = AttendanceStatus.valueOf(response.attendanceStatus),
+            locationDetails =
+                SessionLocationData(
+                    roadAddress = response.roadAddress,
+                    latitude = response.latitude,
+                    longitude = response.longitude,
+                    detailAddress = response.detailAddress,
+                ).takeIfPresent(),
         )
 
     private fun toDomain(data: CurrentWeekSessionData): CurrentWeekSession =
@@ -39,5 +46,6 @@ internal object CurrentWeekScheduleMapper {
             startTime = data.startTime,
             location = data.location,
             attendanceStatus = data.attendanceStatus,
+            locationDetails = data.locationDetails?.toDomain(),
         )
 }

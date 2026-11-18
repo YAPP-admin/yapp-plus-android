@@ -12,4 +12,8 @@ internal data class ScheduledSessionResponse(
     val startTime: String,
     val endTime: String,
     val type: String,
+    val roadAddress: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val detailAddress: String? = null,
 )

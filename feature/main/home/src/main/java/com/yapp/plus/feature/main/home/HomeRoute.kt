@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,11 +18,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
+import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.feature.main.home.components.HomeReportConfirmation
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
+import kotlinx.coroutines.delay
+import java.time.Instant
 
 @Composable
 fun HomeRoute(
@@ -37,6 +42,13 @@ fun HomeRoute(
     val interaction by interactionViewModel.uiState.collectAsStateWithLifecycle()
     val session = (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
     val lifecycleOwner = LocalLifecycleOwner.current
+    val now by produceState(Instant.now(), session?.sessionId) {
+        while (true) {
+            value = Instant.now()
+            delay(1000)
+        }
+    }
+    val canReport = AttendanceReportPolicy.canSubmit(session?.sessionDate, session?.startTime, now)
 
     LaunchedEffect(viewModel) { viewModel.loadHomeData() }
 
@@ -69,6 +81,13 @@ fun HomeRoute(
             onReportClick = interactionViewModel::openReport,
             onNoticeClick = onNoticeClick,
             hasAttended = session != null && interaction.attendedSessionId == session.sessionId,
+            distanceContent = {
+                session?.coordinates?.let { coordinates ->
+                    key(session.sessionId, coordinates) {
+                        HomeDistanceRoute(coordinates)
+                    }
+                }
+            },
         )
         if (interaction.isReportComplete) {
             HomeReportConfirmation(
@@ -96,8 +115,11 @@ fun HomeRoute(
                     interaction,
                     interactionViewModel::selectReportType,
                     interactionViewModel::updateReportReason,
-                    interactionViewModel::confirmReport,
-                    canSubmit = state.currentWeekSchedule !is AttendanceUiState.Loading,
+                    {
+                        interactionViewModel.confirmReport(session?.sessionDate, session?.startTime)
+                    },
+                    canSubmit = canReport,
+                    unavailableMessage = if (canReport) null else R.string.home_report_closed,
                 )
             } else {
                 HomeSheetContent(

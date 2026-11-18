@@ -3,6 +3,7 @@ package com.yapp.plus.feature.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.attendance.AttendanceException
+import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
@@ -13,6 +14,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,8 +60,16 @@ internal class HomeInteractionViewModel
             mutableUiState.update { it.copy(reportReason = reason, errorResource = null) }
         }
 
-        fun confirmReport() {
+        fun confirmReport(
+            sessionDate: LocalDate?,
+            startTime: LocalTime?,
+            now: Instant = Instant.now(),
+        ) {
             val state = mutableUiState.value
+            if (!AttendanceReportPolicy.canSubmit(sessionDate, startTime, now)) {
+                mutableUiState.update { it.copy(errorResource = R.string.home_report_closed) }
+                return
+            }
             val type = state.reportType ?: return
             if (state.isSubmitting) return
             if (state.sheet == HomeSheet.ReportType) {

@@ -13,5 +13,7 @@ interface AuthE2ETestEntryPoint {
     @Named("unauthenticated")
     fun unauthenticatedClient(): HttpClient
 
+    fun authenticatedClient(): HttpClient
+
     fun tokenStore(): TokenStore
 }

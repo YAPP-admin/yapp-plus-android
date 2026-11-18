@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-09
+last_verified: 2026-11-14
 ---
 
 # 모듈 구조
@@ -27,6 +27,8 @@ last_verified: 2026-11-09
 | `:core:datastore` | `com.yapp.plus.core.datastore` | DataStore 세션 레코드·Keystore 암호화·백업 제외 파일 저장과 별도 기기 알림 선택 저장 구현됨; Data에서 사용 |
 
 14개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+
+세션 거리 확인은 `:domain`의 `SessionDistanceRepository`와 `:data`의 Android 위치 어댑터를 App Hilt에서 연결합니다. `:feature:main:home`의 Route가 위치 권한과 화면 생명주기를 다루고 ViewModel은 일회성 요청과 거리 표시 상태를 관리합니다.
 
 개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·로그아웃·통합 탈퇴·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. My 출석 점수·이력 조회를 인증 client에 연결했습니다. 공지와 사전 보고 화면 및 인증 응답 이름을 연결했습니다. Firebase 푸시의 기기 등록·수신은 App에 연결했습니다. 팀 사진 업로드·제출 어댑터를 조립했으며 팀원 선택에는 사용자용 팀원 계약이 필요합니다. My 본인 프로필과 문의 링크는 연결했으며 지각 면제권은 미확인 계약의 연결만 비워 둡니다. 기기별 알림 선택은 DataStore에 저장하고 App에서 Firebase 및 서버 기기 등록·해제와 연결합니다.
 

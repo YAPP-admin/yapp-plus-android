@@ -22,6 +22,20 @@ class ScheduleViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
+    fun inactiveGenerationShowsNormalState() =
+        runTest {
+            val repository =
+                FakeSessionScheduleRepository().apply {
+                    generationScheduleError =
+                        com.yapp.plus.domain.session
+                            .NoActiveGenerationException()
+                }
+            val viewModel = ScheduleViewModel(repository)
+            advanceUntilIdle()
+            assertEquals(ScheduleUiState.Inactive, viewModel.uiState.value)
+        }
+
+    @Test
     fun requestFailureShowsErrorAndRetryLoadsGenerationSchedule() =
         runTest(mainDispatcherRule.dispatcher) {
             val repository =

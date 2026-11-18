@@ -27,6 +27,20 @@ class HomeViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
+    fun inactiveGenerationShowsNormalState() =
+        runTest {
+            val repository =
+                FakeSessionScheduleRepository().apply {
+                    currentWeekError =
+                        com.yapp.plus.domain.session
+                            .NoActiveGenerationException()
+                }
+            val viewModel = HomeViewModel(repository, FakeHomeNoticeRepository()).also { it.loadHomeData() }
+            advanceUntilIdle()
+            assertEquals(AttendanceUiState.Inactive, viewModel.uiState.value.currentWeekSchedule)
+        }
+
+    @Test
     fun requestFailureShowsErrorAndRetryLoadsCurrentWeek() =
         runTest(mainDispatcherRule.dispatcher) {
             val scheduleRepository =

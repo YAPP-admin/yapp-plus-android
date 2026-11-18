@@ -30,14 +30,14 @@ class HomeReportViewModelTest {
                     },
                 )
             viewModel.openReport()
-            viewModel.confirmReport()
+            viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
             assertEquals(HomeSheet.ReportType, viewModel.uiState.value.sheet)
             viewModel.selectReportType(AttendanceReportType.EARLY_LEAVE)
-            viewModel.confirmReport()
+            viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
             assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
             viewModel.updateReportReason("개인 일정")
-            viewModel.confirmReport()
-            viewModel.confirmReport()
+            viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
+            viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
             viewModel.dismissSheet()
             viewModel.updateReportReason("변경")
             assertTrue(viewModel.uiState.value.isSubmitting)
@@ -68,10 +68,10 @@ class HomeReportViewModelTest {
                 )
             viewModel.openReport()
             viewModel.selectReportType(AttendanceReportType.LATE)
-            viewModel.confirmReport()
+            viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
             viewModel.updateReportReason("가".repeat(29) + "😀")
             assertEquals("가".repeat(29), viewModel.uiState.value.reportReason)
-            viewModel.confirmReport()
+            viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
             assertEquals(
                 R.string.home_report_session_changed,
                 viewModel.uiState.value.errorResource,
@@ -79,8 +79,35 @@ class HomeReportViewModelTest {
             assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
             assertFalse(viewModel.uiState.value.isReportComplete)
             fails = false
-            viewModel.confirmReport()
+            viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
             assertTrue(viewModel.uiState.value.isReportComplete)
+        }
+
+    @Test
+    fun missingOrStartedSessionNeverSubmitsAndPreservesReason() =
+        runTest {
+            var requests = 0
+            val viewModel =
+                HomeInteractionViewModel(
+                    repository { _, _ ->
+                        requests++
+                        42
+                    },
+                )
+            val date = java.time.LocalDate.of(2026, 11, 21)
+            val time = java.time.LocalTime.of(14, 0)
+            val start = java.time.Instant.parse("2026-11-21T05:00:00Z")
+            viewModel.openReport()
+            viewModel.selectReportType(AttendanceReportType.ABSENT)
+            viewModel.confirmReport(date, time, start.minusSeconds(1))
+            viewModel.updateReportReason("개인 사정")
+            viewModel.confirmReport(null, null, start.minusSeconds(1))
+            viewModel.confirmReport(date, time, start)
+            advanceUntilIdle()
+            assertEquals(0, requests)
+            assertEquals("개인 사정", viewModel.uiState.value.reportReason)
+            assertEquals(R.string.home_report_closed, viewModel.uiState.value.errorResource)
+            assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
         }
 
     private fun repository(submit: suspend (AttendanceReportType, String) -> Long) =

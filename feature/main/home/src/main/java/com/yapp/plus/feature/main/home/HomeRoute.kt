@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,6 +23,7 @@ import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.feature.main.home.components.HomeReportConfirmation
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
+import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import kotlinx.coroutines.delay
@@ -50,14 +52,19 @@ fun HomeRoute(
     }
     val canReport = AttendanceReportPolicy.canSubmit(session?.sessionDate, session?.startTime, now)
 
-    LaunchedEffect(viewModel) { viewModel.loadHomeData() }
+    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+        if (interactionViewModel.uiState.value.sheet == HomeSheet.None) {
+            viewModel.loadHomeData()
+        }
+    }
 
-    LaunchedEffect(interaction.isAttendanceComplete, lifecycleOwner) {
-        if (interaction.isAttendanceComplete) {
-            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                onAttendanceComplete()
-                interactionViewModel.acknowledgeAttendanceComplete()
-            }
+    val verifiedSessionId = interaction.verifiedSessionId
+    LaunchedEffect(verifiedSessionId, lifecycleOwner) {
+        if (verifiedSessionId == null) return@LaunchedEffect
+        viewModel.markAttendanceVerified(verifiedSessionId)
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            onAttendanceComplete()
+            interactionViewModel.acknowledgeAttendanceComplete()
         }
     }
 
@@ -80,7 +87,6 @@ fun HomeRoute(
             onScoreClick = onScoreClick,
             onReportClick = interactionViewModel::openReport,
             onNoticeClick = onNoticeClick,
-            hasAttended = session != null && interaction.attendedSessionId == session.sessionId,
             distanceContent = {
                 session?.coordinates?.let { coordinates ->
                     key(session.sessionId, coordinates) {
@@ -126,8 +132,8 @@ fun HomeRoute(
                     state = interaction,
                     onCodeChange = interactionViewModel::updateCode,
                     onConfirm = {
-                        session?.let {
-                            interactionViewModel.verifyAttendance(it.sessionId)
+                        if (session?.attendanceStatus == AttendanceStatusUiModel.Available) {
+                            interactionViewModel.verifyAttendance(session.sessionId)
                         }
                     },
                 )

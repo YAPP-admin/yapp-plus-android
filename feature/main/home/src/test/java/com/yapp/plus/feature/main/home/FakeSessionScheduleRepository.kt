@@ -13,6 +13,7 @@ internal class FakeSessionScheduleRepository : SessionScheduleRepository {
     var currentWeekError: Exception? = null
     var currentWeekRequestCount = 0
     var gate: CompletableDeferred<Unit>? = null
+    var attendanceStatus = AttendanceStatus.NOT_OPEN
 
     override suspend fun fetchCurrentWeekSchedule(): CurrentWeekSchedule {
         currentWeekRequestCount += 1
@@ -28,7 +29,7 @@ internal class FakeSessionScheduleRepository : SessionScheduleRepository {
                     date = LocalDate.of(2026, 10, 24),
                     startTime = LocalTime.of(14, 0),
                     location = null,
-                    attendanceStatus = AttendanceStatus.NOT_OPEN,
+                    attendanceStatus = attendanceStatus,
                 ),
         )
     }

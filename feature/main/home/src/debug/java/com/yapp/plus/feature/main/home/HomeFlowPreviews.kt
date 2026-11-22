@@ -34,10 +34,20 @@ fun AvailableHomePreview() {
 fun AttendedHomePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeScreen(
-            HomePreviewData.state(),
-            hasAttended = true,
+            HomePreviewData.state(AttendanceStatusUiModel.CheckedIn),
             now = HomePreviewData.now.withDayOfMonth(7),
             noticeState = HomeNoticeUiState.Content(HomePreviewData.notices()),
+        )
+    }
+}
+
+@Preview(name = "Home attendance pending approval", widthDp = 393, heightDp = 692)
+@Composable
+fun PendingApprovalHomePreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeScreen(
+            HomePreviewData.state(AttendanceStatusUiModel.PendingApproval),
+            now = HomePreviewData.now.withDayOfMonth(7),
         )
     }
 }

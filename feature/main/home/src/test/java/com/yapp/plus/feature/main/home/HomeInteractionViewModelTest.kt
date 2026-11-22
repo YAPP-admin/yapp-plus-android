@@ -37,7 +37,7 @@ class HomeInteractionViewModelTest {
             viewModel.verifyAttendance(42)
 
             assertTrue(viewModel.uiState.value.isSubmitting)
-            assertFalse(viewModel.uiState.value.isAttendanceComplete)
+            assertNull(viewModel.uiState.value.verifiedSessionId)
             viewModel.verifyAttendance(42)
             viewModel.dismissSheet()
             viewModel.updateCode("9999")
@@ -50,12 +50,10 @@ class HomeInteractionViewModelTest {
 
             assertEquals(listOf(42L to 123), requests)
             assertEquals(HomeSheet.None, viewModel.uiState.value.sheet)
-            assertEquals(42L, viewModel.uiState.value.attendedSessionId)
-            assertTrue(viewModel.uiState.value.isAttendanceComplete)
+            assertEquals(42L, viewModel.uiState.value.verifiedSessionId)
             assertFalse(viewModel.uiState.value.isSubmitting)
             viewModel.acknowledgeAttendanceComplete()
-            assertFalse(viewModel.uiState.value.isAttendanceComplete)
-            assertEquals(42L, viewModel.uiState.value.attendedSessionId)
+            assertNull(viewModel.uiState.value.verifiedSessionId)
         }
 
     @Test
@@ -105,7 +103,7 @@ class HomeInteractionViewModelTest {
             assertEquals(R.string.home_code_invalid, viewModel.uiState.value.errorResource)
             assertTrue(viewModel.uiState.value.isInvalidCode)
             assertEquals("1234", viewModel.uiState.value.code)
-            assertFalse(viewModel.uiState.value.isAttendanceComplete)
+            assertNull(viewModel.uiState.value.verifiedSessionId)
             viewModel.updateCode("2345")
             assertNull(viewModel.uiState.value.errorResource)
             assertFalse(viewModel.uiState.value.isInvalidCode)
@@ -116,12 +114,12 @@ class HomeInteractionViewModelTest {
             assertFalse(viewModel.uiState.value.isInvalidCode)
             assertEquals("2345", viewModel.uiState.value.code)
             assertEquals(HomeSheet.AttendanceCode, viewModel.uiState.value.sheet)
-            assertFalse(viewModel.uiState.value.isAttendanceComplete)
+            assertNull(viewModel.uiState.value.verifiedSessionId)
             viewModel.verifyAttendance(42)
             advanceUntilIdle()
 
             assertEquals(3, requests)
-            assertTrue(viewModel.uiState.value.isAttendanceComplete)
+            assertEquals(42L, viewModel.uiState.value.verifiedSessionId)
             assertNull(viewModel.uiState.value.errorResource)
         }
 

@@ -49,7 +49,6 @@ fun HomeScreen(
     onNoticeClick: (Long) -> Unit = {},
     noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
     onNoticeRetry: () -> Unit = {},
-    hasAttended: Boolean = false,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     isLoading: Boolean = false,
     distanceContent: @Composable () -> Unit = {},
@@ -90,9 +89,9 @@ fun HomeScreen(
             ) {
                 HomeSessionCard(
                     state = state,
-                    hasAttended = hasAttended,
                     now = now,
-                    onAttendanceClick = if (hasAttended) onScoreClick else onAttendanceClick,
+                    onAttendanceClick = onAttendanceClick,
+                    onScoreClick = onScoreClick,
                     onRetry = onRetry,
                     distanceContent = distanceContent,
                 )

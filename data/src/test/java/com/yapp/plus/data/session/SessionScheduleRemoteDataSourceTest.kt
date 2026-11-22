@@ -62,6 +62,28 @@ class SessionScheduleRemoteDataSourceTest {
         }
 
     @Test
+    fun `weekly response maps checked in and pending approval into domain states`() =
+        runTest {
+            val statuses =
+                mapOf(
+                    "CHECKED_IN" to AttendanceStatus.CHECKED_IN,
+                    "PENDING_APPROVAL" to AttendanceStatus.PENDING_APPROVAL,
+                )
+            for ((wireStatus, domainStatus) in statuses) {
+                val response =
+                    """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
+                    "sessionId":12,"name":"세션","date":"2026-10-24","startTime":"14:00",
+                    "attendanceStatus":"$wireStatus"}}"""
+                createClient(response).use { client ->
+                    val repository =
+                        SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(client))
+                    val session = requireNotNull(repository.fetchCurrentWeekSchedule().session)
+                    assertEquals(domainStatus, session.attendanceStatus)
+                }
+            }
+        }
+
+    @Test
     fun `weekly request carries the registered venue and full coordinate precision`() =
         runTest {
             val response =

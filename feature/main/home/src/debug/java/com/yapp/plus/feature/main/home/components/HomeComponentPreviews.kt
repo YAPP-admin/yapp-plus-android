@@ -120,10 +120,10 @@ fun HomeSubmissionErrorPreview() {
 fun HomeSessionContentPreview() {
     YappTheme {
         HomeSessionContent(
-            HomePreviewData.session(),
-            hasAttended = false,
+            session = HomePreviewData.session(),
             now = HomePreviewData.now,
             onAttendanceClick = {},
+            onScoreClick = {},
         )
     }
 }

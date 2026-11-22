@@ -6,6 +6,7 @@ import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.notice.NoticeType
 import com.yapp.plus.domain.session.NoActiveGenerationException
 import com.yapp.plus.domain.session.SessionScheduleRepository
+import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiMapper
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiModel
@@ -37,10 +38,26 @@ internal class HomeViewModel
         private var noticesJob: Job? = null
 
         fun loadHomeData() {
-            if (uiState.value.currentWeekSchedule == AttendanceUiState.Loading) {
-                retryCurrentWeekSchedule()
-            }
+            retryCurrentWeekSchedule()
             retryWeeklyNotices()
+        }
+
+        fun markAttendanceVerified(sessionId: Long) {
+            mutableUiState.update { state ->
+                val session =
+                    (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
+                        ?: return@update state
+                if (session.sessionId != sessionId) return@update state
+                if (session.attendanceStatus != AttendanceStatusUiModel.Available) {
+                    return@update state
+                }
+                state.copy(
+                    currentWeekSchedule =
+                        AttendanceUiState.Content(
+                            session.copy(attendanceStatus = AttendanceStatusUiModel.CheckedIn),
+                        ),
+                )
+            }
         }
 
         fun retryCurrentWeekSchedule() {

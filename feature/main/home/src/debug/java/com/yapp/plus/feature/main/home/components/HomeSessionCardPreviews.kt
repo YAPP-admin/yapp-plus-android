@@ -16,7 +16,7 @@ import com.yapp.plus.feature.main.home.model.SessionDistanceUiState
 private fun HomeSessionCardPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeSessionCard(
-            state = AttendanceUiState.Content(sampleCurrentWeekSession()),
+            state = AttendanceUiState.Content(sampleSession()),
             distanceContent = {
                 HomeSessionDistance(
                     state = SessionDistanceUiState.Idle,
@@ -45,7 +45,7 @@ private fun HomeSessionCardStatesPreview() {
 }
 
 @Composable
-private fun sampleCurrentWeekSession() =
+private fun sampleSession(status: AttendanceStatusUiModel = AttendanceStatusUiModel.Available) =
     CurrentWeekSessionUiModel(
         weekStartDateLabel = stringResource(R.string.attendance_home_demo_week_start),
         weekEndDateLabel = stringResource(R.string.attendance_home_demo_week_end),
@@ -53,7 +53,7 @@ private fun sampleCurrentWeekSession() =
         name = stringResource(R.string.attendance_home_demo_session_name),
         startTimeLabel = stringResource(R.string.attendance_home_demo_session_time),
         location = stringResource(R.string.attendance_home_demo_session_location),
-        attendanceStatus = AttendanceStatusUiModel.Available,
+        attendanceStatus = status,
         sessionId = 42,
         weekStartDate = java.time.LocalDate.of(2026, 10, 18),
         sessionDate = java.time.LocalDate.of(2026, 10, 24),
@@ -66,8 +66,23 @@ private fun sampleCurrentWeekSession() =
 private fun HomeAttendanceCompletedPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeSessionCard(
-            state = AttendanceUiState.Content(sampleCurrentWeekSession()),
-            hasAttended = true,
+            state =
+                AttendanceUiState.Content(
+                    sampleSession(AttendanceStatusUiModel.CheckedIn),
+                ),
+        )
+    }
+}
+
+@Preview(name = "Home attendance pending approval", widthDp = 361)
+@Composable
+private fun HomeAttendancePendingApprovalPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeSessionCard(
+            state =
+                AttendanceUiState.Content(
+                    sampleSession(AttendanceStatusUiModel.PendingApproval),
+                ),
         )
     }
 }

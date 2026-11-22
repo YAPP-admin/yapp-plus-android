@@ -136,8 +136,7 @@ internal class HomeInteractionViewModel
                 onSuccess = { state, _ ->
                     state.copy(
                         sheet = HomeSheet.None,
-                        attendedSessionId = sessionId,
-                        isAttendanceComplete = true,
+                        verifiedSessionId = sessionId,
                     )
                 },
             )
@@ -176,7 +175,7 @@ internal class HomeInteractionViewModel
         }
 
         fun acknowledgeAttendanceComplete() {
-            mutableUiState.update { it.copy(isAttendanceComplete = false) }
+            mutableUiState.update { it.copy(verifiedSessionId = null) }
         }
 
         private companion object {

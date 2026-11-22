@@ -3,6 +3,7 @@ package com.yapp.plus.feature.main.home
 import com.yapp.plus.domain.notice.NoticePage
 import com.yapp.plus.domain.notice.NoticeSummary
 import com.yapp.plus.domain.notice.NoticeType
+import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
@@ -106,6 +107,29 @@ class HomeViewModelTest {
         }
 
     @Test
+    fun freshServerStatusReplacesVerificationResultForCurrentSession() =
+        runTest(mainDispatcherRule.dispatcher) {
+            val repository =
+                FakeSessionScheduleRepository().apply {
+                    attendanceStatus = AttendanceStatus.AVAILABLE
+                }
+            val viewModel = HomeViewModel(repository, FakeHomeNoticeRepository())
+            viewModel.loadHomeData()
+            advanceUntilIdle()
+
+            viewModel.markAttendanceVerified(sessionId = 2)
+            assertEquals(AttendanceStatusUiModel.Available, viewModel.currentAttendanceStatus())
+
+            viewModel.markAttendanceVerified(sessionId = 1)
+            assertEquals(AttendanceStatusUiModel.CheckedIn, viewModel.currentAttendanceStatus())
+
+            viewModel.loadHomeData()
+            advanceUntilIdle()
+            assertEquals(AttendanceStatusUiModel.Available, viewModel.currentAttendanceStatus())
+            assertEquals(2, repository.currentWeekRequestCount)
+        }
+
+    @Test
     fun weeklyNoticesFilterToCurrentWeekAndRetryAfterFailure() =
         runTest(mainDispatcherRule.dispatcher) {
             val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
@@ -144,4 +168,7 @@ class HomeViewModelTest {
             assertTrue(notices.notices.all { it.isAssignmentNotice })
             assertEquals(2, noticeRepository.requestCount)
         }
+
+    private fun HomeViewModel.currentAttendanceStatus(): AttendanceStatusUiModel =
+        (uiState.value.currentWeekSchedule as AttendanceUiState.Content).value.attendanceStatus
 }

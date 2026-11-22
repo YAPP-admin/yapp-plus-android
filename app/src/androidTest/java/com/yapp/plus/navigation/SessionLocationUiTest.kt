@@ -17,9 +17,11 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.printToString
+import androidx.lifecycle.Lifecycle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.di.AuthE2ETestEntryPoint
+import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.testing.NavigationTestActivity
 import dagger.hilt.android.EntryPointAccessors
 import io.ktor.client.HttpClient
@@ -35,9 +37,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicReference
 
 @OptIn(ExperimentalTestApi::class)
 class SessionLocationUiTest {
@@ -109,6 +113,48 @@ class SessionLocationUiTest {
     }
 
     @Test
+    fun serverCheckedInShowsScoreWithoutOpeningCompletionScreen() {
+        installApiFixtures(
+            includeLocation = false,
+            currentAttendanceStatus = { AttendanceStatus.CHECKED_IN },
+        ).use {
+            var completionScreenCount = 0
+            composeRule.setContent {
+                YappTheme { MainTabScaffold(onAttendanceComplete = { completionScreenCount++ }) }
+            }
+            waitForText("출석했어요!")
+            composeRule.runOnIdle { assertEquals(0, completionScreenCount) }
+            composeRule.onNodeWithText("출석하기").assertDoesNotExist()
+            composeRule.onNodeWithText("출석 점수 확인하기").assertIsEnabled().performClick()
+            waitForText("마이페이지")
+        }
+    }
+
+    @Test
+    fun pendingApprovalBlocksCodeAndRefreshesWhenHomeResumes() {
+        val attendanceStatus = AtomicReference(AttendanceStatus.PENDING_APPROVAL)
+        installApiFixtures(
+            includeLocation = false,
+            currentAttendanceStatus = attendanceStatus::get,
+        ).use {
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            waitForText("출석 확인 중이에요")
+            composeRule.onNodeWithText("출석 확인 중이에요").assertIsNotEnabled()
+            composeRule.onNodeWithText("출석하기").assertDoesNotExist()
+            composeRule.onNodeWithText("출석 점수 확인하기").assertDoesNotExist()
+
+            val scenario = composeRule.activityRule.scenario
+            scenario.moveToState(Lifecycle.State.CREATED)
+            attendanceStatus.set(AttendanceStatus.CHECKED_IN)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+
+            waitForText("출석했어요!")
+            composeRule.onNodeWithText("출석 확인 중이에요").assertDoesNotExist()
+            composeRule.onNodeWithText("출석 점수 확인하기").assertIsEnabled()
+        }
+    }
+
+    @Test
     fun inactiveGenerationShowsNormalMessageAndBlocksReport() {
         installApiFixtures(includeLocation = false, inactive = true).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
@@ -125,13 +171,14 @@ class SessionLocationUiTest {
     private fun installApiFixtures(
         includeLocation: Boolean,
         inactive: Boolean = false,
+        currentAttendanceStatus: () -> AttendanceStatus = { AttendanceStatus.AVAILABLE },
     ): HttpClient {
         val client =
             HttpClient(
                 MockEngine { request ->
                     val response =
                         when (request.url.encodedPath.substringAfterLast('/')) {
-                            "current-week" -> weeklySession(includeLocation)
+                            "current-week" -> weeklySession(includeLocation, currentAttendanceStatus())
                             "sessions" -> generationSessions(includeLocation)
                             "attendance-verifications" ->
                                 """{"verified":true,"checkedInAt":"2026-11-18T05:00:00Z"}"""
@@ -173,11 +220,15 @@ class SessionLocationUiTest {
         return client
     }
 
-    private fun weeklySession(includeLocation: Boolean): String {
+    private fun weeklySession(
+        includeLocation: Boolean,
+        attendanceStatus: AttendanceStatus,
+    ): String {
         val locationDetails = if (includeLocation) LOCATION_DETAILS else ""
         return """{"weekStartDate":"2026-11-08","weekEndDate":"2026-11-14",
             "session":{"sessionId":12,"name":"개발 세션","date":"2026-11-14","startTime":"14:00",
-            "location":"DMC 첨단산업센터","attendanceStatus":"AVAILABLE"$locationDetails}}"""
+            "location":"DMC 첨단산업센터",
+            "attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
     }
 
     private fun generationSessions(includeLocation: Boolean): String {

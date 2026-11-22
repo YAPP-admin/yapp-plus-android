@@ -33,6 +33,8 @@ internal object CurrentWeekSessionUiMapper {
             AttendanceStatus.NOT_ELIGIBLE -> AttendanceStatusUiModel.NotEligible
             AttendanceStatus.NOT_OPEN -> AttendanceStatusUiModel.NotOpen
             AttendanceStatus.AVAILABLE -> AttendanceStatusUiModel.Available
+            AttendanceStatus.CHECKED_IN -> AttendanceStatusUiModel.CheckedIn
+            AttendanceStatus.PENDING_APPROVAL -> AttendanceStatusUiModel.PendingApproval
         }
 
     private val weekDateFormatter = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN)

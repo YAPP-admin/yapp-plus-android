@@ -39,7 +39,7 @@ fun HomeSessionCard(
     modifier: Modifier = Modifier,
     onAttendanceClick: () -> Unit = {},
     onRetry: () -> Unit = {},
-    hasAttended: Boolean = false,
+    onScoreClick: () -> Unit = {},
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     distanceContent: @Composable () -> Unit = {},
 ) {
@@ -76,9 +76,9 @@ fun HomeSessionCard(
                 is AttendanceUiState.Content -> {
                     HomeSessionContent(
                         session = state.value,
-                        hasAttended = hasAttended,
                         now = now,
                         onAttendanceClick = onAttendanceClick,
+                        onScoreClick = onScoreClick,
                     )
                     distanceContent()
                 }
@@ -106,9 +106,9 @@ internal fun HomeSessionError(onRetry: () -> Unit) {
 @Composable
 internal fun HomeSessionContent(
     session: CurrentWeekSessionUiModel,
-    hasAttended: Boolean,
     now: LocalDateTime,
     onAttendanceClick: () -> Unit,
+    onScoreClick: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         HomeSessionVenue(location = session.location, address = session.address)
@@ -127,14 +127,25 @@ internal fun HomeSessionContent(
     session.weekStartDate?.let {
         HomeWeekCalendar(it, session.sessionDate, now.toLocalDate())
     }
-    YappButton(
-        text = attendanceButtonText(session, hasAttended, now),
-        onClick = onAttendanceClick,
-        modifier = Modifier.fillMaxWidth(),
-        enabled = hasAttended || session.attendanceStatus == AttendanceStatusUiModel.Available,
-        variant = YappButtonVariant.SolidNeutral,
-        size = YappButtonSize.HomeSecondary,
-    )
+    val attendanceStatus = session.attendanceStatus
+    val isCheckedIn = attendanceStatus == AttendanceStatusUiModel.CheckedIn
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        if (isCheckedIn) {
+            YappText(
+                stringResource(attendanceStatus.messageResource),
+                YappHomeTypography.label,
+                YappHomeColor.text,
+            )
+        }
+        YappButton(
+            text = attendanceButtonText(session, now),
+            onClick = if (isCheckedIn) onScoreClick else onAttendanceClick,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isCheckedIn || attendanceStatus == AttendanceStatusUiModel.Available,
+            variant = YappButtonVariant.SolidNeutral,
+            size = YappButtonSize.HomeSecondary,
+        )
+    }
 }
 
 @Composable
@@ -166,17 +177,25 @@ internal fun HomeSessionVenue(
 }
 
 @Composable
-internal fun attendanceButtonText(
+private fun attendanceButtonText(
     session: CurrentWeekSessionUiModel,
-    hasAttended: Boolean,
+    now: LocalDateTime,
+): String =
+    when (val status = session.attendanceStatus) {
+        AttendanceStatusUiModel.CheckedIn -> stringResource(R.string.home_score_check)
+        AttendanceStatusUiModel.Available -> stringResource(R.string.attendance_home_session_action)
+        AttendanceStatusUiModel.NotOpen -> attendanceNotOpenText(session, now)
+        AttendanceStatusUiModel.NotEligible,
+        AttendanceStatusUiModel.PendingApproval,
+        -> stringResource(status.messageResource)
+    }
+
+@Composable
+private fun attendanceNotOpenText(
+    session: CurrentWeekSessionUiModel,
     now: LocalDateTime,
 ): String =
     when {
-        hasAttended -> stringResource(R.string.home_score_check)
-        session.attendanceStatus == AttendanceStatusUiModel.Available ->
-            stringResource(R.string.attendance_home_session_action)
-        session.attendanceStatus == AttendanceStatusUiModel.NotEligible ->
-            stringResource(R.string.attendance_status_not_eligible)
         session.sessionDate?.isAfter(now.toLocalDate()) == true ->
             stringResource(
                 R.string.home_session_starts,

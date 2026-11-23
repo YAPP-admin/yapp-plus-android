@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.printToString
 import androidx.lifecycle.Lifecycle
 import androidx.test.platform.app.InstrumentationRegistry
@@ -34,13 +35,18 @@ import io.ktor.client.request.request
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
@@ -220,6 +226,37 @@ class SessionLocationUiTest {
     }
 
     @Test
+    fun reportConfirmRequiresNonBlankReasonBeforeSubmitting() {
+        val reportBody = AtomicReference<String>()
+        installApiFixtures(
+            includeLocation = false,
+            weeklySessionDate = LocalDate.now(ZoneId.of("Asia/Seoul")).plusDays(1),
+            onReport = reportBody::set,
+        ).use {
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            waitForText("출석하기")
+            composeRule.onNodeWithText("출결 보고").performClick()
+            composeRule.onNodeWithText("지각").performClick()
+            val confirm = composeRule.onNodeWithText("확인")
+            confirm.assertIsEnabled().performClick()
+            confirm.assertIsNotEnabled()
+
+            val reason = composeRule.onNode(hasSetTextAction())
+            reason.performTextInput("   ")
+            confirm.assertIsNotEnabled()
+            assertNull(reportBody.get())
+
+            reason.performTextReplacement("  개인 일정  ")
+            confirm.assertIsEnabled().performClick()
+            waitForText("출결 보고를 완료했어요")
+            assertEquals(
+                Json.parseToJsonElement("""{"type":"LATE","reason":"개인 일정"}"""),
+                Json.parseToJsonElement(reportBody.get()),
+            )
+        }
+    }
+
+    @Test
     fun inactiveGenerationShowsNormalMessageAndBlocksReport() {
         installApiFixtures(includeLocation = false, inactive = true).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
@@ -239,6 +276,8 @@ class SessionLocationUiTest {
         venueLatitude: Double = VENUE_LATITUDE,
         onVerification: () -> Unit = {},
         currentAttendanceStatus: () -> AttendanceStatus = { AttendanceStatus.AVAILABLE },
+        weeklySessionDate: LocalDate = LocalDate.of(2026, 11, 14),
+        onReport: (String) -> Unit = { error("Unexpected attendance report") },
     ): HttpClient {
         val client =
             HttpClient(
@@ -246,11 +285,20 @@ class SessionLocationUiTest {
                     val response =
                         when (request.url.encodedPath.substringAfterLast('/')) {
                             "current-week" ->
-                                weeklySession(includeLocation, venueLatitude, currentAttendanceStatus())
+                                weeklySession(
+                                    includeLocation,
+                                    venueLatitude,
+                                    currentAttendanceStatus(),
+                                    weeklySessionDate,
+                                )
                             "sessions" -> generationSessions(includeLocation)
                             "attendance-verifications" -> {
                                 onVerification()
                                 """{"verified":true,"checkedInAt":"2026-11-18T05:00:00Z"}"""
+                            }
+                            "attendance-reports" -> {
+                                onReport((request.body as TextContent).text)
+                                """{"sessionId":12,"submittedAt":"2026-11-18T05:00:00Z"}"""
                             }
                             "me" ->
                                 if (request.url.encodedPath.contains("attendance-scores")) {
@@ -294,10 +342,11 @@ class SessionLocationUiTest {
         includeLocation: Boolean,
         venueLatitude: Double,
         attendanceStatus: AttendanceStatus,
+        sessionDate: LocalDate,
     ): String {
         val locationDetails = if (includeLocation) locationDetails(venueLatitude) else ""
-        return """{"weekStartDate":"2026-11-08","weekEndDate":"2026-11-14",
-            "session":{"sessionId":12,"name":"개발 세션","date":"2026-11-14","startTime":"14:00",
+        return """{"weekStartDate":"${sessionDate.minusDays(6)}","weekEndDate":"$sessionDate",
+            "session":{"sessionId":12,"name":"개발 세션","date":"$sessionDate","startTime":"14:00",
             "location":"DMC 첨단산업센터","attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
     }
 

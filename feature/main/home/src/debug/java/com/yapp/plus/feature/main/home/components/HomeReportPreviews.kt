@@ -30,13 +30,20 @@ fun HomeReportTypePreview() {
 
 @Preview(widthDp = 393, showBackground = true)
 @Composable
-fun HomeReportReasonPreview() {
+fun HomeReportReasonPreview() = HomeReportReasonPreviewContent("개인 일정")
+
+@Preview(widthDp = 393, showBackground = true)
+@Composable
+fun HomeReportReasonEmptyPreview() = HomeReportReasonPreviewContent("")
+
+@Composable
+private fun HomeReportReasonPreviewContent(reason: String) {
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeReportSheet(
             HomeInteractionUiState(
                 sheet = HomeSheet.ReportReason,
                 reportType = AttendanceReportType.EARLY_LEAVE,
-                reportReason = "개인 일정",
+                reportReason = reason,
             ),
             {
             },

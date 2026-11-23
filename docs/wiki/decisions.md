@@ -6,7 +6,7 @@ last_verified: 2026-11-23
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0058`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0059`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -480,3 +480,11 @@ last_verified: 2026-11-23
 - 근거: 사용자가 Android와 iOS의 코드 출석 조건을 맞추도록 요청했습니다. [iOS 기능 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/026-location-attendance/spec.md), [Android 이슈 #217](https://github.com/YAPP-admin/yapp-plus-android/issues/217)
 - 적용 상태: [코드 출석 위치 조건](product-policy.md#코드-출석-위치-조건)과 Android의 출석 확인 흐름에 적용했습니다. 위치 확인 결과는 기기에서 현재 시도에만 사용합니다.
 - 대체한 결정: DEC-0054의 코드 입력 뒤 위치 조건 없이 제출하던 동작. 홈의 거리 확인은 유지합니다.
+
+## DEC-0058 · Android 사전 출결 보고 사유 필수
+
+- 기록일: 2026-11-23
+- 결정: 지각·조퇴·결석 사전 보고에는 30자 이내의 사유가 필요하며, 빈 값과 공백뿐인 값은 제출을 차단합니다.
+- 근거: 사용자의 Android·iOS 정합성 구현 요청, [iOS 사전 출결 보고 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/020-member-attendance-submit/spec.md), [Android 이슈 #222](https://github.com/YAPP-admin/yapp-plus-android/issues/222)
+- 적용 상태: [제품 정책](product-policy.md#사전-보고-사유-검증), Android Domain 규칙, 홈 확인 버튼과 ViewModel의 제출 경로에 반영했습니다. 백엔드 요청은 기존 형식을 사용합니다.
+- 대체한 결정: 제품 정책에서 Android 홈 사유를 선택 입력으로 허용하던 규칙.

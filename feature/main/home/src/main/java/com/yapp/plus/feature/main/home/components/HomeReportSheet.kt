@@ -109,7 +109,11 @@ internal fun HomeReportSheet(
             modifier = Modifier.fillMaxWidth(),
             variant = YappButtonVariant.SolidBrand,
             size = YappButtonSize.HomePrimary,
-            enabled = state.reportType != null && !state.isSubmitting && canSubmit,
+            enabled =
+                canSubmit &&
+                    !state.isSubmitting &&
+                    state.reportType != null &&
+                    (selecting || state.isReportReasonValid),
         )
     }
 }

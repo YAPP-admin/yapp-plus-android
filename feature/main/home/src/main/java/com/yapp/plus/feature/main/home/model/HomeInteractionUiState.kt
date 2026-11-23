@@ -1,5 +1,6 @@
 package com.yapp.plus.feature.main.home.model
 
+import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.attendance.AttendanceReportType
 
 data class HomeInteractionUiState(
@@ -16,4 +17,7 @@ data class HomeInteractionUiState(
 ) {
     val isSubmitting: Boolean
         get() = submissionStage != HomeSubmissionStage.Idle
+
+    val isReportReasonValid: Boolean
+        get() = AttendanceReportPolicy.isReasonValid(reportReason)
 }

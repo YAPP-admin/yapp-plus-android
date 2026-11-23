@@ -13,10 +13,58 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeReportViewModelTest {
     @get:Rule val mainDispatcherRule = MainDispatcherRule()
+
+    @Test
+    fun requiresReasonForEveryReportTypeAndSendsTrimmedInput() =
+        runTest {
+            val requests = mutableListOf<Pair<AttendanceReportType, String>>()
+            val viewModel =
+                viewModel(
+                    repository { type, reason ->
+                        requests += type to reason
+                        42L
+                    },
+                )
+            val date = LocalDate.of(2026, 11, 21)
+            val time = LocalTime.of(14, 0)
+            val beforeStart = Instant.parse("2026-11-21T04:59:59Z")
+
+            for (type in AttendanceReportType.entries) {
+                viewModel.openReport()
+                viewModel.selectReportType(type)
+                viewModel.confirmReport(date, time, beforeStart)
+                assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
+
+                val previousRequests = requests.size
+                for (reason in listOf("", " \t\u3000")) {
+                    viewModel.updateReportReason(reason)
+                    viewModel.confirmReport(date, time, beforeStart)
+                    advanceUntilIdle()
+                    assertEquals(previousRequests, requests.size)
+                    assertFalse(viewModel.uiState.value.isSubmitting)
+                    assertEquals(reason, viewModel.uiState.value.reportReason)
+                    assertEquals(
+                        R.string.home_report_reason_required,
+                        viewModel.uiState.value.errorResource,
+                    )
+                }
+
+                viewModel.updateReportReason("  개인 일정  ")
+                viewModel.confirmReport(date, time, beforeStart)
+                advanceUntilIdle()
+                assertEquals(previousRequests + 1, requests.size)
+                assertEquals(type to "개인 일정", requests.last())
+                assertTrue(viewModel.uiState.value.isReportComplete)
+                viewModel.acknowledgeReportComplete()
+            }
+        }
 
     @Test fun reportSelectsTypeThenReasonAndPreventsDuplicateSubmission() =
         runTest {

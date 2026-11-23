@@ -62,7 +62,7 @@ Google 인증의 `SIGNED_IN` 응답은 access/refresh token 쌍을 암호화 저
 | 이번 주 세션 | `GET /api/sessions/current-week`로 장소명·주소·기준 좌표와 출석 인증·검토 상태를 조회해 홈에 연결 |
 | 현재 기수 일정 | `GET /api/generations/current/sessions`로 장소명·주소·기준 좌표를 조회해 일정에 연결 |
 | 출석 인증 | `POST /api/attendance-verifications`; 서버 확인 후에만 완료 표시 |
-| 사전 보고 | `POST /api/attendance-reports`; 홈의 지각·조퇴·결석 선택 → 30자 이내 사유 → 서버 성공 안내까지 연결 |
+| 사전 보고 | `POST /api/attendance-reports`. 홈에서 지각·조퇴·결석을 선택하고 30자 이내의 필수 사유를 입력하면 서버 결과를 표시합니다. |
 | 세션 갱신 | `POST /api/auth/session-renewals`; 암호화 저장·복원과 401 뒤 한 번 재시도 구현 |
 | Google 로그인 | `POST /api/auth/oidc/google/native-authentications`; `SIGNED_IN` 세션 저장·메인 이동, `SIGNUP_REQUIRED` 가입 토큰을 Signup으로 전달 |
 | 회원가입 | `POST /api/users`; registration token·이름·E.164 전화번호 제출, 성공 응답 세션 저장 |
@@ -87,7 +87,7 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 - 홈은 이번 주 세션의 장소·제목, 일요일부터 토요일까지의 달력, 출석 상태와 빠른 메뉴, 이번 주 공지를 표시합니다. 오늘은 원형으로, 세션 날짜는 브랜드 색상으로 구분합니다. 서버의 `AVAILABLE` 상태에서만 출석 버튼을 활성화합니다.
 - 4자리 숫자 입력은 붙여넣기와 숫자 키보드를 지원합니다. 입력 형식 검증 뒤 `POST /api/attendance-verifications`에 `sessionId`와 정수 `code`를 전달합니다. `verified=true`와 유효한 `checkedInAt`을 받은 뒤 완료 화면을 열고 해당 세션 카드에 인증 완료를 반영합니다.
 - 홈에 처음 진입하거나 복귀해 다시 조회하면 `current-week.attendanceStatus`의 현재 값을 표시합니다. `CHECKED_IN`은 “출석했어요!”와 My의 점수 확인 버튼을, `PENDING_APPROVAL`은 선택된 팀원의 사진 심사를 기다리는 “출석 확인 중이에요”를 표시합니다. 두 상태에서는 코드를 입력할 수 없습니다. `CHECKED_IN`은 인증 완료이며 최종 출결과 점수는 각 사용자 조회 API를 따릅니다. [이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/0f2ddbdf0c9aa6a8b754225d9c6938ab70097322/APIDOC.md#L312-L322)
-- 보고는 지각·조퇴·결석 선택 후 30자 이내의 선택적 사유를 입력합니다. 서버의 `POST /api/attendance-reports`에는 `LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 사유를 보냅니다. 서버는 사유 생략·빈 문자열을 허용하며 길이는 Kotlin `String.length` 기준으로 제한합니다. 응답의 `sessionId`·`submittedAt`을 확인한 뒤 완료 안내를 표시합니다. 서버의 허용 시간과 점수를 클라이언트에서 재판정하지 않습니다.
+- 지각·조퇴·결석 사전 보고는 [필수 사유 검증](#사전-보고-사유-검증)을 거칩니다. `POST /api/attendance-reports`에 유형과 사유를 보내고, 응답의 `sessionId`와 `submittedAt`을 확인한 뒤 완료 안내를 표시합니다.
 - 홈의 이번 주 공지는 한국 시간의 일요일 00:00부터 다음 일요일 전까지의 게시 시각을 기준으로 합니다. 공지 API의 `createdDate`를 이 범위로 필터링해 최신 최대 3개를 표시합니다. 홈의 알림 버튼은 사용자 알림함을 엽니다. 알림 목록 API는 읽음 상태를 제공하지 않습니다.
 - 전체 세션은 일정 탭으로 연결합니다. 전체 세션·출결 보고 카드는 Figma와 같은 70dp 높이로 표시합니다. 출석 완료 버튼은 “출석 점수 확인하기”로 바뀌며 My 탭으로 이동합니다.
 - API 실패 시 입력을 보존하고 오류·재시도를 제공합니다. 제출 중에는 중복 확인·입력 수정·시트 닫기를 막습니다. 코드 불일치와 일반 요청 실패를 구분하며 성공 상태를 낙관적으로 만들지 않습니다.
@@ -234,7 +234,12 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 ## 홈 사전 보고와 활동 기간 안내 (2026-11-18)
 
 - 사용자 요청과 [Figma 11월 17일 확인 댓글](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x#2010796754)에 따라 지각·조퇴·결석 보고를 모두 서울 시각의 세션 시작 전까지만 제출합니다. 시작 정각·이후와 세션 조회 중·실패·세션 없음에서는 제출하지 않습니다. 화면이 열린 채 마감되어도 제출 직전에 재검사합니다. 서버의 마감 강제는 별도 계약 동기화가 필요합니다.
-- 사유는 현재 서버 계약대로 선택적 30자 이내입니다. 결석 보고 접수 마감은 서버의 감점 인정 시간 기준을 변경하지 않습니다.
+- 사유는 [사전 보고 사유 검증](#사전-보고-사유-검증)을 따릅니다. 결석 보고 접수 마감과 감점 인정의 48시간 기준은 각각 적용합니다.
 - `404 CURRENT_GENERATION_NOT_FOUND`만 홈·일정의 “현재 활동 기간이 아니에요.” 정상 상태로 표시합니다. 다른 HTTP·파싱 오류는 재시도할 수 있는 오류로 유지합니다.
 - 코드 확인은 숫자 4자리 입력 후 활성화합니다. 출석 완료 버튼으로 My 점수를 확인할 수 있습니다.
 - 팀 사진은 사용자 확인에 따라 팀원·본인 membershipId·제출 상세의 사용자 API 계약 대기로 유지합니다. [이슈 #210](https://github.com/YAPP-admin/yapp-plus-android/issues/210), [팀 사진 #180](https://github.com/YAPP-admin/yapp-plus-android/issues/180)
+
+## 사전 보고 사유 검증
+
+- Android의 지각·조퇴·결석 사전 보고는 30자 이내의 사유가 필수입니다. 빈 값과 공백만 입력한 값은 확인 버튼을 비활성화하고 제출 시에도 차단합니다. 입력 길이는 기존 Kotlin `String.length` 기준으로 제한하고 서버에 보낼 때 양끝 공백을 제거합니다.
+- 서버의 `POST /api/attendance-reports`는 기존 선택적 `reason` 계약을 제공합니다. Android 홈에 필수 입력 정책을 적용합니다. [기존 서버 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/0f2ddbdf0c9aa6a8b754225d9c6938ab70097322/APIDOC.md#L251-L253), [iOS 회원 사전 보고 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/020-member-attendance-submit/spec.md), [Android 이슈 #222](https://github.com/YAPP-admin/yapp-plus-android/issues/222)

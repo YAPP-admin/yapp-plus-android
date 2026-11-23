@@ -67,6 +67,7 @@
     <string name="home_report_absent">결석</string>
     <string name="home_report_reason_title">%1$s 사유를 입력해 주세요</string>
     <string name="home_report_reason_hint">사유를 입력해 주세요</string>
+    <string name="home_report_reason_required">사유를 입력해 주세요.</string>
     <string name="home_report_reason_count">%1$d/30</string>
     <string name="home_report_complete">출결 보고를 완료했어요</string>
     <string name="home_report_not_eligible">현재 기수의 출결 보고 대상이 아니에요.</string>

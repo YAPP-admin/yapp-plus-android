@@ -63,7 +63,7 @@ internal class HomeInteractionViewModel
 
         fun updateReportReason(value: String) {
             if (mutableUiState.value.isSubmitting) return
-            val truncated = value.take(MAX_REASON_LENGTH)
+            val truncated = value.take(AttendanceReportPolicy.MAX_REASON_LENGTH)
             val reason =
                 if (truncated.lastOrNull()?.isHighSurrogate() ==
                     true
@@ -92,6 +92,10 @@ internal class HomeInteractionViewModel
                 return
             }
             if (state.sheet != HomeSheet.ReportReason) return
+            if (!state.isReportReasonValid) {
+                mutableUiState.update { it.copy(errorResource = R.string.home_report_reason_required) }
+                return
+            }
             submit(
                 operation = { attendanceRepository.submitReport(type, state.reportReason.trim()) },
                 onSuccess = {
@@ -310,7 +314,6 @@ internal class HomeInteractionViewModel
 
         private companion object {
             const val CODE_LENGTH = 4
-            const val MAX_REASON_LENGTH = 30
         }
     }
 

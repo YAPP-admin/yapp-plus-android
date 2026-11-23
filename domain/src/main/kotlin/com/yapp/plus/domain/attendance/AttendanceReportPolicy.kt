@@ -6,6 +6,10 @@ import java.time.LocalTime
 import java.time.ZoneId
 
 object AttendanceReportPolicy {
+    const val MAX_REASON_LENGTH = 30
+
+    fun isReasonValid(text: String): Boolean = text.length <= MAX_REASON_LENGTH && text.isNotBlank()
+
     fun canSubmit(
         sessionDate: LocalDate?,
         startTime: LocalTime?,

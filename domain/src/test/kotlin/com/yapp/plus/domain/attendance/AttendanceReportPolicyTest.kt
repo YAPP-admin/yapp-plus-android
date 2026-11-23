@@ -9,6 +9,16 @@ import java.time.LocalTime
 
 class AttendanceReportPolicyTest {
     @Test
+    fun requiresNonBlankReasonWithinServerLengthLimit() {
+        assertFalse(AttendanceReportPolicy.isReasonValid(""))
+        assertFalse(AttendanceReportPolicy.isReasonValid(" \t\n\u3000"))
+        assertTrue(AttendanceReportPolicy.isReasonValid(" 개인 일정 "))
+        assertTrue(AttendanceReportPolicy.isReasonValid("가".repeat(30)))
+        assertTrue(AttendanceReportPolicy.isReasonValid("가".repeat(28) + "😀"))
+        assertFalse(AttendanceReportPolicy.isReasonValid("가".repeat(29) + "😀"))
+    }
+
+    @Test
     fun closesExactlyAtSeoulSessionStartAndRejectsMissingSchedule() {
         val date = LocalDate.of(2026, 11, 21)
         val time = LocalTime.of(14, 0)

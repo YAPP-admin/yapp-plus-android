@@ -41,6 +41,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 @OptIn(ExperimentalTestApi::class)
@@ -60,7 +61,11 @@ class SessionLocationUiTest {
     fun distanceFlowKeepsCodeAttendanceAvailableWithAndWithoutPermission() {
         val phase = InstrumentationRegistry.getArguments().getString("sessionLocationPhase")
         assumeTrue(phase in listOf("precise", "approximate", "denied", "disabled", "unavailable"))
-        installApiFixtures(includeLocation = true).use {
+        val verifications = AtomicInteger()
+        installApiFixtures(
+            includeLocation = true,
+            onVerification = { verifications.incrementAndGet() },
+        ).use {
             assertLocationPermission(phase)
             composeRule.setContent {
                 YappTheme { MainTabScaffold() }
@@ -74,6 +79,20 @@ class SessionLocationUiTest {
 
             composeRule.onNodeWithText("출석하기").assertIsEnabled().performClick()
             composeRule.onNodeWithText("출석 코드를 입력해 주세요").assertIsDisplayed()
+            val locationError =
+                when (phase) {
+                    "precise" -> "세션 장소에서 100m 이내로 이동한 뒤 다시 시도해 주세요."
+                    "denied" -> "출석하려면 위치 권한을 허용해 주세요."
+                    "disabled" -> "휴대폰의 위치 기능을 켜 주세요"
+                    else -> null
+                }
+            if (locationError != null) {
+                composeRule.onNode(hasSetTextAction()).performTextInput("1234")
+                composeRule.onNodeWithText("확인").performClick()
+                waitForText(locationError)
+                composeRule.onNodeWithText("확인").assertIsEnabled()
+                assertEquals(0, verifications.get())
+            }
             instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
             composeRule.onNodeWithText("일정").performClick()
             waitForText(ADDRESS, substring = true)
@@ -97,7 +116,13 @@ class SessionLocationUiTest {
 
     @Test
     fun codeRequiresFourDigitsAndSuccessOffersMyScore() {
-        installApiFixtures(includeLocation = false).use {
+        assumeTrue(InstrumentationRegistry.getArguments().getString("sessionLocationPhase") == "precise")
+        val verifications = AtomicInteger()
+        installApiFixtures(
+            includeLocation = true,
+            venueLatitude = MOCK_LOCATION_LATITUDE,
+            onVerification = { verifications.incrementAndGet() },
+        ).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
             waitForText("출석하기")
             composeRule.onNodeWithText("출석하기").performClick()
@@ -107,8 +132,48 @@ class SessionLocationUiTest {
             composeRule.onNode(hasSetTextAction()).performTextInput("4")
             composeRule.onNodeWithText("확인").assertIsEnabled().performClick()
             waitForText("출석 점수 확인하기")
+            assertEquals(1, verifications.get())
             composeRule.onNodeWithText("출석 점수 확인하기").performClick()
             waitForText("마이페이지")
+        }
+    }
+
+    @Test
+    fun missingVenueBlocksSubmissionAndKeepsCode() {
+        val verifications = AtomicInteger()
+        installApiFixtures(
+            includeLocation = false,
+            onVerification = { verifications.incrementAndGet() },
+        ).use {
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            waitForText("출석하기")
+            composeRule.onNodeWithText("출석하기").performClick()
+            composeRule.onNode(hasSetTextAction()).performTextInput("1234")
+            composeRule.onNodeWithText("확인").performClick()
+            waitForText("세션 위치를 확인할 수 없어요.", substring = true)
+            composeRule.onNodeWithText("세션 다시 확인").assertIsEnabled()
+            composeRule.onNodeWithText("확인").assertIsEnabled()
+            assertEquals(0, verifications.get())
+        }
+    }
+
+    @Test
+    fun oldLocationCannotBeReusedForAttendance() {
+        assumeTrue(InstrumentationRegistry.getArguments().getString("sessionLocationPhase") == "stale")
+        val verifications = AtomicInteger()
+        installApiFixtures(
+            includeLocation = true,
+            venueLatitude = MOCK_LOCATION_LATITUDE,
+            onVerification = { verifications.incrementAndGet() },
+        ).use {
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            waitForText("출석하기")
+            composeRule.onNodeWithText("출석하기").performClick()
+            composeRule.onNode(hasSetTextAction()).performTextInput("1234")
+            composeRule.onNodeWithText("확인").performClick()
+            waitForText("위치 확인 시간이 지났어요. 다시 시도해 주세요.")
+            composeRule.onNodeWithText("확인").assertIsEnabled()
+            assertEquals(0, verifications.get())
         }
     }
 
@@ -171,6 +236,8 @@ class SessionLocationUiTest {
     private fun installApiFixtures(
         includeLocation: Boolean,
         inactive: Boolean = false,
+        venueLatitude: Double = VENUE_LATITUDE,
+        onVerification: () -> Unit = {},
         currentAttendanceStatus: () -> AttendanceStatus = { AttendanceStatus.AVAILABLE },
     ): HttpClient {
         val client =
@@ -178,10 +245,13 @@ class SessionLocationUiTest {
                 MockEngine { request ->
                     val response =
                         when (request.url.encodedPath.substringAfterLast('/')) {
-                            "current-week" -> weeklySession(includeLocation, currentAttendanceStatus())
+                            "current-week" ->
+                                weeklySession(includeLocation, venueLatitude, currentAttendanceStatus())
                             "sessions" -> generationSessions(includeLocation)
-                            "attendance-verifications" ->
+                            "attendance-verifications" -> {
+                                onVerification()
                                 """{"verified":true,"checkedInAt":"2026-11-18T05:00:00Z"}"""
+                            }
                             "me" ->
                                 if (request.url.encodedPath.contains("attendance-scores")) {
                                     """{"generationId":31,"totalScore":100,"attendanceCount":1,
@@ -222,17 +292,17 @@ class SessionLocationUiTest {
 
     private fun weeklySession(
         includeLocation: Boolean,
+        venueLatitude: Double,
         attendanceStatus: AttendanceStatus,
     ): String {
-        val locationDetails = if (includeLocation) LOCATION_DETAILS else ""
+        val locationDetails = if (includeLocation) locationDetails(venueLatitude) else ""
         return """{"weekStartDate":"2026-11-08","weekEndDate":"2026-11-14",
             "session":{"sessionId":12,"name":"개발 세션","date":"2026-11-14","startTime":"14:00",
-            "location":"DMC 첨단산업센터",
-            "attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
+            "location":"DMC 첨단산업센터","attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
     }
 
     private fun generationSessions(includeLocation: Boolean): String {
-        val locationDetails = if (includeLocation) LOCATION_DETAILS else ""
+        val locationDetails = if (includeLocation) locationDetails(VENUE_LATITUDE) else ""
         return """{"generationId":31,"generationNumber":31,"sessions":[
             {"sessionId":12,"name":"개발 세션","date":"2026-11-14","dayOfWeek":"SATURDAY",
             "startTime":"14:00","endTime":"18:00","type":"REGULAR",
@@ -276,7 +346,10 @@ class SessionLocationUiTest {
     ) {
         try {
             composeRule.waitUntil(20_000) {
-                composeRule.onAllNodesWithText(text, substring).fetchSemanticsNodes().isNotEmpty()
+                composeRule
+                    .onAllNodesWithText(text, substring)
+                    .fetchSemanticsNodes(atLeastOneRootRequired = false)
+                    .isNotEmpty()
             }
         } catch (exception: ComposeTimeoutException) {
             val tree = composeRule.onRoot().printToString()
@@ -311,8 +384,11 @@ class SessionLocationUiTest {
     private companion object {
         const val CHECK_DISTANCE = "세션 장소까지 거리 확인"
         const val ADDRESS = "서울특별시 마포구 월드컵북로 396 2층"
-        const val LOCATION_DETAILS =
+        const val VENUE_LATITUDE = 37.58
+        const val MOCK_LOCATION_LATITUDE = 37.581
+
+        fun locationDetails(latitude: Double): String =
             ""","roadAddress":"서울특별시 마포구 월드컵북로 396","detailAddress":"2층",
-            "latitude":37.58,"longitude":126.88"""
+            "latitude":$latitude,"longitude":126.88"""
     }
 }

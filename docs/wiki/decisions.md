@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-22
+last_verified: 2026-11-23
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0057`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0058`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -472,3 +472,11 @@ last_verified: 2026-11-22
 - 근거: [백엔드 이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/0f2ddbdf0c9aa6a8b754225d9c6938ab70097322/APIDOC.md#L312-L322), [Figma 상태 복원 논의](https://www.figma.com/file/LUFGoDnVmwJT43QhecBI8x#2013000555), 사용자 구현 요청과 [Android 이슈 #215](https://github.com/YAPP-admin/yapp-plus-android/issues/215).
 - 적용 상태: [제품 정책](product-policy.md#수정된-홈-화면과-연결-흐름), Domain·Data 응답 상태와 홈 카드에 적용했습니다. 사진 제출 상세 조회는 회원용 계약 확인을 기다립니다.
 - 대체한 결정: 없음.
+
+## DEC-0057 · Android 코드 출석 위치 조건
+
+- 기록일: 2026-11-23
+- 결정: Android도 코드 제출 직전에 정확한 위치를 확인합니다. 새 측정의 오차 50m 이하와 세션까지 거리 100m 이내를 모두 충족한 경우 코드 검증 API를 호출합니다.
+- 근거: 사용자가 Android와 iOS의 코드 출석 조건을 맞추도록 요청했습니다. [iOS 기능 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/026-location-attendance/spec.md), [Android 이슈 #217](https://github.com/YAPP-admin/yapp-plus-android/issues/217)
+- 적용 상태: [코드 출석 위치 조건](product-policy.md#코드-출석-위치-조건)과 Android의 출석 확인 흐름에 적용했습니다. 위치 확인 결과는 기기에서 현재 시도에만 사용합니다.
+- 대체한 결정: DEC-0054의 코드 입력 뒤 위치 조건 없이 제출하던 동작. 홈의 거리 확인은 유지합니다.

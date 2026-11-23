@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-22
+last_verified: 2026-11-23
 ---
 
 # 제품 정책
@@ -97,8 +97,15 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 - 홈과 일정은 세션의 장소명(`location`) 아래에 도로명주소(`roadAddress`)와 선택적 상세주소(`detailAddress`)를 텍스트로 표시합니다. 주소가 없으면 장소명을 표시합니다. 두 값이 모두 없으면 홈의 기존 세션 라벨과 일정의 `-`를 표시합니다.
 - 조회에서 유효한 위도(`latitude`)와 경도(`longitude`)를 함께 받은 이번 주 세션에 거리 확인을 표시합니다. 서버는 TEAM과 주소 미등록 기존 세션에 이 필드를 null로 반환합니다.
 - 사용자가 홈에서 거리 확인을 누르면 현재 기기의 위치 권한을 확인하고 위치를 한 번 조회합니다. 앱은 기준 좌표까지의 직선거리를 계산해 표시합니다. 대략적인 위치의 사용 여부를 안내하며, 위치를 조회할 수 없으면 설정 안내 또는 재시도를 제공합니다. 기기의 위치와 계산값은 서버 전송과 영구 저장 없이 처리합니다.
-- 코드 입력 가능 여부는 서버의 출석 상태를 따릅니다. 제출 요청은 `sessionId`와 `code`를 사용합니다.
+- 홈의 거리 안내에는 대략적인 위치를 사용할 수 있습니다. 출석 코드 확인은 [코드 출석 위치 조건](#코드-출석-위치-조건)을 따릅니다.
 - 근거는 [백엔드 세션 장소 계약 #107](https://github.com/YAPP-admin/yapp-plus-backend/issues/107), [사용자 세션 조회 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/c7685e86a9c6d2514ab158444a1f4812de57d919/APIDOC.md#L272-L372), [Android 이슈 #209](https://github.com/YAPP-admin/yapp-plus-android/issues/209)입니다.
+
+## 코드 출석 위치 조건
+
+- 코드 입력 가능 여부는 서버 출석 상태를 따릅니다. 출석 가능한 세션에서 4자리 코드를 확인할 때만 Android가 정확한 위치 권한을 요청하거나 현재 위치를 조회합니다.
+- 유효한 세션 좌표, 정확한 위치 권한, 이번 시도에서 수신한 위치의 오차 50m 이하, 세션까지 반올림 전 직선거리 100m 이내를 모두 충족하면 `sessionId`와 `code`를 전송합니다. 위치 판정은 기기에서 하고 기기 위치와 계산값은 서버 전송과 영구 저장 없이 처리합니다.
+- 권한 부족, 위치 기능 꺼짐, 측정 실패·시간 초과, 정확도 부족, 범위 초과와 세션 좌표 누락을 안내합니다. 입력을 유지하며, 설정 복귀 후 사용자가 다시 확인해야 새 위치를 측정합니다. 위치 확인 중 화면에서 이탈한 시도의 응답은 코드 전송에 사용하지 않습니다.
+- 근거는 사용자 요청, [iOS 위치 출석 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/026-location-attendance/spec.md), [Android 이슈 #217](https://github.com/YAPP-admin/yapp-plus-android/issues/217)입니다.
 
 ## 출석 인증과 사전 보고 API 계약
 

@@ -3,13 +3,24 @@ package com.yapp.plus.feature.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.attendance.AttendanceException
+import com.yapp.plus.domain.attendance.AttendanceLocationFailure
+import com.yapp.plus.domain.attendance.AttendanceLocationPolicy
+import com.yapp.plus.domain.attendance.AttendanceLocationReading
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
+import com.yapp.plus.domain.session.SessionDistanceRepository
+import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
+import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
+import com.yapp.plus.feature.main.home.model.HomeAttendanceAttempt
+import com.yapp.plus.feature.main.home.model.HomeAttendanceLocationIssue
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
+import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,9 +35,13 @@ internal class HomeInteractionViewModel
     @Inject
     constructor(
         private val attendanceRepository: AttendanceRepository,
+        private val distanceRepository: SessionDistanceRepository,
     ) : ViewModel() {
         private val mutableUiState = MutableStateFlow(HomeInteractionUiState())
         val uiState = mutableUiState.asStateFlow()
+        private var attendanceSessionId: Long? = null
+        private var pendingPermissionAttempt: HomeAttendanceAttempt? = null
+        private var locationCheck: Job? = null
 
         fun openReport() {
             if (mutableUiState.value.isSubmitting) return
@@ -92,47 +107,140 @@ internal class HomeInteractionViewModel
             mutableUiState.update { it.copy(isReportComplete = false) }
         }
 
-        fun openAttendanceCode() {
-            if (mutableUiState.value.isSubmitting) return
+        fun openAttendanceCode(sessionId: Long) {
+            if (mutableUiState.value.isSubmitting || sessionId <= 0) return
+            attendanceSessionId = sessionId
             mutableUiState.update {
                 it.copy(
                     sheet = HomeSheet.AttendanceCode,
                     code = "",
                     errorResource = null,
                     isInvalidCode = false,
+                    locationIssue = null,
                 )
             }
         }
 
         fun dismissSheet() {
             if (mutableUiState.value.isSubmitting) return
-            mutableUiState.update { it.copy(sheet = HomeSheet.None, errorResource = null) }
+            attendanceSessionId = null
+            mutableUiState.update {
+                it.copy(sheet = HomeSheet.None, errorResource = null, locationIssue = null)
+            }
         }
 
         fun updateCode(code: String) {
             if (mutableUiState.value.isSubmitting) return
             val digits = code.filter { it in '0'..'9' }.take(CODE_LENGTH)
             mutableUiState.update {
-                it.copy(code = digits, errorResource = null, isInvalidCode = false)
+                it.copy(
+                    code = digits,
+                    errorResource = null,
+                    isInvalidCode = false,
+                    locationIssue = null,
+                )
             }
         }
 
-        fun verifyAttendance(sessionId: Long) {
-            val state = mutableUiState.value
-            if (state.isSubmitting || sessionId <= 0) return
-            if (state.code.length != CODE_LENGTH) {
+        fun confirmAttendance(
+            session: CurrentWeekSessionUiModel?,
+            hasPrecisePermission: Boolean,
+        ): Boolean {
+            val attempt = createAttendanceAttempt(session) ?: return false
+            if (hasPrecisePermission) {
+                checkLocation(attempt)
+                return false
+            }
+            pendingPermissionAttempt = attempt
+            updateSubmissionStage(HomeSubmissionStage.RequestingLocationPermission)
+            return true
+        }
+
+        private fun createAttendanceAttempt(session: CurrentWeekSessionUiModel?): HomeAttendanceAttempt? {
+            val state = uiState.value
+            if (state.isSubmitting || state.sheet != HomeSheet.AttendanceCode) return null
+            val code = state.code.takeIf { it.length == CODE_LENGTH }?.toIntOrNull()
+            if (code == null) {
                 mutableUiState.update {
-                    it.copy(errorResource = R.string.home_code_required, isInvalidCode = true)
+                    it.copy(
+                        errorResource = R.string.home_code_required,
+                        isInvalidCode = true,
+                        locationIssue = null,
+                    )
                 }
+                return null
+            }
+            val coordinates = session?.coordinates?.takeIf { it.isValid }
+            if (session == null ||
+                session.sessionId != attendanceSessionId ||
+                session.attendanceStatus != AttendanceStatusUiModel.Available ||
+                coordinates == null
+            ) {
+                showLocationIssue(HomeAttendanceLocationIssue.SessionUnavailable)
+                return null
+            }
+            return HomeAttendanceAttempt(session.sessionId, code, coordinates)
+        }
+
+        fun onAttendancePermissionResult(
+            session: CurrentWeekSessionUiModel?,
+            hasPrecisePermission: Boolean,
+            hasApproximatePermission: Boolean,
+        ) {
+            val attempt = pendingPermissionAttempt ?: return
+            pendingPermissionAttempt = null
+            when {
+                !attempt.matches(session) ->
+                    showLocationIssue(HomeAttendanceLocationIssue.SessionUnavailable)
+                hasPrecisePermission -> checkLocation(attempt)
+                hasApproximatePermission ->
+                    showLocationIssue(HomeAttendanceLocationIssue.PrecisePermissionRequired)
+                else -> showLocationIssue(HomeAttendanceLocationIssue.PermissionDenied)
+            }
+        }
+
+        fun cancelAttendanceLocation() {
+            val stage = uiState.value.submissionStage
+            if (stage != HomeSubmissionStage.CheckingLocation &&
+                stage != HomeSubmissionStage.RequestingLocationPermission
+            ) {
                 return
             }
+            pendingPermissionAttempt = null
+            locationCheck?.cancel()
+            locationCheck = null
+            updateSubmissionStage(HomeSubmissionStage.Idle)
+        }
+
+        fun onLocationSettingsUnavailable() {
+            if (uiState.value.isSubmitting) return
+            showLocationIssue(HomeAttendanceLocationIssue.SettingsUnavailable)
+        }
+
+        private fun checkLocation(attempt: HomeAttendanceAttempt) {
+            updateSubmissionStage(HomeSubmissionStage.CheckingLocation)
+            locationCheck =
+                viewModelScope.launch {
+                    val distance = measureAttendanceDistance(attempt)
+                    ensureActive()
+                    val issue = AttendanceLocationPolicy.blockingReason(distance)?.toUiIssue()
+                    if (issue == null) submitVerifiedLocation(attempt) else showLocationIssue(issue)
+                }
+        }
+
+        private suspend fun measureAttendanceDistance(attempt: HomeAttendanceAttempt): AttendanceLocationReading =
+            try {
+                distanceRepository.fetchPreciseDistanceTo(attempt.coordinates)
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                AttendanceLocationReading.Failed(AttendanceLocationFailure.UNAVAILABLE)
+            }
+
+        private fun submitVerifiedLocation(attempt: HomeAttendanceAttempt) {
+            val sessionId = attempt.sessionId
             submit(
-                operation = {
-                    attendanceRepository.verifyAttendance(
-                        sessionId,
-                        state.code.toInt(),
-                    )
-                },
+                operation = { attendanceRepository.verifyAttendance(sessionId, attempt.code) },
                 onSuccess = { state, _ ->
                     state.copy(
                         sheet = HomeSheet.None,
@@ -142,11 +250,33 @@ internal class HomeInteractionViewModel
             )
         }
 
+        private fun updateSubmissionStage(stage: HomeSubmissionStage) {
+            mutableUiState.update {
+                it.copy(
+                    submissionStage = stage,
+                    errorResource = null,
+                    isInvalidCode = false,
+                    locationIssue = null,
+                )
+            }
+        }
+
+        private fun showLocationIssue(issue: HomeAttendanceLocationIssue) {
+            mutableUiState.update {
+                it.copy(
+                    submissionStage = HomeSubmissionStage.Idle,
+                    errorResource = null,
+                    isInvalidCode = false,
+                    locationIssue = issue,
+                )
+            }
+        }
+
         private fun <T> submit(
             operation: suspend () -> T,
             onSuccess: (HomeInteractionUiState, T) -> HomeInteractionUiState,
         ) {
-            mutableUiState.update { it.copy(isSubmitting = true, errorResource = null) }
+            updateSubmissionStage(HomeSubmissionStage.Submitting)
             viewModelScope.launch {
                 try {
                     val result = operation()
@@ -156,7 +286,7 @@ internal class HomeInteractionViewModel
                 } catch (exception: Exception) {
                     showSubmissionError(exception)
                 } finally {
-                    mutableUiState.update { it.copy(isSubmitting = false) }
+                    mutableUiState.update { it.copy(submissionStage = HomeSubmissionStage.Idle) }
                 }
             }
         }
@@ -193,4 +323,16 @@ private fun reportErrorResource(code: String?): Int =
             R.string.home_report_session_changed
         "INVALID_ATTENDANCE_REPORT" -> R.string.home_report_invalid
         else -> R.string.home_submit_error
+    }
+
+private fun AttendanceLocationFailure.toUiIssue(): HomeAttendanceLocationIssue =
+    when (this) {
+        AttendanceLocationFailure.PRECISE_PERMISSION_REQUIRED ->
+            HomeAttendanceLocationIssue.PrecisePermissionRequired
+        AttendanceLocationFailure.LOCATION_DISABLED -> HomeAttendanceLocationIssue.LocationDisabled
+        AttendanceLocationFailure.TIMED_OUT -> HomeAttendanceLocationIssue.TimedOut
+        AttendanceLocationFailure.UNAVAILABLE -> HomeAttendanceLocationIssue.Unavailable
+        AttendanceLocationFailure.INSUFFICIENT_ACCURACY ->
+            HomeAttendanceLocationIssue.InsufficientAccuracy
+        AttendanceLocationFailure.OUT_OF_RANGE -> HomeAttendanceLocationIssue.OutOfRange
     }

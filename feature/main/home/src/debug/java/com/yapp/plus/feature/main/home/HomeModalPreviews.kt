@@ -9,6 +9,7 @@ import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
+import com.yapp.plus.feature.main.home.model.HomeAttendanceLocationIssue
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 
@@ -16,6 +17,31 @@ import com.yapp.plus.feature.main.home.model.HomeSheet
 @Composable
 fun AttendanceCodeModalPreview() {
     HomeModalPreview(HomeInteractionUiState(sheet = HomeSheet.AttendanceCode))
+}
+
+@Preview(name = "Attendance location check", widthDp = 393, heightDp = 790)
+@Composable
+fun AttendanceLocationCheckingPreview() {
+    HomeModalPreview(
+        HomeInteractionUiState(
+            sheet = HomeSheet.AttendanceCode,
+            code = "1234",
+            isSubmitting = true,
+        ),
+        isCheckingLocation = true,
+    )
+}
+
+@Preview(name = "Attendance location recovery", widthDp = 393, heightDp = 790)
+@Composable
+fun AttendancePrecisePermissionPreview() {
+    HomeModalPreview(
+        HomeInteractionUiState(
+            sheet = HomeSheet.AttendanceCode,
+            code = "1234",
+        ),
+        locationIssue = HomeAttendanceLocationIssue.PrecisePermissionRequired,
+    )
 }
 
 @Preview(name = "Attendance invalid code", widthDp = 393, heightDp = 790)
@@ -32,7 +58,11 @@ fun AttendanceCodeErrorModalPreview() {
 }
 
 @Composable
-private fun HomeModalPreview(state: HomeInteractionUiState) {
+private fun HomeModalPreview(
+    state: HomeInteractionUiState,
+    isCheckingLocation: Boolean = false,
+    locationIssue: HomeAttendanceLocationIssue? = null,
+) {
     YappTheme(darkTheme = false, dynamicColor = false) {
         Box(Modifier.fillMaxSize()) {
             HomeScreen(HomePreviewData.state(), now = HomePreviewData.now)
@@ -48,7 +78,13 @@ private fun HomeModalPreview(state: HomeInteractionUiState) {
                 showHandle = true,
                 showActions = false,
             ) {
-                HomeSheetContent(state, {}, {})
+                HomeSheetContent(
+                    state = state,
+                    onCodeChange = {},
+                    onConfirm = {},
+                    isCheckingLocation = isCheckingLocation,
+                    locationIssue = locationIssue,
+                )
             }
         }
     }

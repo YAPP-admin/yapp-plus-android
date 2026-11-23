@@ -12,6 +12,7 @@ import com.yapp.plus.feature.main.home.components.HomeSheetContent
 import com.yapp.plus.feature.main.home.model.HomeAttendanceLocationIssue
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
+import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
 
 @Preview(name = "Attendance code sheet", widthDp = 393, heightDp = 790)
 @Composable
@@ -26,7 +27,7 @@ fun AttendanceLocationCheckingPreview() {
         HomeInteractionUiState(
             sheet = HomeSheet.AttendanceCode,
             code = "1234",
-            isSubmitting = true,
+            submissionStage = HomeSubmissionStage.CheckingLocation,
         ),
         isCheckingLocation = true,
     )

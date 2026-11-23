@@ -23,7 +23,7 @@ class HomeReportViewModelTest {
             val response = CompletableDeferred<Long>()
             val requests = mutableListOf<Pair<AttendanceReportType, String>>()
             val viewModel =
-                HomeInteractionViewModel(
+                viewModel(
                     repository { type, reason ->
                         requests += type to reason
                         response.await()
@@ -56,7 +56,7 @@ class HomeReportViewModelTest {
         runTest {
             var fails = true
             val viewModel =
-                HomeInteractionViewModel(
+                viewModel(
                     repository { _, _ ->
                         if (fails) {
                             throw AttendanceException(
@@ -88,7 +88,7 @@ class HomeReportViewModelTest {
         runTest {
             var requests = 0
             val viewModel =
-                HomeInteractionViewModel(
+                viewModel(
                     repository { _, _ ->
                         requests++
                         42
@@ -109,6 +109,9 @@ class HomeReportViewModelTest {
             assertEquals(R.string.home_report_closed, viewModel.uiState.value.errorResource)
             assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
         }
+
+    private fun viewModel(repository: AttendanceRepository): HomeInteractionViewModel =
+        HomeInteractionViewModel(repository) { error("not location attendance") }
 
     private fun repository(submit: suspend (AttendanceReportType, String) -> Long) =
         object : AttendanceRepository {

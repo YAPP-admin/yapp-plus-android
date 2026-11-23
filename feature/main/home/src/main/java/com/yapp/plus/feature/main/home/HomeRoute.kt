@@ -22,8 +22,6 @@ import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.feature.main.home.components.HomeReportConfirmation
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
-import com.yapp.plus.feature.main.home.components.HomeSheetContent
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import kotlinx.coroutines.delay
@@ -82,7 +80,9 @@ fun HomeRoute(
             noticeState = state.weeklyNotices,
             onNoticeRetry = viewModel::retryWeeklyNotices,
             onNotificationsClick = onNotificationsClick,
-            onAttendanceClick = interactionViewModel::openAttendanceCode,
+            onAttendanceClick = {
+                session?.let { interactionViewModel.openAttendanceCode(it.sessionId) }
+            },
             onSessionsClick = onSessionsClick,
             onScoreClick = onScoreClick,
             onReportClick = interactionViewModel::openReport,
@@ -128,14 +128,11 @@ fun HomeRoute(
                     unavailableMessage = if (canReport) null else R.string.home_report_closed,
                 )
             } else {
-                HomeSheetContent(
+                HomeAttendanceCodeRoute(
+                    session = session,
                     state = interaction,
-                    onCodeChange = interactionViewModel::updateCode,
-                    onConfirm = {
-                        if (session?.attendanceStatus == AttendanceStatusUiModel.Available) {
-                            interactionViewModel.verifyAttendance(session.sessionId)
-                        }
-                    },
+                    viewModel = interactionViewModel,
+                    onRefreshSession = viewModel::retryCurrentWeekSchedule,
                 )
             }
         }

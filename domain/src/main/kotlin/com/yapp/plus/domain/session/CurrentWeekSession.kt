@@ -11,4 +11,6 @@ data class CurrentWeekSession(
     val location: String?,
     val attendanceStatus: AttendanceStatus,
     val locationDetails: SessionLocationDetails? = null,
+    val endTime: LocalTime? = null,
+    val type: SessionType? = null,
 )

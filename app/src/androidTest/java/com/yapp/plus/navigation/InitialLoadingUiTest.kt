@@ -70,7 +70,6 @@ class InitialLoadingUiTest {
                 MyAttendanceHistoryScreen(
                     state = MyPreviewData.history,
                     onBack = {},
-                    onRetry = {},
                     onLoadMore = {},
                     isScreenLoading = isLoading,
                 )

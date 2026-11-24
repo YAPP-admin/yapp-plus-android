@@ -17,7 +17,12 @@ fun BoardRoute(
 ) {
     val viewModel: BoardViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(noticeId) { viewModel.showNotice(noticeId) }
+    LaunchedEffect(noticeId) {
+        viewModel.showNotice(noticeId)
+        if (noticeId == null && viewModel.uiState.value.notices == NoticeUiState.Error) {
+            viewModel.retry()
+        }
+    }
     BoardScreen(
         modifier = modifier,
         category = state.category,
@@ -26,7 +31,6 @@ fun BoardRoute(
         onCategorySelected = viewModel::selectCategory,
         onNoticeClick = onNoticeClick,
         onBack = onBack,
-        onRetry = viewModel::retry,
         nextCursor = state.nextCursor,
         isLoadingMore = state.isLoadingMore,
         hasLoadMoreError = state.hasLoadMoreError,

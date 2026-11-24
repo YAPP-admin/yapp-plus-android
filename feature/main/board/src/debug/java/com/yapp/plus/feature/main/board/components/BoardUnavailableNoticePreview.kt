@@ -12,7 +12,6 @@ private fun BoardUnavailableNoticePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         BoardNoticeState<Nothing>(
             state = NoticeUiState.Unavailable,
-            onRetry = {},
             emptyMessage = R.string.board_empty,
         ) {}
     }

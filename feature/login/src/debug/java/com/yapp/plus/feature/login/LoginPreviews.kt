@@ -41,7 +41,7 @@ private fun LoginErrorDialogPreview() {
                         .padding(padding)
                         .consumeWindowInsets(padding),
             )
-            LoginErrorDialog(onDismiss = {}, onRetry = {})
+            LoginErrorDialog(onDismiss = {})
         }
     }
 }

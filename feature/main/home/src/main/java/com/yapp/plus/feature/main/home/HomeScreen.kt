@@ -42,13 +42,11 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNotificationsClick: (() -> Unit)? = null,
     onAttendanceClick: () -> Unit = {},
-    onRetry: () -> Unit = {},
     onSessionsClick: () -> Unit = {},
     onScoreClick: () -> Unit = {},
     onReportClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
     noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
-    onNoticeRetry: () -> Unit = {},
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     isLoading: Boolean = false,
     distanceContent: @Composable () -> Unit = {},
@@ -93,7 +91,6 @@ fun HomeScreen(
                     now = now,
                     onAttendanceClick = onAttendanceClick,
                     onScoreClick = onScoreClick,
-                    onRetry = onRetry,
                     distanceContent = distanceContent,
                 )
                 Spacer(Modifier.height(10.dp))
@@ -116,7 +113,6 @@ fun HomeScreen(
                         HomeNoticeContent(
                             noticeState,
                             onNoticeClick,
-                            onNoticeRetry,
                             Modifier.weight(1f).fillMaxWidth(),
                         )
                     }

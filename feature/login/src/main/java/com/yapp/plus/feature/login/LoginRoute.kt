@@ -59,12 +59,6 @@ fun LoginRoute(
     )
 
     if (uiState.dialog == LoginUiState.Dialog.Error) {
-        LoginErrorDialog(
-            onDismiss = viewModel::dismissDialog,
-            onRetry = {
-                viewModel.dismissDialog()
-                requestLogin()
-            },
-        )
+        LoginErrorDialog(onDismiss = viewModel::dismissDialog)
     }
 }

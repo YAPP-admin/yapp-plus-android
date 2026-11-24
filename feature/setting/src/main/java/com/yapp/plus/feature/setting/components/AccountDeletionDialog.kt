@@ -34,11 +34,17 @@ internal fun AccountDeletionDialog(
         body = body?.let { stringResource(it) },
         confirmText =
             stringResource(
-                if (hasError) R.string.settings_retry else R.string.settings_account_delete,
+                if (hasError) R.string.settings_confirm else R.string.settings_account_delete,
             ),
-        dismissText = stringResource(R.string.settings_cancel),
+        dismissText = if (hasError) null else stringResource(R.string.settings_cancel),
         showActions = !isDeleting,
-        onConfirm = { if (!isDeleting) onConfirm() },
+        onConfirm = {
+            if (hasError) {
+                onDismiss()
+            } else if (!isDeleting) {
+                onConfirm()
+            }
+        },
         onDismiss = { if (!isDeleting) onDismiss() },
     )
 }

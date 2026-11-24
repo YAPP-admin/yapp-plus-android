@@ -33,7 +33,7 @@ private fun MyLoadingPreview() {
 @Composable
 private fun MyHistoryScreenPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        MyAttendanceHistoryScreen(MyPreviewData.history, {}, {}, {})
+        MyAttendanceHistoryScreen(MyPreviewData.history, {}, {})
     }
 }
 
@@ -41,6 +41,6 @@ private fun MyHistoryScreenPreview() {
 @Composable
 private fun MyHistoryLoadingPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        MyAttendanceHistoryScreen(MyPreviewData.history, {}, {}, {}, isScreenLoading = true)
+        MyAttendanceHistoryScreen(MyPreviewData.history, {}, {}, isScreenLoading = true)
     }
 }

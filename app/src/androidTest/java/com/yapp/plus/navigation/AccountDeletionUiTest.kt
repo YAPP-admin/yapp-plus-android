@@ -107,7 +107,7 @@ class AccountDeletionUiTest {
     }
 
     @Test
-    fun deletionFailureOffersRetryAndDismissal() {
+    fun deletionFailureClosesThenUsesTheOriginalConfirmation() {
         var hasError by mutableStateOf(true)
         var retries = 0
         composeRule.setContent {
@@ -125,13 +125,13 @@ class AccountDeletionUiTest {
             }
         }
         composeRule.onNodeWithText("탈퇴 처리 실패").assertIsDisplayed()
-        composeRule.onNodeWithText("다시 시도").performClick()
-        composeRule.runOnIdle {
-            assertEquals(1, retries)
-            hasError = true
-        }
-        composeRule.onNodeWithText("취소").performClick()
+        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
+        composeRule.onNodeWithText("확인").performClick()
         composeRule.onNodeWithText("탈퇴 처리 실패").assertDoesNotExist()
+        composeRule.runOnIdle { assertEquals(0, retries) }
+        composeRule.onNodeWithText("회원 탈퇴").performClick()
+        composeRule.onNodeWithText("탈퇴하기").performClick()
+        composeRule.runOnIdle { assertEquals(1, retries) }
     }
 
     private fun saveWindowScreenshot(name: String) {

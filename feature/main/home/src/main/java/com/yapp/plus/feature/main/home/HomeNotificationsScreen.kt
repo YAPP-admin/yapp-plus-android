@@ -48,9 +48,12 @@ internal fun HomeNotificationsScreen(
                     CircularProgressIndicator(color = YappHomeColor.brand)
                 }
             HomeNotificationsUiState.Error ->
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    NotificationListError(onRetry = onRefresh)
-                }
+                NotificationList(
+                    state = HomeNotificationsUiState.Content(hasRefreshError = true),
+                    onPostClick = onPostClick,
+                    onRefresh = onRefresh,
+                    onLoadMore = onLoadMore,
+                )
             is HomeNotificationsUiState.Content ->
                 NotificationList(state, onPostClick, onRefresh, onLoadMore)
         }
@@ -68,9 +71,9 @@ internal fun NotificationList(
     PullToRefreshBox(isRefreshing = state.isRefreshing, onRefresh = onRefresh) {
         LazyColumn(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
             if (state.hasRefreshError) {
-                item { NotificationListError(onRetry = onRefresh) }
+                item { NotificationListError() }
             }
-            if (state.items.isEmpty() && state.nextCursor == null) {
+            if (state.items.isEmpty() && state.nextCursor == null && !state.hasRefreshError) {
                 item {
                     HomeEmptyState(
                         message = stringResource(R.string.home_notifications_empty),
@@ -105,38 +108,29 @@ internal fun NotificationPagination(
     ) {
         when {
             state.isLoadingMore -> CircularProgressIndicator(color = YappHomeColor.brand)
-            state.hasLoadMoreError -> NotificationListError(onRetry = onLoadMore)
             else ->
-                YappButton(
-                    text = stringResource(R.string.home_notifications_load_more),
-                    onClick = onLoadMore,
-                    enabled = !state.isRefreshing,
-                    variant = YappButtonVariant.SolidNeutral,
-                    size = YappButtonSize.HomeSecondary,
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (state.hasLoadMoreError) NotificationListError()
+                    YappButton(
+                        text = stringResource(R.string.home_notifications_load_more),
+                        onClick = onLoadMore,
+                        enabled = !state.isRefreshing,
+                        variant = YappButtonVariant.SolidNeutral,
+                        size = YappButtonSize.HomeSecondary,
+                    )
+                }
         }
     }
 }
 
 @Composable
-internal fun NotificationListError(onRetry: () -> Unit) {
-    Column(
+internal fun NotificationListError() {
+    YappText(
+        stringResource(R.string.home_notifications_load_error),
+        YappHomeTypography.body,
+        YappHomeColor.muted,
         modifier = Modifier.padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        YappText(
-            stringResource(R.string.home_notifications_load_error),
-            YappHomeTypography.body,
-            YappHomeColor.muted,
-        )
-        YappButton(
-            text = stringResource(R.string.attendance_retry),
-            onClick = onRetry,
-            variant = YappButtonVariant.SolidNeutral,
-            size = YappButtonSize.HomeSecondary,
-        )
-    }
+    )
 }
 
 @Composable

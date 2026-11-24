@@ -23,7 +23,6 @@ internal fun BoardNoticeDetail(
     onMarkRead: () -> Unit = {},
     isMarkingRead: Boolean = false,
     hasReadError: Boolean = false,
-    onReload: () -> Unit = {},
 ) {
     Column(
         Modifier
@@ -46,8 +45,8 @@ internal fun BoardNoticeDetail(
         Column(Modifier.padding(top = 28.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             notice.assignment?.let { BoardAssignmentInfo(it) }
             BoardMarkdown(notice.content)
-            notice.images.forEach { BoardNoticeImage(it, onReload) }
+            notice.images.forEach { BoardNoticeImage(it) }
         }
-        BoardReadConfirmation(notice, onMarkRead, isMarkingRead, hasReadError, onReload)
+        BoardReadConfirmation(notice, onMarkRead, isMarkingRead, hasReadError)
     }
 }

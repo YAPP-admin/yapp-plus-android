@@ -106,7 +106,6 @@ private fun TeamPhotoHomePreview(
                 sessionDate = sessionDate,
                 today = sessionDate,
                 onUpload = {},
-                onRetry = {},
                 onReviewResult = {},
                 onViewPhoto = {},
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
@@ -178,7 +177,6 @@ fun TeamPhotoSessionCardPreview() {
             sessionDate = date,
             today = date,
             onUpload = {},
-            onRetry = {},
             onReviewResult = {},
         )
     }
@@ -199,7 +197,6 @@ fun TeamPhotoLookupActionsPreview() {
                 HomeTeamPhotoSessionAction(
                     state = state,
                     onUpload = {},
-                    onRetry = {},
                     onReviewResult = {},
                 )
             }

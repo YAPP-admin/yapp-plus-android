@@ -14,12 +14,16 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.feature.login.components.LoginErrorDialog
 import com.yapp.plus.feature.main.board.BoardScreen
 import com.yapp.plus.feature.main.board.model.BoardCategory
 import com.yapp.plus.feature.main.board.model.BoardNoticeUiModel
 import com.yapp.plus.feature.main.board.model.NoticeUiState
+import com.yapp.plus.feature.main.home.HomeScreen
 import com.yapp.plus.feature.main.home.components.HomeReportReasonPreview
 import com.yapp.plus.feature.main.home.components.HomeReportTypePreview
+import com.yapp.plus.feature.main.home.model.AttendanceUiState
+import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.my.MyScreen
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
@@ -64,6 +68,39 @@ class ConnectedApisUiTest {
         composeRule.runOnIdle { assertEquals(1, confirmations) }
         composeRule.onNodeWithText("확인했어요").assertIsDisplayed()
         screenshot("notice-detail")
+    }
+
+    @Test fun failedNoticeQueryShowsFigmaErrorWithoutRetryButton() {
+        composeRule.setContent {
+            YappTheme { BoardScreen(notices = NoticeUiState.Error) }
+        }
+        composeRule.onNodeWithText("앗, 오류가 발생했어요!").assertIsDisplayed()
+        composeRule.onNodeWithText("잠시 후 다시 시도해 주세요.").assertIsDisplayed()
+        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
+    }
+
+    @Test fun failedHomeQueriesKeepSeparateErrorMessages() {
+        composeRule.setContent {
+            YappTheme {
+                HomeScreen(state = AttendanceUiState.Error, noticeState = HomeNoticeUiState.Error)
+            }
+        }
+        composeRule.onNodeWithText("이번 주 세션을 불러오지 못했어요").assertIsDisplayed()
+        composeRule.onNodeWithText("공지를 불러오지 못했어요").assertIsDisplayed()
+        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
+    }
+
+    @Test fun loginFailureClosesWithoutStartingAnotherRequest() {
+        var showError by mutableStateOf(true)
+        composeRule.setContent {
+            YappTheme {
+                if (showError) LoginErrorDialog { showError = false }
+            }
+        }
+        composeRule.onNodeWithText("로그인을 완료하지 못했어요").assertIsDisplayed()
+        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
+        composeRule.onNodeWithText("닫기").performClick()
+        composeRule.onNodeWithText("로그인을 완료하지 못했어요").assertDoesNotExist()
     }
 
     @Test fun reportTypeMatchesFigmaOptions() {

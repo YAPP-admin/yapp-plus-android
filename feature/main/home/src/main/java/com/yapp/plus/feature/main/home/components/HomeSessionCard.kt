@@ -39,7 +39,6 @@ fun HomeSessionCard(
     state: AttendanceUiState<CurrentWeekSessionUiModel>,
     modifier: Modifier = Modifier,
     onAttendanceClick: () -> Unit = {},
-    onRetry: () -> Unit = {},
     onScoreClick: () -> Unit = {},
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     distanceContent: @Composable () -> Unit = {},
@@ -73,7 +72,7 @@ fun HomeSessionCard(
                         YappHomeColor.text,
                         Modifier.padding(vertical = 24.dp),
                     )
-                AttendanceUiState.Error -> HomeSessionError(onRetry)
+                AttendanceUiState.Error -> HomeSessionError()
                 is AttendanceUiState.Content -> {
                     HomeSessionContent(
                         session = state.value,
@@ -90,20 +89,12 @@ fun HomeSessionCard(
 
 @Composable
 internal fun HomeSessionError(
-    onRetry: () -> Unit,
     @StringRes messageResource: Int = R.string.attendance_home_session_error,
 ) {
     YappText(
         stringResource(messageResource),
         YappHomeTypography.body,
         YappHomeColor.muted,
-    )
-    YappButton(
-        text = stringResource(R.string.attendance_retry),
-        onClick = onRetry,
-        modifier = Modifier.fillMaxWidth(),
-        variant = YappButtonVariant.SolidNeutral,
-        size = YappButtonSize.HomeSecondary,
     )
 }
 

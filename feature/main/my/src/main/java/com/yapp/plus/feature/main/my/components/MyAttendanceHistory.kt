@@ -182,6 +182,5 @@ internal fun MyHistoryPagination(
                 },
             ),
         isLoading = !state.hasLoadMoreError,
-        onRetry = if (state.hasLoadMoreError) onLoadMore else null,
     )
 }

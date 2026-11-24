@@ -375,7 +375,7 @@ class SessionLocationUiTest {
             "disabled" -> waitForText("휴대폰의 위치 기능을 켜 주세요")
             "unavailable" -> {
                 waitForText("현재 위치를 확인하지 못했어요. 다시 시도해 주세요")
-                composeRule.onNodeWithText("다시 시도").assertIsEnabled()
+                composeRule.onNodeWithText(CHECK_DISTANCE).assertIsEnabled()
             }
         }
     }

@@ -9,7 +9,6 @@
     <string name="attendance_status_not_eligible">이번 세션은 출석 대상이 아니에요</string>
     <string name="attendance_status_not_open">지금은 출석할 수 없어요</string>
     <string name="attendance_status_available">출석할 수 있어요</string>
-    <string name="attendance_retry">다시 시도</string>
     <string name="home_week_title">이번 주는 %1$s 세션이에요</string>
     <string name="home_today_title">오늘은 %1$s 세션이에요</string>
     <string name="home_session_starts">%1$s에 세션이 시작돼요</string>

@@ -31,7 +31,6 @@ fun MyRoute(
             state = state.attendanceHistory,
             absentCount = (state.score as? MyAttendanceScoreState.Content)?.score?.absentCount,
             onBack = onBack,
-            onRetry = viewModel::fetchHistory,
             onLoadMore = viewModel::fetchNextPage,
             modifier = modifier,
             isScreenLoading = state.isLoading,
@@ -39,8 +38,6 @@ fun MyRoute(
     } else {
         MyScreen(
             state = state,
-            onRetryScore = viewModel::fetchScore,
-            onRetryProfile = viewModel::fetchProfile,
             onAttendanceHistoryClick = onAttendanceHistoryClick,
             onSettingsClick = onSettingsClick,
             onContactClick = onContactClick,

@@ -18,7 +18,6 @@ private fun MyProfileLoadingPreview() {
     YappTheme {
         MyProfileSection(
             state = MyProfileUiState.Loading(savedName = MyPreviewData.profile.name),
-            onRetry = {},
         )
     }
 }
@@ -26,5 +25,5 @@ private fun MyProfileLoadingPreview() {
 @Preview(name = "Profile error", widthDp = 393)
 @Composable
 private fun MyProfileErrorPreview() {
-    YappTheme { MyProfileSection(state = MyProfileUiState.Error(), onRetry = {}) }
+    YappTheme { MyProfileSection(state = MyProfileUiState.Error()) }
 }

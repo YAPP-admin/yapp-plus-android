@@ -18,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.components.button.YappButton
-import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -30,7 +28,6 @@ import com.yapp.plus.feature.main.board.model.NoticeUiState
 @Composable
 internal fun <T> BoardNoticeState(
     state: NoticeUiState<T>,
-    onRetry: () -> Unit,
     @StringRes emptyMessage: Int,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit,
@@ -44,19 +41,7 @@ internal fun <T> BoardNoticeState(
             NoticeUiState.Unavailable -> BoardEmptyState(message = R.string.board_preparing)
             NoticeUiState.Loading -> CircularProgressIndicator(color = YappMainColor.brand)
             NoticeUiState.Empty -> BoardEmptyState(message = emptyMessage)
-            NoticeUiState.Error ->
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    YappText(
-                        stringResource(R.string.board_error),
-                        YappTypography.body1NormalRegular,
-                        YappMainColor.textPrimary,
-                    )
-                    val retryLabel = stringResource(R.string.board_retry)
-                    YappButton(retryLabel, onRetry, size = YappButtonSize.Medium)
-                }
+            NoticeUiState.Error -> BoardNoticeError()
             is NoticeUiState.Content -> content(state.value)
         }
     }
@@ -90,4 +75,23 @@ internal fun BoardNoticeCard(
         }
     }
     HorizontalDivider(color = YappMainColor.divider)
+}
+
+@Composable
+internal fun BoardNoticeError() {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        YappText(
+            stringResource(R.string.board_error_title),
+            YappTypography.scaleT5Bold,
+            YappMainColor.textPrimary,
+        )
+        YappText(
+            stringResource(R.string.board_error_description),
+            YappTypography.body1NormalRegular,
+            YappMainColor.textSecondary,
+        )
+    }
 }

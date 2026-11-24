@@ -16,7 +16,6 @@ import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryState
 fun MyAttendanceHistoryScreen(
     state: MyAttendanceHistoryState,
     onBack: () -> Unit,
-    onRetry: () -> Unit,
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
     absentCount: Int? = null,
@@ -38,7 +37,6 @@ fun MyAttendanceHistoryScreen(
             MyAttendanceHistoryState.Error ->
                 MyRequestState(
                     message = stringResource(R.string.my_attendance_history_error),
-                    onRetry = onRetry,
                 )
             is MyAttendanceHistoryState.Content ->
                 MyAttendanceHistory(

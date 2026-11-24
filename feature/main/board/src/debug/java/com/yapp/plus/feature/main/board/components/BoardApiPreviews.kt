@@ -53,7 +53,7 @@ private fun BoardMarkdownPreview() {
 @Preview(widthDp = 353, showBackground = true)
 @Composable
 private fun BoardImagePreview() {
-    YappTheme { BoardNoticeImage(NoticeImage("image", "첨부 이미지", "", Instant.EPOCH), {}) }
+    YappTheme { BoardNoticeImage(NoticeImage("image", "첨부 이미지", "", Instant.EPOCH)) }
 }
 
 @Preview(widthDp = 353, showBackground = true)
@@ -73,7 +73,6 @@ private fun BoardReadPreview() {
             },
             false,
             false,
-            {},
         )
     }
 }

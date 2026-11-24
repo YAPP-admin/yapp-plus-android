@@ -33,7 +33,7 @@ class SessionScheduleRemoteDataSourceTest {
             val response =
                 """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
                 "sessionId":12,"name":"세션","date":"2026-10-24","startTime":"14:00",
-                "attendanceStatus":"AVAILABLE"}}"""
+                "endTime":"18:00:00","type":"TEAM","attendanceStatus":"AVAILABLE"}}"""
             createClient(
                 response = response,
                 path = "sessions/current-week",
@@ -48,6 +48,8 @@ class SessionScheduleRemoteDataSourceTest {
                         name = "세션",
                         date = LocalDate.of(2026, 10, 24),
                         startTime = LocalTime.of(14, 0),
+                        endTime = LocalTime.of(18, 0),
+                        type = SessionType.TEAM,
                         location = null,
                         attendanceStatus = AttendanceStatus.AVAILABLE,
                     ),
@@ -73,7 +75,7 @@ class SessionScheduleRemoteDataSourceTest {
                 val response =
                     """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
                     "sessionId":12,"name":"세션","date":"2026-10-24","startTime":"14:00",
-                    "attendanceStatus":"$wireStatus"}}"""
+                    "endTime":"18:00","type":"TEAM","attendanceStatus":"$wireStatus"}}"""
                 createClient(response).use { client ->
                     val repository =
                         SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(client))
@@ -89,12 +91,15 @@ class SessionScheduleRemoteDataSourceTest {
             val response =
                 """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
                 "sessionId":12,"name":"정규 세션","date":"2026-10-24","startTime":"14:00",
-                "attendanceStatus":"AVAILABLE","location":"DMC 첨단산업센터",
+                "endTime":"18:30","type":"REGULAR","attendanceStatus":"AVAILABLE",
+                "location":"DMC 첨단산업센터",
                 "roadAddress":"서울특별시 마포구 월드컵북로 396",
                 "latitude":37.5823741,"longitude":126.8864512,"detailAddress":"2층"}}"""
             createClient(response).use {
                 val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
                 val session = requireNotNull(repository.fetchCurrentWeekSchedule().session)
+                assertEquals(SessionType.REGULAR, session.type)
+                assertEquals(LocalTime.of(18, 30), session.endTime)
                 assertEquals("DMC 첨단산업센터", session.location)
                 assertEquals(
                     SessionLocationDetails(

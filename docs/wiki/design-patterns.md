@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-14
+last_verified: 2026-11-24
 ---
 
 # 설계 패턴
@@ -31,6 +31,11 @@ last_verified: 2026-11-14
 - 업무 정책은 Domain에서 처리하고 ViewModel은 화면 상태와 요청을 조율합니다.
 - 비동기 작업은 Coroutines·Flow를 사용하며 코루틴 취소 예외를 전파합니다.
 - 실패 표현과 UI 오류 변환 방식을 일관되게 사용합니다. 프로젝트 오류 타입은 실제 API 계약과 요구사항에 맞춰 정의합니다.
+
+### 홈과 일정 탭의 일정 조회
+
+- Domain의 `YappResult<T, E>`는 성공 값 `Success(value)`와 기능별 실패 사유 `Failure(reason)`를 표현합니다. 코루틴 취소는 호출자에게 전파합니다.
+- 일정 조회 계약에서 빈 일정은 성공입니다. 활성 기수가 없으면 `ScheduleFailure.NoActiveGeneration`, 그 밖의 조회 실패는 `ScheduleFailure.Unavailable`로 구분합니다. 이 단계에서는 두 타입을 정의하고 Repository 매핑과 두 화면의 상태 반영은 후속으로 진행합니다.
 
 ## Repository와 DataSource
 

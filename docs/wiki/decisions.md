@@ -6,7 +6,7 @@ last_verified: 2026-11-24
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0061`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0062`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -502,3 +502,10 @@ last_verified: 2026-11-24
 - 결정: 팀 사진 검토 카드에서 접근 권한이 있는 제출 사진을 열람합니다. 열람 시 사용자 조회로 같은 사진의 유효한 링크를 확인한 뒤 불러옵니다.
 - 근거: [백엔드 사용자 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L299-L331), [Figma 팀 사진 검토](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).
 - 적용 상태: [제품 정책](product-policy.md#사용자-팀-출석-조회)과 Android 홈에 반영했습니다. 이미지 링크가 없으면 열람을 제공하지 않으며 이미지 캐시에는 저장하지 않습니다.
+
+## DEC-0061 · 일정 조회 결과와 공통 ViewModel
+
+- 기록일: 2026-11-24
+- 결정: 홈·일정 탭의 두 일정 조회는 Domain의 `YappResult`로 성공과 기능별 실패를 전달합니다. `:core:ui`의 `BaseViewModel`이 요청 실행과 상태 갱신을 공유하고, 각 화면이 요청별 로딩·재시도와 표시 상태를 결정합니다.
+- 근거: 사용자가 두 화면에 적용할 설계와 `:core:ui` 배치를 승인했습니다. [Android 이슈 #234](https://github.com/YAPP-admin/yapp-plus-android/issues/234)
+- 적용 상태: Domain에 `YappResult`와 `ScheduleFailure`를 추가했습니다. Repository 반환형 전환, Data 매핑 및 `:core:ui`와 두 화면의 연결은 후속입니다. [설계 패턴](design-patterns.md#홈과-일정-탭의-일정-조회)

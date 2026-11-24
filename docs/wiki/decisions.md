@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-23
+last_verified: 2026-11-24
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0059`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0061`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -495,3 +495,10 @@ last_verified: 2026-11-23
 - 결정: 홈은 이번 주 세션의 `REGULAR`·`TEAM` 유형과 종료 시각을 서버 조회에서 받습니다. 유형은 출석 진입 경로를, 시작·종료 시각은 팀 세션 시간 안내를 결정하는 데 사용합니다.
 - 근거: [백엔드 이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L334), [Figma 팀 사진 안내](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-11966), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).
 - 적용 상태: Data 어댑터가 두 필드를 Domain으로 전달하며 홈은 팀 출석 화면 분기와 사진 제출 시간창에 사용합니다.
+
+## DEC-0060 · 팀 출석 제출 사진 열람
+
+- 기록일: 2026-11-24
+- 결정: 팀 사진 검토 카드에서 접근 권한이 있는 제출 사진을 열람합니다. 열람 시 사용자 조회로 같은 사진의 유효한 링크를 확인한 뒤 불러옵니다.
+- 근거: [백엔드 사용자 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L299-L331), [Figma 팀 사진 검토](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).
+- 적용 상태: [제품 정책](product-policy.md#사용자-팀-출석-조회)과 Android 홈에 반영했습니다. 이미지 링크가 없으면 열람을 제공하지 않으며 이미지 캐시에는 저장하지 않습니다.

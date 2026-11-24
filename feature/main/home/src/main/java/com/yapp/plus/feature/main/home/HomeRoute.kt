@@ -113,6 +113,7 @@ fun HomeRoute(
                             onGuide = { teamViewModel.openGuide() },
                             onReload = { teamViewModel.refresh(target) },
                             onContact = onContactStaff,
+                            onViewPhoto = teamViewModel::openSubmittedPhoto,
                         )
                     }
                 },

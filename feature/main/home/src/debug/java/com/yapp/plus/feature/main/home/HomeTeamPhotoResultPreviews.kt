@@ -110,7 +110,7 @@ private fun TeamPhotoHomePreview(
                 onReviewResult = {},
                 onViewPhoto = {},
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                thumbnail = painterResource(R.drawable.home_team_result_thumbnail),
+                thumbnail = { TeamPhotoPreviewThumbnail(it) },
             )
             HomeQuickActions({}, {}, Modifier.padding(horizontal = 16.dp))
         }
@@ -155,7 +155,7 @@ fun TeamPhotoReceiptDetailsPreview() {
 fun TeamPhotoPendingDetailsPreview() {
     HomeTeamPhotoPendingDetails(
         state = teamPhotoPreviewPending(),
-        thumbnail = painterResource(R.drawable.home_team_result_thumbnail),
+        thumbnail = { TeamPhotoPreviewThumbnail(it) },
         onViewPhoto = {},
     )
 }
@@ -231,3 +231,12 @@ fun TeamPhotoRejectedAfterDeadlinePreview() =
                 canRetry = false,
             ),
     )
+
+@Composable
+private fun TeamPhotoPreviewThumbnail(modifier: Modifier) {
+    Image(
+        painter = painterResource(R.drawable.home_team_result_thumbnail),
+        contentDescription = null,
+        modifier = modifier,
+    )
+}

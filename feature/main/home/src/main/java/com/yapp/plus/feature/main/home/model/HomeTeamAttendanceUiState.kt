@@ -17,9 +17,10 @@ internal data class HomeTeamAttendanceUiState(
     val error: Int? = null,
     val uncertain: Boolean = false,
     val receipt: HomeTeamPhotoReceiptUiModel? = null,
+    val photoViewer: HomeTeamPhotoViewerUiState? = null,
 ) {
     val isActive: Boolean
-        get() = guide || preparing || input != null || receipt != null
+        get() = guide || preparing || input != null || receipt != null || photoViewer != null
 
     val photo: TeamAttendancePhoto?
         get() = (latest as? AttendanceUiState.Content)?.value

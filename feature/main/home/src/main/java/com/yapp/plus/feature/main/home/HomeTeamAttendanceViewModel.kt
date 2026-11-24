@@ -13,6 +13,7 @@ import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamAttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoInput
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoReceiptUiModel
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoViewerUiState
 import com.yapp.plus.feature.main.home.model.canUploadTeamPhoto
 import com.yapp.plus.feature.main.home.model.teamTimeFormat
 import com.yapp.plus.feature.main.home.model.teamZone
@@ -41,6 +42,7 @@ internal class HomeTeamAttendanceViewModel
         private val mutableState = MutableStateFlow(HomeTeamAttendanceUiState())
         val state = mutableState.asStateFlow()
         private var lookup: Job? = null
+        private var photoLookup: Job? = null
         private var operation: Job? = null
         private var session: CurrentWeekSessionUiModel? = null
 
@@ -53,6 +55,16 @@ internal class HomeTeamAttendanceViewModel
             }
             if (target.attendanceStatus == AttendanceStatusUiModel.NotEligible) return
             lookup = viewModelScope.launch { fetchLatest(target) }
+        }
+
+        fun openSubmittedPhoto() {
+            if (state.value.isActive || state.value.photo?.image == null) return
+            loadSubmittedPhoto()
+        }
+
+        fun closeSubmittedPhoto() {
+            photoLookup?.cancel()
+            mutableState.update { it.copy(photoViewer = null) }
         }
 
         fun openGuide(now: Instant = Instant.now()) {
@@ -147,10 +159,43 @@ internal class HomeTeamAttendanceViewModel
         fun clear() {
             lookup?.cancel()
             operation?.cancel()
+            photoLookup?.cancel()
             lookup = null
             operation = null
+            photoLookup = null
             session = null
             mutableState.value = HomeTeamAttendanceUiState()
+        }
+
+        private fun loadSubmittedPhoto() {
+            val current = state.value
+            val sessionId = current.sessionId ?: return
+            val photoId = current.photo?.photoId ?: return
+            if (photoLookup?.isActive == true) return
+
+            mutableState.update { it.copy(photoViewer = HomeTeamPhotoViewerUiState.Loading) }
+            photoLookup =
+                viewModelScope.launch {
+                    try {
+                        val photo = read.fetchLatestPhoto(sessionId)
+                        val image = photo?.image
+                        val viewer =
+                            when {
+                                photo?.photoId != photoId || image == null -> HomeTeamPhotoViewerUiState.Unavailable
+                                !image.expiresAt.isAfter(Instant.now()) -> HomeTeamPhotoViewerUiState.Error
+                                else -> HomeTeamPhotoViewerUiState.Content(image)
+                            }
+                        ensureActive()
+                        mutableState.update {
+                            it.copy(latest = AttendanceUiState.Content(photo), photoViewer = viewer)
+                        }
+                    } catch (cancelled: CancellationException) {
+                        throw cancelled
+                    } catch (_: Exception) {
+                        ensureActive()
+                        mutableState.update { it.copy(photoViewer = HomeTeamPhotoViewerUiState.Error) }
+                    }
+                }
         }
 
         private suspend fun fetchLatest(target: CurrentWeekSessionUiModel) {

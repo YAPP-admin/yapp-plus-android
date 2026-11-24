@@ -18,8 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -60,8 +58,7 @@ internal fun HomeTeamPhotoSessionCard(
     onReviewResult: () -> Unit,
     modifier: Modifier = Modifier,
     onViewPhoto: (() -> Unit)? = null,
-    thumbnail: Painter? = null,
-    onReplace: (() -> Unit)? = null,
+    thumbnail: (@Composable (Modifier) -> Unit)? = null,
 ) {
     val sessionDayContent: (@Composable (Int) -> Unit)? =
         if (state == Approved) {
@@ -128,15 +125,6 @@ internal fun HomeTeamPhotoSessionCard(
                 onRetry = onRetry,
                 onReviewResult = onReviewResult,
             )
-            if (state is Pending && onReplace != null) {
-                YappButton(
-                    text = stringResource(R.string.home_team_result_retry),
-                    onClick = onReplace,
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = YappButtonVariant.SolidNeutral,
-                    size = YappButtonSize.HomeSecondary,
-                )
-            }
         }
     }
 }
@@ -196,7 +184,7 @@ internal fun HomeTeamPhotoSessionAction(
 @Composable
 internal fun HomeTeamPhotoPendingDetails(
     state: Pending,
-    thumbnail: Painter?,
+    thumbnail: (@Composable (Modifier) -> Unit)?,
     onViewPhoto: (() -> Unit)?,
 ) {
     val photoAction =
@@ -218,14 +206,7 @@ internal fun HomeTeamPhotoPendingDetails(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (thumbnail != null) {
-            Image(
-                painter = thumbnail,
-                contentDescription = null,
-                modifier = Modifier.size(41.dp).clip(RoundedCornerShape(6.dp)),
-                contentScale = ContentScale.Crop,
-            )
-        }
+        thumbnail?.invoke(Modifier.size(41.dp).clip(RoundedCornerShape(6.dp)))
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             val title = stringResource(R.string.home_team_result_pending_title)
             YappText(title, YappTypography.scaleT4Bold, YappHomeColor.text)

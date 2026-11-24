@@ -470,7 +470,7 @@ last_verified: 2026-11-23
 - 기록일: 2026-11-22
 - 결정: 홈은 이번 주 세션 조회의 `CHECKED_IN`을 인증 완료로, `PENDING_APPROVAL`을 사진 검토 대기로 표시합니다. 직접 코드 인증에 성공하면 완료 화면을 열며, 홈을 다시 조회할 때는 현재 서버 상태를 표시합니다. 인증 완료 카드는 DEC-0055의 점수 확인 버튼을 제공합니다.
 - 근거: [백엔드 이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/0f2ddbdf0c9aa6a8b754225d9c6938ab70097322/APIDOC.md#L312-L322), [Figma 상태 복원 논의](https://www.figma.com/file/LUFGoDnVmwJT43QhecBI8x#2013000555), 사용자 구현 요청과 [Android 이슈 #215](https://github.com/YAPP-admin/yapp-plus-android/issues/215).
-- 적용 상태: [제품 정책](product-policy.md#수정된-홈-화면과-연결-흐름), Domain·Data 응답 상태와 홈 카드에 적용했습니다. 사진 제출 상세 조회는 회원용 계약 확인을 기다립니다.
+- 적용 상태: [제품 정책](product-policy.md#수정된-홈-화면과-연결-흐름), Domain·Data 응답 상태와 홈 카드에 적용했습니다. 사진 제출 상세 조회는 당시 회원용 계약 확인을 기다렸으며, 이후 확인한 범위는 [사용자 팀 출석 조회](product-policy.md#사용자-팀-출석-조회)를 따릅니다.
 - 대체한 결정: 없음.
 
 ## DEC-0057 · Android 코드 출석 위치 조건

@@ -249,5 +249,5 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 - `GET /api/sessions/{sessionId}/team-members`는 현재 팀의 선택 가능한 PLAYER와 본인 표시 `isMe`를 제공합니다. 선택·제출에는 기수 소속 ID인 `membershipId`를 사용합니다. 직군은 없을 수 있습니다.
 - `GET /api/sessions/{sessionId}/team-attendance-photos`는 권한이 있는 최신 제출의 사진 상태, 업로더 이름, 업로드·제출 시각, 선택 인원 수를 제공합니다. 사진이 없으면 `photo: null`입니다. 이미지 링크는 만료되거나 없을 수 있습니다.
 - 홈은 제출 안내의 한국 시간 세션 구간 안에서 팀원 선택과 제출을 허용하며, 서버 검토 상태와 업로드 정보를 표시합니다. 결석은 개인 출석 이력으로 확인합니다. 사용자 응답에 제출 당시 참석자 명단과 반려 사유는 없으며, 현재 팀 명단을 그 대신 사용하지 않습니다.
-- 팀 사진 검토 카드에는 서버가 이미지 링크를 제공한 경우 열람 진입점을 표시하고, 링크가 유효한 동안 썸네일을 불러옵니다. 열람과 재시도 시 최신 링크를 조회하며 원래 선택한 사진이 교체되거나 링크가 사라지면 사진을 표시하지 않습니다. 이미지는 앱의 메모리·디스크 이미지 캐시에 저장하지 않습니다. [Figma 팀 사진 검토](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728)
+- 팀 사진 검토 카드에는 서버가 이미지 링크를 제공한 경우 열람 진입점을 표시하고, 링크가 유효한 동안 썸네일을 불러옵니다. 열람 시 최신 링크를 조회하며 원래 선택한 사진이 교체되거나 링크가 사라지면 사진을 표시하지 않습니다. 이미지는 앱의 메모리·디스크 이미지 캐시에 저장하지 않습니다. [Figma 팀 사진 검토](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728)
 - 근거: [백엔드 사용자 팀 출석 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L275), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).

@@ -56,7 +56,7 @@ class HomeTeamAttendanceViewModelTest {
     }
 
     @Test
-    fun refreshesExpiredPhotoLinkOnOpenAndRetry() {
+    fun refreshesExpiredPhotoLinkWhenViewerIsReopened() {
         val expiredPhoto = photo(1, Instant.EPOCH)
         val repository = FakeTeamAttendance().apply { latestPhoto = expiredPhoto }
         val viewModel = home(repository)
@@ -67,7 +67,8 @@ class HomeTeamAttendanceViewModelTest {
 
         val currentPhoto = photo(1, Instant.MAX)
         repository.latestPhoto = currentPhoto
-        viewModel.retrySubmittedPhoto()
+        viewModel.closeSubmittedPhoto()
+        viewModel.openSubmittedPhoto()
         assertEquals(
             HomeTeamPhotoViewerUiState.Content(checkNotNull(currentPhoto.image)),
             viewModel.state.value.photoViewer,

@@ -62,13 +62,6 @@ internal class HomeTeamAttendanceViewModel
             loadSubmittedPhoto()
         }
 
-        fun retrySubmittedPhoto() {
-            when (state.value.photoViewer) {
-                HomeTeamPhotoViewerUiState.Error, is HomeTeamPhotoViewerUiState.Content -> loadSubmittedPhoto()
-                else -> Unit
-            }
-        }
-
         fun closeSubmittedPhoto() {
             photoLookup?.cancel()
             mutableState.update { it.copy(photoViewer = null) }

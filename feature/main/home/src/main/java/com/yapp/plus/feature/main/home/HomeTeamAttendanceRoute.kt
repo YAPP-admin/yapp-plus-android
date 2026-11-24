@@ -102,7 +102,6 @@ internal fun HomeTeamAttendanceOverlays(
         state.photoViewer != null ->
             HomeTeamSubmittedPhotoDialog(
                 state = state.photoViewer,
-                onRetry = viewModel::retrySubmittedPhoto,
                 onClose = viewModel::closeSubmittedPhoto,
             )
         state.guide ->

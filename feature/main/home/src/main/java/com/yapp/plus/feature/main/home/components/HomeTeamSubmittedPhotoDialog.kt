@@ -1,8 +1,6 @@
 package com.yapp.plus.feature.main.home.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.AlertDialog
@@ -28,7 +26,6 @@ import com.yapp.plus.feature.main.home.model.HomeTeamPhotoViewerUiState
 @Composable
 internal fun HomeTeamSubmittedPhotoDialog(
     state: HomeTeamPhotoViewerUiState,
-    onRetry: () -> Unit,
     onClose: () -> Unit,
 ) {
     AlertDialog(
@@ -43,7 +40,7 @@ internal fun HomeTeamSubmittedPhotoDialog(
                 HomeTeamPhotoViewerUiState.Unavailable ->
                     Text(stringResource(R.string.home_team_result_image_unavailable))
                 HomeTeamPhotoViewerUiState.Error ->
-                    HomeTeamSubmittedPhotoError(onRetry)
+                    Text(stringResource(R.string.home_team_result_image_error))
                 is HomeTeamPhotoViewerUiState.Content ->
                     SubcomposeAsyncImage(
                         model = rememberSubmittedPhotoRequest(state.image),
@@ -51,7 +48,7 @@ internal fun HomeTeamSubmittedPhotoDialog(
                         modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 420.dp),
                         contentScale = ContentScale.Fit,
                         loading = { CircularProgressIndicator() },
-                        error = { HomeTeamSubmittedPhotoError(onRetry) },
+                        error = { Text(stringResource(R.string.home_team_result_image_error)) },
                     )
             }
         },
@@ -74,13 +71,6 @@ internal fun HomeTeamSubmittedPhotoThumbnail(
         modifier = modifier,
         contentScale = ContentScale.Crop,
     )
-}
-
-@Composable
-private fun HomeTeamSubmittedPhotoError(onRetry: () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        HomeSessionError(onRetry, R.string.home_team_result_image_error)
-    }
 }
 
 @Composable

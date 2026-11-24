@@ -29,7 +29,6 @@ import com.yapp.plus.feature.main.my.MyScreen
 import com.yapp.plus.feature.main.my.model.MyAttendanceHistoryState
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
 import com.yapp.plus.feature.main.my.model.MySessionSummary
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import java.io.File
@@ -56,7 +55,6 @@ class MyPageUiTest {
                         MyAttendanceHistoryScreen(
                             state = MyPreviewData.history,
                             onBack = { history = false },
-                            onRetry = {},
                             onLoadMore = {},
                         )
                     } else {
@@ -114,7 +112,6 @@ class MyPageUiTest {
                                 emptyList(),
                             ),
                         onBack = {},
-                        onRetry = {},
                         onLoadMore = {},
                     )
                 }
@@ -126,38 +123,29 @@ class MyPageUiTest {
     }
 
     @Test
-    fun loadingFailureRetriesWithoutInventingAttendance() {
-        var retries = 0
+    fun historyFailureShowsAnErrorWithoutAnExtraAction() {
         composeRule.setContent {
             YappTheme {
                 MyAttendanceHistoryScreen(
                     state = MyAttendanceHistoryState.Error,
                     onBack = {},
-                    onRetry = { retries++ },
                     onLoadMore = {},
                 )
             }
         }
         composeRule.onNodeWithText("아직 출석 내역이 없어요").assertDoesNotExist()
-        composeRule.onNodeWithText("다시 시도").performClick()
-        composeRule.runOnIdle { assertEquals(1, retries) }
+        composeRule.onNodeWithText("출석 내역을 불러오지 못했어요").assertIsDisplayed()
+        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
     }
 
     @Test
-    fun profileRetryKeepsSavedNameAndAttendanceScore() {
+    fun profileFailureKeepsSavedNameAndAttendanceScore() {
         val savedName = "저장된 이름"
         var profile by mutableStateOf<MyProfileUiState>(MyProfileUiState.Loading())
-        var profileRetries = 0
-        var scoreRetries = 0
         composeRule.setContent {
             YappTheme {
                 MyScreen(
                     state = MyPreviewData.state.copy(profile = profile),
-                    onRetryScore = { scoreRetries++ },
-                    onRetryProfile = {
-                        profileRetries++
-                        profile = MyProfileUiState.Loading(savedName = savedName)
-                    },
                 )
             }
         }
@@ -171,13 +159,7 @@ class MyPageUiTest {
         composeRule.onNodeWithText("프로필을 불러오지 못했어요").assertIsDisplayed()
         composeRule.onNodeWithText(savedName).assertIsDisplayed()
         composeRule.onNodeWithText("92점").assertIsDisplayed()
-        composeRule.onNodeWithText("다시 시도").performClick()
-        composeRule.onNodeWithText("프로필을 불러오는 중이에요").assertIsDisplayed()
-        composeRule.onNodeWithText("92점").assertIsDisplayed()
-        composeRule.runOnIdle {
-            assertEquals(1, profileRetries)
-            assertEquals(0, scoreRetries)
-        }
+        composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
     }
 
     private fun saveScreenshot(name: String) {

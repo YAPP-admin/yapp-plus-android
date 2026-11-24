@@ -9,6 +9,6 @@ import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 @Composable
 private fun HomeUnavailableNoticePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeNoticeContent(HomeNoticeUiState.Unavailable, onNoticeClick = {}, onRetry = {})
+        HomeNoticeContent(HomeNoticeUiState.Unavailable, onNoticeClick = {})
     }
 }

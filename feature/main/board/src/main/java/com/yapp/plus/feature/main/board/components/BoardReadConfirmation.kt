@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -29,7 +28,6 @@ internal fun BoardReadConfirmation(
     onMarkRead: () -> Unit,
     isMarkingRead: Boolean,
     hasReadError: Boolean,
-    onReload: () -> Unit,
 ) {
     Column(
         Modifier.fillMaxWidth().padding(top = 52.dp),
@@ -78,10 +76,6 @@ internal fun BoardReadConfirmation(
                 stringResource(R.string.board_read_error),
                 YappTypography.scaleT3Medium,
                 YappMainColor.critical,
-            )
-            YappButton(
-                stringResource(R.string.board_retry),
-                if (notice.isRead) onReload else onMarkRead,
             )
         }
     }

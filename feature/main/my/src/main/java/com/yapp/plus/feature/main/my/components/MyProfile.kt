@@ -32,7 +32,6 @@ import com.yapp.plus.feature.main.my.model.MyProfileUiState
 @Composable
 internal fun MyProfileSection(
     state: MyProfileUiState,
-    onRetry: () -> Unit,
     showRequestState: Boolean = true,
 ) {
     val savedName =
@@ -56,7 +55,6 @@ internal fun MyProfileSection(
             is MyProfileUiState.Error ->
                 MyRequestState(
                     message = stringResource(R.string.my_profile_error),
-                    onRetry = onRetry,
                 )
             MyProfileUiState.Unavailable, is MyProfileUiState.Content -> Unit
         }

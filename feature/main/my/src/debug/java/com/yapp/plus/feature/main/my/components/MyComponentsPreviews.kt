@@ -9,7 +9,7 @@ import com.yapp.plus.feature.main.my.model.MyAttendanceStatus
 
 @Preview @Composable
 private fun SummaryPreview() {
-    YappTheme { MyAttendanceSummary(MyPreviewData.score, {}, {}) }
+    YappTheme { MyAttendanceSummary(MyPreviewData.score, {}) }
 }
 
 @Preview @Composable
@@ -49,7 +49,7 @@ private fun PaginationPreview() {
 
 @Preview @Composable
 private fun RequestStatePreview() {
-    YappTheme { MyRequestState("출석 현황을 불러오지 못했어요", onRetry = {}) }
+    YappTheme { MyRequestState("출석 현황을 불러오지 못했어요") }
 }
 
 @Preview @Composable

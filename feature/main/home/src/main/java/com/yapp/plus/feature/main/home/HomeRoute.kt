@@ -90,9 +90,7 @@ fun HomeRoute(
             state = state.currentWeekSchedule,
             isLoading = state.isLoading,
             modifier = Modifier.fillMaxSize(),
-            onRetry = viewModel::retryCurrentWeekSchedule,
             noticeState = state.weeklyNotices,
-            onNoticeRetry = viewModel::retryWeeklyNotices,
             onNotificationsClick = onNotificationsClick,
             onAttendanceClick = {
                 session?.takeUnless { it.type == SessionType.TEAM }?.let {
@@ -111,7 +109,6 @@ fun HomeRoute(
                             state = team,
                             now = now,
                             onGuide = { teamViewModel.openGuide() },
-                            onReload = { teamViewModel.refresh(target) },
                             onContact = onContactStaff,
                             onViewPhoto = teamViewModel::openSubmittedPhoto,
                         )

@@ -54,7 +54,6 @@ internal fun HomeTeamPhotoSessionCard(
     sessionDate: LocalDate?,
     today: LocalDate,
     onUpload: () -> Unit,
-    onRetry: () -> Unit,
     onReviewResult: () -> Unit,
     modifier: Modifier = Modifier,
     onViewPhoto: (() -> Unit)? = null,
@@ -122,7 +121,6 @@ internal fun HomeTeamPhotoSessionCard(
             HomeTeamPhotoSessionAction(
                 state = state,
                 onUpload = onUpload,
-                onRetry = onRetry,
                 onReviewResult = onReviewResult,
             )
         }
@@ -133,7 +131,6 @@ internal fun HomeTeamPhotoSessionCard(
 internal fun HomeTeamPhotoSessionAction(
     state: HomeTeamPhotoSessionUiState,
     onUpload: () -> Unit,
-    onRetry: () -> Unit,
     onReviewResult: () -> Unit,
 ) {
     if (state == Loading) {
@@ -146,12 +143,7 @@ internal fun HomeTeamPhotoSessionAction(
         return
     }
     if (state == LookupFailed) {
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            HomeSessionError(
-                onRetry = onRetry,
-                messageResource = R.string.home_team_result_lookup_error,
-            )
-        }
+        HomeSessionError(R.string.home_team_result_lookup_error)
         return
     }
     val label =

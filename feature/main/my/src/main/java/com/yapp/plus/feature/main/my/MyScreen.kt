@@ -31,11 +31,9 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 fun MyScreen(
     state: MyUiState = MyUiState(),
     modifier: Modifier = Modifier,
-    onRetryScore: () -> Unit = {},
     onAttendanceHistoryClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onContactClick: () -> Unit = {},
-    onRetryProfile: () -> Unit = {},
 ) {
     var showRules by rememberSaveable { mutableStateOf(false) }
     Column(modifier.fillMaxSize().background(YappMainColor.surface)) {
@@ -47,7 +45,7 @@ fun MyScreen(
             iconTint = YappMainColor.textSubtle,
         )
         if (state.isLoading) {
-            MyProfileSection(state.profile, onRetryProfile, showRequestState = false)
+            MyProfileSection(state.profile, showRequestState = false)
             Box(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentAlignment = Alignment.Center,
@@ -57,9 +55,9 @@ fun MyScreen(
         } else {
             LazyColumn(Modifier.weight(1f)) {
                 item {
-                    MyProfileSection(state = state.profile, onRetry = onRetryProfile)
+                    MyProfileSection(state.profile)
                     Spacer(Modifier.height(2.dp))
-                    MyAttendanceSummary(state.score, { showRules = true }, onRetryScore)
+                    MyAttendanceSummary(state.score) { showRules = true }
                     Spacer(Modifier.height(28.dp))
                     Spacer(Modifier.fillMaxWidth().height(8.dp).background(YappMainColor.basement))
                     Spacer(Modifier.height(10.dp))

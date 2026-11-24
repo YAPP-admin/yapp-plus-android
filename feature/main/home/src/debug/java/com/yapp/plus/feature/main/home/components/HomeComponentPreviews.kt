@@ -67,7 +67,7 @@ fun HomeNoticeListPreview() {
 @Preview(widthDp = 361, heightDp = 160)
 @Composable
 fun HomeNoticeContentPreview() {
-    YappTheme { HomeNoticeContent(HomeNoticeUiState.Error, {}, {}) }
+    YappTheme { HomeNoticeContent(HomeNoticeUiState.Error, {}) }
 }
 
 @Preview(widthDp = 361)
@@ -131,7 +131,7 @@ fun HomeSessionContentPreview() {
 @Preview(widthDp = 361)
 @Composable
 fun HomeSessionErrorPreview() {
-    YappTheme { HomeSessionError({}) }
+    YappTheme { HomeSessionError() }
 }
 
 @Preview(widthDp = 350, heightDp = 180)

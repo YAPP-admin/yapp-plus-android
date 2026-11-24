@@ -39,7 +39,6 @@ internal fun HomeTeamAttendanceCard(
     state: HomeTeamAttendanceUiState,
     now: Instant,
     onGuide: () -> Unit,
-    onReload: () -> Unit,
     onContact: () -> Unit,
     onViewPhoto: () -> Unit,
 ) {
@@ -53,7 +52,6 @@ internal fun HomeTeamAttendanceCard(
         sessionDate = session.sessionDate,
         today = now.atZone(teamZone).toLocalDate(),
         onUpload = onGuide,
-        onRetry = onReload,
         onReviewResult = { viewingResult = true },
         onViewPhoto = onViewPhoto.takeIf { photo?.image != null },
         thumbnail =
@@ -128,7 +126,7 @@ internal fun HomeTeamAttendanceOverlays(
                                 if (state.preparing) {
                                     CircularProgressIndicator()
                                 } else {
-                                    HomeSessionError(viewModel::loadRoster, R.string.home_team_result_lookup_error)
+                                    HomeSessionError(R.string.home_team_result_lookup_error)
                                 }
                             }
                         }

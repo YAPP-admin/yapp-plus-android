@@ -18,8 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.components.button.YappButton
-import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
@@ -33,7 +31,6 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 internal fun HomeNoticeContent(
     state: HomeNoticeUiState,
     onNoticeClick: (Long) -> Unit,
-    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (state) {
@@ -49,18 +46,12 @@ internal fun HomeNoticeContent(
                 modifier,
             )
         HomeNoticeUiState.Error ->
-            Column(
-                modifier,
-                Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                Alignment.CenterHorizontally,
-            ) {
+            Box(modifier, Alignment.Center) {
                 YappText(
                     stringResource(R.string.home_notices_error),
                     YappHomeTypography.body,
                     YappHomeColor.text,
                 )
-                val retryLabel = stringResource(R.string.attendance_retry)
-                YappButton(retryLabel, onRetry, size = YappButtonSize.Medium)
             }
         is HomeNoticeUiState.Content -> HomeNoticeList(state.notices, onNoticeClick)
     }

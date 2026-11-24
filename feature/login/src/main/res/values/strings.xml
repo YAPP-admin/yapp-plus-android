@@ -5,5 +5,4 @@
     <string name="auth_error_title">로그인을 완료하지 못했어요</string>
     <string name="auth_error_description">잠시 후 다시 시도해주세요.</string>
     <string name="auth_close">닫기</string>
-    <string name="auth_retry">다시 시도</string>
 </resources>

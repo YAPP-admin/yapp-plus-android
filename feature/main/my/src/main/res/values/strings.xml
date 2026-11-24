@@ -16,7 +16,6 @@
     <string name="my_attendance_history_empty">아직 출석 내역이 없어요</string>
     <string name="my_attendance_history_error">출석 내역을 불러오지 못했어요</string>
     <string name="my_more_error">다음 출석 내역을 불러오지 못했어요</string>
-    <string name="my_retry">다시 시도</string>
     <string name="my_session_summary">세션 현황</string>
     <string name="my_progress">진행률</string>
     <string name="my_percent">%1$d%%</string>

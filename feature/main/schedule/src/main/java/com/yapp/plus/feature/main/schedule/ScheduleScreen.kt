@@ -19,9 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.yapp.plus.core.designsystem.components.button.YappButton
-import com.yapp.plus.core.designsystem.components.button.YappButtonSize
-import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
@@ -35,7 +32,6 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 fun ScheduleScreen(
     state: ScheduleUiState<List<ScheduleSessionUiModel>>,
     modifier: Modifier = Modifier,
-    onRetry: () -> Unit = {},
 ) {
     Column(
         modifier =
@@ -60,7 +56,6 @@ fun ScheduleScreen(
             ScheduleUiState.Error ->
                 SchedulePlaceholder(
                     messageResource = R.string.schedule_error,
-                    onRetry = onRetry,
                     modifier = Modifier.weight(1f),
                 )
 
@@ -95,7 +90,6 @@ private fun ScheduleLoading(modifier: Modifier = Modifier) {
 private fun SchedulePlaceholder(
     messageResource: Int,
     modifier: Modifier = Modifier,
-    onRetry: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = 32.dp),
@@ -114,15 +108,6 @@ private fun SchedulePlaceholder(
             color = YappMainColor.textSecondary,
             textAlign = TextAlign.Center,
         )
-        onRetry?.let { retry ->
-            Spacer(Modifier.height(16.dp))
-            YappButton(
-                text = stringResource(R.string.schedule_retry),
-                onClick = retry,
-                variant = YappButtonVariant.OutlinedPrimary,
-                size = YappButtonSize.Medium,
-            )
-        }
     }
 }
 

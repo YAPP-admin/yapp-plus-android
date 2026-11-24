@@ -92,10 +92,6 @@ fun SignUpRoute(
             SignUpErrorDialog(
                 failure = failure,
                 onDismiss = viewModel::dismissFailure,
-                onRetry = {
-                    viewModel.dismissFailure()
-                    coroutineScope.launch { viewModel.submit(registrationToken) }
-                },
                 onBack = onBack,
             )
         }

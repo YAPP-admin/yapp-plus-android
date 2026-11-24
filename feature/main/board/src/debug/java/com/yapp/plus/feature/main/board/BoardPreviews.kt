@@ -68,7 +68,7 @@ private fun BoardNoticeDetailPreview() {
 @Preview(widthDp = 353, heightDp = 240, showBackground = true)
 @Composable
 private fun BoardNoticeStatePreview() {
-    YappTheme { BoardNoticeState<Nothing>(NoticeUiState.Error, {}, R.string.board_empty) {} }
+    YappTheme { BoardNoticeState<Nothing>(NoticeUiState.Error, R.string.board_empty) {} }
 }
 
 private fun previewNotice() =

@@ -17,7 +17,6 @@ import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState
 internal fun MyAttendanceSummary(
     state: MyAttendanceScoreState,
     onRulesClick: () -> Unit,
-    onRetry: () -> Unit,
 ) {
     val content = state as? MyAttendanceScoreState.Content
     val emptyValue = stringResource(R.string.my_empty_value)
@@ -30,7 +29,6 @@ internal fun MyAttendanceSummary(
         MyAttendanceScoreState.Error ->
             MyRequestState(
                 message = stringResource(R.string.my_score_error),
-                onRetry = onRetry,
             )
         MyAttendanceScoreState.Ineligible, is MyAttendanceScoreState.Content ->
             MyStatsCard(

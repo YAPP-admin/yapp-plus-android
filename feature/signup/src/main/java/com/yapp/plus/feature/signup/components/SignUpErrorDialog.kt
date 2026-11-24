@@ -10,12 +10,10 @@ import com.yapp.plus.feature.signup.R
 internal fun SignUpErrorDialog(
     failure: AuthFailure,
     onDismiss: () -> Unit,
-    onRetry: () -> Unit,
     onBack: () -> Unit,
 ) {
     val requiresNewLogin =
         failure == AuthFailure.AuthenticationRejected || failure == AuthFailure.UserAlreadyExists
-    val canRetry = failure == AuthFailure.Unavailable
     val bodyResource =
         when (failure) {
             AuthFailure.AuthenticationRejected -> R.string.auth_signup_expired
@@ -29,19 +27,10 @@ internal fun SignUpErrorDialog(
         body = stringResource(bodyResource),
         confirmText =
             stringResource(
-                when {
-                    requiresNewLogin -> R.string.auth_signup_login_again
-                    canRetry -> R.string.auth_retry
-                    else -> R.string.auth_close
-                },
+                if (requiresNewLogin) R.string.auth_signup_login_again else R.string.auth_close,
             ),
-        dismissText = if (requiresNewLogin || canRetry) stringResource(R.string.auth_close) else null,
-        onConfirm =
-            when {
-                requiresNewLogin -> onBack
-                canRetry -> onRetry
-                else -> onDismiss
-            },
+        dismissText = if (requiresNewLogin) stringResource(R.string.auth_close) else null,
+        onConfirm = if (requiresNewLogin) onBack else onDismiss,
         onDismiss = if (requiresNewLogin) onBack else onDismiss,
     )
 }

@@ -97,7 +97,7 @@ internal class HomeTeamAttendanceViewModel
             if (input != null) loadRoster()
         }
 
-        fun loadRoster() {
+        private fun loadRoster() {
             val id = session?.sessionId ?: return
             if (state.value.input == null || operation?.isActive == true) return
             mutableState.update { it.copy(preparing = true, error = null) }

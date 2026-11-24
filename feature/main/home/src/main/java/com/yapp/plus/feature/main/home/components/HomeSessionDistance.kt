@@ -41,8 +41,6 @@ internal fun HomeSessionDistance(
             when {
                 state == SessionDistanceUiState.Loading -> R.string.home_distance_loading
                 result is SessionDistance.Measured -> R.string.home_distance_refresh
-                result == SessionDistance.Unavailable ||
-                    result == SessionDistance.LocationDisabled -> R.string.attendance_retry
                 else -> R.string.home_distance_check
             }
         YappButton(

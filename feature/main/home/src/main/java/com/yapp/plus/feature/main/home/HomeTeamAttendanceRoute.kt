@@ -20,6 +20,8 @@ import com.yapp.plus.feature.main.home.components.HomeSessionError
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoGuideSheet
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoResultSheet
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoSessionCard
+import com.yapp.plus.feature.main.home.components.HomeTeamSubmittedPhotoDialog
+import com.yapp.plus.feature.main.home.components.HomeTeamSubmittedPhotoThumbnail
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamAttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState
@@ -39,6 +41,7 @@ internal fun HomeTeamAttendanceCard(
     onGuide: () -> Unit,
     onReload: () -> Unit,
     onContact: () -> Unit,
+    onViewPhoto: () -> Unit,
 ) {
     var viewingResult by remember(session.sessionId) { mutableStateOf(false) }
     val photo = state.photo
@@ -52,6 +55,11 @@ internal fun HomeTeamAttendanceCard(
         onUpload = onGuide,
         onRetry = onReload,
         onReviewResult = { viewingResult = true },
+        onViewPhoto = onViewPhoto.takeIf { photo?.image != null },
+        thumbnail =
+            photo?.image?.takeIf { it.expiresAt.isAfter(now) }?.let { image ->
+                { modifier -> HomeTeamSubmittedPhotoThumbnail(image, modifier) }
+            },
         onReplace = onGuide.takeIf { canUpload && photo?.status == TeamAttendancePhotoStatus.PENDING },
     )
     if (viewingResult) {
@@ -91,6 +99,12 @@ internal fun HomeTeamAttendanceOverlays(
     val pickPhoto = rememberHomeTeamPhotoPicker(viewModel)
     val bitmap = state.input?.preview
     when {
+        state.photoViewer != null ->
+            HomeTeamSubmittedPhotoDialog(
+                state = state.photoViewer,
+                onRetry = viewModel::retrySubmittedPhoto,
+                onClose = viewModel::closeSubmittedPhoto,
+            )
         state.guide ->
             HomeTeamPhotoGuideSheet(
                 sessionTimeLabel = session.teamTimeLabel(),

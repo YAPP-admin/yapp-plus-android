@@ -1,9 +1,12 @@
 package com.yapp.plus.data.session
 
+import com.yapp.plus.domain.result.YappResult
 import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.domain.session.CurrentGenerationSchedule
 import com.yapp.plus.domain.session.CurrentWeekSchedule
 import com.yapp.plus.domain.session.CurrentWeekSession
+import com.yapp.plus.domain.session.NoActiveGenerationException
+import com.yapp.plus.domain.session.ScheduleFailure
 import com.yapp.plus.domain.session.ScheduledSession
 import com.yapp.plus.domain.session.SessionType
 import kotlinx.coroutines.CancellationException
@@ -11,6 +14,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Test
+import java.io.IOException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -42,7 +46,7 @@ class SessionScheduleRepositoryImplTest {
                                 attendanceStatus = status,
                             ),
                     )
-                assertEquals(
+                val expected =
                     CurrentWeekSchedule(
                         weekStartDate = date.minusDays(6),
                         weekEndDate = date,
@@ -57,8 +61,10 @@ class SessionScheduleRepositoryImplTest {
                                 location = null,
                                 attendanceStatus = status,
                             ),
-                    ),
-                    repository.fetchCurrentWeekSchedule(),
+                    )
+                assertEquals(
+                    YappResult.Success(expected),
+                    repository.fetchWeekResult(),
                 )
             }
             source.currentWeekSchedule =
@@ -67,14 +73,13 @@ class SessionScheduleRepositoryImplTest {
                     weekEndDate = date.plusDays(6),
                     session = null,
                 )
-            assertEquals(
+            val emptyWeek =
                 CurrentWeekSchedule(
                     weekStartDate = date,
                     weekEndDate = date.plusDays(6),
                     session = null,
-                ),
-                repository.fetchCurrentWeekSchedule(),
-            )
+                )
+            assertEquals(YappResult.Success(emptyWeek), repository.fetchWeekResult())
         }
 
     @Test
@@ -110,13 +115,13 @@ class SessionScheduleRepositoryImplTest {
                 }
             val repository = SessionScheduleRepositoryImpl(source)
             assertEquals(
-                CurrentGenerationSchedule(31, 31, expected),
-                repository.fetchCurrentGenerationSchedule(),
+                YappResult.Success(CurrentGenerationSchedule(31, 31, expected)),
+                repository.fetchGenerationResult(),
             )
             source.currentGenerationSchedule = CurrentGenerationScheduleData(31, 31, emptyList())
             assertEquals(
-                emptyList<ScheduledSession>(),
-                repository.fetchCurrentGenerationSchedule().sessions,
+                YappResult.Success(CurrentGenerationSchedule(31, 31, emptyList())),
+                repository.fetchGenerationResult(),
             )
         }
 
@@ -125,7 +130,13 @@ class SessionScheduleRepositoryImplTest {
         runTest {
             val source = FakeSessionScheduleDataSource()
             val repository = SessionScheduleRepositoryImpl(source)
-            for (failure in listOf(IllegalStateException("unavailable"), CancellationException())) {
+            val failures =
+                listOf(
+                    NoActiveGenerationException(),
+                    IllegalStateException("unavailable"),
+                    CancellationException(),
+                )
+            for (failure in failures) {
                 source.failure = failure
                 assertSame(
                     failure,
@@ -136,5 +147,31 @@ class SessionScheduleRepositoryImplTest {
                     runCatching { repository.fetchCurrentGenerationSchedule() }.exceptionOrNull(),
                 )
             }
+        }
+
+    @Test
+    fun `both result lookups return unavailable on a network failure`() =
+        runTest {
+            val source = FakeSessionScheduleDataSource().apply { failure = IOException("offline") }
+            val repository = SessionScheduleRepositoryImpl(source)
+            val expected = YappResult.Failure(ScheduleFailure.Unavailable)
+            assertEquals(expected, repository.fetchWeekResult())
+            assertEquals(expected, repository.fetchGenerationResult())
+        }
+
+    @Test
+    fun `both result lookups propagate the original cancellation`() =
+        runTest {
+            val cancellation = CancellationException()
+            val source = FakeSessionScheduleDataSource().apply { failure = cancellation }
+            val repository = SessionScheduleRepositoryImpl(source)
+            assertSame(
+                cancellation,
+                runCatching { repository.fetchWeekResult() }.exceptionOrNull(),
+            )
+            assertSame(
+                cancellation,
+                runCatching { repository.fetchGenerationResult() }.exceptionOrNull(),
+            )
         }
 }

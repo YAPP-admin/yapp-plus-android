@@ -1,7 +1,9 @@
 package com.yapp.plus.data.session
 
 import com.yapp.plus.core.network.BuildConfig
+import com.yapp.plus.domain.result.YappResult
 import com.yapp.plus.domain.session.AttendanceStatus
+import com.yapp.plus.domain.session.ScheduleFailure
 import com.yapp.plus.domain.session.SessionCoordinates
 import com.yapp.plus.domain.session.SessionLocationDetails
 import com.yapp.plus.domain.session.SessionType
@@ -179,7 +181,7 @@ class SessionScheduleRemoteDataSourceTest {
         }
 
     @Test
-    fun `HTTP errors and invalid response values propagate`() =
+    fun `HTTP errors propagate and malformed success responses become unavailable`() =
         runTest {
             createClient("", status = HttpStatusCode.ServiceUnavailable).use {
                 val source = SessionScheduleRemoteDataSource(it)
@@ -191,39 +193,50 @@ class SessionScheduleRemoteDataSourceTest {
                 assertTrue(generationFailure is ResponseException)
             }
             createClient("""{"weekStartDate":"invalid","weekEndDate":"2026-10-24"}""").use {
-                val result =
-                    runCatching { SessionScheduleRemoteDataSource(it).fetchCurrentWeekSchedule() }
-                assertTrue(result.isFailure)
+                val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
+                assertEquals(
+                    YappResult.Failure(ScheduleFailure.Unavailable),
+                    repository.fetchWeekResult(),
+                )
             }
             val unknownType =
                 """{"generationId":31,"generationNumber":31,"sessions":[{"sessionId":12,
                 "name":"세션","date":"2026-10-24","dayOfWeek":"SATURDAY","startTime":"14:00",
                 "endTime":"18:00","type":"UNKNOWN"}]}"""
             createClient(unknownType).use {
-                val source = SessionScheduleRemoteDataSource(it)
-                val result = runCatching { source.fetchCurrentGenerationSchedule() }
-                assertTrue(result.isFailure)
+                val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
+                assertEquals(
+                    YappResult.Failure(ScheduleFailure.Unavailable),
+                    repository.fetchGenerationResult(),
+                )
             }
         }
 
     @Test
     fun onlyDocumentedInactiveGeneration404BecomesNormalAbsence() =
         runTest {
-            for (code in listOf("CURRENT_GENERATION_NOT_FOUND", "OTHER_NOT_FOUND")) {
-                createClient("""{"code":"$code"}""", status = HttpStatusCode.NotFound).use {
-                    val source = SessionScheduleRemoteDataSource(it)
-                    val errors =
-                        listOf(
-                            runCatching { source.fetchCurrentWeekSchedule() }.exceptionOrNull(),
-                            runCatching { source.fetchCurrentGenerationSchedule() }.exceptionOrNull(),
-                        )
-                    for (error in errors) {
-                        if (code == "CURRENT_GENERATION_NOT_FOUND") {
-                            assertTrue(error is com.yapp.plus.domain.session.NoActiveGenerationException)
-                        } else {
-                            assertTrue(error is ResponseException)
-                        }
-                    }
+            val inactiveGeneration = """{"code":"CURRENT_GENERATION_NOT_FOUND"}"""
+            val otherNotFound = """{"code":"OTHER_NOT_FOUND"}"""
+            val unavailable = ScheduleFailure.Unavailable
+            val cases =
+                listOf(
+                    Triple(
+                        HttpStatusCode.NotFound,
+                        inactiveGeneration,
+                        ScheduleFailure.NoActiveGeneration,
+                    ),
+                    Triple(HttpStatusCode.NotFound, otherNotFound, unavailable),
+                    Triple(HttpStatusCode.NotFound, "invalid JSON", unavailable),
+                    Triple(HttpStatusCode.BadRequest, inactiveGeneration, unavailable),
+                    Triple(HttpStatusCode.ServiceUnavailable, inactiveGeneration, unavailable),
+                )
+            for ((status, body, reason) in cases) {
+                createClient(body, status = status).use {
+                    val repository =
+                        SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
+                    val expected = YappResult.Failure(reason)
+                    assertEquals(expected, repository.fetchWeekResult())
+                    assertEquals(expected, repository.fetchGenerationResult())
                 }
             }
         }

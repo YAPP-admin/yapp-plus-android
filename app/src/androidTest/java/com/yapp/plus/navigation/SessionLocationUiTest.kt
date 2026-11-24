@@ -347,7 +347,8 @@ class SessionLocationUiTest {
         val locationDetails = if (includeLocation) locationDetails(venueLatitude) else ""
         return """{"weekStartDate":"${sessionDate.minusDays(6)}","weekEndDate":"$sessionDate",
             "session":{"sessionId":12,"name":"개발 세션","date":"$sessionDate","startTime":"14:00",
-            "location":"DMC 첨단산업센터","attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
+            "endTime":"18:00","type":"REGULAR","location":"DMC 첨단산업센터",
+            "attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
     }
 
     private fun generationSessions(includeLocation: Boolean): String {

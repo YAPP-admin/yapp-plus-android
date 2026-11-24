@@ -3,6 +3,7 @@ package com.yapp.plus.data.session
 import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.domain.session.CurrentWeekSchedule
 import com.yapp.plus.domain.session.CurrentWeekSession
+import com.yapp.plus.domain.session.SessionType
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -27,6 +28,8 @@ internal object CurrentWeekScheduleMapper {
             name = response.name,
             date = LocalDate.parse(response.date),
             startTime = LocalTime.parse(response.startTime),
+            endTime = LocalTime.parse(response.endTime),
+            type = SessionType.valueOf(response.type),
             location = response.location,
             attendanceStatus = AttendanceStatus.valueOf(response.attendanceStatus),
             locationDetails =
@@ -44,6 +47,8 @@ internal object CurrentWeekScheduleMapper {
             name = data.name,
             date = data.date,
             startTime = data.startTime,
+            endTime = data.endTime,
+            type = data.type,
             location = data.location,
             attendanceStatus = data.attendanceStatus,
             locationDetails = data.locationDetails?.toDomain(),

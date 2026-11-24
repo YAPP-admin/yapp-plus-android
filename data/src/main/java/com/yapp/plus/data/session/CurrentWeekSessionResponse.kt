@@ -8,6 +8,8 @@ internal data class CurrentWeekSessionResponse(
     val name: String,
     val date: String,
     val startTime: String,
+    val endTime: String,
+    val type: String,
     val location: String? = null,
     val attendanceStatus: String,
     val roadAddress: String? = null,

@@ -11,6 +11,8 @@ import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
 import com.yapp.plus.data.attendance.read.AttendanceReadDataSource
 import com.yapp.plus.data.attendance.read.AttendanceReadRemoteDataSource
 import com.yapp.plus.data.attendance.read.AttendanceReadRepositoryImpl
+import com.yapp.plus.data.attendance.team.TeamAttendanceReadRemoteDataSource
+import com.yapp.plus.data.attendance.team.TeamAttendanceReadRepositoryImpl
 import com.yapp.plus.data.attendance.team.TeamAttendanceRepositoryImpl
 import com.yapp.plus.data.attendance.team.TeamPhotoDataSource
 import com.yapp.plus.data.attendance.team.TeamPhotoRemoteDataSource
@@ -38,6 +40,7 @@ import com.yapp.plus.data.session.SessionScheduleRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
 import com.yapp.plus.domain.attendance.AttendanceReadRepository
 import com.yapp.plus.domain.attendance.AttendanceRepository
+import com.yapp.plus.domain.attendance.TeamAttendanceReadRepository
 import com.yapp.plus.domain.attendance.TeamAttendanceRepository
 import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.UserProfileRepository
@@ -151,6 +154,11 @@ object NetworkModule {
     @Singleton
     fun provideAttendanceRead(source: AttendanceReadDataSource): AttendanceReadRepository =
         AttendanceReadRepositoryImpl(source)
+
+    @Provides
+    @Singleton
+    fun provideTeamAttendanceRead(client: HttpClient): TeamAttendanceReadRepository =
+        TeamAttendanceReadRepositoryImpl(TeamAttendanceReadRemoteDataSource(client))
 
     private const val UNAUTHENTICATED_CLIENT = "unauthenticated"
 

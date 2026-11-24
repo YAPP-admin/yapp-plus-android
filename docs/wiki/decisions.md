@@ -494,4 +494,4 @@ last_verified: 2026-11-23
 - 기록일: 2026-11-24
 - 결정: 홈은 이번 주 세션의 `REGULAR`·`TEAM` 유형과 종료 시각을 서버 조회에서 받습니다. 유형은 출석 진입 경로를, 시작·종료 시각은 팀 세션 시간 안내를 결정하는 데 사용합니다.
 - 근거: [백엔드 이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L334), [Figma 팀 사진 안내](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-11966), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).
-- 적용 상태: Domain 모델에 필드를 추가합니다. 기존 어댑터와 호환하도록 일시적으로 비워 둘 수 있으며, Data 응답 매핑과 홈 연결은 후속입니다.
+- 적용 상태: Data 어댑터가 응답의 두 필수 필드를 Domain으로 전달합니다. 홈 화면 연결은 후속입니다.

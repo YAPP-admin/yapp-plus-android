@@ -30,7 +30,7 @@ last_verified: 2026-11-14
 
 세션 거리 확인은 `:domain`의 `SessionDistanceRepository`와 `:data`의 Android 위치 어댑터를 App Hilt에서 연결합니다. `:feature:main:home`의 Route가 위치 권한과 화면 생명주기를 다루고 ViewModel은 일회성 요청과 거리 표시 상태를 관리합니다.
 
-개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·로그아웃·통합 탈퇴·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. My 출석 점수·이력 조회를 인증 client에 연결했습니다. 공지와 사전 보고 화면 및 인증 응답 이름을 연결했습니다. Firebase 푸시의 기기 등록·수신은 App에 연결했습니다. 팀 사진 업로드·제출 어댑터를 조립했습니다. 사용자용 팀원·사진 조회는 Domain 계약을 추가했으며 Data와 홈 연결은 후속입니다. My 본인 프로필과 문의 링크는 연결했으며 지각 면제권은 미확인 계약의 연결만 비워 둡니다. 기기별 알림 선택은 DataStore에 저장하고 App에서 Firebase 및 서버 기기 등록·해제와 연결합니다.
+개발 버전은 YAPP 서버의 Google 네이티브 인증·회원가입·로그아웃·통합 탈퇴·일정·출석 인증·보고 어댑터를 App Hilt에 연결합니다. 서버에 확인된 계약만 DataSource·DTO로 구현합니다. My 출석 점수·이력 조회를 인증 client에 연결했습니다. 공지와 사전 보고 화면 및 인증 응답 이름을 연결했습니다. Firebase 푸시의 기기 등록·수신은 App에 연결했습니다. 팀 사진 업로드·제출 어댑터를 조립했습니다. 사용자용 팀원·사진 조회 어댑터를 App에 조립했으며 홈 연결은 후속입니다. My 본인 프로필과 문의 링크는 연결했으며 지각 면제권은 미확인 계약의 연결만 비워 둡니다. 기기별 알림 선택은 DataStore에 저장하고 App에서 Firebase 및 서버 기기 등록·해제와 연결합니다.
 
 Login Feature는 Google Credential Manager의 ID 토큰과 nonce를 메모리의 App 콜백으로 전달합니다. App은 YAPP 인증 결과를 해석해 세션을 저장하거나 Signup Feature로 이동합니다. Signup Feature는 가입 토큰을 저장하지 않고 이름·휴대폰 입력, E.164 검증, 서버 제출·완료 전환과 내부 뒤로 가기·입력 복원을 소유합니다. 시작 시 세션 복원은 App이 소유합니다.
 

@@ -30,13 +30,33 @@ class SessionScheduleRepositoryImplTest {
                     CurrentWeekScheduleData(
                         weekStartDate = date.minusDays(6),
                         weekEndDate = date,
-                        session = CurrentWeekSessionData(12, "세션", date, startTime, null, status),
+                        session =
+                            CurrentWeekSessionData(
+                                sessionId = 12,
+                                name = "세션",
+                                date = date,
+                                startTime = startTime,
+                                endTime = endTime,
+                                type = SessionType.TEAM,
+                                location = null,
+                                attendanceStatus = status,
+                            ),
                     )
                 assertEquals(
                     CurrentWeekSchedule(
                         weekStartDate = date.minusDays(6),
                         weekEndDate = date,
-                        session = CurrentWeekSession(12, "세션", date, startTime, null, status),
+                        session =
+                            CurrentWeekSession(
+                                sessionId = 12,
+                                name = "세션",
+                                date = date,
+                                startTime = startTime,
+                                endTime = endTime,
+                                type = SessionType.TEAM,
+                                location = null,
+                                attendanceStatus = status,
+                            ),
                     ),
                     repository.fetchCurrentWeekSchedule(),
                 )

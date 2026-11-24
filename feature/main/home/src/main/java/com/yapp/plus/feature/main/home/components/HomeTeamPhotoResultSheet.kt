@@ -70,7 +70,7 @@ internal fun HomeTeamPhotoResultSheet(
             is ConfirmedAbsent -> state.reason
             else -> null
         }
-    val isRetry = state is Rejected || state == UploadFailed
+    val canRetry = state == UploadFailed || (state is Rejected && state.canRetry)
     YappBottomSheet(
         onDismissRequest = onDismiss,
         onConfirm = onConfirm,
@@ -131,13 +131,12 @@ internal fun HomeTeamPhotoResultSheet(
                 YappButton(
                     text =
                         stringResource(
-                            if (isRetry) R.string.home_team_result_retry else R.string.home_confirm,
+                            if (canRetry) R.string.home_team_result_retry else R.string.home_confirm,
                         ),
-                    onClick = if (isRetry) onRetry else onConfirm,
+                    onClick = if (canRetry) onRetry else onConfirm,
                     modifier = Modifier.fillMaxWidth(),
                     variant = YappButtonVariant.SolidBrand,
                     size = YappButtonSize.HomePrimary,
-                    enabled = state !is Rejected || state.canRetry,
                 )
             }
         }

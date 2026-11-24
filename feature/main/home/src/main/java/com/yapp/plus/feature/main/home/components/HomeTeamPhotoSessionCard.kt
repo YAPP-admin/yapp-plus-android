@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -36,27 +37,31 @@ import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.Approved
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.AwaitingPhoto
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.BeforeStart
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.Closed
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.Loading
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.LookupFailed
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.NotEligible
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.Pending
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.ResultAvailable
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState.Reviewing
 import java.time.LocalDate
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun HomeTeamPhotoSessionCard(
     state: HomeTeamPhotoSessionUiState,
+    sessionTimeLabel: String,
     weekStartDate: LocalDate,
     sessionDate: LocalDate?,
     today: LocalDate,
     onUpload: () -> Unit,
+    onRetry: () -> Unit,
+    onReviewResult: () -> Unit,
     modifier: Modifier = Modifier,
     onViewPhoto: (() -> Unit)? = null,
     thumbnail: Painter? = null,
 ) {
-    val actionLabel =
-        when (state) {
-            AwaitingPhoto -> R.string.home_team_result_upload
-            is Pending -> R.string.home_team_result_pending_action
-            Approved -> R.string.home_attended
-        }
     val sessionDayContent: (@Composable (Int) -> Unit)? =
         if (state == Approved) {
             { day ->
@@ -99,7 +104,8 @@ internal fun HomeTeamPhotoSessionCard(
                         modifier = Modifier.size(14.dp),
                         tint = YappHomeColor.placeholder,
                     )
-                    val location = stringResource(R.string.home_team_result_session_location)
+                    val location =
+                        stringResource(R.string.home_team_result_session_location, sessionTimeLabel)
                     YappText(location, YappTypography.scaleT3Medium, YappHomeColor.subtle)
                 }
                 val title = stringResource(R.string.home_team_result_session_title)
@@ -115,16 +121,66 @@ internal fun HomeTeamPhotoSessionCard(
                 )
                 if (state is Pending) HomeTeamPhotoPendingDetails(state, thumbnail, onViewPhoto)
             }
-            YappButton(
-                text = stringResource(actionLabel),
-                onClick = onUpload,
-                modifier = Modifier.fillMaxWidth(),
-                variant = YappButtonVariant.SolidNeutral,
-                size = YappButtonSize.HomeSecondary,
-                enabled = state == AwaitingPhoto,
+            HomeTeamPhotoSessionAction(
+                state = state,
+                onUpload = onUpload,
+                onRetry = onRetry,
+                onReviewResult = onReviewResult,
             )
         }
     }
+}
+
+@Composable
+internal fun HomeTeamPhotoSessionAction(
+    state: HomeTeamPhotoSessionUiState,
+    onUpload: () -> Unit,
+    onRetry: () -> Unit,
+    onReviewResult: () -> Unit,
+) {
+    if (state == Loading) {
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = YappHomeColor.brand,
+            )
+        }
+        return
+    }
+    if (state == LookupFailed) {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            HomeSessionError(
+                onRetry = onRetry,
+                messageResource = R.string.home_team_result_lookup_error,
+            )
+        }
+        return
+    }
+    val label =
+        when (state) {
+            AwaitingPhoto -> stringResource(R.string.home_team_result_upload)
+            is BeforeStart -> stringResource(R.string.home_session_starts, state.startTimeLabel)
+            Closed -> stringResource(R.string.attendance_status_not_open)
+            NotEligible -> stringResource(R.string.attendance_status_not_eligible)
+            Reviewing, is Pending -> stringResource(R.string.home_team_result_pending_action)
+            Approved -> stringResource(R.string.home_attended)
+            ResultAvailable -> stringResource(R.string.home_team_result_check)
+            Loading, LookupFailed -> return
+        }
+    val action =
+        when (state) {
+            AwaitingPhoto -> onUpload
+            ResultAvailable -> onReviewResult
+            else -> null
+        }
+    YappButton(
+        text = label,
+        onClick = { action?.invoke() },
+        modifier = Modifier.fillMaxWidth(),
+        variant = YappButtonVariant.SolidNeutral,
+        size = YappButtonSize.HomeSecondary,
+        enabled = action != null,
+    )
 }
 
 @Composable
@@ -163,13 +219,24 @@ internal fun HomeTeamPhotoPendingDetails(
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             val title = stringResource(R.string.home_team_result_pending_title)
             YappText(title, YappTypography.scaleT4Bold, YappHomeColor.text)
+            val uploader = state.uploaderName?.takeIf { it.isNotBlank() }
+            val details =
+                if (uploader == null) {
+                    stringResource(
+                        R.string.home_team_result_pending_details_without_uploader,
+                        state.uploadTimeLabel,
+                        state.attendeeCount,
+                    )
+                } else {
+                    stringResource(
+                        R.string.home_team_result_pending_details,
+                        state.uploadTimeLabel,
+                        uploader,
+                        state.attendeeCount,
+                    )
+                }
             YappText(
-                stringResource(
-                    R.string.home_team_result_pending_details,
-                    state.uploadTimeLabel,
-                    state.uploaderName,
-                    state.attendeeCount,
-                ),
+                details,
                 YappTypography.scaleT2Medium,
                 YappHomeColor.subtle,
             )

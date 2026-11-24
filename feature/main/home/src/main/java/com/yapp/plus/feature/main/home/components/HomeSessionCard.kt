@@ -1,5 +1,6 @@
 package com.yapp.plus.feature.main.home.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,9 +89,12 @@ fun HomeSessionCard(
 }
 
 @Composable
-internal fun HomeSessionError(onRetry: () -> Unit) {
+internal fun HomeSessionError(
+    onRetry: () -> Unit,
+    @StringRes messageResource: Int = R.string.attendance_home_session_error,
+) {
     YappText(
-        stringResource(R.string.attendance_home_session_error),
+        stringResource(messageResource),
         YappHomeTypography.body,
         YappHomeColor.muted,
     )

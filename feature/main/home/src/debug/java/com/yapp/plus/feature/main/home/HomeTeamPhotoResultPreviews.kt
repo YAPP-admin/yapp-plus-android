@@ -21,6 +21,7 @@ import com.yapp.plus.feature.main.home.components.HomeTeamPhotoPendingDetails
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoReceiptDetails
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoResultNotice
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoResultSheet
+import com.yapp.plus.feature.main.home.components.HomeTeamPhotoSessionAction
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoSessionCard
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoReceiptUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState
@@ -100,10 +101,13 @@ private fun TeamPhotoHomePreview(
             )
             HomeTeamPhotoSessionCard(
                 state = state,
+                sessionTimeLabel = stringResource(R.string.home_team_photo_preview_time),
                 weekStartDate = sessionDate.minusDays(6),
                 sessionDate = sessionDate,
                 today = sessionDate,
                 onUpload = {},
+                onRetry = {},
+                onReviewResult = {},
                 onViewPhoto = {},
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
                 thumbnail = painterResource(R.drawable.home_team_result_thumbnail),
@@ -161,3 +165,69 @@ fun TeamPhotoPendingDetailsPreview() {
 fun TeamPhotoResultNoticePreview() {
     HomeTeamPhotoResultNotice(stringResource(R.string.home_team_result_size_notice))
 }
+
+@Preview(widthDp = 353, showBackground = true)
+@Composable
+fun TeamPhotoSessionCardPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        val date = LocalDate.of(2026, 11, 7)
+        HomeTeamPhotoSessionCard(
+            state = HomeTeamPhotoSessionUiState.AwaitingPhoto,
+            sessionTimeLabel = stringResource(R.string.home_team_photo_preview_time),
+            weekStartDate = date.minusDays(6),
+            sessionDate = date,
+            today = date,
+            onUpload = {},
+            onRetry = {},
+            onReviewResult = {},
+        )
+    }
+}
+
+@Preview(widthDp = 353, showBackground = true)
+@Composable
+fun TeamPhotoLookupActionsPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        Column {
+            val states =
+                listOf(
+                    HomeTeamPhotoSessionUiState.Loading,
+                    HomeTeamPhotoSessionUiState.LookupFailed,
+                    HomeTeamPhotoSessionUiState.ResultAvailable,
+                )
+            for (state in states) {
+                HomeTeamPhotoSessionAction(
+                    state = state,
+                    onUpload = {},
+                    onRetry = {},
+                    onReviewResult = {},
+                )
+            }
+        }
+    }
+}
+
+@Preview(widthDp = 321, showBackground = true)
+@Composable
+fun TeamPhotoPendingWithoutImageOrUploaderPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeTeamPhotoPendingDetails(
+            state = teamPhotoPreviewPending().copy(uploaderName = null),
+            thumbnail = null,
+            onViewPhoto = null,
+        )
+    }
+}
+
+@Preview(widthDp = 393, heightDp = 756)
+@Composable
+fun TeamPhotoRejectedAfterDeadlinePreview() =
+    TeamPhotoHomePreview(
+        state = HomeTeamPhotoSessionUiState.ResultAvailable,
+        sheet =
+            HomeTeamPhotoResultSheetState.Rejected(
+                retryDeadlineLabel = null,
+                reason = null,
+                canRetry = false,
+            ),
+    )

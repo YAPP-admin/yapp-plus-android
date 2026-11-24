@@ -1,10 +1,10 @@
 package com.yapp.plus.feature.main.home
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.core.ui.BaseViewModel
 import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.notice.NoticeType
-import com.yapp.plus.domain.session.NoActiveGenerationException
+import com.yapp.plus.domain.session.ScheduleFailure
 import com.yapp.plus.domain.session.SessionScheduleRepository
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
@@ -15,9 +15,6 @@ import com.yapp.plus.feature.main.home.model.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -31,9 +28,7 @@ internal class HomeViewModel
     constructor(
         private val sessionScheduleRepository: SessionScheduleRepository,
         private val noticeRepository: NoticeRepository,
-    ) : ViewModel() {
-        private val mutableUiState = MutableStateFlow(HomeUiState())
-        val uiState = mutableUiState.asStateFlow()
+    ) : BaseViewModel<HomeUiState>(HomeUiState()) {
         private var scheduleJob: Job? = null
         private var noticesJob: Job? = null
 
@@ -43,13 +38,13 @@ internal class HomeViewModel
         }
 
         fun markAttendanceVerified(sessionId: Long) {
-            mutableUiState.update { state ->
+            updateState { state ->
                 val session =
                     (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
-                        ?: return@update state
-                if (session.sessionId != sessionId) return@update state
+                        ?: return@updateState state
+                if (session.sessionId != sessionId) return@updateState state
                 if (session.attendanceStatus != AttendanceStatusUiModel.Available) {
-                    return@update state
+                    return@updateState state
                 }
                 state.copy(
                     currentWeekSchedule =
@@ -63,36 +58,31 @@ internal class HomeViewModel
         fun retryCurrentWeekSchedule() {
             if (scheduleJob?.isActive == true) return
             scheduleJob =
-                viewModelScope.launch {
-                    mutableUiState.update { it.copy(currentWeekSchedule = AttendanceUiState.Loading) }
-                    fetchCurrentWeekSchedule()
-                }
+                launchRequest(
+                    request = sessionScheduleRepository::fetchCurrentWeekSchedule,
+                    onStart = { it.copy(currentWeekSchedule = AttendanceUiState.Loading) },
+                    onSuccess = { state, schedule ->
+                        val scheduleState = CurrentWeekSessionUiMapper.toUiState(schedule)
+                        state.copy(currentWeekSchedule = scheduleState)
+                    },
+                    onFailure = { state, reason ->
+                        val schedule =
+                            when (reason) {
+                                ScheduleFailure.NoActiveGeneration -> AttendanceUiState.Inactive
+                                ScheduleFailure.Unavailable -> AttendanceUiState.Error
+                            }
+                        state.copy(currentWeekSchedule = schedule)
+                    },
+                )
         }
 
         fun retryWeeklyNotices() {
             if (noticesJob?.isActive == true) return
             noticesJob =
                 viewModelScope.launch {
-                    mutableUiState.update { it.copy(weeklyNotices = HomeNoticeUiState.Loading) }
+                    updateState { it.copy(weeklyNotices = HomeNoticeUiState.Loading) }
                     fetchWeeklyNotices()
                 }
-        }
-
-        private suspend fun fetchCurrentWeekSchedule() {
-            try {
-                val schedule = sessionScheduleRepository.fetchCurrentWeekSchedule()
-                mutableUiState.update {
-                    it.copy(currentWeekSchedule = CurrentWeekSessionUiMapper.toUiState(schedule))
-                }
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (_: NoActiveGenerationException) {
-                mutableUiState.update { it.copy(currentWeekSchedule = AttendanceUiState.Inactive) }
-            } catch (_: NoActiveGenerationException) {
-                mutableUiState.update { it.copy(currentWeekSchedule = AttendanceUiState.Inactive) }
-            } catch (_: Exception) {
-                mutableUiState.update { it.copy(currentWeekSchedule = AttendanceUiState.Error) }
-            }
         }
 
         private suspend fun fetchWeeklyNotices() {
@@ -115,7 +105,7 @@ internal class HomeViewModel
                                 isAssignmentNotice = it.type == NoticeType.ASSIGNMENT,
                             )
                         }
-                mutableUiState.update {
+                updateState {
                     it.copy(
                         weeklyNotices =
                             if (items.isEmpty()) {
@@ -128,7 +118,7 @@ internal class HomeViewModel
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
             } catch (_: Exception) {
-                mutableUiState.update { it.copy(weeklyNotices = HomeNoticeUiState.Error) }
+                updateState { it.copy(weeklyNotices = HomeNoticeUiState.Error) }
             }
         }
     }

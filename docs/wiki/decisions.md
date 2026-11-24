@@ -508,4 +508,4 @@ last_verified: 2026-11-24
 - 기록일: 2026-11-24
 - 결정: 홈·일정 탭의 두 일정 조회는 Domain의 `YappResult`로 성공과 기능별 실패를 전달합니다. `:core:ui`의 `BaseViewModel`이 요청 실행과 상태 갱신을 공유하고, 각 화면이 요청별 로딩·재시도와 표시 상태를 결정합니다.
 - 근거: 사용자가 두 화면에 적용할 설계와 `:core:ui` 배치를 승인했습니다. [Android 이슈 #234](https://github.com/YAPP-admin/yapp-plus-android/issues/234)
-- 적용 상태: Domain의 `YappResult`와 `ScheduleFailure`를 Data에서 이번 주·기수 일정 조회에 매핑했습니다. Domain Repository의 반환형 전환과 `:core:ui`의 `BaseViewModel`을 통한 홈·일정 탭 연결은 후속입니다. [설계 패턴](design-patterns.md#홈과-일정-탭의-일정-조회)
+- 적용 상태: `SessionScheduleRepository`의 두 조회가 `YappResult`를 반환하고, 홈과 일정 탭은 `:core:ui`의 `BaseViewModel`에서 그 결과를 화면 상태로 반영합니다. [설계 패턴](design-patterns.md#홈과-일정-탭의-일정-조회) · [모듈 구조](module-structure.md)

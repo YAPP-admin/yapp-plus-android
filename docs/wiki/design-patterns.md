@@ -36,7 +36,8 @@ last_verified: 2026-11-24
 
 - Domain의 `YappResult<T, E>`는 성공 값 `Success(value)`와 기능별 실패 사유 `Failure(reason)`를 표현합니다. 코루틴 취소는 호출자에게 전파합니다.
 - Data는 이번 주 세션이 없거나 기수 일정 목록이 비어 있는 정상 응답을 성공으로 처리합니다. HTTP 404 응답에 서버 코드 `CURRENT_GENERATION_NOT_FOUND`가 있으면 `ScheduleFailure.NoActiveGeneration`으로, 그 밖의 통신·응답 오류는 `ScheduleFailure.Unavailable`로 변환합니다.
-- 이 결과 변환은 현재 Data 내부에서 제공합니다. Domain Repository의 두 조회 반환형과 홈·일정 탭의 ViewModel은 후속 PR에서 함께 전환합니다.
+- `SessionScheduleRepository`의 두 조회는 `YappResult<T, ScheduleFailure>`를 반환합니다. 홈과 일정 탭은 이를 받아 빈 일정(`Empty`), 활성 기수 부재(`Inactive`), 조회 실패(`Error`)를 구분해 표시합니다.
+- `:core:ui`의 `BaseViewModel`은 읽기 전용 상태를 공개합니다. `launchRequest`는 화면이 전달한 로딩·성공·실패 함수를 최신 상태에 적용합니다. 이 함수들은 여러 번 실행될 수 있으므로 외부 작업 없이 새 상태만 계산합니다. 각 화면은 반환된 `Job`으로 동일한 일정 재요청을 건너뛰고, 홈의 주간 공지는 별도로 갱신합니다.
 
 ## Repository와 DataSource
 

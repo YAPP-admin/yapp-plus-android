@@ -4,6 +4,7 @@ import com.yapp.plus.domain.notice.NoticePage
 import com.yapp.plus.domain.notice.NoticeSummary
 import com.yapp.plus.domain.notice.NoticeType
 import com.yapp.plus.domain.session.AttendanceStatus
+import com.yapp.plus.domain.session.ScheduleFailure
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
@@ -32,9 +33,7 @@ class HomeViewModelTest {
         runTest {
             val repository =
                 FakeSessionScheduleRepository().apply {
-                    currentWeekError =
-                        com.yapp.plus.domain.session
-                            .NoActiveGenerationException()
+                    currentWeekFailure = ScheduleFailure.NoActiveGeneration
                 }
             val viewModel = HomeViewModel(repository, FakeHomeNoticeRepository()).also { it.loadHomeData() }
             advanceUntilIdle()
@@ -46,7 +45,7 @@ class HomeViewModelTest {
         runTest(mainDispatcherRule.dispatcher) {
             val scheduleRepository =
                 FakeSessionScheduleRepository().apply {
-                    currentWeekError = IllegalStateException("temporary failure")
+                    currentWeekFailure = ScheduleFailure.Unavailable
                 }
             val noticeRepository = FakeHomeNoticeRepository()
             val viewModel = HomeViewModel(scheduleRepository, noticeRepository)
@@ -56,7 +55,7 @@ class HomeViewModelTest {
             assertEquals(AttendanceUiState.Error, viewModel.uiState.value.currentWeekSchedule)
             assertFalse(viewModel.uiState.value.isLoading)
 
-            scheduleRepository.currentWeekError = null
+            scheduleRepository.currentWeekFailure = null
             viewModel.retryCurrentWeekSchedule()
             advanceUntilIdle()
 
@@ -103,6 +102,29 @@ class HomeViewModelTest {
 
             noticeGate.complete(Unit)
             advanceUntilIdle()
+            assertFalse(viewModel.uiState.value.isLoading)
+        }
+
+    @Test
+    fun scheduleFailurePreservesNoticesThatFinishedFirst() =
+        runTest(mainDispatcherRule.dispatcher) {
+            val scheduleGate = CompletableDeferred<Unit>()
+            val scheduleRepository =
+                FakeSessionScheduleRepository().apply {
+                    gate = scheduleGate
+                    currentWeekFailure = ScheduleFailure.Unavailable
+                }
+            val viewModel = HomeViewModel(scheduleRepository, FakeHomeNoticeRepository())
+
+            viewModel.loadHomeData()
+            runCurrent()
+            assertEquals(HomeNoticeUiState.Empty, viewModel.uiState.value.weeklyNotices)
+            assertTrue(viewModel.uiState.value.isLoading)
+
+            scheduleGate.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(AttendanceUiState.Error, viewModel.uiState.value.currentWeekSchedule)
+            assertEquals(HomeNoticeUiState.Empty, viewModel.uiState.value.weeklyNotices)
             assertFalse(viewModel.uiState.value.isLoading)
         }
 

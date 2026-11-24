@@ -1,7 +1,12 @@
 package com.yapp.plus.domain.session
 
-interface SessionScheduleRepository {
-    suspend fun fetchCurrentWeekSchedule(): CurrentWeekSchedule
+import com.yapp.plus.domain.result.YappResult
 
-    suspend fun fetchCurrentGenerationSchedule(): CurrentGenerationSchedule
+interface SessionScheduleRepository {
+    suspend fun fetchCurrentWeekSchedule(): YappResult<CurrentWeekSchedule, ScheduleFailure>
+
+    suspend fun fetchCurrentGenerationSchedule(): YappResult<
+        CurrentGenerationSchedule,
+        ScheduleFailure,
+    >
 }

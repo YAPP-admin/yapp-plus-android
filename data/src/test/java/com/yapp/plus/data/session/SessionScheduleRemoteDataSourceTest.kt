@@ -81,7 +81,8 @@ class SessionScheduleRemoteDataSourceTest {
                 createClient(response).use { client ->
                     val repository =
                         SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(client))
-                    val session = requireNotNull(repository.fetchCurrentWeekSchedule().session)
+                    val result = repository.fetchCurrentWeekSchedule() as YappResult.Success
+                    val session = requireNotNull(result.value.session)
                     assertEquals(domainStatus, session.attendanceStatus)
                 }
             }
@@ -99,7 +100,8 @@ class SessionScheduleRemoteDataSourceTest {
                 "latitude":37.5823741,"longitude":126.8864512,"detailAddress":"2층"}}"""
             createClient(response).use {
                 val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
-                val session = requireNotNull(repository.fetchCurrentWeekSchedule().session)
+                val result = repository.fetchCurrentWeekSchedule() as YappResult.Success
+                val session = requireNotNull(result.value.session)
                 assertEquals(SessionType.REGULAR, session.type)
                 assertEquals(LocalTime.of(18, 30), session.endTime)
                 assertEquals("DMC 첨단산업센터", session.location)
@@ -165,7 +167,8 @@ class SessionScheduleRemoteDataSourceTest {
             val response = """{"generationId":31,"generationNumber":31,"sessions":$items}"""
             createClient(response).use {
                 val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
-                val sessions = repository.fetchCurrentGenerationSchedule().sessions
+                val result = repository.fetchCurrentGenerationSchedule() as YappResult.Success
+                val sessions = result.value.sessions
                 val locations = sessions.map { requireNotNull(it.locationDetails) }
                 val roadAddress = "서울특별시 마포구 월드컵북로 396"
                 assertEquals("$roadAddress 2층", locations.first().addressLine)
@@ -196,7 +199,7 @@ class SessionScheduleRemoteDataSourceTest {
                 val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
                 assertEquals(
                     YappResult.Failure(ScheduleFailure.Unavailable),
-                    repository.fetchWeekResult(),
+                    repository.fetchCurrentWeekSchedule(),
                 )
             }
             val unknownType =
@@ -207,7 +210,7 @@ class SessionScheduleRemoteDataSourceTest {
                 val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
                 assertEquals(
                     YappResult.Failure(ScheduleFailure.Unavailable),
-                    repository.fetchGenerationResult(),
+                    repository.fetchCurrentGenerationSchedule(),
                 )
             }
         }
@@ -235,8 +238,8 @@ class SessionScheduleRemoteDataSourceTest {
                     val repository =
                         SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
                     val expected = YappResult.Failure(reason)
-                    assertEquals(expected, repository.fetchWeekResult())
-                    assertEquals(expected, repository.fetchGenerationResult())
+                    assertEquals(expected, repository.fetchCurrentWeekSchedule())
+                    assertEquals(expected, repository.fetchCurrentGenerationSchedule())
                 }
             }
         }

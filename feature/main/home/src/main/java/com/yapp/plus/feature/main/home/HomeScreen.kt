@@ -52,6 +52,7 @@ fun HomeScreen(
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     isLoading: Boolean = false,
     distanceContent: @Composable () -> Unit = {},
+    teamSessionCard: (@Composable () -> Unit)? = null,
 ) {
     if (isLoading) {
         Box(
@@ -87,7 +88,7 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp)
                     .padding(top = 14.dp, bottom = 14.dp),
             ) {
-                HomeSessionCard(
+                teamSessionCard?.invoke() ?: HomeSessionCard(
                     state = state,
                     now = now,
                     onAttendanceClick = onAttendanceClick,

@@ -44,6 +44,7 @@ internal fun HomeTeamPhotoGuideSheet(
     onTakePhoto: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    errorResource: Int? = null,
 ) {
     YappBottomSheet(
         onDismissRequest = onDismiss,
@@ -62,6 +63,7 @@ internal fun HomeTeamPhotoGuideSheet(
             sessionTimeLabel = sessionTimeLabel,
             onChooseFromAlbum = onChooseFromAlbum,
             onTakePhoto = onTakePhoto,
+            errorResource = errorResource,
         )
     }
 }
@@ -72,6 +74,7 @@ internal fun HomeTeamPhotoGuideContent(
     onChooseFromAlbum: () -> Unit,
     onTakePhoto: () -> Unit,
     modifier: Modifier = Modifier,
+    errorResource: Int? = null,
 ) {
     Column(
         modifier =
@@ -120,6 +123,7 @@ internal fun HomeTeamPhotoGuideContent(
                 text = stringResource(R.string.home_team_photo_guide_review),
             )
         }
+        errorResource?.let { HomeSubmissionError(stringResource(it)) }
         HomeTeamPhotoGuideActions(onChooseFromAlbum, onTakePhoto)
     }
 }

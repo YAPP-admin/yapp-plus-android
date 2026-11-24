@@ -26,7 +26,7 @@ last_verified: 2026-11-24
 - **My:** 이름·앱 권한·기수·직군과 공식 출석 점수·출석 결과 집계·세션 진행 현황·기록을 보여 줍니다. 10회 이상 결석 시 안내를 표시합니다. 명세서의 직군 선택지는 PM / Design / Mobile / Web / Server / AI Native입니다. 본인 프로필의 표시 기준은 [회원·역할 정책](membership-policy.md#my-프로필의-회원-구분과-직군)을 따릅니다. 진행률 산식은 기존 미확정 항목을 따릅니다.
 - **미확정 항목:** 공지 질문 기능과 오류 제보 이동 위치는 미확정입니다. 탈퇴 문구는 모든 정보 삭제를 안내하면서 개인정보 일부를 3년, 나머지를 1년 보관한다고 함께 적고 있어 UI 문구는 아래 Figma 결정에 따라 표시하되, 이 문구를 서버의 전체 이력 삭제 정책으로 해석하지 않습니다.
 
-**현재 구현 상태:** 개발 앱은 YAPP 서버의 Google 인증·가입, 세션·출석 인증·사전 보고, 공지 목록·상세·읽음 API를 사용합니다. My는 본인 프로필과 출석 점수·이력을 표시합니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현했습니다. Firebase 설정을 적용한 Android 앱은 푸시를 수신하고 공지 상세를 열 수 있습니다. 팀 사진은 사용자용 팀원·사진 조회 어댑터를 App에 조립했으며 홈 연결은 후속입니다. 지각 면제권은 `—`로 표시하고 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 정상 상태에는 Figma의 알림 행만 표시합니다.
+**현재 구현 상태:** 개발 앱은 YAPP 서버의 Google 인증·가입, 세션·출석 인증·사전 보고, 공지 목록·상세·읽음 API를 사용합니다. My는 본인 프로필과 출석 점수·이력을 표시합니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현했습니다. Firebase 설정을 적용한 Android 앱은 푸시를 수신하고 공지 상세를 열 수 있습니다. 팀 사진 출석은 홈에서 팀원 조회·사진 제출·검토 상태 갱신을 진행합니다. 지각 면제권은 `—`로 표시하고 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 정상 상태에는 Figma의 알림 행만 표시합니다.
 
 ## 개발과 비공개 테스트 배포
 
@@ -59,7 +59,7 @@ Google 인증의 `SIGNED_IN` 응답은 access/refresh token 쌍을 암호화 저
 
 | 기능 | 계약과 적용 상태 |
 | --- | --- |
-| 이번 주 세션 | `GET /api/sessions/current-week`로 장소명·주소·기준 좌표와 출석 인증·검토 상태를 조회해 홈에 연결. 서버 필수 `type`·`endTime`을 Domain에 매핑하며 팀 출석 화면 연결은 후속 |
+| 이번 주 세션 | `GET /api/sessions/current-week`로 장소명·주소·기준 좌표와 출석 인증·검토 상태를 조회해 홈에 연결. 서버 필수 `type`·`endTime`으로 홈의 팀 출석 카드와 제출 시간창을 설정 |
 | 현재 기수 일정 | `GET /api/generations/current/sessions`로 장소명·주소·기준 좌표를 조회해 일정에 연결 |
 | 출석 인증 | `POST /api/attendance-verifications`; 서버 확인 후에만 완료 표시 |
 | 사전 보고 | `POST /api/attendance-reports`. 홈에서 지각·조퇴·결석을 선택하고 30자 이내의 필수 사유를 입력하면 서버 결과를 표시합니다. |
@@ -72,7 +72,7 @@ Google 인증의 `SIGNED_IN` 응답은 access/refresh token 쌍을 암호화 저
 | 공지 | `GET /api/posts`, `GET /api/posts/{id}`, `PUT /api/posts/{id}/read`; 분류·커서·Markdown·첨부 이미지·과제·명시적 읽음 확인과 홈 주간 최대 3개 공지 연결 |
 | My 이름 | 인증·가입 성공 응답 `user.name`을 세션과 함께 암호화 저장·복원. 토큰 갱신 시 유지, 새 계정·로그아웃·탈퇴 시 제거. 기존 저장 세션은 다음 로그인 성공부터 이름을 표시 |
 | My 본인 프로필 | `GET /api/users/me`. 이름·회원 구분·기수·직군을 조회하며 실패 시 세션 이름과 재시도를 표시합니다. |
-| 팀 사진 출석 | `POST /api/sessions/{id}/team-attendance-photos/presign` → 서명 URL PUT → `POST /api/sessions/{id}/team-attendance-photos`; 어댑터와 안내·사진 미리보기·팀원 선택 UI를 구현했습니다. 화면은 debug Preview에서 확인할 수 있습니다. 사용자용 팀원·사진 조회 어댑터를 App에 조립했고 홈 연결은 후속입니다. |
+| 팀 사진 출석 | `POST /api/sessions/{id}/team-attendance-photos/presign` → 서명 URL PUT → `POST /api/sessions/{id}/team-attendance-photos`; 홈에서 앨범·카메라 입력, 사진 미리보기, 본인 포함 팀원 선택과 제출을 연결합니다. 최종 제출 후 홈의 세션·사진 상태를 갱신합니다. |
 | 푸시 기기 | `PUT/DELETE /api/users/me/notification-devices/{installationId}`; ANDROID 기기 어댑터 구현. Firebase FID·FCM 토큰을 사용해 로그인한 Android 기기를 등록 |
 | 알림함 | `GET /api/users/me/notifications`. 목록·새로고침·다음 페이지·재시도를 제공하고 공지 알림에서 상세로 이동합니다. |
 | 통합 탈퇴 | `DELETE /api/users/me`; Bearer access token으로 요청하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도. Figma 확인·요청 진행·오류와 App 연결 구현 |
@@ -248,5 +248,5 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 - `GET /api/sessions/{sessionId}/team-members`는 현재 팀의 선택 가능한 PLAYER와 본인 표시 `isMe`를 제공합니다. 선택·제출에는 기수 소속 ID인 `membershipId`를 사용합니다. 직군은 없을 수 있습니다.
 - `GET /api/sessions/{sessionId}/team-attendance-photos`는 권한이 있는 최신 제출의 사진 상태, 업로더 이름, 업로드·제출 시각, 선택 인원 수를 제공합니다. 사진이 없으면 `photo: null`입니다. 이미지 링크는 만료되거나 없을 수 있습니다.
-- 두 조회를 인증된 API client와 App Hilt에 연결했습니다. 홈 화면 연결은 후속입니다. 사용자 응답에 제출 당시 참석자 명단과 반려 사유는 없으며, 현재 팀 명단을 그 대신 사용하지 않습니다.
+- 홈은 제출 안내의 한국 시간 세션 구간 안에서 팀원 선택과 제출을 허용하며, 서버 검토 상태와 업로드 정보를 표시합니다. 결석은 개인 출석 이력으로 확인합니다. 사용자 응답에 제출 당시 참석자 명단과 반려 사유는 없으며, 현재 팀 명단을 그 대신 사용하지 않습니다. 기존 제출 이미지 열람은 후속입니다.
 - 근거: [백엔드 사용자 팀 출석 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L275), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).

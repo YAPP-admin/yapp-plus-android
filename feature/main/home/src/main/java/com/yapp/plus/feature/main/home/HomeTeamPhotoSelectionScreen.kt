@@ -87,7 +87,7 @@ internal fun HomeTeamPhotoSelectionScreen(
                     onSelectionChange = { isSelected ->
                         onMemberSelectionChange(member.membershipId, isSelected)
                     },
-                    isEnabled = !state.isSubmitting,
+                    isEnabled = !state.isSubmitting && !member.isCurrentUser,
                 )
             }
         }

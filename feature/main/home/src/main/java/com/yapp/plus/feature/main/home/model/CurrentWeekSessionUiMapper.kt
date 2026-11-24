@@ -24,6 +24,8 @@ internal object CurrentWeekSessionUiMapper {
                 startTime = session.startTime,
                 address = session.locationDetails?.addressLine,
                 coordinates = session.locationDetails?.coordinates,
+                endTime = session.endTime,
+                type = session.type,
             ),
         )
     }

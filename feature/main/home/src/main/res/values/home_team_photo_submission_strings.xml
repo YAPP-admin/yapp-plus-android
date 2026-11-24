@@ -13,4 +13,6 @@
     <string name="home_team_photo_current_user">나</string>
     <string name="home_team_photo_confirm">확인 · %1$d명 참석</string>
     <string name="home_team_photo_submitting">제출 중</string>
+    <string name="home_team_photo_invalid">10MB 이하의 JPG 또는 PNG 사진을 선택해 주세요.</string>
+    <string name="home_team_photo_uncertain">사진 접수 여부를 확인하지 못했어요. 홈에서 다시 확인해 주세요.</string>
 </resources>

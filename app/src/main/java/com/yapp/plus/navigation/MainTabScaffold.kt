@@ -39,6 +39,8 @@ internal fun MainTabScaffold(
     hasDeleteAccountError: Boolean = false,
     onDeleteAccountErrorDismissed: () -> Unit = {},
 ) {
+    val uriHandler = LocalUriHandler.current
+    val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
     var isSettingsVisible by rememberSaveable { mutableStateOf(false) }
     var isMyHistoryVisible by rememberSaveable { mutableStateOf(false) }
@@ -88,6 +90,7 @@ internal fun MainTabScaffold(
                         },
                         onAttendanceComplete = onAttendanceComplete,
                         onScoreClick = { selectedTab = MainTab.My },
+                        onContactStaff = { runCatching { uriHandler.openUri(contactChannelUrl) } },
                     )
                 MainTab.Schedule -> ScheduleRoute()
                 MainTab.Board ->
@@ -111,8 +114,6 @@ internal fun MainTabScaffold(
                             notificationSettings = { NotificationSettingsRoute() },
                         )
                     } else {
-                        val uriHandler = LocalUriHandler.current
-                        val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
                         MyRoute(
                             onSettingsClick = { isSettingsVisible = true },
                             onAttendanceHistoryClick = { isMyHistoryVisible = true },

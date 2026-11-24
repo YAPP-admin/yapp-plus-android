@@ -1,6 +1,7 @@
 package com.yapp.plus.feature.main.home.model
 
 import com.yapp.plus.domain.session.SessionCoordinates
+import com.yapp.plus.domain.session.SessionType
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -18,4 +19,6 @@ data class CurrentWeekSessionUiModel(
     val startTime: LocalTime? = null,
     val address: String? = null,
     val coordinates: SessionCoordinates? = null,
+    val endTime: LocalTime? = null,
+    val type: SessionType? = null,
 )

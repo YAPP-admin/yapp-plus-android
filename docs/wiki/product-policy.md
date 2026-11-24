@@ -26,7 +26,7 @@ last_verified: 2026-11-23
 - **My:** 이름·앱 권한·기수·직군과 공식 출석 점수·출석 결과 집계·세션 진행 현황·기록을 보여 줍니다. 10회 이상 결석 시 안내를 표시합니다. 명세서의 직군 선택지는 PM / Design / Mobile / Web / Server / AI Native입니다. 본인 프로필의 표시 기준은 [회원·역할 정책](membership-policy.md#my-프로필의-회원-구분과-직군)을 따릅니다. 진행률 산식은 기존 미확정 항목을 따릅니다.
 - **미확정 항목:** 공지 질문 기능과 오류 제보 이동 위치는 미확정입니다. 탈퇴 문구는 모든 정보 삭제를 안내하면서 개인정보 일부를 3년, 나머지를 1년 보관한다고 함께 적고 있어 UI 문구는 아래 Figma 결정에 따라 표시하되, 이 문구를 서버의 전체 이력 삭제 정책으로 해석하지 않습니다.
 
-**현재 구현 상태:** 개발 앱은 YAPP 서버의 Google 인증·가입, 세션·출석 인증·사전 보고, 공지 목록·상세·읽음 API를 사용합니다. My는 본인 프로필과 출석 점수·이력을 표시합니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현했습니다. Firebase 설정을 적용한 Android 앱은 푸시를 수신하고 공지 상세를 열 수 있습니다. 팀 사진 제출은 사용자용 팀원 목록과 본인 membershipId 계약 확인 후 연결합니다. 지각 면제권은 `—`로 표시하고 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 정상 상태에는 Figma의 알림 행만 표시합니다.
+**현재 구현 상태:** 개발 앱은 YAPP 서버의 Google 인증·가입, 세션·출석 인증·사전 보고, 공지 목록·상세·읽음 API를 사용합니다. My는 본인 프로필과 출석 점수·이력을 표시합니다. 팀 사진 업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현했습니다. Firebase 설정을 적용한 Android 앱은 푸시를 수신하고 공지 상세를 열 수 있습니다. 팀 사진은 사용자용 팀원·사진 조회 계약을 Domain에 반영했으며 실제 화면과 API 연결은 후속입니다. 지각 면제권은 `—`로 표시하고 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 정상 상태에는 Figma의 알림 행만 표시합니다.
 
 ## 개발과 비공개 테스트 배포
 
@@ -72,7 +72,7 @@ Google 인증의 `SIGNED_IN` 응답은 access/refresh token 쌍을 암호화 저
 | 공지 | `GET /api/posts`, `GET /api/posts/{id}`, `PUT /api/posts/{id}/read`; 분류·커서·Markdown·첨부 이미지·과제·명시적 읽음 확인과 홈 주간 최대 3개 공지 연결 |
 | My 이름 | 인증·가입 성공 응답 `user.name`을 세션과 함께 암호화 저장·복원. 토큰 갱신 시 유지, 새 계정·로그아웃·탈퇴 시 제거. 기존 저장 세션은 다음 로그인 성공부터 이름을 표시 |
 | My 본인 프로필 | `GET /api/users/me`. 이름·회원 구분·기수·직군을 조회하며 실패 시 세션 이름과 재시도를 표시합니다. |
-| 팀 사진 출석 | `POST /api/sessions/{id}/team-attendance-photos/presign` → 서명 URL PUT → `POST /api/sessions/{id}/team-attendance-photos`; 어댑터와 안내·사진 미리보기·팀원 선택 UI를 구현했습니다. 화면은 debug Preview에서 확인할 수 있으며 실제 제출 연결은 팀원 목록과 본인 membershipId 계약 확인 후 진행합니다. |
+| 팀 사진 출석 | `POST /api/sessions/{id}/team-attendance-photos/presign` → 서명 URL PUT → `POST /api/sessions/{id}/team-attendance-photos`; 어댑터와 안내·사진 미리보기·팀원 선택 UI를 구현했습니다. 화면은 debug Preview에서 확인할 수 있습니다. 사용자용 팀원·사진 조회를 Domain에 반영했고 Data와 홈 연결은 후속입니다. |
 | 푸시 기기 | `PUT/DELETE /api/users/me/notification-devices/{installationId}`; ANDROID 기기 어댑터 구현. Firebase FID·FCM 토큰을 사용해 로그인한 Android 기기를 등록 |
 | 알림함 | `GET /api/users/me/notifications`. 목록·새로고침·다음 페이지·재시도를 제공하고 공지 알림에서 상세로 이동합니다. |
 | 통합 탈퇴 | `DELETE /api/users/me`; Bearer access token으로 요청하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도. Figma 확인·요청 진행·오류와 App 연결 구현 |
@@ -111,7 +111,7 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 
 - `POST /api/attendance-verifications`는 `sessionId`와 정수 `code`를 받습니다. 서버 응답의 `verified`와 `checkedInAt`으로 검증 성공을 판정하며 출석의 최종 확정과 점수 계산은 서버가 담당합니다.
 - `POST /api/attendance-reports`는 `LATE`, `EARLY_LEAVE`, `ABSENT` 중 하나와 선택적 30자 이내 사유를 받습니다. 응답의 `sessionId`와 `submittedAt`으로 서버의 제출 결과를 확인합니다.
-- 사전 보고 Data는 서버 오류 코드를 Domain 오류로 전달하며 `LATE`와 선택적 사유 계약을 검증합니다. 팀 사진은 SHA-256 체크섬으로 presign을 요청한 뒤 서명된 헤더를 붙여 별도 미인증 client로 업로드·제출합니다. 푸시 기기 등록·해제 Data 어댑터는 `ANDROID`를 사용합니다. 팀 사진 제출은 본인 membershipId와 팀원 목록 계약 확인 후 연결합니다. Android 푸시는 로그인 상태와 기기 알림 권한을 확인해 등록합니다.
+- 사전 보고 Data는 서버 오류 코드를 Domain 오류로 전달하며 `LATE`와 선택적 사유 계약을 검증합니다. 팀 사진은 SHA-256 체크섬으로 presign을 요청한 뒤 서명된 헤더를 붙여 별도 미인증 client로 업로드·제출합니다. 푸시 기기 등록·해제 Data 어댑터는 `ANDROID`를 사용합니다. Android 푸시는 로그인 상태와 기기 알림 권한을 확인해 등록합니다.
 - Domain은 출석 코드 검증·사전 보고 Repository 계약과 보고 종류·코드 오류 표현을 정의합니다. Data의 DTO·YAPP API 어댑터와 App 연결은 구현됐으며 홈의 출석 코드 제출은 이 경로를 사용합니다. 홈의 보고 UI도 같은 경로를 사용합니다.
 
 ## 기기별 알림 설정
@@ -229,7 +229,7 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 [백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c)에서 확인한 출석 점수·커서 이력, 공지 목록·상세·과제·읽음, 인증 응답 이름, 팀 사진과 푸시 기기의 Domain 모델·Repository 계약을 정의했습니다. My 출석 점수·이력 조회 Data 어댑터와 인증 응답 이름 저장을 반영했습니다. 점수는 서버 값을 사용하고 이력의 미확정·TEAM 검토 상태를 보존합니다. 문서화된 자격·현재 기수 없음만 값 없는 점수로 처리하며 다른 오류는 실패로 전달합니다. 공지·팀 사진·푸시 기기의 Data 어댑터와 공통·설정·보고·게시판 상세·My 요약 UI까지 PR #162~#171로 병합했습니다. 가입 Route 정리, App Repository 조립, My 화면과 조회·이동, 게시판과 홈의 API 연결을 PR #172~#178로 나누어 반영했습니다. 팀원 정보·본인 membershipId·Firebase 설정 및 미확인 회원 필드를 임의의 값으로 채우지 않습니다.
 
-팀 사진 출석 결과 UI는 사진 제출 완료와 출석 확정을 구분합니다. 검토 중·승인·반려·미선택·실패 표시는 debug Preview에서 확인할 수 있습니다. 실제 홈 결과 표시는 팀 제출 상세와 사진 열람 범위의 사용자용 계약을 확인한 뒤 연결합니다.
+팀 사진 출석 결과 UI는 사진 제출 완료와 출석 확정을 구분합니다. 검토 중·승인·반려·미선택·실패 표시는 debug Preview에서 확인할 수 있습니다. 실제 홈 연결에는 아래 사용자 조회 계약을 사용합니다.
 
 ## 홈 사전 보고와 활동 기간 안내 (2026-11-18)
 
@@ -237,9 +237,16 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 - 사유는 [사전 보고 사유 검증](#사전-보고-사유-검증)을 따릅니다. 결석 보고 접수 마감과 감점 인정의 48시간 기준은 각각 적용합니다.
 - `404 CURRENT_GENERATION_NOT_FOUND`만 홈·일정의 “현재 활동 기간이 아니에요.” 정상 상태로 표시합니다. 다른 HTTP·파싱 오류는 재시도할 수 있는 오류로 유지합니다.
 - 코드 확인은 숫자 4자리 입력 후 활성화합니다. 출석 완료 버튼으로 My 점수를 확인할 수 있습니다.
-- 팀 사진은 사용자 확인에 따라 팀원·본인 membershipId·제출 상세의 사용자 API 계약 대기로 유지합니다. [이슈 #210](https://github.com/YAPP-admin/yapp-plus-android/issues/210), [팀 사진 #180](https://github.com/YAPP-admin/yapp-plus-android/issues/180)
+- 당시 팀 사진 연결은 사용자 API 계약을 기다렸으며, 이후 확인한 범위는 [사용자 팀 출석 조회](#사용자-팀-출석-조회)를 따릅니다. [이슈 #210](https://github.com/YAPP-admin/yapp-plus-android/issues/210), [팀 사진 #180](https://github.com/YAPP-admin/yapp-plus-android/issues/180)
 
 ## 사전 보고 사유 검증
 
 - Android의 지각·조퇴·결석 사전 보고는 30자 이내의 사유가 필수입니다. 빈 값과 공백만 입력한 값은 확인 버튼을 비활성화하고 제출 시에도 차단합니다. 입력 길이는 기존 Kotlin `String.length` 기준으로 제한하고 서버에 보낼 때 양끝 공백을 제거합니다.
 - 서버의 `POST /api/attendance-reports`는 기존 선택적 `reason` 계약을 제공합니다. Android 홈에 필수 입력 정책을 적용합니다. [기존 서버 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/0f2ddbdf0c9aa6a8b754225d9c6938ab70097322/APIDOC.md#L251-L253), [iOS 회원 사전 보고 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/020-member-attendance-submit/spec.md), [Android 이슈 #222](https://github.com/YAPP-admin/yapp-plus-android/issues/222)
+
+## 사용자 팀 출석 조회
+
+- `GET /api/sessions/{sessionId}/team-members`는 현재 팀의 선택 가능한 PLAYER와 본인 표시 `isMe`를 제공합니다. 선택·제출에는 기수 소속 ID인 `membershipId`를 사용합니다. 직군은 없을 수 있습니다.
+- `GET /api/sessions/{sessionId}/team-attendance-photos`는 권한이 있는 최신 제출의 사진 상태, 업로더 이름, 업로드·제출 시각, 선택 인원 수를 제공합니다. 사진이 없으면 `photo: null`입니다. 이미지 링크는 만료되거나 없을 수 있습니다.
+- 두 조회의 Domain 계약을 추가합니다. Data와 홈 연결은 후속입니다. 사용자 응답에 제출 당시 참석자 명단과 반려 사유는 없으며, 현재 팀 명단을 그 대신 사용하지 않습니다.
+- 근거: [백엔드 사용자 팀 출석 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L275), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).

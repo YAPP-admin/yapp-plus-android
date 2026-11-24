@@ -26,17 +26,19 @@ class TeamAttendanceReadApiTest {
     @Test
     fun `roster maps the current membership by self flag and preserves missing position`() =
         runTest {
-            val body = """
+            val body =
+                """
                 {"teamId":7,"teamName":"7팀","members":[
                 {"membershipId":10,"name":"팀원","position":null,"isMe":false},
                 {"membershipId":11,"name":"본인","position":"ANDROID","isMe":true}]}
-            """.trimIndent()
+                """.trimIndent()
             client("team-members", body).use {
                 val roster = repository(it).fetchTeamRoster(SESSION_ID)
-                val members = listOf(
-                    TeamAttendanceMember(10, "팀원", null),
-                    TeamAttendanceMember(11, "본인", UserPosition.ANDROID),
-                )
+                val members =
+                    listOf(
+                        TeamAttendanceMember(10, "팀원", null),
+                        TeamAttendanceMember(11, "본인", UserPosition.ANDROID),
+                    )
                 assertEquals(TeamAttendanceRoster(7, "7팀", 11, members), roster)
             }
         }
@@ -45,11 +47,12 @@ class TeamAttendanceReadApiTest {
     fun `roster rejects missing self multiple selves and duplicate membership IDs`() =
         runTest {
             val member = """{"membershipId":10,"name":"본인","position":null,"isMe":true}"""
-            val invalidLists = listOf(
-                member.replace("true", "false"),
-                "$member,${member.replace("10", "11")}",
-                "$member,${member.replace("true", "false")}",
-            )
+            val invalidLists =
+                listOf(
+                    member.replace("true", "false"),
+                    "$member,${member.replace("10", "11")}",
+                    "$member,${member.replace("true", "false")}",
+                )
             for (members in invalidLists) {
                 val body = """{"teamId":7,"teamName":"7팀","members":[$members]}"""
                 client("team-members", body).use {
@@ -132,12 +135,13 @@ class TeamAttendanceReadApiTest {
         status: String,
         url: String,
         expiry: String,
-    ): String = """
+    ): String =
+        """
         {"photo":{"photoId":1,"teamId":7,"teamName":"7팀","status":"$status",
         "imageUrl":$url,"imageUrlExpiresAt":$expiry,"uploadedAt":"2026-11-23T01:59:00Z",
         "uploadedTime":"10:59","submittedAt":"2026-11-23T02:00:00Z",
         "uploader":{"userId":1,"name":null},"selectedMemberCount":4}}
-    """.trimIndent()
+        """.trimIndent()
 
     private companion object {
         const val SESSION_ID = 42L

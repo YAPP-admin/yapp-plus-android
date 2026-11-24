@@ -60,7 +60,6 @@ internal fun HomeTeamAttendanceCard(
             photo?.image?.takeIf { it.expiresAt.isAfter(now) }?.let { image ->
                 { modifier -> HomeTeamSubmittedPhotoThumbnail(image, modifier) }
             },
-        onReplace = onGuide.takeIf { canUpload && photo?.status == TeamAttendancePhotoStatus.PENDING },
     )
     if (viewingResult) {
         val result =

@@ -59,7 +59,6 @@ internal fun HomeTeamPhotoSessionCard(
     modifier: Modifier = Modifier,
     onViewPhoto: (() -> Unit)? = null,
     thumbnail: (@Composable (Modifier) -> Unit)? = null,
-    onReplace: (() -> Unit)? = null,
 ) {
     val sessionDayContent: (@Composable (Int) -> Unit)? =
         if (state == Approved) {
@@ -126,15 +125,6 @@ internal fun HomeTeamPhotoSessionCard(
                 onRetry = onRetry,
                 onReviewResult = onReviewResult,
             )
-            if (state is Pending && onReplace != null) {
-                YappButton(
-                    text = stringResource(R.string.home_team_result_retry),
-                    onClick = onReplace,
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = YappButtonVariant.SolidNeutral,
-                    size = YappButtonSize.HomeSecondary,
-                )
-            }
         }
     }
 }

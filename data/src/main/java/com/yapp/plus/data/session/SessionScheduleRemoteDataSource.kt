@@ -1,7 +1,6 @@
 package com.yapp.plus.data.session
 
 import com.yapp.plus.core.network.BuildConfig
-import com.yapp.plus.domain.session.NoActiveGenerationException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException

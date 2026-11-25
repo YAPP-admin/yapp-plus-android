@@ -5,7 +5,6 @@ import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.domain.session.CurrentGenerationSchedule
 import com.yapp.plus.domain.session.CurrentWeekSchedule
 import com.yapp.plus.domain.session.CurrentWeekSession
-import com.yapp.plus.domain.session.NoActiveGenerationException
 import com.yapp.plus.domain.session.ScheduleFailure
 import com.yapp.plus.domain.session.ScheduledSession
 import com.yapp.plus.domain.session.SessionType
@@ -64,7 +63,7 @@ class SessionScheduleRepositoryImplTest {
                     )
                 assertEquals(
                     YappResult.Success(expected),
-                    repository.fetchWeekResult(),
+                    repository.fetchCurrentWeekSchedule(),
                 )
             }
             source.currentWeekSchedule =
@@ -79,7 +78,7 @@ class SessionScheduleRepositoryImplTest {
                     weekEndDate = date.plusDays(6),
                     session = null,
                 )
-            assertEquals(YappResult.Success(emptyWeek), repository.fetchWeekResult())
+            assertEquals(YappResult.Success(emptyWeek), repository.fetchCurrentWeekSchedule())
         }
 
     @Test
@@ -116,36 +115,30 @@ class SessionScheduleRepositoryImplTest {
             val repository = SessionScheduleRepositoryImpl(source)
             assertEquals(
                 YappResult.Success(CurrentGenerationSchedule(31, 31, expected)),
-                repository.fetchGenerationResult(),
+                repository.fetchCurrentGenerationSchedule(),
             )
             source.currentGenerationSchedule = CurrentGenerationScheduleData(31, 31, emptyList())
             assertEquals(
                 YappResult.Success(CurrentGenerationSchedule(31, 31, emptyList())),
-                repository.fetchGenerationResult(),
+                repository.fetchCurrentGenerationSchedule(),
             )
         }
 
     @Test
-    fun `source failures and cancellation propagate from both lookups`() =
+    fun `both lookups distinguish missing generation from unexpected source errors`() =
         runTest {
             val source = FakeSessionScheduleDataSource()
             val repository = SessionScheduleRepositoryImpl(source)
             val failures =
                 listOf(
-                    NoActiveGenerationException(),
-                    IllegalStateException("unavailable"),
-                    CancellationException(),
+                    NoActiveGenerationException() to ScheduleFailure.NoActiveGeneration,
+                    IllegalStateException("unavailable") to ScheduleFailure.Unavailable,
                 )
-            for (failure in failures) {
+            for ((failure, reason) in failures) {
                 source.failure = failure
-                assertSame(
-                    failure,
-                    runCatching { repository.fetchCurrentWeekSchedule() }.exceptionOrNull(),
-                )
-                assertSame(
-                    failure,
-                    runCatching { repository.fetchCurrentGenerationSchedule() }.exceptionOrNull(),
-                )
+                val expected = YappResult.Failure(reason)
+                assertEquals(expected, repository.fetchCurrentWeekSchedule())
+                assertEquals(expected, repository.fetchCurrentGenerationSchedule())
             }
         }
 
@@ -155,8 +148,8 @@ class SessionScheduleRepositoryImplTest {
             val source = FakeSessionScheduleDataSource().apply { failure = IOException("offline") }
             val repository = SessionScheduleRepositoryImpl(source)
             val expected = YappResult.Failure(ScheduleFailure.Unavailable)
-            assertEquals(expected, repository.fetchWeekResult())
-            assertEquals(expected, repository.fetchGenerationResult())
+            assertEquals(expected, repository.fetchCurrentWeekSchedule())
+            assertEquals(expected, repository.fetchCurrentGenerationSchedule())
         }
 
     @Test
@@ -167,11 +160,11 @@ class SessionScheduleRepositoryImplTest {
             val repository = SessionScheduleRepositoryImpl(source)
             assertSame(
                 cancellation,
-                runCatching { repository.fetchWeekResult() }.exceptionOrNull(),
+                runCatching { repository.fetchCurrentWeekSchedule() }.exceptionOrNull(),
             )
             assertSame(
                 cancellation,
-                runCatching { repository.fetchGenerationResult() }.exceptionOrNull(),
+                runCatching { repository.fetchCurrentGenerationSchedule() }.exceptionOrNull(),
             )
         }
 }

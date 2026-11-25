@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.core.designsystem.theme.YappTheme
@@ -40,7 +41,7 @@ fun YappButton(
     val metrics = ButtonMetrics.from(size)
     val colors = ButtonColors.from(variant, enabled)
 
-    Surface(
+    YappClickableSurface(
         onClick = onClick,
         modifier = modifier.alpha(colors.alpha),
         enabled = enabled,

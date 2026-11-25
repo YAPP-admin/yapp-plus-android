@@ -16,10 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
+import com.yapp.plus.core.designsystem.components.refresh.YappPullToRefreshBox
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
@@ -40,7 +37,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     state: AttendanceUiState<CurrentWeekSessionUiModel>,
@@ -87,19 +83,10 @@ fun HomeScreen(
         )
         BoxWithConstraints(Modifier.weight(1f)) {
             val minHeight = maxHeight
-            val pullToRefreshState = rememberPullToRefreshState()
-            PullToRefreshBox(
+            YappPullToRefreshBox(
                 isRefreshing = isRefreshing,
                 onRefresh = onRefresh,
-                state = pullToRefreshState,
                 modifier = Modifier.fillMaxSize(),
-                indicator = {
-                    PullToRefreshDefaults.Indicator(
-                        state = pullToRefreshState,
-                        isRefreshing = isRefreshing,
-                        modifier = Modifier.align(Alignment.TopCenter),
-                    )
-                },
             ) {
                 Column(
                     Modifier

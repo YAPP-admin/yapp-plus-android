@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-10-30
+last_verified: 2026-11-25
 ---
 
 # 디자인시스템 공통 컴포넌트
@@ -34,6 +34,10 @@ YappText(
 ## 메인 아이콘 라벨
 
 `components/main/YappIconLabel.kt`의 `YappIconLabel`은 공통 아이콘과 한 줄 텍스트를 가로로 표시합니다. 아이콘 리소스와 텍스트를 받고 선택적으로 tint를 적용합니다. 아이콘 크기·간격·텍스트 스타일은 디자인시스템 토큰으로 고정하며, 화면별 문구와 아이콘 선택은 호출부가 소유합니다. 홈 세션과 일정 항목에서 함께 사용합니다.
+
+## 당겨서 새로고침
+
+`components/refresh/YappPullToRefreshBox.kt`의 `YappPullToRefreshBox`는 Material 3의 당김 제스처를 공통으로 제공하며 브랜드 색상 표시기와 흰색 표면을 사용합니다. 새로고침 상태와 요청 콜백은 호출부가 소유하고, 제스처 상태는 공통 컴포넌트가 관리합니다. `showIndicator`는 페이지네이션 로딩처럼 표시기를 숨길 때 사용합니다. 개별 Preview는 `src/debug`의 `components/refresh/YappPullToRefreshBoxPreview.kt`에 둡니다.
 
 ## Chip·Dropdown 표현 인자
 

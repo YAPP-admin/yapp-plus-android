@@ -1,0 +1,86 @@
+<resources>
+    <string name="community_title">커뮤니티</string>
+    <string name="community_afterparties">뒤풀이</string>
+    <string name="community_all">전체</string>
+    <string name="community_open">진행 중</string>
+    <string name="community_closed">투표 마감</string>
+    <string name="community_ended">종료</string>
+    <string name="community_dday">D-%1$d</string>
+    <string name="community_today">D-DAY</string>
+    <string name="community_responded">%1$d명 투표 완료</string>
+    <string name="community_empty">초대받은 뒤풀이가 없어요</string>
+    <string name="community_back">뒤로 가기</string>
+    <string name="community_vote">투표하기</string>
+    <string name="community_attendance">참석 여부</string>
+    <string name="community_date">뒤풀이 날짜</string>
+    <string name="community_deadline">조사 기한</string>
+    <string name="community_choice">뒤풀이 참여 여부</string>
+    <string name="community_attending">참석</string>
+    <string name="community_absent">불참</string>
+    <string name="community_unanswered">미응답</string>
+    <string name="community_submit">제출하기</string>
+    <string name="community_edit">수정하기</string>
+    <string name="community_attendees">참석자 %1$d명</string>
+    <string name="community_myself">나</string>
+    <string name="community_loading_error">정보를 불러오지 못했어요.</string>
+    <string name="community_voting_closed">투표 기한이 지났어요. 변경은 운영진에게 문의해 주세요.</string>
+    <string name="community_missing">이 항목을 볼 수 없어요.</string>
+    <string name="community_forbidden">이 작업을 수행할 수 없어요.</string>
+    <string name="community_invalid">입력 또는 첨부 사진을 확인해 주세요.</string>
+    <string name="community_conflict">정산이 변경됐어요. 화면을 다시 열어 최신 정보를 확인해 주세요.</string>
+    <string name="community_locked">송금을 완료한 사람이 있어요. 증빙 사진만 수정할 수 있어요.</string>
+    <string name="community_uncertain">정산 등록 결과를 확인하지 못했어요. 정산 목록에서 확인해 주세요.</string>
+    <string name="community_request_error">요청을 처리하지 못했어요.</string>
+    <string name="community_settlement">정산</string>
+    <string name="community_my_settlements">뒤풀이 정산</string>
+    <string name="community_settlement_guide">계산한 사람이 직접 정산해요. 따로 계산한 사람이 있다면 각자 정산할 수 있어요.</string>
+    <string name="community_settlement_empty">아직 정산이 없어요</string>
+    <string name="community_settlement_add">정산 추가하기</string>
+    <string name="community_settlement_title">%1$s님 정산</string>
+    <string name="community_settlement_count">총 %1$d명</string>
+    <string name="community_money">%1$s원</string>
+    <string name="community_settlement_state">정산 현황</string>
+    <string name="community_receivable">받을 금액</string>
+    <string name="community_remaining">%1$s 남았어요</string>
+    <string name="community_paid_count">%1$d / %2$d명</string>
+    <string name="community_paid">송금 완료</string>
+    <string name="community_unpaid">미송금</string>
+    <string name="community_paid_action">송금했어요</string>
+    <string name="community_undo_payment">되돌리기</string>
+    <string name="community_pay_guide">계좌로 직접 보낸 뒤 ‘송금했어요’를 눌러 주세요.</string>
+    <string name="community_reminder">송금하지 않은 사람에게 24시간마다 송금 요청 알림을 자동으로 보내요.</string>
+    <string name="community_account_holder">예금주 %1$s</string>
+    <string name="community_copy">복사</string>
+    <string name="community_copied">계좌번호를 복사했어요</string>
+    <string name="community_confirm">확인</string>
+    <string name="community_cancel">취소</string>
+    <string name="community_payment_empty">해당하는 사람이 없어요</string>
+    <string name="community_settlement_editor">정산하기</string>
+    <string name="community_settlement_editor_edit">정산 수정</string>
+    <string name="community_candidates">정산할 사람</string>
+    <string name="community_selected_count">총 정산 인원 %1$d명</string>
+    <string name="community_search">이름으로 찾기</string>
+    <string name="community_total_amount">총 금액</string>
+    <string name="community_per_person">1인당 금액</string>
+    <string name="community_proofs">증빙 사진</string>
+    <string name="community_add_photo">사진 추가 (%1$d/%2$d)</string>
+    <string name="community_remove_photo">사진 삭제</string>
+    <string name="community_photo_guide">영수증이나 결제 내역을 최대 5장까지 올릴 수 있어요.</string>
+    <string name="community_bank_account">받을 계좌</string>
+    <string name="community_bank">은행 선택</string>
+    <string name="community_account">계좌번호</string>
+    <string name="community_holder">예금주</string>
+    <string name="community_account_guide">정산받는 사람에게 은행, 계좌번호, 예금주가 표시돼요.</string>
+    <string name="community_settlement_submit">정산 요청하기 (%1$d명)</string>
+    <string name="community_settlement_save">저장하기</string>
+    <string name="community_sending">보내는 중</string>
+    <string name="community_to_pay">보낼 돈</string>
+    <string name="community_to_receive">받을 돈</string>
+    <string-array name="community_banks">
+        <item>하나</item><item>KB국민</item><item>기업</item><item>농협</item><item>경남</item><item>광주</item>
+        <item>부산</item><item>산업</item><item>수협</item><item>신한</item><item>우리</item><item>전북</item>
+        <item>제주</item><item>카카오뱅크</item><item>케이뱅크</item><item>토스뱅크</item><item>아이엠뱅크(구 대구)</item>
+        <item>SC제일</item><item>한국씨티</item><item>새마을</item><item>산림조합</item><item>신협</item>
+        <item>우체국</item><item>저축</item>
+    </string-array>
+</resources>

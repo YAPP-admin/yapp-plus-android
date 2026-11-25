@@ -3,6 +3,7 @@ package com.yapp.plus.core.designsystem.components.navigation
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,7 +26,7 @@ private val navigationItemMinimumHeight = 52.dp
 private val navigationIconSize = 24.dp
 
 @Composable
-fun YappBottomNavigationItem(
+fun RowScope.YappBottomNavigationItem(
     label: String,
     @DrawableRes iconResource: Int,
     isSelected: Boolean,
@@ -37,6 +38,7 @@ fun YappBottomNavigationItem(
     Column(
         modifier =
             modifier
+                .weight(1f, fill = false)
                 .width(navigationItemWidth)
                 .heightIn(min = navigationItemMinimumHeight)
                 .noRippleSelectable(selected = isSelected, role = Role.Tab, onClick = onClick),

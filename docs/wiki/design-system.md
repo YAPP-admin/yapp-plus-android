@@ -68,6 +68,8 @@ Figma의 알파 마스크는 VectorDrawable의 클리핑 경로로 옮겼습니�
 
 `:core:designsystem/components/navigation/`의 `YappBottomNavigation`은 탭 배치·상단 구분선을, `YappBottomNavigationItem`은 아이콘·라벨·선택 상태와 탭 semantics를 담당합니다. App이 아이콘 리소스, 표시 라벨, 선택 상태와 클릭 콜백을 전달하고 탭 선택 상태와 화면 연결도 App에서 소유합니다. 공통 컴포넌트는 앱 Navigation에 의존하지 않습니다. 컴포넌트 Preview는 `:core:preview`의 재사용 enum parameter provider를 사용합니다.
 
+탭 바의 좌우 여백은 10dp입니다. 탭은 기준 폭 70dp를 사용하며, 다섯 탭을 배치할 공간이 부족하면 폭이 균등하게 줄어듭니다. 탭 바 아래는 Figma의 하단 여백 34dp와 Android 내비게이션 인셋 중 큰 값을 확보합니다. 상위 레이아웃이 확보한 시스템 인셋도 이 여백에 포함합니다. [Figma 하단 내비게이션](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40353)
+
 ## 타이포그래피
 
 YAPP 앱의 Compose 타이포그래피 기준은 [YAPP Figma Typography 페이지](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-50739)입니다. 구현은 `:core:designsystem`의 `YappTypography` 토큰과 `YappTheme`의 Material 3 타이포그래피 매핑을 사용합니다.

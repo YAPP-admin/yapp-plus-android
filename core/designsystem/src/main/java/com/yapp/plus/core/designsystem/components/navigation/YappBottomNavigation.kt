@@ -20,7 +20,7 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 
 private val navigationDividerHeight = 1.dp
-private val navigationHorizontalPadding = 20.dp
+private val navigationHorizontalPadding = 10.dp
 
 @Composable
 fun YappBottomNavigation(

@@ -4,10 +4,18 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +30,7 @@ import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onLast
@@ -100,6 +109,61 @@ class ReleaseDesignUiTest {
             composeRule.runOnIdle { screen = name }
             composeRule.waitForIdle()
             saveScreenshot(name)
+        }
+    }
+
+    @Test
+    fun bottomNavigationUsesFigmaSpacingAndAccountsForConsumedInsets() {
+        var parentPadding by mutableStateOf(0.dp)
+        var systemBottomInset = 0.dp
+        composeRule.setContent {
+            val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            SideEffect { systemBottomInset = bottomInset }
+            YappTheme {
+                Column(
+                    Modifier
+                        .testTag("bottom-navigation")
+                        .padding(bottom = parentPadding)
+                        .consumeWindowInsets(PaddingValues(bottom = parentPadding)),
+                ) {
+                    MainTabNavigation(selectedTab = MainTab.Home, onTabSelected = {})
+                }
+            }
+        }
+
+        for (appliedPadding in listOf(0.dp, 24.dp, 48.dp)) {
+            val bottomInset =
+                composeRule.runOnIdle {
+                    parentPadding = appliedPadding
+                    maxOf(34.dp, systemBottomInset, appliedPadding)
+                }
+            composeRule.onNodeWithTag("bottom-navigation").assertHeightIsEqualTo(64.dp + bottomInset)
+        }
+    }
+
+    @Test
+    fun bottomNavigationCentersFiveTabsAtCompactAndReferenceWidths() {
+        var navigationWidth by mutableStateOf(320.dp)
+        composeRule.setContent {
+            YappTheme {
+                Box(Modifier.requiredWidth(navigationWidth).testTag("tab-row")) {
+                    MainTabNavigation(selectedTab = MainTab.Home, onTabSelected = {})
+                }
+            }
+        }
+
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val labels = MainTab.entries.map { context.getString(it.labelResource) }
+        for ((width, firstTabCenter) in listOf(320.dp to 40.dp, 360.dp to 44.dp, 393.dp to 45.dp)) {
+            composeRule.runOnIdle { navigationWidth = width }
+            val frame = composeRule.onNodeWithTag("tab-row").getUnclippedBoundsInRoot()
+            val interval = (width - firstTabCenter * 2) / labels.lastIndex
+            for ((index, label) in labels.withIndex()) {
+                val bounds = composeRule.onNodeWithText(label).getUnclippedBoundsInRoot()
+                val expectedCenter = frame.left + firstTabCenter + interval * index
+                val actualCenter = (bounds.left + bounds.right) / 2
+                assertEquals("$label at $width", expectedCenter.value, actualCenter.value, 1f)
+            }
         }
     }
 

@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.AttendanceUiState
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 
 @Preview(name = "Home", widthDp = 393, heightDp = 692)
 @Preview(name = "Tall home", widthDp = 393, heightDp = 852)

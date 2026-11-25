@@ -25,8 +25,8 @@ import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.home.attendance.components.HomeCompletionGraphic
-import com.yapp.plus.feature.main.home.attendance.components.HomeTopBar
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoReceiptDetails
+import com.yapp.plus.feature.main.home.team.components.HomeTopBar
 import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoReceiptUiModel
 
 @Composable
@@ -77,7 +77,7 @@ internal fun HomeTeamPhotoSubmittedScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
             variant = YappButtonVariant.SolidBrand,
-            size = YappButtonSize.HomePrimary,
+            size = YappButtonSize.MainAction,
         )
     }
 }

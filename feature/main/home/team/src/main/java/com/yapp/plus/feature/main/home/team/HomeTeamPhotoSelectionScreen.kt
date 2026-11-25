@@ -27,6 +27,7 @@ import com.yapp.plus.core.designsystem.components.main.YappDetailHeader
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.feature.main.home.team.components.HomeSubmissionError
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoMemberRow
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoPreview
 import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoSelectionUiState
@@ -127,7 +128,7 @@ internal fun HomeTeamPhotoSelectionActions(
     ) {
         state.errorResource?.let { errorResource ->
             Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                YappText(stringResource(errorResource), YappTypography.scaleT3Medium, YappHomeColor.error)
+                HomeSubmissionError(stringResource(errorResource))
             }
         }
         YappButton(
@@ -135,7 +136,7 @@ internal fun HomeTeamPhotoSelectionActions(
             onClick = onConfirm,
             modifier = Modifier.fillMaxWidth(),
             variant = YappButtonVariant.SolidBrand,
-            size = YappButtonSize.HomePrimary,
+            size = YappButtonSize.MainAction,
             enabled = state.canConfirm && selectedCount > 0 && !state.isSubmitting,
             leadingIcon = progressIndicator,
         )

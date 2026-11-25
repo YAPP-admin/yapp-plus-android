@@ -1,6 +1,11 @@
 package com.yapp.plus.feature.main.home.team
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,18 +33,68 @@ fun TeamPhotoSelectionPreview() {
     TeamPhotoSelectionStatePreview(initialMembers = teamPhotoPreviewMembers())
 }
 
+@Preview(name = "Team photo no selection", widthDp = 393, heightDp = 756)
 @Composable
-private fun TeamPhotoSelectionStatePreview(initialMembers: List<HomeTeamPhotoMemberUiModel>) {
+fun TeamPhotoUnselectedPreview() {
+    TeamPhotoSelectionStatePreview(
+        initialMembers = teamPhotoPreviewMembers().map { it.copy(isSelected = false) },
+    )
+}
+
+@Preview(name = "Team photo without current user", widthDp = 393, heightDp = 756)
+@Composable
+fun TeamPhotoWithoutCurrentUserPreview() {
+    TeamPhotoSelectionStatePreview(
+        initialMembers = teamPhotoPreviewMembers().map { it.copy(isCurrentUser = false) },
+    )
+}
+
+@Preview(name = "Team photo submitting", widthDp = 393, heightDp = 756)
+@Composable
+fun TeamPhotoSubmittingPreview() {
+    TeamPhotoSelectionStatePreview(
+        initialMembers = teamPhotoPreviewMembers(),
+        isSubmitting = true,
+    )
+}
+
+@Preview(name = "Team photo submission error", widthDp = 393, heightDp = 756)
+@Composable
+fun TeamPhotoSubmissionErrorPreview() {
+    TeamPhotoSelectionStatePreview(
+        initialMembers = teamPhotoPreviewMembers(),
+        errorResource = R.string.home_team_photo_invalid,
+    )
+}
+
+@Composable
+private fun TeamPhotoSelectionStatePreview(
+    initialMembers: List<HomeTeamPhotoMemberUiModel>,
+    isSubmitting: Boolean = false,
+    @StringRes errorResource: Int? = null,
+) {
+    var members by remember(initialMembers) { mutableStateOf(initialMembers) }
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeTeamPhotoSelectionScreen(
             state =
                 HomeTeamPhotoSelectionUiState(
-                    members = initialMembers,
-                    canConfirm = initialMembers.any { it.isCurrentUser && it.isSelected },
+                    members = members,
+                    canConfirm = members.any { it.isCurrentUser && it.isSelected },
+                    isSubmitting = isSubmitting,
+                    errorResource = errorResource,
                 ),
             photo = painterResource(R.drawable.home_team_photo_preview_placeholder),
             onBack = {},
-            onMemberSelectionChange = { _, _ -> },
+            onMemberSelectionChange = { membershipId, isSelected ->
+                members =
+                    members.map { member ->
+                        if (member.membershipId == membershipId) {
+                            member.copy(isSelected = isSelected)
+                        } else {
+                            member
+                        }
+                    }
+            },
             onConfirm = {},
         )
     }
@@ -50,20 +105,20 @@ internal fun teamPhotoPreviewMembers(): List<HomeTeamPhotoMemberUiModel> =
     listOf(
         HomeTeamPhotoMemberUiModel(
             membershipId = 10,
-            name = stringResource(R.string.home_team_photo_preview_member_1),
+            name = stringResource(R.string.home_team_photo_preview_ios_name),
             roleLabel = "iOS",
             isCurrentUser = true,
             isSelected = true,
         ),
         HomeTeamPhotoMemberUiModel(
             membershipId = 11,
-            name = stringResource(R.string.home_team_photo_preview_member_2),
+            name = stringResource(R.string.home_team_photo_preview_android_name),
             roleLabel = "Android",
             isSelected = true,
         ),
         HomeTeamPhotoMemberUiModel(
             membershipId = 12,
-            name = stringResource(R.string.home_team_photo_preview_member_3),
-            roleLabel = "Web",
+            name = stringResource(R.string.home_team_photo_preview_server_name),
+            roleLabel = "Server",
         ),
     )

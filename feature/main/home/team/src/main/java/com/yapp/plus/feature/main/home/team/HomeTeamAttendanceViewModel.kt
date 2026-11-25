@@ -1,15 +1,16 @@
 package com.yapp.plus.feature.main.home.team
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.AttendanceUiState
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.attendance.AttendanceReadRepository
 import com.yapp.plus.domain.attendance.AttendanceResultStatus
 import com.yapp.plus.domain.attendance.TeamAttendancePhotoStatus
 import com.yapp.plus.domain.attendance.TeamAttendanceReadRepository
 import com.yapp.plus.domain.attendance.TeamAttendanceRepository
-import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
-import com.yapp.plus.core.ui.model.AttendanceUiState
-import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.team.model.HomeTeamAttendanceUiState
 import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoInput
 import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoReceiptUiModel
@@ -30,6 +31,8 @@ import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
 
+private const val ACKNOWLEDGED_TEAM_APPROVAL = "acknowledgedTeamApprovalSessionId"
+
 @HiltViewModel
 class HomeTeamAttendanceViewModel
     @Inject
@@ -37,8 +40,14 @@ class HomeTeamAttendanceViewModel
         private val read: TeamAttendanceReadRepository,
         private val write: TeamAttendanceRepository,
         private val history: AttendanceReadRepository,
+        private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-        private val mutableState = MutableStateFlow(HomeTeamAttendanceUiState())
+        private val mutableState =
+            MutableStateFlow(
+                HomeTeamAttendanceUiState(
+                    acknowledgedApprovalSessionId = savedStateHandle[ACKNOWLEDGED_TEAM_APPROVAL],
+                ),
+            )
         val state = mutableState.asStateFlow()
         private var lookup: Job? = null
         private var photoLookup: Job? = null
@@ -56,6 +65,13 @@ class HomeTeamAttendanceViewModel
             lookup = viewModelScope.launch { fetchLatest(target) }
         }
 
+        fun acknowledgeApproval(sessionId: Long) {
+            val target = session ?: return
+            if (target.sessionId != sessionId || !state.value.shouldShowApproval(target)) return
+            savedStateHandle[ACKNOWLEDGED_TEAM_APPROVAL] = sessionId
+            mutableState.update { it.copy(acknowledgedApprovalSessionId = sessionId) }
+        }
+
         fun openSubmittedPhoto() {
             if (state.value.isActive || state.value.photo?.image == null) return
             loadSubmittedPhoto()
@@ -69,7 +85,7 @@ class HomeTeamAttendanceViewModel
         fun openGuide(now: Instant = Instant.now()) {
             val current = state.value
             if (session?.canUploadTeamPhoto(now) != true || current.isActive) return
-            if (current.latest !is AttendanceUiState.Content<*>) return
+            if (current.latest !is AttendanceUiState.Content) return
             if (current.photo?.status == TeamAttendancePhotoStatus.APPROVED) return
             mutableState.update { it.copy(guide = true, error = null) }
         }
@@ -139,7 +155,7 @@ class HomeTeamAttendanceViewModel
                 submissionFailed(uncertain = false, error = R.string.attendance_status_not_open)
                 return
             }
-            mutableState.update { it.copy(isSubmitting = true, error = null) }
+            mutableState.update { it.copy(isSubmitting = true, uploadFailed = false, error = null) }
             operation = viewModelScope.launch { submitPhoto(target, draft, input, clock) }
         }
 
@@ -151,6 +167,7 @@ class HomeTeamAttendanceViewModel
                     sessionId = it.sessionId,
                     latest = it.latest,
                     isAbsent = it.isAbsent,
+                    acknowledgedApprovalSessionId = it.acknowledgedApprovalSessionId,
                 )
             }
         }
@@ -163,7 +180,11 @@ class HomeTeamAttendanceViewModel
             operation = null
             photoLookup = null
             session = null
-            mutableState.value = HomeTeamAttendanceUiState()
+            mutableState.update {
+                HomeTeamAttendanceUiState(
+                    acknowledgedApprovalSessionId = it.acknowledgedApprovalSessionId,
+                )
+            }
         }
 
         private fun loadSubmittedPhoto() {
@@ -227,36 +248,68 @@ class HomeTeamAttendanceViewModel
             clock: Clock,
         ) {
             var requestedSubmission = false
-            try {
-                val key = write.uploadPhoto(target.sessionId, input.filename, input.contentType, input.bytes)
-                currentCoroutineContext().ensureActive()
-                if (session?.canUploadTeamPhoto(clock.instant()) != true) {
-                    submissionFailed(uncertain = false, error = R.string.attendance_status_not_open)
+            val result =
+                try {
+                    val key =
+                        write.uploadPhoto(
+                            sessionId = target.sessionId,
+                            filename = input.filename,
+                            contentType = input.contentType,
+                            bytes = input.bytes,
+                        )
+                    currentCoroutineContext().ensureActive()
+                    if (session?.canUploadTeamPhoto(clock.instant()) != true) {
+                        submissionFailed(uncertain = false, error = R.string.attendance_status_not_open)
+                        return
+                    }
+                    requestedSubmission = true
+                    write.submitPhoto(target.sessionId, key, draft.selected)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (_: Exception) {
+                    if (requestedSubmission) {
+                        submissionFailed(uncertain = true, error = R.string.home_team_photo_uncertain)
+                    } else {
+                        mutableState.update { it.copy(isSubmitting = false, uploadFailed = true) }
+                    }
                     return
                 }
-                requestedSubmission = true
-                val result = write.submitPhoto(target.sessionId, key, draft.selected)
-                currentCoroutineContext().ensureActive()
-                val roster = checkNotNull(draft.roster)
-                val selected = roster.members.filter { it.membershipId in draft.selected }
-                val receipt =
-                    HomeTeamPhotoReceiptUiModel(
-                        teamName = roster.teamName,
-                        uploadTimeLabel = teamTimeFormat.format(result.submittedAt.atZone(teamZone)),
-                        attendeeCount = selected.size,
-                        teamMemberCount = roster.members.size,
-                        attendeeNamesLabel = selected.joinToString(", ") { it.name },
-                    )
-                mutableState.update {
-                    it.copy(input = null, roster = null, receipt = receipt, isSubmitting = false)
-                }
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (_: Exception) {
-                submissionFailed(
-                    requestedSubmission,
-                    if (requestedSubmission) R.string.home_team_photo_uncertain else R.string.home_submit_error,
+            currentCoroutineContext().ensureActive()
+            val roster = checkNotNull(draft.roster)
+            val selected = roster.members.filter { it.membershipId in draft.selected }
+            val receipt =
+                HomeTeamPhotoReceiptUiModel(
+                    teamName = roster.teamName,
+                    submittedTimeLabel = teamTimeFormat.format(result.submittedAt.atZone(teamZone)),
+                    attendeeCount = selected.size,
+                    teamMemberCount = roster.members.size,
+                    attendeeNamesLabel = selected.joinToString(", ") { it.name },
                 )
+            mutableState.update {
+                it.copy(input = null, roster = null, receipt = receipt, isSubmitting = false)
+            }
+            loadReceiptUploadTime(target.sessionId, result.photoId, receipt)
+        }
+
+        private suspend fun loadReceiptUploadTime(
+            sessionId: Long,
+            photoId: Long,
+            receipt: HomeTeamPhotoReceiptUiModel,
+        ) {
+            val photo =
+                try {
+                    read.fetchLatestPhoto(sessionId)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (_: Exception) {
+                    return
+                }
+            currentCoroutineContext().ensureActive()
+            if (photo?.photoId != photoId) return
+            val uploadTime = photo.uploadedTime.format(teamTimeFormat)
+            mutableState.update { current ->
+                if (current.receipt != receipt) return@update current
+                current.copy(receipt = receipt.copy(uploadTimeLabel = uploadTime))
             }
         }
 
@@ -264,6 +317,8 @@ class HomeTeamAttendanceViewModel
             uncertain: Boolean,
             error: Int,
         ) {
-            mutableState.update { it.copy(isSubmitting = false, uncertain = uncertain, error = error) }
+            mutableState.update {
+                it.copy(isSubmitting = false, uploadFailed = false, uncertain = uncertain, error = error)
+            }
         }
     }

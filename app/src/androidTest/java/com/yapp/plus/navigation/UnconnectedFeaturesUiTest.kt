@@ -7,9 +7,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.feature.main.board.BoardScreen
 import com.yapp.plus.feature.main.home.HomeScreen
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.my.MyScreen
 import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState

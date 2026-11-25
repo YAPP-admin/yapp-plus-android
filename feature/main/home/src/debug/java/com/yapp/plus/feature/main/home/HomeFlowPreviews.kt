@@ -5,8 +5,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCompleteScreen
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 
 @Preview(name = "Home - None", widthDp = 393, heightDp = 692)

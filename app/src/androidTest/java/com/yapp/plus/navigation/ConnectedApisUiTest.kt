@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.feature.login.components.LoginErrorDialog
 import com.yapp.plus.feature.main.board.BoardScreen
 import com.yapp.plus.feature.main.board.model.BoardCategory
@@ -22,7 +23,6 @@ import com.yapp.plus.feature.main.board.model.NoticeUiState
 import com.yapp.plus.feature.main.home.HomeScreen
 import com.yapp.plus.feature.main.home.components.HomeReportReasonPreview
 import com.yapp.plus.feature.main.home.components.HomeReportTypePreview
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.my.MyScreen
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel

@@ -2,6 +2,7 @@ package com.yapp.plus.feature.main.home.team.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -33,7 +35,7 @@ internal fun HomeTeamPhotoMemberRow(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
 ) {
-    val borderColor = if (member.isSelected) YappHomeColor.text else YappHomeColor.divider
+    val borderColor = if (member.isSelected) YappHomeColor.muted else YappHomeColor.divider
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = YappHomeColor.surface,
@@ -68,7 +70,7 @@ internal fun HomeTeamPhotoMemberRow(
                         modifier =
                             Modifier
                                 .size(20.dp)
-                                .border(1.dp, YappHomeColor.divider, RoundedCornerShape(4.dp)),
+                                .border(1.dp, YappHomeColor.border, RoundedCornerShape(4.dp)),
                     )
                 }
             }
@@ -97,11 +99,19 @@ internal fun HomeTeamPhotoMemberRow(
                 }
             }
             if (member.isCurrentUser) {
-                YappText(
-                    text = stringResource(R.string.home_team_photo_current_user),
-                    style = YappTypography.scaleT3Medium,
-                    color = YappHomeColor.brand,
-                )
+                Box(
+                    modifier =
+                        Modifier
+                            .sizeIn(minWidth = 20.dp, minHeight = 20.dp)
+                            .background(YappHomeColor.background, RoundedCornerShape(4.dp)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    YappText(
+                        text = stringResource(R.string.home_team_photo_current_user),
+                        style = YappTypography.scaleT1Bold,
+                        color = YappHomeColor.muted,
+                    )
+                }
             }
         }
     }

@@ -1,13 +1,13 @@
 package com.yapp.plus.feature.main.home
 
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.AttendanceUiState
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.notice.NoticePage
 import com.yapp.plus.domain.notice.NoticeSummary
 import com.yapp.plus.domain.notice.NoticeType
 import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.domain.session.ScheduleFailure
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi

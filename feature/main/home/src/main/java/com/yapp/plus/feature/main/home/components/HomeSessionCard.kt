@@ -30,11 +30,11 @@ import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.ui.formatter.AppDateFormatter
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.AttendanceUiState
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
+import com.yapp.plus.core.ui.model.homeSessionStartFormat
 import com.yapp.plus.feature.main.home.R
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
-import com.yapp.plus.feature.main.home.model.homeSessionStartFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -185,22 +185,24 @@ private fun attendanceButtonText(
 private fun attendanceNotOpenText(
     session: CurrentWeekSessionUiModel,
     now: LocalDateTime,
-): String =
-    when {
-        session.sessionDate?.isAfter(now.toLocalDate()) == true ->
+): String {
+    val sessionDate = session.sessionDate
+    val startTime = session.startTime
+    return when {
+        sessionDate?.isAfter(now.toLocalDate()) == true ->
             stringResource(
                 R.string.home_session_starts,
-                session.startTime?.let { session.sessionDate.atTime(it).format(homeSessionStartFormat) }
-                    ?: "${session.sessionDate.dayOfMonth}일 ${session.startTimeLabel}",
+                startTime?.let { sessionDate.atTime(it).format(homeSessionStartFormat) }
+                    ?: "${sessionDate.dayOfMonth}일 ${session.startTimeLabel}",
             )
-        session.sessionDate == now.toLocalDate() &&
-            session.startTime?.isAfter(now.toLocalTime()) == true ->
+        sessionDate == now.toLocalDate() && startTime?.isAfter(now.toLocalTime()) == true ->
             stringResource(
                 R.string.home_attendance_opens,
-                session.startTime.format(AppDateFormatter.timeHourMinute),
+                startTime.format(AppDateFormatter.timeHourMinute),
             )
         else -> stringResource(R.string.attendance_status_not_open)
     }
+}
 
 @Preview(name = "Home session card", widthDp = 361)
 @Composable

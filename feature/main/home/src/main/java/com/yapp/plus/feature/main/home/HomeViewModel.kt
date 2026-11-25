@@ -2,15 +2,15 @@ package com.yapp.plus.feature.main.home
 
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.core.ui.BaseViewModel
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.AttendanceUiState
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.domain.notice.NoticeType
 import com.yapp.plus.domain.result.YappResult
 import com.yapp.plus.domain.session.ScheduleFailure
 import com.yapp.plus.domain.session.SessionScheduleRepository
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiMapper
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.home.model.HomeUiState

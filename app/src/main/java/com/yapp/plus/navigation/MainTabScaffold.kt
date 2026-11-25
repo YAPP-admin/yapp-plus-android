@@ -38,6 +38,7 @@ internal fun MainTabScaffold(
     isDeletingAccount: Boolean = false,
     hasDeleteAccountError: Boolean = false,
     onDeleteAccountErrorDismissed: () -> Unit = {},
+    scheduleSessionId: Long? = null,
 ) {
     val uriHandler = LocalUriHandler.current
     val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
@@ -92,7 +93,7 @@ internal fun MainTabScaffold(
                         onScoreClick = { selectedTab = MainTab.My },
                         onContactStaff = { runCatching { uriHandler.openUri(contactChannelUrl) } },
                     )
-                MainTab.Schedule -> ScheduleRoute()
+                MainTab.Schedule -> ScheduleRoute(targetSessionId = scheduleSessionId)
                 MainTab.Board ->
                     BoardRoute(
                         noticeId = selectedNoticeId,

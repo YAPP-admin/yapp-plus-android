@@ -19,10 +19,13 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.navigation.AppNavigationRoute
+import com.yapp.plus.notification.PUSH_NAVIGATION_TARGET
 import com.yapp.plus.notification.PUSH_POST_ID
+import com.yapp.plus.notification.PUSH_SESSION_ID
 import com.yapp.plus.notification.PUSH_SOURCE
 import com.yapp.plus.notification.PushRegistration
 import com.yapp.plus.notification.pushPostId
+import com.yapp.plus.notification.pushSessionId
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
@@ -34,6 +37,7 @@ class MainActivity : ComponentActivity() {
     internal lateinit var pushRegistration: PushRegistration
 
     private var pendingPushPostId by mutableStateOf<Long?>(null)
+    private var pendingPushSessionId by mutableStateOf<Long?>(null)
     private val notificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             pushRegistration.synchronize()
@@ -43,6 +47,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         pendingPushPostId = intent.pushPostId()
+        pendingPushSessionId = intent.pushSessionId()
         val barStyle =
             SystemBarStyle.light(scrim = Color.TRANSPARENT, darkScrim = Color.TRANSPARENT)
         enableEdgeToEdge(statusBarStyle = barStyle, navigationBarStyle = barStyle)
@@ -52,7 +57,9 @@ class MainActivity : ComponentActivity() {
                     onExit = ::finish,
                     onSessionReady = ::onSessionReady,
                     pushPostId = pendingPushPostId,
-                    onPushPostOpened = ::consumePushPost,
+                    onPushPostOpened = ::consumePushTarget,
+                    pushSessionId = pendingPushSessionId,
+                    onPushSessionOpened = ::consumePushTarget,
                 )
             }
         }
@@ -65,9 +72,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val postId = intent.pushPostId() ?: return
+        val postId = intent.pushPostId()
+        val sessionId = intent.pushSessionId()
+        if (postId == null && sessionId == null) return
         setIntent(intent)
         pendingPushPostId = postId
+        pendingPushSessionId = sessionId
     }
 
     private fun onSessionReady() {
@@ -98,10 +108,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun consumePushPost() {
+    private fun consumePushTarget() {
         pendingPushPostId = null
+        pendingPushSessionId = null
         intent.removeExtra(PUSH_SOURCE)
         intent.removeExtra(PUSH_POST_ID)
+        intent.removeExtra(PUSH_SESSION_ID)
+        intent.removeExtra(PUSH_NAVIGATION_TARGET)
     }
 
     private companion object {

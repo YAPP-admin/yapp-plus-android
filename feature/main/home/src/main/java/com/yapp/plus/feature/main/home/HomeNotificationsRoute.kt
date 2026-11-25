@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun HomeNotificationsRoute(
     onBack: () -> Unit,
     onPostClick: (Long) -> Unit,
+    onSessionClick: (Long) -> Unit = {},
 ) {
     val viewModel: HomeNotificationsViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -16,6 +17,7 @@ fun HomeNotificationsRoute(
         state = state,
         onBack = onBack,
         onPostClick = onPostClick,
+        onSessionClick = onSessionClick,
         onRefresh = viewModel::refresh,
         onLoadMore = viewModel::loadMore,
     )

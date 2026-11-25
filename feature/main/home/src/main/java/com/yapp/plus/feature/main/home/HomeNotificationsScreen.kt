@@ -39,6 +39,7 @@ internal fun HomeNotificationsScreen(
     onPostClick: (Long) -> Unit = {},
     onRefresh: () -> Unit = {},
     onLoadMore: () -> Unit = {},
+    onSessionClick: (Long) -> Unit = {},
 ) {
     Column(modifier.fillMaxSize().background(YappHomeColor.surface)) {
         HomeTopBar(stringResource(R.string.attendance_home_notifications), onBack)
@@ -53,9 +54,10 @@ internal fun HomeNotificationsScreen(
                     onPostClick = onPostClick,
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
+                    onSessionClick = onSessionClick,
                 )
             is HomeNotificationsUiState.Content ->
-                NotificationList(state, onPostClick, onRefresh, onLoadMore)
+                NotificationList(state, onPostClick, onRefresh, onLoadMore, onSessionClick)
         }
     }
 }
@@ -67,6 +69,7 @@ internal fun NotificationList(
     onPostClick: (Long) -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
+    onSessionClick: (Long) -> Unit = {},
 ) {
     PullToRefreshBox(isRefreshing = state.isRefreshing, onRefresh = onRefresh) {
         LazyColumn(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
@@ -87,7 +90,9 @@ internal fun NotificationList(
                 }
             }
             items(state.items, key = { it.id }) { notification ->
-                val onClick = notification.postId?.let { postId -> { onPostClick(postId) } }
+                val onClick =
+                    notification.sessionId?.let { id -> { onSessionClick(id) } }
+                        ?: notification.postId?.let { id -> { onPostClick(id) } }
                 HomeNotificationItem(notification = notification, onClick = onClick)
             }
             if (state.nextCursor != null) {
@@ -143,7 +148,14 @@ internal fun HomeNotificationItem(
             Modifier
         } else {
             Modifier.clickable(
-                onClickLabel = stringResource(R.string.home_notifications_open_post),
+                onClickLabel =
+                    stringResource(
+                        if (notification.sessionId != null) {
+                            R.string.home_notifications_open_schedule
+                        } else {
+                            R.string.home_notifications_open_post
+                        },
+                    ),
                 role = Role.Button,
                 onClick = onClick,
             )

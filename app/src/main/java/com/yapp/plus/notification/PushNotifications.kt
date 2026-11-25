@@ -14,6 +14,10 @@ import com.yapp.plus.R
 internal const val PUSH_SOURCE = "source"
 internal const val PUSH_POST = "POST"
 internal const val PUSH_POST_ID = "postId"
+internal const val PUSH_SESSION_REMINDER = "SESSION_REMINDER"
+internal const val PUSH_SESSION_ID = "sessionId"
+internal const val PUSH_NAVIGATION_TARGET = "navigationTarget"
+internal const val PUSH_SESSION_SCHEDULE = "SESSION_SCHEDULE"
 internal const val PUSH_NOTIFICATION_ID = "notificationId"
 
 internal fun createPushChannel(context: Context) {
@@ -46,4 +50,10 @@ internal fun canShowPushNotifications(context: Context): Boolean {
 internal fun Intent.pushPostId(): Long? {
     if (getStringExtra(PUSH_SOURCE) != PUSH_POST) return null
     return getStringExtra(PUSH_POST_ID)?.toLongOrNull()?.takeIf { it > 0 }
+}
+
+internal fun Intent.pushSessionId(): Long? {
+    if (getStringExtra(PUSH_SOURCE) != PUSH_SESSION_REMINDER) return null
+    if (getStringExtra(PUSH_NAVIGATION_TARGET) != PUSH_SESSION_SCHEDULE) return null
+    return getStringExtra(PUSH_SESSION_ID)?.toLongOrNull()?.takeIf { it > 0 }
 }

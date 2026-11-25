@@ -8,4 +8,5 @@ data class ScheduleSessionUiModel(
     val type: ScheduleTypeUiModel,
     val status: ScheduleStatusUiModel,
     val address: String? = null,
+    val sessionId: Long? = null,
 )

@@ -190,12 +190,14 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 ## 알림함
 
-- 알림함은 서버의 순서와 불투명 cursor를 사용합니다. 일반 알림은 내용과 날짜를 표시하고, 공지 알림은 공지 상세를 열며 뒤로 가면 알림함으로 돌아갑니다.
+- 알림함은 서버의 순서와 불투명 cursor를 사용합니다. 일반 알림은 내용과 날짜를 표시하고, 공지 알림은 공지 상세를 엽니다. `SESSION_REMINDER`에 `SESSION_SCHEDULE`과 양의 `sessionId`가 있으면 일정 탭을 열고 현재 목록에서 해당 세션으로 이동합니다. 뒤로 가면 알림함으로 돌아옵니다. [세션 자동 알림 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#세션-자동-알림과-일정-화면-이동)
 
 ## Firebase 푸시
 
 - Android 설정 파일은 debug에 `yappplus-dev`, release에 `yappplus-prod`를 사용합니다. App은 프로젝트, 로그인 세션, 저장된 수신 선택과 시스템 알림 권한을 확인해 기기를 등록합니다. 서버는 로그아웃 시 해당 세션의 기기 등록을 삭제합니다.
 - 푸시의 `source=POST`와 양의 `postId`가 있을 때 공지 상세를 엽니다. 로그인하지 않은 경우 세션이 생긴 뒤 이동합니다. 공지 상세의 조회 실패는 게시판의 기존 오류 처리를 따릅니다. [서버 알림 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/e2c2612a8652dc9c76f6ce7b6c26e97dbe8348c6/APIDOC.md#운영진-알림과-기기-등록)
+
+- 세션 자동 알림 푸시도 같은 일정 이동 계약을 사용합니다. 로그인 전 수신한 이동 요청은 인증된 화면이 열린 뒤 처리합니다.
 
 ## My 본인 프로필 조회
 

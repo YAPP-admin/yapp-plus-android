@@ -39,6 +39,7 @@ class AppNavHostTest {
     private var hasExited = false
     private val authenticated = mutableStateOf<Boolean?>(null)
     private val pushPostId = mutableStateOf<Long?>(null)
+    private val pushSessionId = mutableStateOf<Long?>(null)
 
     @Before
     fun setUp() {
@@ -52,6 +53,8 @@ class AppNavHostTest {
                     sessionAuthenticated = authenticated.value,
                     pushPostId = pushPostId.value,
                     onPushPostOpened = { pushPostId.value = null },
+                    pushSessionId = pushSessionId.value,
+                    onPushSessionOpened = { pushSessionId.value = null },
                 )
             }
         }
@@ -139,6 +142,27 @@ class AppNavHostTest {
                     .toRoute<AppNavigationDestination.NotificationPost>()
             assertEquals(42L, route.postId)
             assertEquals(null, pushPostId.value)
+        }
+        popAndAssert<AppNavigationDestination.Main>()
+    }
+
+    @Test
+    fun waitsForLoginBeforeOpeningThePushSchedule() {
+        composeRule.runOnIdle {
+            authenticated.value = false
+            pushSessionId.value = 71
+        }
+        assertCurrentRoute<AppNavigationDestination.Login>()
+
+        composeRule.runOnIdle { authenticated.value = true }
+
+        assertCurrentRoute<AppNavigationDestination.NotificationSchedule>()
+        composeRule.runOnIdle {
+            val route =
+                checkNotNull(navController.currentBackStackEntry)
+                    .toRoute<AppNavigationDestination.NotificationSchedule>()
+            assertEquals(71L, route.sessionId)
+            assertEquals(null, pushSessionId.value)
         }
         popAndAssert<AppNavigationDestination.Main>()
     }

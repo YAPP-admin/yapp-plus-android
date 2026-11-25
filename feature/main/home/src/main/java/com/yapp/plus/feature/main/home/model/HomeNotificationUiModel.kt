@@ -5,4 +5,5 @@ data class HomeNotificationUiModel(
     val message: String,
     val dateLabel: String,
     val postId: Long? = null,
+    val sessionId: Long? = null,
 )

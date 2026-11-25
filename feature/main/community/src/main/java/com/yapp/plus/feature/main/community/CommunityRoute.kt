@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
+import com.yapp.plus.core.designsystem.components.refresh.YappPullToRefreshBox
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.domain.afterparty.AfterpartyFilter
 import com.yapp.plus.feature.main.community.CommunityListState.LoadingIndicator
@@ -91,7 +88,6 @@ internal fun CommunityList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CommunityAfterpartyList(
     state: CommunityListState,
@@ -101,24 +97,14 @@ private fun CommunityAfterpartyList(
     onAfterpartyClick: (Long) -> Unit,
     now: Instant,
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
     val isRefreshing = state.loading == LoadingIndicator.PullToRefresh
     val isListLoading = state.loading == LoadingIndicator.List
 
     CommunityVoteFilters(selectedFilter = state.filter, onFilter = onFilter)
-    PullToRefreshBox(
+    YappPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
-        state = pullToRefreshState,
-        indicator = {
-            if (!isListLoading) {
-                PullToRefreshDefaults.Indicator(
-                    state = pullToRefreshState,
-                    isRefreshing = isRefreshing,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                )
-            }
-        },
+        showIndicator = !isListLoading,
     ) {
         if (state.loading == null && !state.hasError && state.items.isEmpty()) {
             val emptyMessage =

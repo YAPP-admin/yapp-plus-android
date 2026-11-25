@@ -279,7 +279,7 @@ class AppNavHostTest {
         restorationTester.emulateSavedInstanceStateRestore()
 
         assertCurrentRoute<AppNavigationDestination.SignUp>()
-        composeRule.onNode(hasSetTextAction()).assertTextContains("01012345678")
+        composeRule.onNode(hasSetTextAction()).assertTextContains("010-1234-5678")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.onNode(hasSetTextAction()).assertTextContains("이름")
         composeRule.onNodeWithContentDescription("뒤로 가기").performClick()

@@ -1,6 +1,7 @@
 package com.yapp.plus.data.notification
 
 import com.yapp.plus.data.apiTestClient
+import com.yapp.plus.domain.notification.SettlementNotificationTarget
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -13,6 +14,31 @@ import org.junit.Test
 import java.time.LocalDate
 
 class NotificationApiTest {
+    @Test
+    fun mapsSettlementDestinationWhileKeepingUnlinkedNotifications() =
+        runTest {
+            apiTestClient(
+                MockEngine {
+                    respond(
+                        """
+                        {"items":[
+                          {"id":1,"content":"정산","sentDate":"2026-11-02","type":"SETTLEMENT","postId":null,
+                            "navigationTarget":"SETTLEMENT","afterpartyId":9,"settlementId":13},
+                          {"id":2,"content":"일정","sentDate":"2026-11-02","type":"SESSION_REMINDER","postId":null},
+                          {"id":3,"content":"이전 정산","sentDate":"2026-11-02","type":"SETTLEMENT","postId":null,
+                            "navigationTarget":"SETTLEMENT","afterpartyId":0,"settlementId":13}
+                        ],"nextCursor":null}
+                        """.trimIndent(),
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                },
+            ).use { client ->
+                val repository = NotificationRepositoryImpl(NotificationRemoteDataSource(client))
+                val targets = repository.fetchNotifications().items.map { it.settlement }
+                assertEquals(listOf(SettlementNotificationTarget(9, 13), null, null), targets)
+            }
+        }
+
     @Test
     fun mapsGeneralPostAndSessionRemindersAndPassesOpaqueCursor() =
         runTest {

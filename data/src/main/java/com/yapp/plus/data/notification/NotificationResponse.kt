@@ -11,6 +11,19 @@ internal data class NotificationResponse(
     val postId: Long?,
     val sessionId: Long? = null,
     val navigationTarget: String? = null,
+    val afterpartyId: Long? = null,
+    val settlementId: Long? = null,
 ) {
-    fun toData(): NotificationData = NotificationData(id, content, sentDate, type, postId, sessionId, navigationTarget)
+    fun toData(): NotificationData =
+        NotificationData(
+            id = id,
+            content = content,
+            sentDate = sentDate,
+            type = type,
+            postId = postId,
+            sessionId = sessionId,
+            navigationTarget = navigationTarget,
+            afterpartyId = afterpartyId,
+            settlementId = settlementId,
+        )
 }

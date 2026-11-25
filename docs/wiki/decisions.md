@@ -649,3 +649,13 @@ last_verified: 2026-11-25
 - 원본 확인: Figma 홈에서 말풍선 문구와 위치를 확인했습니다. Notion 원문은 연동 계정에서 열리지 않았습니다. [Figma 홈 말풍선](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16229) · [Notion 정책 원문](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84800f9abfef181b090892)
 - 적용 상태: Android 홈과 [제품 정책](product-policy.md#홈-사전-보고와-활동-기간-안내-2026-11-18)에 반영했습니다.
 - 대체한 결정: DEC-0068의 말풍선 표시 조건.
+
+## DEC-0081 · Debug와 Release 앱 설치 분리
+
+- 기록일: 2026-11-25
+- 결정: Debug 앱은 `applicationId` `com.yapp.plus.debug`와 런처 이름 `Yapp (Debug)`를 사용합니다. Release 앱은 기존 `com.yapp.plus`와 `Yapp`을 유지합니다. Debug와 Release를 한 기기에 함께 설치할 수 있으며 Firebase Android 앱과 Google OAuth Android 클라이언트는 각 앱 ID에 맞게 등록합니다.
+- 이유: 사용자가 디버그 앱과 릴리즈 앱을 분리하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), [Android 이슈 #280](https://github.com/YAPP-admin/yapp-plus-android/issues/280).
+- 반영: [제품 정책](product-policy.md#개발과-비공개-테스트-배포), [모듈 구조](module-structure.md), [README](../../README.md), [기여 규칙](../../CONTRIBUTING.md), [AGENTS.md](../../AGENTS.md), App Gradle 설정과 Debug 앱 이름.
+- 적용 상태: Gradle Debug applicationId 접미사와 Debug 런처 이름을 적용했습니다. Firebase 설정 파일은 비밀 설정 파일이므로 저장소 외부에서 각 앱 ID로 관리합니다.
+- 대체한 결정: 없음. Release 앱 ID와 Play 배포 경로는 유지합니다.

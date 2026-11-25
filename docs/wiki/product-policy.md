@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-24
+last_verified: 2026-11-25
 ---
 
 # 제품 정책
@@ -31,7 +31,7 @@ last_verified: 2026-11-24
 ## 개발과 비공개 테스트 배포
 
 - `release/v1.0.1`은 기존 비공개 테스트 버전을 보존합니다. 실제 서비스 개발은 `develop` 기반 작업 브랜치에서 진행합니다.
-- 같은 Google Play 앱과 `applicationId` `com.yapp.plus`를 사용하고 비공개 테스트 트랙으로 배포합니다.
+- Release 빌드는 같은 Google Play 앱과 `applicationId` `com.yapp.plus`를 사용하고 비공개 테스트 트랙으로 배포합니다. Debug 빌드는 `com.yapp.plus.debug`를 사용해 Release와 같은 기기에 설치할 수 있습니다.
 - 임시 테스트 브랜치를 실제 개발 브랜치에 통째로 병합하지 않습니다. 필요한 수정만 검토해 반영하고, 실제 서비스의 배포 후보는 최신 `develop`에서 새 릴리즈 브랜치로 준비합니다.
 - 임시 테스트 전용 백엔드 구현·SQL·문서는 개발 버전에서 제거합니다. 기존 배포의 외부 서비스와 데이터는 유지합니다.
 
@@ -193,7 +193,7 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 ## Firebase 푸시
 
-- Android 설정 파일은 debug에 `yappplus-dev`, release에 `yappplus-prod`를 사용합니다. App은 프로젝트, 로그인 세션, 저장된 수신 선택과 시스템 알림 권한을 확인해 기기를 등록합니다. 서버는 로그아웃 시 해당 세션의 기기 등록을 삭제합니다.
+- Android 설정 파일은 Debug에서 `yappplus-dev`의 `com.yapp.plus.debug` 앱, Release에서 `yappplus-prod`의 `com.yapp.plus` 앱을 사용합니다. Google OAuth Android 클라이언트도 각 패키지명과 서명 SHA-1에 맞게 등록합니다. App은 프로젝트, 로그인 세션, 저장된 수신 선택과 시스템 알림 권한을 확인해 기기를 등록합니다. 서버는 로그아웃 시 해당 세션의 기기 등록을 삭제합니다.
 - 푸시의 `source=POST`와 양의 `postId`가 있을 때 공지 상세를 엽니다. 로그인하지 않은 경우 세션이 생긴 뒤 이동합니다. 공지 상세의 조회 실패는 게시판의 기존 오류 처리를 따릅니다. [서버 알림 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/e2c2612a8652dc9c76f6ce7b6c26e97dbe8348c6/APIDOC.md#운영진-알림과-기기-등록)
 
 - 세션 자동 알림 푸시도 같은 일정 이동 계약을 사용합니다. 로그인 전 수신한 이동 요청은 인증된 화면이 열린 뒤 처리합니다.

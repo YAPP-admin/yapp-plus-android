@@ -618,6 +618,14 @@ last_verified: 2026-11-25
 - 근거: 사용자가 이번 주 세션 `location`의 non-null 계약을 확인했습니다. [백엔드 주간 세션 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#사용자-앱-이번-주-세션) · [Android 모델 변경](https://github.com/YAPP-admin/yapp-plus-android/commit/762a6d7d9bfafde214f92e3e64092bb4b2c6b6c3)
 - 적용 상태: [제품 정책](product-policy.md#현재-서버-연결)과 Data·Home 테스트에 반영했습니다.
 
+## DEC-0077 · 홈 복귀 자동 조회와 명시적 새로고침
+
+- 기록일: 2026-11-25
+- 결정: 홈의 이번 주 세션과 주간 공지는 HomeViewModel 생애 동안 최초 한 번 병렬 조회합니다. 앱이 백그라운드에서 돌아올 때 자동 재조회하지 않습니다. 사용자가 홈을 당겨 갱신하면 일정과 공지를 병렬 재요청하고 조회 중에도 기존 콘텐츠를 유지합니다.
+- 근거: 사용자가 홈 복귀 때 발생하는 API 재호출을 제거하고 홈 새로고침을 요청했습니다. [이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225)
+- 반영: [설계 패턴](design-patterns.md#viewmodel과-요청), Home Route·ViewModel·화면.
+- 적용 상태: 초기 조회를 한 번으로 제한하고 당겨서 새로고침을 추가했습니다.
+
 ## DEC-0078 · 팀 출석 승인과 업로드 실패 안내
 
 - 기록일: 2026-11-25

@@ -16,6 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +40,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     state: AttendanceUiState<CurrentWeekSessionUiModel>,
@@ -48,6 +53,8 @@ fun HomeScreen(
     noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     isLoading: Boolean = false,
+    isRefreshing: Boolean = false,
+    onRefresh: () -> Unit = {},
     teamSessionCard: (@Composable () -> Unit)? = null,
     afterpartyBanner: (@Composable () -> Unit)? = null,
     showReportTip: Boolean = false,
@@ -80,42 +87,57 @@ fun HomeScreen(
         )
         BoxWithConstraints(Modifier.weight(1f)) {
             val minHeight = maxHeight
-            Column(
-                Modifier
-                    .verticalScroll(rememberScrollState())
-                    .heightIn(min = minHeight)
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 14.dp, bottom = 14.dp),
+            val pullToRefreshState = rememberPullToRefreshState()
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                state = pullToRefreshState,
+                modifier = Modifier.fillMaxSize(),
+                indicator = {
+                    PullToRefreshDefaults.Indicator(
+                        state = pullToRefreshState,
+                        isRefreshing = isRefreshing,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                    )
+                },
             ) {
-                afterpartyBanner?.invoke()
-                teamSessionCard?.invoke() ?: HomeSessionCard(
-                    state = state,
-                    now = now,
-                    onAttendanceClick = onAttendanceClick,
-                )
-                Spacer(Modifier.height(10.dp))
-                HomeQuickActions(
-                    onSessionsClick = onSessionsClick,
-                    onReportClick = onReportClick,
-                    showReportTip = showReportTip,
-                    showTeamPhotoUploadTip = showTeamPhotoUploadTip,
-                )
-                Spacer(Modifier.height(40.dp))
-                Box(Modifier.weight(1f).fillMaxWidth().heightIn(min = 220.dp)) {
-                    Column(
-                        Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        YappText(
-                            stringResource(R.string.home_week_notices),
-                            YappHomeTypography.heading,
-                            YappHomeColor.text,
-                        )
-                        HomeNoticeContent(
-                            noticeState,
-                            onNoticeClick,
-                            Modifier.weight(1f).fillMaxWidth(),
-                        )
+                Column(
+                    Modifier
+                        .verticalScroll(rememberScrollState())
+                        .heightIn(min = minHeight)
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 14.dp, bottom = 14.dp),
+                ) {
+                    afterpartyBanner?.invoke()
+                    teamSessionCard?.invoke() ?: HomeSessionCard(
+                        state = state,
+                        now = now,
+                        onAttendanceClick = onAttendanceClick,
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    HomeQuickActions(
+                        onSessionsClick = onSessionsClick,
+                        onReportClick = onReportClick,
+                        showReportTip = showReportTip,
+                        showTeamPhotoUploadTip = showTeamPhotoUploadTip,
+                    )
+                    Spacer(Modifier.height(40.dp))
+                    Box(Modifier.weight(1f).fillMaxWidth().heightIn(min = 220.dp)) {
+                        Column(
+                            Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            YappText(
+                                stringResource(R.string.home_week_notices),
+                                YappHomeTypography.heading,
+                                YappHomeColor.text,
+                            )
+                            HomeNoticeContent(
+                                noticeState,
+                                onNoticeClick,
+                                Modifier.weight(1f).fillMaxWidth(),
+                            )
+                        }
                     }
                 }
             }

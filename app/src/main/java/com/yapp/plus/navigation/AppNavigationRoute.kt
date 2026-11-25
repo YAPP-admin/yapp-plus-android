@@ -25,7 +25,6 @@ internal fun AppNavigationRoute(
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination? = null,
     onSessionReady: () -> Unit = {},
-    onHomeEntered: () -> Unit = {},
     pushPostId: Long? = null,
     onPushPostOpened: () -> Unit = {},
     pushSessionId: Long? = null,
@@ -56,7 +55,6 @@ internal fun AppNavigationRoute(
                 isDeletingAccount = authUiState.isWithdrawing,
                 hasDeleteAccountError = authUiState.hasWithdrawalError,
                 onDeleteAccountErrorDismissed = authViewModel::onWithdrawalErrorDismissed,
-                onHomeEntered = onHomeEntered,
                 onRegistrationCompleted = {
                     authViewModel.onRegistrationCompleted()
                     onRegistrationCompleted()

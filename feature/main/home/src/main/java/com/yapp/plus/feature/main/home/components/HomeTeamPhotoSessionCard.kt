@@ -144,7 +144,7 @@ internal fun HomeTeamPhotoSessionAction(
         onClick = { action?.invoke() },
         modifier = Modifier.fillMaxWidth(),
         variant = YappButtonVariant.HomeAttendance,
-        size = YappButtonSize.HomeSecondary,
+        size = YappButtonSize.HomeSecondarySmall,
         enabled = action != null,
     )
 }

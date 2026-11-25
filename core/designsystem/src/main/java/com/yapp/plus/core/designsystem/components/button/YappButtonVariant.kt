@@ -11,5 +11,6 @@ enum class YappButtonVariant {
     BrandAction,
     Kakao,
     SolidNeutral,
+    SolidNeutralWeak,
     HomeAttendance,
 }

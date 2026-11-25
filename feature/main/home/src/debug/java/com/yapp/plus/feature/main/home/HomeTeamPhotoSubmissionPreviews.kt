@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoGuideSheet
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoMemberUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSelectionUiState
 
@@ -24,11 +23,7 @@ import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSelectionUiState
 fun TeamPhotoGuidePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         Box(Modifier.fillMaxSize()) {
-            HomeScreen(
-                state = HomePreviewData.state(AttendanceStatusUiModel.Available),
-                modifier = Modifier.systemBarsPadding(),
-                now = HomePreviewData.now,
-            )
+            TeamPhotoHomePreview()
             HomeTeamPhotoGuideSheet(
                 sessionTimeLabel = stringResource(R.string.home_team_photo_preview_time),
                 onChooseFromAlbum = {},

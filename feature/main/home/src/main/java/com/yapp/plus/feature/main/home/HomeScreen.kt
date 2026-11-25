@@ -51,6 +51,7 @@ fun HomeScreen(
     teamSessionCard: (@Composable () -> Unit)? = null,
     afterpartyBanner: (@Composable () -> Unit)? = null,
     showReportTip: Boolean = false,
+    showTeamPhotoUploadTip: Boolean = false,
 ) {
     if (isLoading) {
         Box(
@@ -97,6 +98,7 @@ fun HomeScreen(
                     onSessionsClick = onSessionsClick,
                     onReportClick = onReportClick,
                     showReportTip = showReportTip,
+                    showTeamPhotoUploadTip = showTeamPhotoUploadTip,
                 )
                 Spacer(Modifier.height(40.dp))
                 Box(Modifier.weight(1f).fillMaxWidth().heightIn(min = 220.dp)) {

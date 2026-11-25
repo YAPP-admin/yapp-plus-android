@@ -3,7 +3,9 @@ package com.yapp.plus.feature.main.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -44,6 +46,10 @@ fun TeamPhotoSubmittedPreview() =
 
 @Preview(widthDp = 393, heightDp = 756)
 @Composable
+fun TeamPhotoAvailablePreview() = TeamPhotoHomePreview()
+
+@Preview(widthDp = 393, heightDp = 756)
+@Composable
 fun TeamPhotoPendingPreview() = TeamPhotoHomePreview(state = teamPhotoPreviewPending())
 
 @Preview(widthDp = 393, heightDp = 756)
@@ -78,7 +84,7 @@ fun TeamPhotoNotSelectedPreview() {
 fun TeamPhotoUploadFailurePreview() = TeamPhotoHomePreview(sheet = UploadFailed)
 
 @Composable
-private fun TeamPhotoHomePreview(
+internal fun TeamPhotoHomePreview(
     state: HomeTeamPhotoSessionUiState = HomeTeamPhotoSessionUiState.AwaitingPhoto,
     sheet: HomeTeamPhotoResultSheetState? = null,
 ) {
@@ -108,10 +114,15 @@ private fun TeamPhotoHomePreview(
                 onUpload = {},
                 onReviewResult = {},
                 onViewPhoto = {},
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 14.dp, end = 16.dp),
                 thumbnail = { TeamPhotoPreviewThumbnail(it) },
             )
-            HomeQuickActions({}, Modifier.padding(horizontal = 16.dp))
+            Spacer(Modifier.height(10.dp))
+            HomeQuickActions(
+                onSessionsClick = {},
+                modifier = Modifier.padding(horizontal = 16.dp),
+                showTeamPhotoUploadTip = state == HomeTeamPhotoSessionUiState.AwaitingPhoto && sheet == null,
+            )
         }
         if (sheet != null) {
             HomeTeamPhotoResultSheet(

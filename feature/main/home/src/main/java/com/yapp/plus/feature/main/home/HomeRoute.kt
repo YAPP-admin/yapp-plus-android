@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -51,8 +50,10 @@ fun HomeRoute(
     val team by teamViewModel.state.collectAsStateWithLifecycle()
     val session = (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
     val teamSession = session?.takeIf { it.type == SessionType.TEAM }
-    LaunchedEffect(state.currentWeekSchedule) {
-        if (state.currentWeekSchedule != AttendanceUiState.Loading) teamViewModel.refresh(teamSession)
+
+    LaunchedEffect(viewModel) { viewModel.loadInitialHomeData() }
+    LaunchedEffect(teamSession) {
+        if (state.currentWeekSchedule is AttendanceUiState.Content) teamViewModel.refresh(teamSession)
     }
     DisposableEffect(teamViewModel) {
         onDispose(teamViewModel::clear)
@@ -65,14 +66,6 @@ fun HomeRoute(
         }
     }
     val canReport = AttendanceReportPolicy.canSubmit(session?.sessionDate, session?.startTime, now)
-
-    LifecycleEventEffect(Lifecycle.Event.ON_START) {
-        if (interactionViewModel.uiState.value.sheet == HomeSheet.None &&
-            !teamViewModel.state.value.isActive
-        ) {
-            viewModel.loadHomeData()
-        }
-    }
 
     val verifiedSessionId = interaction.verifiedSessionId
     LaunchedEffect(verifiedSessionId, lifecycleOwner) {
@@ -93,6 +86,11 @@ fun HomeRoute(
         HomeScreen(
             state = state.currentWeekSchedule,
             isLoading = state.isLoading,
+            isRefreshing = state.isRefreshing,
+            onRefresh = {
+                viewModel.refreshHome()
+                teamSession?.let(teamViewModel::refresh)
+            },
             modifier = Modifier.fillMaxSize(),
             noticeState = state.weeklyNotices,
             afterpartyBanner = afterpartyBanner,

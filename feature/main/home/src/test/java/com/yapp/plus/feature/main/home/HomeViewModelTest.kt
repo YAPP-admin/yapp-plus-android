@@ -35,7 +35,10 @@ class HomeViewModelTest {
                 FakeSessionScheduleRepository().apply {
                     currentWeekFailure = ScheduleFailure.NoActiveGeneration
                 }
-            val viewModel = HomeViewModel(repository, FakeHomeNoticeRepository()).also { it.loadHomeData() }
+            val viewModel =
+                HomeViewModel(repository, FakeHomeNoticeRepository()).also {
+                    it.loadInitialHomeData()
+                }
             advanceUntilIdle()
             assertEquals(AttendanceUiState.Inactive, viewModel.uiState.value.currentWeekSchedule)
         }
@@ -50,7 +53,7 @@ class HomeViewModelTest {
             val noticeRepository = FakeHomeNoticeRepository()
             val viewModel = HomeViewModel(scheduleRepository, noticeRepository)
 
-            viewModel.loadHomeData()
+            viewModel.loadInitialHomeData()
             advanceUntilIdle()
             assertEquals(AttendanceUiState.Error, viewModel.uiState.value.currentWeekSchedule)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -82,7 +85,7 @@ class HomeViewModelTest {
         }
 
     @Test
-    fun homeRequestsRunInParallelAndShareOneLoadingState() =
+    fun homeRequestsRunInParallelAndInitialLoadDoesNotRepeat() =
         runTest(mainDispatcherRule.dispatcher) {
             val scheduleGate = CompletableDeferred<Unit>()
             val noticeGate = CompletableDeferred<Unit>()
@@ -90,7 +93,7 @@ class HomeViewModelTest {
             val noticeRepository = FakeHomeNoticeRepository().apply { gate = noticeGate }
             val viewModel = HomeViewModel(scheduleRepository, noticeRepository)
 
-            repeat(2) { viewModel.loadHomeData() }
+            repeat(2) { viewModel.loadInitialHomeData() }
             runCurrent()
             assertEquals(1, scheduleRepository.currentWeekRequestCount)
             assertEquals(1, noticeRepository.requestCount)
@@ -103,6 +106,49 @@ class HomeViewModelTest {
             noticeGate.complete(Unit)
             advanceUntilIdle()
             assertFalse(viewModel.uiState.value.isLoading)
+
+            viewModel.loadInitialHomeData()
+            advanceUntilIdle()
+            assertEquals(1, scheduleRepository.currentWeekRequestCount)
+            assertEquals(1, noticeRepository.requestCount)
+        }
+
+    @Test
+    fun pullToRefreshKeepsCurrentContentUntilBothRequestsFinish() =
+        runTest(mainDispatcherRule.dispatcher) {
+            val scheduleRepository = FakeSessionScheduleRepository()
+            val noticeRepository = FakeHomeNoticeRepository()
+            val viewModel = HomeViewModel(scheduleRepository, noticeRepository)
+            viewModel.loadInitialHomeData()
+            advanceUntilIdle()
+
+            val currentSchedule = viewModel.uiState.value.currentWeekSchedule
+            val scheduleGate = CompletableDeferred<Unit>()
+            val noticeGate = CompletableDeferred<Unit>()
+            scheduleRepository.gate = scheduleGate
+            noticeRepository.gate = noticeGate
+
+            viewModel.refreshHome()
+            runCurrent()
+
+            assertTrue(viewModel.uiState.value.isRefreshing)
+            assertFalse(viewModel.uiState.value.isLoading)
+            assertEquals(currentSchedule, viewModel.uiState.value.currentWeekSchedule)
+            assertEquals(HomeNoticeUiState.Empty, viewModel.uiState.value.weeklyNotices)
+            assertEquals(2, scheduleRepository.currentWeekRequestCount)
+            assertEquals(2, noticeRepository.requestCount)
+
+            viewModel.refreshHome()
+            assertEquals(2, scheduleRepository.currentWeekRequestCount)
+            assertEquals(2, noticeRepository.requestCount)
+
+            noticeGate.complete(Unit)
+            runCurrent()
+            assertTrue(viewModel.uiState.value.isRefreshing)
+
+            scheduleGate.complete(Unit)
+            advanceUntilIdle()
+            assertFalse(viewModel.uiState.value.isRefreshing)
         }
 
     @Test
@@ -116,7 +162,7 @@ class HomeViewModelTest {
                 }
             val viewModel = HomeViewModel(scheduleRepository, FakeHomeNoticeRepository())
 
-            viewModel.loadHomeData()
+            viewModel.loadInitialHomeData()
             runCurrent()
             assertEquals(HomeNoticeUiState.Empty, viewModel.uiState.value.weeklyNotices)
             assertTrue(viewModel.uiState.value.isLoading)
@@ -136,7 +182,7 @@ class HomeViewModelTest {
                     attendanceStatus = AttendanceStatus.AVAILABLE
                 }
             val viewModel = HomeViewModel(repository, FakeHomeNoticeRepository())
-            viewModel.loadHomeData()
+            viewModel.loadInitialHomeData()
             advanceUntilIdle()
 
             viewModel.markAttendanceVerified(sessionId = 2)
@@ -145,7 +191,7 @@ class HomeViewModelTest {
             viewModel.markAttendanceVerified(sessionId = 1)
             assertEquals(AttendanceStatusUiModel.CheckedIn, viewModel.currentAttendanceStatus())
 
-            viewModel.loadHomeData()
+            viewModel.retryCurrentWeekSchedule()
             advanceUntilIdle()
             assertEquals(AttendanceStatusUiModel.Available, viewModel.currentAttendanceStatus())
             assertEquals(2, repository.currentWeekRequestCount)
@@ -161,7 +207,7 @@ class HomeViewModelTest {
                 }
             val viewModel = HomeViewModel(FakeSessionScheduleRepository(), noticeRepository)
 
-            viewModel.loadHomeData()
+            viewModel.loadInitialHomeData()
             advanceUntilIdle()
             assertEquals(HomeNoticeUiState.Error, viewModel.uiState.value.weeklyNotices)
 

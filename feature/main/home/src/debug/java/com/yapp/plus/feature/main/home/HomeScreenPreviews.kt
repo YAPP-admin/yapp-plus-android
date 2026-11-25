@@ -39,3 +39,11 @@ private fun HomeLoadingPreview() {
         HomeScreen(state = AttendanceUiState.Loading, isLoading = true)
     }
 }
+
+@Preview(name = "Home pull to refresh", widthDp = 393, heightDp = 692)
+@Composable
+private fun HomePullToRefreshPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeScreen(HomePreviewData.state(), isRefreshing = true)
+    }
+}

@@ -68,10 +68,29 @@ private fun BoardReadPreview() {
                 BoardCategory.Session,
                 "2026.10.30",
                 readCount = 95,
+                isRead = false,
             ),
-            {
-            },
+            {},
             false,
+        )
+    }
+}
+
+@Preview(widthDp = 353, showBackground = true)
+@Composable
+private fun BoardReadDonePreview() {
+    YappTheme {
+        BoardReadConfirmation(
+            BoardNoticeUiModel(
+                1,
+                "공지",
+                "본문",
+                BoardCategory.Session,
+                "2026.10.30",
+                readCount = 95,
+                isRead = true,
+            ),
+            {},
             false,
         )
     }

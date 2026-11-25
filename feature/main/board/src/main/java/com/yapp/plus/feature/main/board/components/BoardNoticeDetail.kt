@@ -22,7 +22,6 @@ internal fun BoardNoticeDetail(
     notice: BoardNoticeUiModel,
     onMarkRead: () -> Unit = {},
     isMarkingRead: Boolean = false,
-    hasReadError: Boolean = false,
 ) {
     Column(
         Modifier
@@ -47,6 +46,6 @@ internal fun BoardNoticeDetail(
             BoardMarkdown(notice.content)
             notice.images.forEach { BoardNoticeImage(it) }
         }
-        BoardReadConfirmation(notice, onMarkRead, isMarkingRead, hasReadError)
+        BoardReadConfirmation(notice, onMarkRead, isMarkingRead)
     }
 }

@@ -27,7 +27,6 @@ internal fun BoardReadConfirmation(
     notice: BoardNoticeUiModel,
     onMarkRead: () -> Unit,
     isMarkingRead: Boolean,
-    hasReadError: Boolean,
 ) {
     Column(
         Modifier.fillMaxWidth().padding(top = 52.dp),
@@ -48,7 +47,7 @@ internal fun BoardReadConfirmation(
             onClick = onMarkRead,
             enabled = !notice.isRead && !isMarkingRead,
             modifier = Modifier.padding(top = 14.dp),
-            color = YappMainColor.basement,
+            color = YappMainColor.brand,
             shape = RoundedCornerShape(999.dp),
         ) {
             Row(
@@ -57,7 +56,7 @@ internal fun BoardReadConfirmation(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    painterResource(R.drawable.ic_notice_read),
+                    painterResource(R.drawable.ic_notice_read_active),
                     null,
                     Modifier.size(22.dp),
                     tint = Color.Unspecified,
@@ -67,16 +66,9 @@ internal fun BoardReadConfirmation(
                         if (notice.isRead) R.string.board_read_done else R.string.board_read_action,
                     ),
                     YappTypography.scaleT4Bold,
-                    YappMainColor.textSecondary,
+                    YappMainColor.surface,
                 )
             }
-        }
-        if (hasReadError) {
-            YappText(
-                stringResource(R.string.board_read_error),
-                YappTypography.scaleT3Medium,
-                YappMainColor.critical,
-            )
         }
     }
 }

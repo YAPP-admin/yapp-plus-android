@@ -119,8 +119,11 @@ internal fun SettlementOwner(
     onEdit: () -> Unit,
     onFilter: (SettlementPaymentStatus) -> Unit,
 ) {
+    if (state.summary == null || state.people == null) {
+        CommunityLoading()
+    }
     when (val summary = state.summary) {
-        null -> CommunityLoading()
+        null -> Unit
         is YappResult.Failure -> CommunityError(summary.reason)
         is YappResult.Success -> SettlementTotals(summary.value)
     }
@@ -137,7 +140,7 @@ internal fun SettlementOwner(
     )
     CommunityCaption(stringResource(R.string.community_reminder))
     when (val people = state.people) {
-        null -> CommunityLoading()
+        null -> Unit
         is YappResult.Failure -> CommunityError(people.reason)
         is YappResult.Success -> {
             if (people.value.isEmpty()) CommunityCaption(stringResource(R.string.community_payment_empty))

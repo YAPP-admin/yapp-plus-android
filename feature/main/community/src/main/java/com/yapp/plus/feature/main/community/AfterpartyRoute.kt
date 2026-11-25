@@ -84,10 +84,14 @@ private fun AfterpartySections(
     onAddSettlement: () -> Unit,
 ) {
     state.failure?.let { CommunityError(it, isRequest = true) }
-    if (detail.response != AfterpartyResponse.UNANSWERED) {
+    val canShowAttendees = detail.response != AfterpartyResponse.UNANSWERED
+    if ((canShowAttendees && state.attendees == null) || state.settlements == null) {
+        CommunityLoading()
+    }
+    if (canShowAttendees) {
         detail.attendingCount?.let { CommunityTitle(stringResource(R.string.community_attendees, it)) }
         when (val roster = state.attendees) {
-            null -> CommunityLoading()
+            null -> Unit
             is YappResult.Failure -> CommunityError(roster.reason)
             is YappResult.Success -> roster.value.forEach { CommunityPerson(it) }
         }
@@ -96,7 +100,7 @@ private fun AfterpartySections(
     CommunityTitle(stringResource(R.string.community_settlement))
     CommunityCaption(stringResource(R.string.community_settlement_guide))
     when (val settlements = state.settlements) {
-        null -> CommunityLoading()
+        null -> Unit
         is YappResult.Failure -> CommunityError(settlements.reason)
         is YappResult.Success -> {
             if (settlements.value.isEmpty()) {

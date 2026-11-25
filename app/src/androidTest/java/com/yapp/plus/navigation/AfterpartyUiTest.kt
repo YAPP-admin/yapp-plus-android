@@ -105,6 +105,16 @@ class AfterpartyUiTest {
     }
 
     @Test
+    fun voteSubmitRemainsVisibleWhenDetailsFillTheScreen() {
+        openCommunity(AfterpartyUiFixtures(partyContent = "세션 뒤풀이 안내 ".repeat(120))) {
+            waitFor("테스트 뒤풀이")
+            compose.onNodeWithText("테스트 뒤풀이").performClick()
+            waitFor("제출하기")
+            compose.onNodeWithText("제출하기").assertIsDisplayed()
+        }
+    }
+
+    @Test
     fun settlementNotificationOpensDetail() {
         openCommunity(AfterpartyUiFixtures(), startInCommunity = false) {
             openSettlementNotification()
@@ -154,6 +164,7 @@ class AfterpartyUiTest {
 }
 
 internal class AfterpartyUiFixtures(
+    private val partyContent: String = "세션 뒤풀이 안내",
     private val awaitAfterparties: suspend () -> Unit = {},
 ) {
     val votes = AtomicInteger()
@@ -212,7 +223,7 @@ internal class AfterpartyUiFixtures(
         val response = if (votes.get() == 0) "UNANSWERED" else "ATTENDING"
         val count = if (votes.get() == 0) "null" else "1"
         return """
-            {"afterpartyId":9,"title":"테스트 뒤풀이","content":"세션 뒤풀이 안내",$schedule,
+            {"afterpartyId":9,"title":"테스트 뒤풀이","content":"$partyContent",$schedule,
              "state":"OPEN","response":"$response","attendingCount":$count}
             """.trimIndent()
     }

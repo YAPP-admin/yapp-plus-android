@@ -1,6 +1,7 @@
 package com.yapp.plus.feature.main.community
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,51 +62,55 @@ internal fun AfterpartyScreen(
 ) {
     Column(Modifier.fillMaxSize()) {
         CommunityHeader(stringResource(R.string.community_attendance), onBack)
-        Column(
-            Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            when (val result = state.detail) {
-                null -> CommunityLoading()
-                is YappResult.Failure -> CommunityError(result.reason)
-                is YappResult.Success -> {
-                    val detail = result.value
-                    AfterpartyInformation(detail)
-                    AfterpartyVote(detail, state.submitting, onVote)
-                    state.failure?.let { CommunityError(it, isRequest = true) }
-                    if (detail.response != AfterpartyResponse.UNANSWERED) {
-                        detail.attendingCount?.let { CommunityTitle(stringResource(R.string.community_attendees, it)) }
-                        when (val roster = state.attendees) {
-                            null -> CommunityLoading()
-                            is YappResult.Failure -> CommunityError(roster.reason)
-                            is YappResult.Success -> roster.value.forEach { CommunityPerson(it) }
-                        }
-                    }
-                    HorizontalDivider()
-                    CommunityTitle(stringResource(R.string.community_settlement))
-                    CommunityCaption(stringResource(R.string.community_settlement_guide))
-                    when (val settlements = state.settlements) {
-                        null -> CommunityLoading()
-                        is YappResult.Failure -> CommunityError(settlements.reason)
-                        is YappResult.Success -> {
-                            if (settlements.value.isEmpty()) {
-                                CommunityCaption(
-                                    stringResource(R.string.community_settlement_empty),
-                                )
-                            }
-                            settlements.value.forEach { row -> SettlementRow(row) { onSettlementClick(row.id) } }
-                        }
-                    }
-                    if (detail.response == AfterpartyResponse.ATTENDING && state.settlements is YappResult.Success) {
-                        YappButton(
-                            stringResource(R.string.community_settlement_add),
-                            onClick = onAddSettlement,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
+        when (val result = state.detail) {
+            null -> CommunityLoading(Modifier.padding(horizontal = 20.dp, vertical = 16.dp))
+            is YappResult.Failure ->
+                Box(Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+                    CommunityError(result.reason)
                 }
-            }
+            is YappResult.Success ->
+                AfterpartyContent(result.value, state.submitting, onVote) {
+                    AfterpartySections(result.value, state, onSettlementClick, onAddSettlement)
+                }
         }
+    }
+}
+
+@Composable
+private fun AfterpartySections(
+    detail: AfterpartyDetail,
+    state: AfterpartyScreenState,
+    onSettlementClick: (Long) -> Unit,
+    onAddSettlement: () -> Unit,
+) {
+    state.failure?.let { CommunityError(it, isRequest = true) }
+    if (detail.response != AfterpartyResponse.UNANSWERED) {
+        detail.attendingCount?.let { CommunityTitle(stringResource(R.string.community_attendees, it)) }
+        when (val roster = state.attendees) {
+            null -> CommunityLoading()
+            is YappResult.Failure -> CommunityError(roster.reason)
+            is YappResult.Success -> roster.value.forEach { CommunityPerson(it) }
+        }
+    }
+    HorizontalDivider()
+    CommunityTitle(stringResource(R.string.community_settlement))
+    CommunityCaption(stringResource(R.string.community_settlement_guide))
+    when (val settlements = state.settlements) {
+        null -> CommunityLoading()
+        is YappResult.Failure -> CommunityError(settlements.reason)
+        is YappResult.Success -> {
+            if (settlements.value.isEmpty()) {
+                CommunityCaption(stringResource(R.string.community_settlement_empty))
+            }
+            settlements.value.forEach { row -> SettlementRow(row) { onSettlementClick(row.id) } }
+        }
+    }
+    if (detail.response == AfterpartyResponse.ATTENDING && state.settlements is YappResult.Success) {
+        YappButton(
+            stringResource(R.string.community_settlement_add),
+            onClick = onAddSettlement,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -121,10 +126,11 @@ internal fun AfterpartyInformation(detail: AfterpartyDetail) {
 }
 
 @Composable
-internal fun AfterpartyVote(
+internal fun AfterpartyContent(
     detail: AfterpartyDetail,
     submitting: Boolean,
     onVote: (AfterpartyResponse) -> Unit,
+    content: @Composable () -> Unit,
 ) {
     var editing by rememberSaveable(detail.id) { mutableStateOf(false) }
     var selected by rememberSaveable(detail.id) { mutableStateOf(detail.response) }
@@ -141,28 +147,38 @@ internal fun AfterpartyVote(
         selected = detail.response
         editing = false
     }
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        HorizontalDivider()
-        CommunityTitle(stringResource(R.string.community_choice))
-        if (detail.canVote(now) && (editing || detail.response == AfterpartyResponse.UNANSWERED)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                listOf(AfterpartyResponse.NOT_ATTENDING, AfterpartyResponse.ATTENDING).forEach { option ->
-                    YappButton(
-                        text = stringResource(option.label()),
-                        onClick = { selected = option },
-                        enabled = !submitting,
-                        modifier = Modifier.weight(1f),
-                        variant =
-                            if (selected ==
-                                option
-                            ) {
-                                YappButtonVariant.OutlinedPrimary
-                            } else {
-                                YappButtonVariant.OutlinedAssistive
-                            },
-                    )
+    val canVote = detail.canVote(now)
+    val showChoices = canVote && (editing || detail.response == AfterpartyResponse.UNANSWERED)
+    Column(Modifier.fillMaxSize()) {
+        Column(
+            Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            AfterpartyInformation(detail)
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                HorizontalDivider()
+                CommunityTitle(stringResource(R.string.community_choice))
+                if (showChoices) {
+                    AfterpartyVoteOptions(selected, submitting) { selected = it }
+                } else {
+                    CommunityCaption(stringResource(detail.response.label()))
+                    if (canVote) {
+                        YappButton(
+                            stringResource(R.string.community_edit),
+                            onClick = { editing = true },
+                            variant = YappButtonVariant.OutlinedAssistive,
+                        )
+                    } else {
+                        CommunityCaption(stringResource(R.string.community_voting_closed))
+                    }
                 }
             }
+            content()
+        }
+        if (showChoices) {
             YappButton(
                 text = stringResource(if (submitting) R.string.community_sending else R.string.community_submit),
                 onClick = { onVote(selected) },
@@ -170,17 +186,32 @@ internal fun AfterpartyVote(
                     !submitting &&
                         selected != AfterpartyResponse.UNANSWERED &&
                         selected != detail.response,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
             )
-        } else {
-            CommunityCaption(stringResource(detail.response.label()))
-            if (detail.canVote(now)) {
-                YappButton(stringResource(R.string.community_edit), onClick = {
-                    editing = true
-                }, variant = YappButtonVariant.OutlinedAssistive)
-            } else {
-                CommunityCaption(stringResource(R.string.community_voting_closed))
-            }
+        }
+    }
+}
+
+@Composable
+private fun AfterpartyVoteOptions(
+    selected: AfterpartyResponse,
+    submitting: Boolean,
+    onSelected: (AfterpartyResponse) -> Unit,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        for (option in listOf(AfterpartyResponse.NOT_ATTENDING, AfterpartyResponse.ATTENDING)) {
+            YappButton(
+                text = stringResource(option.label()),
+                onClick = { onSelected(option) },
+                enabled = !submitting,
+                modifier = Modifier.weight(1f),
+                variant =
+                    if (selected == option) {
+                        YappButtonVariant.OutlinedPrimary
+                    } else {
+                        YappButtonVariant.OutlinedAssistive
+                    },
+            )
         }
     }
 }

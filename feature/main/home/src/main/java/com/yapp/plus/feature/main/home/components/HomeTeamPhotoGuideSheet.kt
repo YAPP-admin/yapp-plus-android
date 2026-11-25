@@ -2,17 +2,13 @@ package com.yapp.plus.feature.main.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,14 +17,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
-import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -149,33 +143,19 @@ internal fun HomeTeamPhotoGuideActions(
     onTakePhoto: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        YappClickableSurface(
+        YappButton(
+            text = stringResource(R.string.home_team_photo_choose_from_album),
             onClick = onChooseFromAlbum,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            color = YappHomeColor.background,
-        ) {
-            Box(
-                modifier =
-                    Modifier
-                        .heightIn(min = 52.dp)
-                        .padding(horizontal = 20.dp, vertical = 12.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                YappText(
-                    text = stringResource(R.string.home_team_photo_choose_from_album),
-                    style = YappTypography.scaleT5Bold,
-                    color = YappHomeColor.subtle,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
+            variant = YappButtonVariant.SolidNeutralWeak,
+            size = YappButtonSize.MainAction,
+        )
         YappButton(
             text = stringResource(R.string.home_team_photo_take_photo),
             onClick = onTakePhoto,
             modifier = Modifier.fillMaxWidth(),
             variant = YappButtonVariant.SolidBrand,
-            size = YappButtonSize.HomePrimary,
+            size = YappButtonSize.MainAction,
         )
     }
 }

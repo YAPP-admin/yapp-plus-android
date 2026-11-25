@@ -29,6 +29,7 @@ import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState
 import kotlinx.coroutines.delay
 import java.time.Instant
 
@@ -96,6 +97,9 @@ fun HomeRoute(
             noticeState = state.weeklyNotices,
             afterpartyBanner = afterpartyBanner,
             showReportTip = canReport,
+            showTeamPhotoUploadTip =
+                teamSession != null &&
+                    team.card(teamSession, now) == HomeTeamPhotoSessionUiState.AwaitingPhoto,
             onNotificationsClick = onNotificationsClick,
             onAttendanceClick = {
                 session?.takeUnless { it.type == SessionType.TEAM }?.let {
@@ -165,8 +169,9 @@ fun HomeRoute(
                     sessionId = session?.sessionId,
                     coordinates = session?.coordinates,
                     isAvailable = session?.attendanceStatus == AttendanceStatusUiModel.Available,
-                    isCheckingLocation = interaction.submissionStage == HomeSubmissionStage.RequestingLocationPermission ||
-                        interaction.submissionStage == HomeSubmissionStage.CheckingLocation,
+                    isCheckingLocation =
+                        interaction.submissionStage == HomeSubmissionStage.RequestingLocationPermission ||
+                            interaction.submissionStage == HomeSubmissionStage.CheckingLocation,
                     locationIssue = interaction.locationIssue,
                     sheetContent = { isCheckingLocation, locationIssue, onConfirm, onLocationRecovery ->
                         HomeSheetContent(

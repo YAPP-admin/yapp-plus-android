@@ -136,7 +136,7 @@ internal fun HomeTeamPhotoSelectionActions(
             onClick = onConfirm,
             modifier = Modifier.fillMaxWidth(),
             variant = YappButtonVariant.SolidBrand,
-            size = YappButtonSize.HomePrimary,
+            size = YappButtonSize.MainAction,
             enabled = state.canConfirm && selectedCount > 0 && !state.isSubmitting,
             leadingIcon = progressIndicator,
         )

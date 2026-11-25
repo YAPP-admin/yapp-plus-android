@@ -25,6 +25,7 @@ import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.feature.main.home.R
 
 private val quickActionHeight = 70.dp
+private val teamPhotoTipOffset = (-15).dp
 
 @Composable
 internal fun HomeQuickActions(
@@ -32,29 +33,41 @@ internal fun HomeQuickActions(
     modifier: Modifier = Modifier,
     onReportClick: () -> Unit = {},
     showReportTip: Boolean = false,
+    showTeamPhotoUploadTip: Boolean = false,
 ) {
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        HomeQuickAction(
-            title = stringResource(R.string.home_all_sessions),
-            description = stringResource(R.string.home_check),
-            image = R.drawable.home_action_sessions,
-            onClick = onSessionsClick,
-            modifier = Modifier.weight(1f),
-        )
-        Box(Modifier.weight(1f)) {
+    Box(modifier) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             HomeQuickAction(
-                title = stringResource(R.string.home_report),
-                description = stringResource(R.string.home_report_before),
-                image = R.drawable.graphic_report,
-                onClick = onReportClick,
-                modifier = Modifier.fillMaxWidth(),
-                imageModifier = Modifier.size(width = 102.dp, height = quickActionHeight),
+                title = stringResource(R.string.home_all_sessions),
+                description = stringResource(R.string.home_check),
+                image = R.drawable.home_action_sessions,
+                onClick = onSessionsClick,
+                modifier = Modifier.weight(1f),
             )
-            if (showReportTip) {
-                Box(Modifier.matchParentSize(), contentAlignment = Alignment.TopCenter) {
-                    HomeReportTip(Modifier.offset(y = quickActionHeight + 9.dp))
+            Box(Modifier.weight(1f)) {
+                HomeQuickAction(
+                    title = stringResource(R.string.home_report),
+                    description = stringResource(R.string.home_report_before),
+                    image = R.drawable.graphic_report,
+                    onClick = onReportClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    imageModifier = Modifier.size(width = 102.dp, height = quickActionHeight),
+                )
+                if (showReportTip) {
+                    Box(Modifier.matchParentSize(), contentAlignment = Alignment.TopCenter) {
+                        HomeTooltip(
+                            text = stringResource(R.string.home_report_tip),
+                            modifier = Modifier.offset(y = quickActionHeight + 9.dp),
+                        )
+                    }
                 }
             }
+        }
+        if (showTeamPhotoUploadTip) {
+            HomeTooltip(
+                text = stringResource(R.string.home_team_photo_upload_tip),
+                modifier = Modifier.align(Alignment.TopCenter).offset(y = teamPhotoTipOffset),
+            )
         }
     }
 }

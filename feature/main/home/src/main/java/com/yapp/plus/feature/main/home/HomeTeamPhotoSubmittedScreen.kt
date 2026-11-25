@@ -77,7 +77,7 @@ internal fun HomeTeamPhotoSubmittedScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
             variant = YappButtonVariant.SolidBrand,
-            size = YappButtonSize.HomePrimary,
+            size = YappButtonSize.MainAction,
         )
     }
 }

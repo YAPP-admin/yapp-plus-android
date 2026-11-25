@@ -15,6 +15,14 @@ import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSelectionUiState
 import com.yapp.plus.feature.main.home.teamPhotoPreviewMembers
 
+@Preview(name = "Team photo upload tip", showBackground = true)
+@Composable
+fun TeamPhotoUploadTipPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeTooltip(text = stringResource(R.string.home_team_photo_upload_tip))
+    }
+}
+
 @Preview(name = "Team photo guide content", widthDp = 373, showBackground = true)
 @Composable
 fun TeamPhotoGuideContentPreview() {

@@ -36,6 +36,12 @@ internal data class ButtonColors(
                         content = YappColor.white,
                         border = null,
                     )
+                YappButtonVariant.SolidNeutralWeak ->
+                    ButtonColors(
+                        container = YappHomeColor.background,
+                        content = if (enabled) YappHomeColor.text else YappColor.foregroundDisabled,
+                        border = null,
+                    )
                 YappButtonVariant.SolidBrand ->
                     ButtonColors(
                         container = YappColor.brand,

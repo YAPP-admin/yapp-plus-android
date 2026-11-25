@@ -116,6 +116,8 @@ Figma의 Bold 표기는 해당 스타일의 실제 글꼴 굵기를 따릅니다
 
 정규 세션의 출석 완료 카드는 58dp 달력 행과 40dp `HomeSecondarySmall` 버튼을 사용합니다. 달력에는 실제 세션 날짜를 흰 글자로 표시한 주황색 출석 배지와 `출석` 라벨을 둡니다. 팀 세션의 승인 상태도 같은 달력 배지 리소스를 사용합니다. [Figma 출석 완료 카드](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=810-11334)
 
+팀 세션의 홈 카드도 40dp 버튼을 사용하며 인증 사진을 올릴 수 있을 때 버튼 아래에 도움말을 표시합니다. 사진 안내의 앨범 버튼과 결석 안내의 문의 버튼은 52dp·12dp 모서리의 옅은 회색 버튼을 사용합니다. 팀원 목록의 본인 표시는 20dp 회색 배지와 11sp Bold 글자를 사용합니다. [Figma 팀 카드](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=810-11509) · [사진 안내](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-11966) · [팀원 선택](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=965-21177)
+
 홈 빠른 메뉴의 두 그래픽과 출석 완료의 캐릭터·좌우 장식, tooltip 화살표·코드 오류 아이콘은 해당 Figma 레이어를 PNG로 직접 내보낸 `:feature:main:home`의 `drawable-nodpi/home_*.png`입니다. 빠른 메뉴는 원본 카드에서 실제 보이는 101.5×70dp 영역을 유지합니다. 기존 YAPP 로고와 빈 상태 벡터도 재사용하며, 작은 빈 상태는 원본의 50% 투명도를 적용합니다. 완료 그래픽의 원형 배경은 Figma Frame의 채움·반경으로 구성하고, 세 레이어는 Motion context의 공통 2초 타임라인을 Compose에서 재생합니다. 시스템 애니메이션이 꺼져 있으면 정적인 완료 그래픽을 표시합니다.
 
 선택된 출결 보고 유형은 `#1A1C20` 테두리와 흰색 가운데를 둘러싼 같은 색의 링을 표시합니다. 홈의 `ic_home_report_radio_*`는 기본·선택 상태의 Figma 원본을 변환한 24dp VectorDrawable입니다. [Figma 출결 보고](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=652-5401)

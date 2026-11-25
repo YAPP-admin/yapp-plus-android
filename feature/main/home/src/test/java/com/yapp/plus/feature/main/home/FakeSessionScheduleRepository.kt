@@ -34,7 +34,7 @@ internal class FakeSessionScheduleRepository : SessionScheduleRepository {
                         name = "개발 세션",
                         date = LocalDate.of(2026, 10, 24),
                         startTime = LocalTime.of(14, 0),
-                        location = null,
+                        location = "DMC 첨단산업센터",
                         attendanceStatus = attendanceStatus,
                     ),
             )

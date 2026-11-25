@@ -33,6 +33,20 @@ fun HomeCalendarDayPreview() {
     YappTheme { HomeCalendarDay(LocalDate.of(2026, 11, 3), null, LocalDate.of(2026, 11, 3)) }
 }
 
+@Preview(widthDp = 43)
+@Composable
+private fun HomeAttendedCalendarDayPreview() {
+    val date = LocalDate.of(2026, 11, 7)
+    YappTheme {
+        HomeCalendarDay(
+            date = date,
+            sessionDate = date,
+            today = date,
+            isAttended = true,
+        )
+    }
+}
+
 @Preview(widthDp = 361)
 @Composable
 fun HomeQuickActionsPreview() {
@@ -123,7 +137,6 @@ fun HomeSessionContentPreview() {
             session = HomePreviewData.session(),
             now = HomePreviewData.now,
             onAttendanceClick = {},
-            onScoreClick = {},
         )
     }
 }

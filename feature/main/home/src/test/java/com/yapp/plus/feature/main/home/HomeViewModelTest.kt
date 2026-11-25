@@ -69,7 +69,7 @@ class HomeViewModelTest {
                         dateLabel = "10월 24일 (토)",
                         name = "개발 세션",
                         startTimeLabel = "오후 2시",
-                        location = null,
+                        location = "DMC 첨단산업센터",
                         attendanceStatus = AttendanceStatusUiModel.NotOpen,
                         sessionId = 1,
                         weekStartDate = LocalDate.of(2026, 10, 18),

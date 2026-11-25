@@ -28,9 +28,7 @@ class SessionScheduleRemoteDataSource(
         return CurrentGenerationScheduleMapper.toData(response)
     }
 
-    private suspend fun fetchSession(
-        path: String,
-    ): io.ktor.client.statement.HttpResponse =
+    private suspend fun fetchSession(path: String): io.ktor.client.statement.HttpResponse =
         try {
             httpClient.get(path)
         } catch (exception: ClientRequestException) {

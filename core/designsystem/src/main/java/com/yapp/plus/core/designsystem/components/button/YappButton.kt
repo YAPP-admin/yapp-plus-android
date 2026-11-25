@@ -97,7 +97,9 @@ private fun buttonTextStyle(size: YappButtonSize) =
     when (size) {
         YappButtonSize.Settings, YappButtonSize.MainAction -> YappTypography.scaleT6Bold
         YappButtonSize.HomePrimary -> YappHomeTypography.cardTitle
-        YappButtonSize.HomeSecondary -> YappHomeTypography.bodyBold
+        YappButtonSize.HomeSecondary,
+        YappButtonSize.HomeSecondarySmall,
+        -> YappHomeTypography.bodyBold
         YappButtonSize.CallToAction ->
             YappTypography.scaleT5Bold
 

@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,13 +49,15 @@ private fun HomeButtonVariantsPreview() {
             }, variant = YappButtonVariant.SolidBrand, size = YappButtonSize.HomePrimary)
             YappButton(stringResource(R.string.yapp_preview_home_check_in), {
             }, variant = YappButtonVariant.HomeAttendance, size = YappButtonSize.HomeSecondary)
-            YappButton(
-                stringResource(R.string.yapp_preview_home_attended),
-                {},
-                variant = YappButtonVariant.HomeAttendance,
-                size = YappButtonSize.HomeSecondary,
-                enabled = false,
-            )
+            CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+                YappButton(
+                    text = stringResource(R.string.yapp_preview_home_attended),
+                    onClick = {},
+                    variant = YappButtonVariant.HomeAttendance,
+                    size = YappButtonSize.HomeSecondarySmall,
+                    enabled = false,
+                )
+            }
         }
     }
 }

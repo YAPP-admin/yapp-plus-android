@@ -28,6 +28,7 @@ class SessionScheduleRepositoryImplTest {
         runTest {
             val source = FakeSessionScheduleDataSource()
             val repository = SessionScheduleRepositoryImpl(source)
+            val location = "팀별 자율 장소"
             for (status in AttendanceStatus.entries) {
                 source.currentWeekSchedule =
                     CurrentWeekScheduleData(
@@ -41,7 +42,7 @@ class SessionScheduleRepositoryImplTest {
                                 startTime = startTime,
                                 endTime = endTime,
                                 type = SessionType.TEAM,
-                                location = null,
+                                location = location,
                                 attendanceStatus = status,
                             ),
                     )
@@ -57,7 +58,7 @@ class SessionScheduleRepositoryImplTest {
                                 startTime = startTime,
                                 endTime = endTime,
                                 type = SessionType.TEAM,
-                                location = null,
+                                location = location,
                                 attendanceStatus = status,
                             ),
                     )

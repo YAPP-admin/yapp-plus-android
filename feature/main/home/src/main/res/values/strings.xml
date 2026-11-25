@@ -14,6 +14,7 @@
     <string name="home_session_starts">%1$s에 세션이 시작돼요</string>
     <string name="home_attendance_opens">%1$s에 출석할 수 있어요</string>
     <string name="home_attended">출석했어요!</string>
+    <string name="home_attendance_marker">출석</string>
     <string name="home_distance_loading">현재 위치를 확인하고 있어요</string>
     <string name="home_distance_disabled">휴대폰의 위치 기능을 켜 주세요</string>
     <string name="home_distance_unavailable">현재 위치를 확인하지 못했어요. 다시 시도해 주세요</string>
@@ -73,6 +74,5 @@
     <string name="home_report_session_changed">세션 정보가 변경됐어요. 확인 후 다시 시도해 주세요.</string>
     <string name="home_report_invalid">보고 종류와 30자 이내의 사유를 확인해 주세요.</string>
     <string name="session_inactive">현재 활동 기간이 아니에요.</string>
-    <string name="home_score_check">출석 점수 확인하기</string>
     <string name="home_report_closed">사전 보고는 조회된 세션의 시작 전까지만 가능해요.</string>
 </resources>

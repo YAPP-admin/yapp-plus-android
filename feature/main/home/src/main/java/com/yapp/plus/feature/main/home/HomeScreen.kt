@@ -43,7 +43,6 @@ fun HomeScreen(
     onNotificationsClick: (() -> Unit)? = null,
     onAttendanceClick: () -> Unit = {},
     onSessionsClick: () -> Unit = {},
-    onScoreClick: () -> Unit = {},
     onReportClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
     noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
@@ -92,7 +91,6 @@ fun HomeScreen(
                     state = state,
                     now = now,
                     onAttendanceClick = onAttendanceClick,
-                    onScoreClick = onScoreClick,
                 )
                 Spacer(Modifier.height(10.dp))
                 HomeQuickActions(

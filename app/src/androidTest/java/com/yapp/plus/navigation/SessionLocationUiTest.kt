@@ -128,15 +128,20 @@ class SessionLocationUiTest {
     }
 
     @Test
-    fun codeRequiresFourDigitsAndSuccessOffersMyScore() {
+    fun codeRequiresFourDigitsAndSuccessShowsCompletedCard() {
         assumeTrue(InstrumentationRegistry.getArguments().getString("sessionLocationPhase") == "precise")
         val verifications = AtomicInteger()
+        val completionScreenCount = AtomicInteger()
         installApiFixtures(
             includeLocation = true,
             venueLatitude = MOCK_LOCATION_LATITUDE,
             onVerification = { verifications.incrementAndGet() },
         ).use {
-            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            composeRule.setContent {
+                YappTheme {
+                    MainTabScaffold(onAttendanceComplete = { completionScreenCount.incrementAndGet() })
+                }
+            }
             waitForText("출석하기")
             composeRule.onNodeWithText("출석하기").performClick()
             composeRule.onNodeWithText("확인").assertIsNotEnabled()
@@ -144,10 +149,10 @@ class SessionLocationUiTest {
             composeRule.onNodeWithText("확인").assertIsNotEnabled()
             composeRule.onNode(hasSetTextAction()).performTextInput("4")
             composeRule.onNodeWithText("확인").assertIsEnabled().performClick()
-            waitForText("출석 점수 확인하기")
+            waitForText("출석했어요!")
+            composeRule.onNodeWithText("출석했어요!").assertIsNotEnabled()
             assertEquals(1, verifications.get())
-            composeRule.onNodeWithText("출석 점수 확인하기").performClick()
-            waitForText("마이페이지")
+            composeRule.runOnIdle { assertEquals(1, completionScreenCount.get()) }
         }
     }
 
@@ -191,7 +196,7 @@ class SessionLocationUiTest {
     }
 
     @Test
-    fun serverCheckedInShowsScoreWithoutOpeningCompletionScreen() {
+    fun serverCheckedInShowsCompletedCardWithoutOpeningCompletionScreen() {
         installApiFixtures(
             includeLocation = false,
             currentAttendanceStatus = { AttendanceStatus.CHECKED_IN },
@@ -201,10 +206,11 @@ class SessionLocationUiTest {
                 YappTheme { MainTabScaffold(onAttendanceComplete = { completionScreenCount++ }) }
             }
             waitForText("출석했어요!")
+            composeRule.onNodeWithText("출석했어요!").assertIsNotEnabled()
+            composeRule.onNodeWithText("출석").assertIsDisplayed()
             composeRule.runOnIdle { assertEquals(0, completionScreenCount) }
             composeRule.onNodeWithText("출석하기").assertDoesNotExist()
-            composeRule.onNodeWithText("출석 점수 확인하기").assertIsEnabled().performClick()
-            waitForText("마이페이지")
+            composeRule.onNodeWithText("출석 점수 확인하기").assertDoesNotExist()
         }
     }
 
@@ -228,7 +234,7 @@ class SessionLocationUiTest {
 
             waitForText("출석했어요!")
             composeRule.onNodeWithText("출석 확인 중이에요").assertDoesNotExist()
-            composeRule.onNodeWithText("출석 점수 확인하기").assertIsEnabled()
+            composeRule.onNodeWithText("출석했어요!").assertIsNotEnabled()
         }
     }
 

@@ -17,6 +17,7 @@ last_verified: 2026-11-24
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증·사전 보고·주간 공지·알림함 연결; 별도 점수 진입 숨김 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 분류·커서 목록·Markdown 상세·과제·첨부 이미지·읽음 확인 API 연결 |
+| `:feature:main:community` | `com.yapp.plus.feature.main.community` | 뒤풀이 목록·참석 응답·참석자·정산 등록/수정/납부 및 MY 정산 화면 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | Figma 요약·규칙·별도 이력 UI, 출석 점수·커서 조회 ViewModel·오류 재시도; 본인 프로필 조회·세션 이름 대체 표시; 미확인 면제권 UI 유지; 이용 문의는 App에서 카카오톡 채널 연결 |
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·기기별 알림 상태/오류/권한 안내 UI·Figma 로그아웃/회원 탈퇴 확인·진행·오류 재시도 UI; 앱 버전·확장 안내 제거; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |
@@ -35,7 +36,7 @@ last_verified: 2026-11-24
 
 Login Feature는 Google Credential Manager의 ID 토큰과 nonce를 메모리의 App 콜백으로 전달합니다. App은 YAPP 인증 결과를 해석해 세션을 저장하거나 Signup Feature로 이동합니다. Signup Feature는 가입 토큰을 저장하지 않고 이름·휴대폰 입력, E.164 검증, 서버 제출·완료 전환과 내부 뒤로 가기·입력 복원을 소유합니다. 시작 시 세션 복원은 App이 소유합니다.
 
-App은 네 탭·공지 ID·설정 화면 이동을 소유합니다. 홈과 일정의 ViewModel은 Repository 결과를 표시하고 예시 값은 `src/debug` Preview에서만 사용합니다. My ViewModel은 출석 점수와 이력 API 요청·페이지·오류를 관리하며, 별도 이력 화면 이동은 App의 저장 가능한 상태입니다. 기능별 화면은 Preview와 테스트에서 독립적으로 확인합니다.
+App은 다섯 탭과 공지·뒤풀이·정산 ID 기반 화면 이동, 설정 화면 이동을 소유합니다. 홈과 일정의 ViewModel은 Repository 결과를 표시하고 예시 값은 `src/debug` Preview에서만 사용합니다. My ViewModel은 출석 점수와 이력 API 요청·페이지·오류를 관리하며, 별도 이력 화면 이동은 App의 저장 가능한 상태입니다. 기능별 화면은 Preview와 테스트에서 독립적으로 확인합니다.
 
 임시 비공개 테스트 구현은 `release/v1.0.1`에 보존합니다. 브랜치 운영은 [CONTRIBUTING.md](../../CONTRIBUTING.md)를 따릅니다.
 

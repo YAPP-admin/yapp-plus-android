@@ -10,11 +10,19 @@ import android.os.Build
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.yapp.plus.R
+import com.yapp.plus.domain.notification.SettlementNotificationTarget
 
 internal const val PUSH_SOURCE = "source"
 internal const val PUSH_POST = "POST"
 internal const val PUSH_POST_ID = "postId"
+internal const val PUSH_SESSION_REMINDER = "SESSION_REMINDER"
+internal const val PUSH_SESSION_ID = "sessionId"
+internal const val PUSH_NAVIGATION_TARGET = "navigationTarget"
+internal const val PUSH_SESSION_SCHEDULE = "SESSION_SCHEDULE"
 internal const val PUSH_NOTIFICATION_ID = "notificationId"
+internal const val PUSH_SETTLEMENT = "SETTLEMENT"
+internal const val PUSH_SETTLEMENT_ID = "settlementId"
+internal const val PUSH_AFTERPARTY_ID = "afterpartyId"
 
 internal fun createPushChannel(context: Context) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
@@ -46,4 +54,18 @@ internal fun canShowPushNotifications(context: Context): Boolean {
 internal fun Intent.pushPostId(): Long? {
     if (getStringExtra(PUSH_SOURCE) != PUSH_POST) return null
     return getStringExtra(PUSH_POST_ID)?.toLongOrNull()?.takeIf { it > 0 }
+}
+
+internal fun Intent.pushSessionId(): Long? {
+    if (getStringExtra(PUSH_SOURCE) != PUSH_SESSION_REMINDER) return null
+    if (getStringExtra(PUSH_NAVIGATION_TARGET) != PUSH_SESSION_SCHEDULE) return null
+    return getStringExtra(PUSH_SESSION_ID)?.toLongOrNull()?.takeIf { it > 0 }
+}
+
+internal fun Intent.pushSettlement(): SettlementNotificationTarget? {
+    if (getStringExtra(PUSH_SOURCE) != PUSH_SETTLEMENT) return null
+    if (getStringExtra(PUSH_NAVIGATION_TARGET) != PUSH_SETTLEMENT) return null
+    val afterpartyId = getStringExtra(PUSH_AFTERPARTY_ID)?.toLongOrNull()?.takeIf { it > 0 } ?: return null
+    val settlementId = getStringExtra(PUSH_SETTLEMENT_ID)?.toLongOrNull()?.takeIf { it > 0 } ?: return null
+    return SettlementNotificationTarget(afterpartyId, settlementId)
 }

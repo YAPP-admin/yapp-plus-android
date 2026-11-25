@@ -20,7 +20,32 @@ internal sealed interface AppNavigationDestination {
     data object Notifications : AppNavigationDestination
 
     @Serializable
+    data class Afterparty(
+        val id: Long,
+    ) : AppNavigationDestination
+
+    @Serializable
+    data class Settlement(
+        val afterpartyId: Long,
+        val settlementId: Long,
+    ) : AppNavigationDestination
+
+    @Serializable
+    data class SettlementEditor(
+        val afterpartyId: Long,
+        val settlementId: Long? = null,
+    ) : AppNavigationDestination
+
+    @Serializable
+    data object MySettlements : AppNavigationDestination
+
+    @Serializable
     data class NotificationPost(
         val postId: Long,
+    ) : AppNavigationDestination
+
+    @Serializable
+    data class NotificationSchedule(
+        val sessionId: Long,
     ) : AppNavigationDestination
 }

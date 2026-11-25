@@ -29,6 +29,7 @@ internal object SessionScheduleUiMapper {
             type = type.toUiModel(),
             status = statusAt(now),
             address = locationDetails?.addressLine,
+            sessionId = sessionId,
         )
 
     private fun ScheduledSession.statusAt(now: LocalDateTime): ScheduleStatusUiModel {

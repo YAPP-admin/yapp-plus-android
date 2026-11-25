@@ -127,6 +127,7 @@ private fun MembershipStatus?.labelResource(): Int =
         MembershipStatus.OB -> R.string.my_profile_role_ob
         MembershipStatus.COMPLETED_MEMBER -> R.string.my_profile_role_completed
         MembershipStatus.DEFERRED -> R.string.my_profile_role_deferred
+        MembershipStatus.STAFF -> R.string.my_profile_role_staff
         MembershipStatus.UNKNOWN, null -> R.string.my_empty_value
     }
 

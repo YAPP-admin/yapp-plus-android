@@ -1,6 +1,7 @@
 package com.yapp.plus.core.designsystem.components.button
 
 import androidx.compose.ui.graphics.Color
+import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 
@@ -35,6 +36,13 @@ internal data class ButtonColors(
                         content = YappColor.white,
                         border = null,
                         alpha = if (enabled) 1f else DISABLED_BRAND_ALPHA,
+                    )
+
+                YappButtonVariant.AuthPrimary ->
+                    ButtonColors(
+                        container = if (enabled) YappAuthColor.brand else YappColor.backgroundBasement,
+                        content = if (enabled) YappColor.white else YappAuthColor.textDisabled,
+                        border = null,
                     )
 
                 YappButtonVariant.Kakao ->

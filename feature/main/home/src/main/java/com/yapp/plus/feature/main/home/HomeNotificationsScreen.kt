@@ -26,6 +26,7 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
+import com.yapp.plus.domain.notification.SettlementNotificationTarget
 import com.yapp.plus.feature.main.home.components.HomeEmptyState
 import com.yapp.plus.feature.main.home.components.HomeTopBar
 import com.yapp.plus.feature.main.home.model.HomeNotificationUiModel
@@ -39,6 +40,8 @@ internal fun HomeNotificationsScreen(
     onPostClick: (Long) -> Unit = {},
     onRefresh: () -> Unit = {},
     onLoadMore: () -> Unit = {},
+    onSessionClick: (Long) -> Unit = {},
+    onSettlementClick: (SettlementNotificationTarget) -> Unit = {},
 ) {
     Column(modifier.fillMaxSize().background(YappHomeColor.surface)) {
         HomeTopBar(stringResource(R.string.attendance_home_notifications), onBack)
@@ -51,11 +54,13 @@ internal fun HomeNotificationsScreen(
                 NotificationList(
                     state = HomeNotificationsUiState.Content(hasRefreshError = true),
                     onPostClick = onPostClick,
+                    onSettlementClick = onSettlementClick,
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
+                    onSessionClick = onSessionClick,
                 )
             is HomeNotificationsUiState.Content ->
-                NotificationList(state, onPostClick, onRefresh, onLoadMore)
+                NotificationList(state, onPostClick, onRefresh, onLoadMore, onSessionClick, onSettlementClick)
         }
     }
 }
@@ -67,6 +72,8 @@ internal fun NotificationList(
     onPostClick: (Long) -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
+    onSessionClick: (Long) -> Unit = {},
+    onSettlementClick: (SettlementNotificationTarget) -> Unit = {},
 ) {
     PullToRefreshBox(isRefreshing = state.isRefreshing, onRefresh = onRefresh) {
         LazyColumn(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
@@ -87,7 +94,10 @@ internal fun NotificationList(
                 }
             }
             items(state.items, key = { it.id }) { notification ->
-                val onClick = notification.postId?.let { postId -> { onPostClick(postId) } }
+                val onClick =
+                    notification.settlement?.let { target -> { onSettlementClick(target) } }
+                        ?: notification.sessionId?.let { id -> { onSessionClick(id) } }
+                        ?: notification.postId?.let { id -> { onPostClick(id) } }
                 HomeNotificationItem(notification = notification, onClick = onClick)
             }
             if (state.nextCursor != null) {
@@ -143,7 +153,14 @@ internal fun HomeNotificationItem(
             Modifier
         } else {
             Modifier.clickable(
-                onClickLabel = stringResource(R.string.home_notifications_open_post),
+                onClickLabel =
+                    stringResource(
+                        when {
+                            notification.settlement != null -> R.string.home_notifications_open_settlement
+                            notification.sessionId != null -> R.string.home_notifications_open_schedule
+                            else -> R.string.home_notifications_open_post
+                        },
+                    ),
                 role = Role.Button,
                 onClick = onClick,
             )

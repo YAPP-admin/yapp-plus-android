@@ -7,4 +7,6 @@ data class Notification(
     val content: String,
     val sentDate: LocalDate,
     val postId: Long?,
+    val sessionId: Long? = null,
+    val settlement: SettlementNotificationTarget? = null,
 )

@@ -1,6 +1,7 @@
 package com.yapp.plus.data.notification
 
 import com.yapp.plus.data.apiTestClient
+import com.yapp.plus.domain.notification.SettlementNotificationTarget
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -14,7 +15,32 @@ import java.time.LocalDate
 
 class NotificationApiTest {
     @Test
-    fun mapsGeneralAndPostAndPassesOpaqueCursor() =
+    fun mapsSettlementDestinationWhileKeepingUnlinkedNotifications() =
+        runTest {
+            apiTestClient(
+                MockEngine {
+                    respond(
+                        """
+                        {"items":[
+                          {"id":1,"content":"정산","sentDate":"2026-11-02","type":"SETTLEMENT","postId":null,
+                            "navigationTarget":"SETTLEMENT","afterpartyId":9,"settlementId":13},
+                          {"id":2,"content":"일정","sentDate":"2026-11-02","type":"SESSION_REMINDER","postId":null},
+                          {"id":3,"content":"이전 정산","sentDate":"2026-11-02","type":"SETTLEMENT","postId":null,
+                            "navigationTarget":"SETTLEMENT","afterpartyId":0,"settlementId":13}
+                        ],"nextCursor":null}
+                        """.trimIndent(),
+                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                    )
+                },
+            ).use { client ->
+                val repository = NotificationRepositoryImpl(NotificationRemoteDataSource(client))
+                val targets = repository.fetchNotifications().items.map { it.settlement }
+                assertEquals(listOf(SettlementNotificationTarget(9, 13), null, null), targets)
+            }
+        }
+
+    @Test
+    fun mapsGeneralPostAndSessionRemindersAndPassesOpaqueCursor() =
         runTest {
             val requestedCursors = mutableListOf<String?>()
             val cursor = "next+page/="
@@ -33,7 +59,13 @@ class NotificationApiTest {
                                 {"id":9,"content":"일반 알림","sentDate":"2026-11-02",
                                  "type":"GENERAL","postId":null},
                                 {"id":8,"content":"새 공지","sentDate":"2026-11-01",
-                                 "type":"POST","postId":42}
+                                 "type":"POST","postId":42},
+                                {"id":7,"content":"세션 안내","sentDate":"2026-11-01",
+                                 "type":"SESSION_REMINDER","postId":null,"sessionId":71,
+                                 "navigationTarget":"SESSION_SCHEDULE"},
+                                {"id":6,"content":"세션 안내","sentDate":"2026-11-01",
+                                 "type":"SESSION_REMINDER","postId":null,"sessionId":0,
+                                 "navigationTarget":"SESSION_SCHEDULE"}
                               ],
                               "nextCursor":"$cursor"
                             }
@@ -46,9 +78,10 @@ class NotificationApiTest {
             ).use { client ->
                 val repository = NotificationRepositoryImpl(NotificationRemoteDataSource(client))
                 val page = repository.fetchNotifications()
-                assertEquals(listOf(9L, 8L), page.items.map { it.id })
+                assertEquals(listOf(9L, 8L, 7L, 6L), page.items.map { it.id })
                 assertEquals(LocalDate.of(2026, 11, 2), page.items.first().sentDate)
-                assertEquals(listOf(null, 42L), page.items.map { it.postId })
+                assertEquals(listOf(null, 42L, null, null), page.items.map { it.postId })
+                assertEquals(listOf(null, null, 71L, null), page.items.map { it.sessionId })
                 assertEquals(cursor, page.nextCursor)
                 assertNull(repository.fetchNotifications(page.nextCursor).nextCursor)
                 assertEquals(listOf(null, cursor), requestedCursors)

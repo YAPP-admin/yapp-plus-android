@@ -1,0 +1,28 @@
+package com.yapp.plus.domain.afterparty
+
+enum class SettlementBank {
+    HANA,
+    KB_KOOKMIN,
+    IBK,
+    NH,
+    KYONGNAM,
+    KWANGJU,
+    BUSAN,
+    KDB,
+    SUHYUP,
+    SHINHAN,
+    WOORI,
+    JEONBUK,
+    JEJU,
+    KAKAO,
+    K_BANK,
+    TOSS,
+    IM_BANK,
+    SC_FIRST,
+    CITI,
+    MG,
+    FORESTRY,
+    CREDIT_UNION,
+    POST_OFFICE,
+    SAVINGS,
+}

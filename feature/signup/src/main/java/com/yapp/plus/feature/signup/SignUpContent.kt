@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.auth.AuthHeading
 import com.yapp.plus.core.designsystem.components.auth.AuthLayout
@@ -92,6 +93,8 @@ fun SignUpContent(
                 supportingText = supportingText,
                 enabled = isInputEnabled,
                 variant = YappTextFieldVariant.Auth,
+                visualTransformation =
+                    if (isName) VisualTransformation.None else SignUpPhoneVisualTransformation,
                 keyboardOptions =
                     KeyboardOptions(
                         capitalization = KeyboardCapitalization.Words,

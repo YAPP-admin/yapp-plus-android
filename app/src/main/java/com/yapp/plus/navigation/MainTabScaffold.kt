@@ -18,6 +18,8 @@ import androidx.compose.ui.res.stringResource
 import com.yapp.plus.R
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.BoardRoute
+import com.yapp.plus.feature.main.community.AfterpartyBanner
+import com.yapp.plus.feature.main.community.CommunityRoute
 import com.yapp.plus.feature.main.home.HomeRoute
 import com.yapp.plus.feature.main.my.MyRoute
 import com.yapp.plus.feature.main.schedule.ScheduleRoute
@@ -38,6 +40,9 @@ internal fun MainTabScaffold(
     isDeletingAccount: Boolean = false,
     hasDeleteAccountError: Boolean = false,
     onDeleteAccountErrorDismissed: () -> Unit = {},
+    scheduleSessionId: Long? = null,
+    onAfterpartyClick: ((Long) -> Unit)? = null,
+    onSettlementsClick: (() -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
     val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
@@ -83,6 +88,7 @@ internal fun MainTabScaffold(
                 MainTab.Home ->
                     HomeRoute(
                         onNotificationsClick = onNotificationsClick,
+                        afterpartyBanner = onAfterpartyClick?.let { navigate -> { AfterpartyBanner(navigate) } },
                         onSessionsClick = { selectedTab = MainTab.Schedule },
                         onNoticeClick = {
                             selectedNoticeId = it
@@ -92,13 +98,14 @@ internal fun MainTabScaffold(
                         onScoreClick = { selectedTab = MainTab.My },
                         onContactStaff = { runCatching { uriHandler.openUri(contactChannelUrl) } },
                     )
-                MainTab.Schedule -> ScheduleRoute()
+                MainTab.Schedule -> ScheduleRoute(targetSessionId = scheduleSessionId)
                 MainTab.Board ->
                     BoardRoute(
                         noticeId = selectedNoticeId,
                         onNoticeClick = { selectedNoticeId = it },
                         onBack = { selectedNoticeId = null },
                     )
+                MainTab.Community -> CommunityRoute { onAfterpartyClick?.invoke(it) }
                 MainTab.My ->
                     if (isSettingsVisible) {
                         SettingsScreen(
@@ -116,6 +123,7 @@ internal fun MainTabScaffold(
                     } else {
                         MyRoute(
                             onSettingsClick = { isSettingsVisible = true },
+                            onSettlementsClick = onSettlementsClick,
                             onAttendanceHistoryClick = { isMyHistoryVisible = true },
                             onBack = { isMyHistoryVisible = false },
                             isHistoryVisible = isMyHistoryVisible,

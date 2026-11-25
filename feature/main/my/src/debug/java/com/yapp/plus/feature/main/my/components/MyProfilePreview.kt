@@ -3,6 +3,7 @@ package com.yapp.plus.feature.main.my.components
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.domain.profile.MembershipStatus
 import com.yapp.plus.feature.main.my.MyPreviewData
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
 
@@ -26,4 +27,10 @@ private fun MyProfileLoadingPreview() {
 @Composable
 private fun MyProfileErrorPreview() {
     YappTheme { MyProfileSection(state = MyProfileUiState.Error()) }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyStaffProfilePreview() {
+    YappTheme { MyProfile(MyPreviewData.profile.copy(role = MembershipStatus.STAFF)) }
 }

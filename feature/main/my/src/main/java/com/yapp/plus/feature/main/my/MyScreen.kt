@@ -34,6 +34,7 @@ fun MyScreen(
     onAttendanceHistoryClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onContactClick: () -> Unit = {},
+    onSettlementsClick: (() -> Unit)? = null,
 ) {
     var showRules by rememberSaveable { mutableStateOf(false) }
     Column(modifier.fillMaxSize().background(YappMainColor.surface)) {
@@ -67,6 +68,9 @@ fun MyScreen(
                         title = stringResource(R.string.my_attendance_history_title),
                         onClick = onAttendanceHistoryClick,
                     )
+                }
+                if (onSettlementsClick != null) {
+                    item { MyMenuRow(stringResource(R.string.my_settlements), onSettlementsClick) }
                 }
                 item {
                     MyMenuRow(stringResource(R.string.my_contact), onContactClick)

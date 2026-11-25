@@ -8,7 +8,7 @@
 
 로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager ID Token과 원본 nonce를 YAPP native-authentication API에 보내고, `SIGNED_IN` 세션을 암호화 저장하거나 `SIGNUP_REQUIRED` 토큰으로 기존 회원가입 입력 흐름을 진행합니다. 가입 성공 시 세션을 저장하고, 앱 시작 시 저장 세션을 복원해 메인 또는 로그인 화면을 엽니다.
 
-홈 주간 공지와 게시판 목록·상세·읽음 확인은 사용자 공지 API에 연결했습니다. My는 사용자 출석 점수·커서 기반 이력 API를 연결했고, 이름은 인증 성공 응답에서 저장·복원하며 본인 프로필은 사용자 API를 조회합니다. 지각 면제권은 Figma UI를 유지하고 API 연결을 기다립니다. 문의는 YAPP 카카오톡 채널을 엽니다. 미확인 조회값과 진행률은 `—`로 표시하며 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 App이 네 화면과 탭·설정·출석 내역 이동 상태를 관리합니다.
+홈 주간 공지와 게시판 목록·상세·읽음 확인은 사용자 공지 API에 연결했습니다. My는 사용자 출석 점수·커서 기반 이력 API를 연결했고, 이름은 인증 성공 응답에서 저장·복원하며 본인 프로필은 사용자 API를 조회합니다. 지각 면제권은 Figma UI를 유지하고 API 연결을 기다립니다. 문의는 YAPP 카카오톡 채널을 엽니다. 미확인 조회값과 진행률은 `—`로 표시하며 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈·게시판·My·일정은 각각 `:feature:main:home`, `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 커뮤니티는 `:feature:main:community`에서 뒤풀이 투표와 정산 기능을 제공하며 App이 탭·설정·출석 내역·정산 이동을 관리합니다.
 
 인증 세션의 HTTP 401 자동 갱신, 원래 요청 1회 재시도와 동시 갱신 중복 방지를 구현했습니다. Data가 Google 로그인·가입·세션 갱신 API를 연결하고, Network가 토큰 쌍 복원·교체와 인증 처리를 소유합니다. `:core:datastore`가 Keystore로 암호화한 토큰 쌍을 백업 제외 경로에 저장하며 API 환경별로 분리합니다.
 
@@ -31,7 +31,7 @@ MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필�
 
 - Android Studio와 Android SDK 37
 - JDK 25 (Gradle daemon JVM 설정으로 자동 선택)
-- Kotlin 2.2.10, Android Gradle Plugin 9.5.0-alpha02, Gradle 9.6.0
+- Kotlin 2.2.10, Android Gradle Plugin 9.4.0, Gradle 9.6.0
 - minSdk 24, targetSdk 37
 
 Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합니다. 로컬 SDK 경로는 `local.properties`에 설정하며 이 파일은 Git에서 제외됩니다.

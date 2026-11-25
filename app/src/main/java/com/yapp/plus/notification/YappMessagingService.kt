@@ -58,9 +58,22 @@ class YappMessagingService : FirebaseMessagingService() {
                         .authority("notification")
                         .appendPath(tag)
                         .build()
-                if (message.data[PUSH_SOURCE] == PUSH_POST) {
-                    putExtra(PUSH_SOURCE, PUSH_POST)
-                    putExtra(PUSH_POST_ID, message.data[PUSH_POST_ID])
+                when (message.data[PUSH_SOURCE]) {
+                    PUSH_POST -> {
+                        putExtra(PUSH_SOURCE, PUSH_POST)
+                        putExtra(PUSH_POST_ID, message.data[PUSH_POST_ID])
+                    }
+                    PUSH_SESSION_REMINDER -> {
+                        putExtra(PUSH_SOURCE, PUSH_SESSION_REMINDER)
+                        putExtra(PUSH_SESSION_ID, message.data[PUSH_SESSION_ID])
+                        putExtra(PUSH_NAVIGATION_TARGET, message.data[PUSH_NAVIGATION_TARGET])
+                    }
+                    PUSH_SETTLEMENT -> {
+                        putExtra(PUSH_SOURCE, PUSH_SETTLEMENT)
+                        putExtra(PUSH_AFTERPARTY_ID, message.data[PUSH_AFTERPARTY_ID])
+                        putExtra(PUSH_SETTLEMENT_ID, message.data[PUSH_SETTLEMENT_ID])
+                        putExtra(PUSH_NAVIGATION_TARGET, message.data[PUSH_NAVIGATION_TARGET])
+                    }
                 }
             }
         return PendingIntent.getActivity(

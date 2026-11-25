@@ -6,6 +6,7 @@
     <string name="my_contact">이용문의</string>
     <string name="my_profile_loading">프로필을 불러오는 중이에요</string>
     <string name="my_profile_error">프로필을 불러오지 못했어요</string>
+    <string name="my_settlements">뒤풀이 정산</string>
     <string name="my_attendance_history_title">출석 내역</string>
     <string name="my_attendance_summary">내 출석 현황</string>
     <string name="my_total_score">총 점수</string>
@@ -55,6 +56,7 @@
     <string name="my_profile_role_ob">OB</string>
     <string name="my_profile_role_completed">수료회원</string>
     <string name="my_profile_role_deferred">유예 회원</string>
+    <string name="my_profile_role_staff">운영진</string>
     <string name="my_profile_position_pm">PM</string>
     <string name="my_profile_position_design">Design</string>
     <string name="my_profile_position_web">Web</string>

@@ -1,12 +1,12 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-24
+last_verified: 2026-11-25
 ---
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0062`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0063`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -509,3 +509,10 @@ last_verified: 2026-11-24
 - 결정: 홈·일정 탭의 두 일정 조회는 Domain의 `YappResult`로 성공과 기능별 실패를 전달합니다. `:core:ui`의 `BaseViewModel`이 요청 실행과 상태 갱신을 공유하고, 각 화면이 요청별 로딩·재시도와 표시 상태를 결정합니다.
 - 근거: 사용자가 두 화면에 적용할 설계와 `:core:ui` 배치를 승인했습니다. [Android 이슈 #234](https://github.com/YAPP-admin/yapp-plus-android/issues/234)
 - 적용 상태: `SessionScheduleRepository`의 두 조회가 `YappResult`를 반환하고, 홈과 일정 탭은 `:core:ui`의 `BaseViewModel`에서 그 결과를 화면 상태로 반영합니다. [설계 패턴](design-patterns.md#홈과-일정-탭의-일정-조회) · [모듈 구조](module-structure.md)
+
+## DEC-0062 · 사용자 뒤풀이·정산 연결
+
+- 기록일: 2026-11-25
+- 결정: Android 커뮤니티에서 초대 목록·단일 참석 응답·참석자 조회를 제공하고, 정산은 사용자 계약의 자격·증빙·revision·납부 상태를 따릅니다.
+- 근거: [사용자 뒤풀이 및 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/45e4cdf55d43f5cfcbb0a876a9ec48d52e06f3d4/APIDOC.md#afterparty--기수-초대-및-참석-조사), [Figma 뒤풀이](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1421-13412), [Android 이슈 #238](https://github.com/YAPP-admin/yapp-plus-android/issues/238).
+- 적용 상태: [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산) 및 Android 커뮤니티·홈·My·알림 이동에 적용했습니다.

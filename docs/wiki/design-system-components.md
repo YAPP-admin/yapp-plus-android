@@ -71,3 +71,8 @@ YappText(
 - `YappChipSize.Profile`은 13sp/18sp 글자, 가로 10dp·세로 2dp 여백과 8dp 모서리를 사용합니다. `YappChipColor.Brand`와 함께 프로필의 활동회원 배지를 표시합니다. 개별 Preview는 `src/debug`의 `components/chip/ProfileChipPreview.kt`에서 확인합니다.
 - `YappMainColor.basement`, `layerFill`, `critical`, `criticalWeak`는 My 요약 카드 배경과 결석 배지에 사용하는 Figma 색상입니다.
 - My·설정의 API 연결 범위와 표시 정책은 [DEC-0043](decisions.md#dec-0043--my-출석-조회-연결과-figma-ui-기준)을 따릅니다.
+
+## 리플을 사용하지 않는 컨트롤
+
+- 클릭·선택·토글에는 `noRippleClickable`, `noRippleSelectable`, `noRippleToggleable`을 사용해 클릭과 접근성 동작을 유지할 수 있습니다.
+- `YappClickableSurface`와 `YappButton`은 리플을 표시하지 않습니다. Material3 컨트롤에는 필요한 범위에 `WithoutRipple`을 적용합니다.

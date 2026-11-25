@@ -23,7 +23,7 @@ fun AuthPrimaryAction(
             modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-        variant = YappButtonVariant.SolidBrand,
+        variant = YappButtonVariant.AuthPrimary,
         size = YappButtonSize.CallToAction,
         enabled = isEnabled,
     )

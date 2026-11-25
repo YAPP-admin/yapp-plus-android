@@ -51,6 +51,7 @@ fun HomeScreen(
     isLoading: Boolean = false,
     distanceContent: @Composable () -> Unit = {},
     teamSessionCard: (@Composable () -> Unit)? = null,
+    afterpartyBanner: (@Composable () -> Unit)? = null,
 ) {
     if (isLoading) {
         Box(
@@ -86,6 +87,7 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp)
                     .padding(top = 14.dp, bottom = 14.dp),
             ) {
+                afterpartyBanner?.invoke()
                 teamSessionCard?.invoke() ?: HomeSessionCard(
                     state = state,
                     now = now,

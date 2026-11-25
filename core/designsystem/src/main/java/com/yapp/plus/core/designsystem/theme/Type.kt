@@ -43,6 +43,7 @@ private fun yappTextStyle(
 
 /** Typography tokens from the YAPP Figma type scale. */
 object YappTypography {
+    val scaleT1Bold = yappTextStyle(FontWeight.Bold, 11.sp, 15.sp, 0.sp)
     val scaleT2Medium = yappTextStyle(FontWeight.Medium, 12.sp, 16.sp, 0.sp)
     val scaleT2Bold = yappTextStyle(FontWeight.Bold, 12.sp, 16.sp, 0.sp)
     val scaleT3Medium = yappTextStyle(FontWeight.Medium, 13.sp, 18.sp, 0.sp)

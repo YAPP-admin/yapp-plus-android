@@ -95,7 +95,7 @@ fun YappButton(
 @Composable
 private fun buttonTextStyle(size: YappButtonSize) =
     when (size) {
-        YappButtonSize.Settings -> YappTypography.scaleT6Bold
+        YappButtonSize.Settings, YappButtonSize.MainAction -> YappTypography.scaleT6Bold
         YappButtonSize.HomePrimary -> YappHomeTypography.cardTitle
         YappButtonSize.HomeSecondary -> YappHomeTypography.bodyBold
         YappButtonSize.CallToAction ->

@@ -26,6 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,22 +56,28 @@ fun YappTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     textStyle: TextStyle? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    inputContentDescription: String? = null,
 ) {
     val metrics = InputMetrics.from(size, variant)
-    val isAuth = variant == YappTextFieldVariant.Auth
-    val textColor = if (isAuth) YappColor.foregroundNeutral else YappColor.textPrimary
-    val cursorColor = if (isAuth) YappColor.foregroundMuted else YappColor.primary
-    val placeholderColor = if (isAuth) YappColor.foregroundFaint else YappColor.placeholder
+    val usesNeutralPalette = variant.usesNeutralPalette
+    val textColor = if (usesNeutralPalette) YappColor.foregroundNeutral else YappColor.textPrimary
+    val cursorColor = if (usesNeutralPalette) YappColor.foregroundMuted else YappColor.primary
+    val placeholderColor =
+        if (usesNeutralPalette) YappColor.foregroundFaint else YappColor.placeholder
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val shouldHighlightFocus =
-        isAuth &&
+        usesNeutralPalette &&
             isFocused &&
             enabled &&
             state == YappInputState.Default
     val borderState = if (shouldHighlightFocus) YappInputState.Active else state
     val borderColor = inputBorderColor(borderState, variant)
     val inputShape = RoundedCornerShape(metrics.cornerRadius)
+    val inputSemantics =
+        inputContentDescription?.let { label ->
+            Modifier.semantics { contentDescription = label }
+        } ?: Modifier
     val currentSelectionColors = LocalTextSelectionColors.current
     val textSelectionColors =
         remember(currentSelectionColors) {
@@ -94,6 +102,7 @@ fun YappTextField(
                     onValueChange = onValueChange,
                     modifier =
                         Modifier
+                            .then(inputSemantics)
                             .fillMaxWidth()
                             .height(metrics.height)
                             .border(width = 1.dp, color = borderColor, shape = inputShape)

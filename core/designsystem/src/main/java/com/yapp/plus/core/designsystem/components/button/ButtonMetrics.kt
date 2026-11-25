@@ -48,6 +48,16 @@ internal data class ButtonMetrics(
 
                 YappButtonSize.Settings ->
                     ButtonMetrics(20.dp, 16.dp, 12.dp, 8.dp, 24.dp, Alignment.CenterHorizontally)
+                YappButtonSize.MainAction ->
+                    ButtonMetrics(
+                        20.dp,
+                        14.dp,
+                        12.dp,
+                        8.dp,
+                        24.dp,
+                        Alignment.CenterHorizontally,
+                        52.dp,
+                    )
                 YappButtonSize.Social ->
                     ButtonMetrics(
                         horizontalPadding = 20.dp,

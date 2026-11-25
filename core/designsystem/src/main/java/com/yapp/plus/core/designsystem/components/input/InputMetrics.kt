@@ -23,6 +23,8 @@ internal data class InputMetrics(
                 )
             } else if (variant == YappTextFieldVariant.Home) {
                 InputMetrics(50.dp, 16.dp, 12.dp, 12.dp)
+            } else if (variant == YappTextFieldVariant.Form) {
+                InputMetrics(52.dp, 16.dp, 12.dp, 10.dp)
             } else {
                 when (size) {
                     YappInputSize.Large -> InputMetrics(48.dp, 16.dp, 10.dp, 12.dp)

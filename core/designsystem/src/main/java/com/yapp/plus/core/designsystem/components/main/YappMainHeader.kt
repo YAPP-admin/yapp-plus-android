@@ -14,11 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappMainColor
+import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
 @Composable
@@ -58,5 +61,17 @@ fun YappMainHeader(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 393)
+@Composable
+private fun YappMainHeaderPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        YappMainHeader(
+            title = "마이",
+            iconResource = R.drawable.ic_settings,
+            iconDescription = "설정",
+        )
     }
 }

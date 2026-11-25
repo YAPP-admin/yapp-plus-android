@@ -8,6 +8,7 @@ enum class YappButtonVariant {
     OutlinedAssistive,
     SolidBrand,
     AuthPrimary,
+    BrandAction,
     Kakao,
     SolidNeutral,
     HomeAttendance,

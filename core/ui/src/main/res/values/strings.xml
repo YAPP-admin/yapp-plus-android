@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Date and Time Format Patterns -->
+    <string name="date_format_month_day">M월 d일</string>
+    <string name="date_format_month_day_day_of_week">M월 d일 (E)</string>
+    <string name="date_format_time_am_pm_hour">a h시</string>
+    <string name="date_format_day_of_month_time">d\'일\' HH:mm</string>
+    <string name="date_format_day_of_week">E</string>
+    <string name="date_format_time_hour_minute">HH:mm</string>
+    <string name="date_format_month_day_dot">M.d</string>
+    <string name="date_format_year_month_day_korean_day_of_week">yyyy년 MM월 dd일 (E)</string>
+    <string name="date_format_year_month_day_dot_day_of_week">yyyy.MM.dd (E)</string>
+    <string name="date_format_month_day_dot_day_of_week">M.d (E)</string>
+</resources>

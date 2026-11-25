@@ -25,7 +25,7 @@ internal fun inputTextStyle(
     size: YappInputSize,
     variant: YappTextFieldVariant = YappTextFieldVariant.Default,
 ): TextStyle =
-    if (variant == YappTextFieldVariant.Auth) {
+    if (variant.usesNeutralPalette) {
         YappTypography.scaleT5Regular
     } else {
         when (size) {
@@ -40,14 +40,17 @@ internal fun inputBorderColor(
     variant: YappTextFieldVariant = YappTextFieldVariant.Default,
 ) = when {
     state == YappInputState.Error -> YappColor.error
-    variant == YappTextFieldVariant.Auth && state == YappInputState.Active -> {
+    variant.usesNeutralPalette && state == YappInputState.Active -> {
         YappColor.foregroundMuted
     }
-    variant == YappTextFieldVariant.Auth -> YappColor.strokeNeutralWeak
+    variant.usesNeutralPalette -> YappColor.strokeNeutralWeak
     state == YappInputState.Active -> YappColor.primary
     state == YappInputState.Success -> YappColor.borderStrong
     else -> YappColor.border
 }
+
+internal val YappTextFieldVariant.usesNeutralPalette: Boolean
+    get() = this == YappTextFieldVariant.Auth || this == YappTextFieldVariant.Form
 
 internal fun supportingTextColor(state: YappInputState) =
     when (state) {

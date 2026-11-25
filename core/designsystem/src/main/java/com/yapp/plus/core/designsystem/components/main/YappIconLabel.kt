@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
@@ -24,6 +25,7 @@ fun YappIconLabel(
     modifier: Modifier = Modifier,
     tint: Color? = null,
     maxLines: Int = 1,
+    iconSize: Dp = 12.dp,
 ) {
     val isMultiline = maxLines > 1
     Row(
@@ -37,7 +39,7 @@ fun YappIconLabel(
             modifier =
                 Modifier
                     .padding(top = if (isMultiline) 2.dp else 0.dp)
-                    .size(12.dp),
+                    .size(iconSize),
             tint = tint ?: YappMainColor.textFaint,
         )
         YappText(

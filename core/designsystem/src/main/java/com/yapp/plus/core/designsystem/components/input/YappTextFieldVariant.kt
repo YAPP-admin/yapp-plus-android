@@ -4,4 +4,5 @@ enum class YappTextFieldVariant {
     Home,
     Default,
     Auth,
+    Form,
 }

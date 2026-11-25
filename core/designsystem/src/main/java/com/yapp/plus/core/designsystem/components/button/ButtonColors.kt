@@ -1,7 +1,6 @@
 package com.yapp.plus.core.designsystem.components.button
 
 import androidx.compose.ui.graphics.Color
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 
@@ -45,10 +44,10 @@ internal data class ButtonColors(
                         alpha = if (enabled) 1f else DISABLED_BRAND_ALPHA,
                     )
 
-                YappButtonVariant.AuthPrimary ->
+                YappButtonVariant.AuthPrimary, YappButtonVariant.BrandAction ->
                     ButtonColors(
-                        container = if (enabled) YappAuthColor.brand else YappColor.backgroundBasement,
-                        content = if (enabled) YappColor.white else YappAuthColor.textDisabled,
+                        container = if (enabled) YappColor.brand else YappColor.backgroundBasement,
+                        content = if (enabled) YappColor.white else YappColor.foregroundDisabled,
                         border = null,
                     )
 

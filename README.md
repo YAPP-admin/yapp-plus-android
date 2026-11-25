@@ -21,7 +21,7 @@ YAPP access/refresh token 쌍은 암호화해 저장·복원하고, 인증 요�
 인증된 API의 401 갱신과 원래 요청 1회 재시도, 동시 갱신 공유를 구현했습니다. Data의 인증·가입·갱신 API와 DTO, DataStore 토큰 저장소를 App singleton으로 조립하며, `:core:datastore`는 토큰 쌍을 암호화해 저장·복원합니다. 저장소 프로세스 재시작 검증 방법은 [모듈 구조](docs/wiki/module-structure.md#인증-세션-자동-검증)에 있습니다.
 
 MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필요한 범위의 Clean Architecture로 분리합니다.
-현재 15개 Gradle 모듈과 build-logic 설정, 디자인시스템 공통 표현, `:core:ui`의 공통 ViewModel, `:core:preview`의 재사용 Preview 데이터가 준비되어 있습니다. 로그인은 `:feature:login`, 가입 입력·단계·상태는 `:feature:signup`이 소유합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지와 Google ID 토큰 콜백을 조립하고, 메인 탭 내비게이션·선택 상태와 설정 화면 이동 상태도 소유합니다. 가입 단계와 입력값은 Feature의 `SignUpViewModel` 및 `SavedStateHandle`로 유지·복원합니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.
+현재 15개 Gradle 모듈과 build-logic 설정, 디자인시스템 공통 표현, `:core:ui`의 공통 ViewModel 및 날짜/시간 포맷터 리소스, `:core:preview`의 재사용 Preview 데이터가 준비되어 있습니다. 로그인은 `:feature:login`, 가입 입력·단계·상태는 `:feature:signup`이 소유합니다. App은 Navigation Compose 2.10.2의 타입 기반 목적지와 Google ID 토큰 콜백을 조립하고, 메인 탭 내비게이션·선택 상태와 설정 화면 이동 상태도 소유합니다. 가입 단계와 입력값은 Feature의 `SignUpViewModel` 및 `SavedStateHandle`로 유지·복원합니다. 구현 상태와 모듈별 책임은 [Wiki 모듈 구조](docs/wiki/module-structure.md), 의존성 방향과 라이브러리 선택은 [Wiki 아키텍처](docs/wiki/architecture.md)에서 확인합니다. 출석 모델·정책·Repository·UI와 API 호출은 확정된 요구사항에 따라 구현합니다.
 
 ## 프로젝트 지식
 

@@ -6,7 +6,7 @@ last_verified: 2026-11-25
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0070`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0074`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -571,3 +571,34 @@ last_verified: 2026-11-25
 - 근거: 사용자가 홈 상세주소 제외와 비활성 출석 버튼의 색·날짜 형식을 확인했습니다. [Figma 메인 - None](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16229)
 - 대체한 결정: DEC-0054의 홈 상세주소 표시.
 - 적용 상태: [제품 정책](product-policy.md#세션-주소와-기기-거리-확인)과 [홈 디자인 토큰](design-system.md#수정된-홈-디자인-토큰)에 반영했습니다.
+
+## DEC-0070 · 커뮤니티 뒤풀이 목록의 Figma 디자인
+
+- 기록일: 2026-11-25
+- 결정: 커뮤니티 첫 화면에 Figma의 뒤풀이 탭·필터·마감 배지·날짜 형식을 적용합니다. 마감과 종료 항목은 투표 마감으로 표시하고 투표 수는 서버의 `respondedCount`를 사용합니다.
+- 근거: 사용자가 커뮤니티 뒤풀이 원본 디자인을 적용해 달라고 요청했습니다. [Figma 뒤풀이 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1437-6052), [Figma 마감 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1755-17663)
+- 적용 상태: Android 뒤풀이 목록에 반영했습니다. 모임 탭은 비활성 표시이며, 뒤풀이 알림 점은 표시 조건을 확인할 때까지 보류합니다. [Notion 12차 회의](https://app.notion.com/p/yapp-workspace/12-41f2106a0e848169a49bff10af13b2ef), [사용자 뒤풀이 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#L1530-L1535)
+
+## DEC-0071 · 정산하기와 정산 수정 화면의 Figma 디자인
+
+- 기록일: 2026-11-25
+- 결정: 정산 작성·수정 폼과 인원·은행 선택에 Figma 디자인을 적용합니다. 인원 조회와 검색은 사용자 API의 정산 후보 범위를 따릅니다. 소수점 옵션은 계산 결과에 적용합니다.
+- 근거: 사용자가 정산하기 화면에 Figma 디자인을 적용해 달라고 요청했습니다. [Figma 정산하기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16848), [정산할 사람](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-17112), [Notion 12차 회의](https://app.notion.com/p/yapp-workspace/12-41f2106a0e848169a49bff10af13b2ef)
+- 적용 상태: Android 정산 폼과 [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산)에 반영했습니다.
+
+## DEC-0072 · 알림 토글에서 Android 앱 알림 설정 열기
+
+- 기록일: 2026-11-25
+- 결정: 설정 화면에서 별도의 “휴대폰 설정에서 알림 허용하기” 행을 표시하지 않습니다. 알림 토글을 ON으로 바꾸려는데 Android 권한이나 알림 채널이 꺼져 있으면 토글 동작으로 앱 알림 설정을 엽니다. 설정에서 돌아와 알림을 허용한 경우 기존 기기 등록 요청을 진행하고, 서버 성공 뒤에만 ON 선택을 저장합니다. 허용되지 않은 경우 기존 선택을 다시 조회하며 변경하지 않습니다.
+- 이유: 사용자가 별도 안내 행을 제거하고 알림 토글에서 같은 휴대폰 설정 기능을 제공하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), [기기별 알림 설정](product-policy.md#기기별-알림-설정)의 기존 선택·기기 등록 계약. 확인한 [Figma UI 페이지](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487)에는 설정 화면과 알림 권한 문구가 없었고, 연결된 [Notion 정책 원문](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84800f9abfef181b090892)은 현재 연동 계정에서 찾을 수 없었습니다.
+- 반영: [제품 정책](product-policy.md#기기별-알림-설정), App의 알림 설정 Route·ViewModel, `:feature:setting`의 상태·섹션·리소스와 Preview.
+- 적용 상태: OS 권한 확인, 앱 알림 설정 진입, 돌아온 뒤 허용 상태 확인과 기존 서버 등록 흐름을 연결했습니다. OFF 저장과 서버 성공 뒤 선택 확정 규칙은 유지합니다.
+- 대체한 결정: 없음. DEC-0050의 기기별 알림 선택·서버 등록·권한 분리 원칙을 유지하며 설정 진입 동작을 구체화합니다.
+
+## DEC-0073 · 정산 등록 완료·현황·송금·MY 목록의 Figma 디자인
+
+- 기록일: 2026-11-25
+- 결정: Android에 Figma의 정산 등록 완료, 정산 현황, 송금, 보낼 돈·받을 돈을 연결합니다. 서버가 돌려준 요청 인원과 수금 현황을 표시하고, 정산 상태는 사용자 API로 변경합니다.
+- 근거: 사용자가 남은 정산 흐름에 Figma 디자인을 적용해 달라고 요청했습니다. [Figma 정산 등록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16692), [Figma 정산 현황](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1805-19959), [사용자 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#L1557-L1572)
+- 적용 상태: Android와 [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산)에 반영했습니다. 송금 완료 날짜와 정산 목록의 미확인 표시는 사용자 응답에 필요한 값이 추가될 때까지 보류합니다.

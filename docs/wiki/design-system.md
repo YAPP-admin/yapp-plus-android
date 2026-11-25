@@ -124,6 +124,7 @@ Figma의 Bold 표기는 해당 스타일의 실제 글꼴 굵기를 따릅니다
 
 | 토큰 크기 | 글자 / 행간(sp) |
 | --- | --- |
+| t1 | 11 / 15 |
 | t2 | 12 / 16 |
 | t3 | 13 / 18 |
 | t4 | 14 / 19 |
@@ -139,6 +140,9 @@ Figma의 Bold 표기는 해당 스타일의 실제 글꼴 굵기를 따릅니다
 - 메인 헤더는 54dp, 하단 탭은 시스템 내비게이션 영역을 제외한 64dp입니다. 상세·설정 헤더는 왼쪽 뒤로가기와 가운데 제목을 배치하며 공지 상세에는 하단 탭을 표시하지 않습니다.
 - 공지 유형 탭은 한 줄 너비를 확보하고, 목록은 상단부터 배지·제목·날짜를 표시합니다. 날짜는 한국 시간의 `yyyy.MM.dd (E)`로 표시합니다.
 - 일정은 날짜 열 70dp, 열 간격 16dp, 행의 위아래 여백 20dp를 사용합니다. 정규 세션 배지는 노란색이며 별도의 진행 상태 배지나 오늘 배경을 추가하지 않습니다.
+- 커뮤니티 뒤풀이 목록은 44dp 상단 탭, 36dp 필터 칩, 20dp 마감 배지와 14dp Figma 달력 아이콘을 사용합니다. 진행 중 배지는 배경 `#FFF2EC`와 글자 `#E14D00`을 사용합니다. 일정 표기는 서울 시각의 `MM.dd (E) HH:mm` 형식입니다. [Figma 뒤풀이 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1437-6052), [마감 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1755-17663)
+- 정산 폼은 52dp 입력 필드와 하단 버튼, 80dp 증빙 사진 타일, 은행 선택 시트를 사용합니다. 첫 증빙 사진은 대표 사진으로 표시합니다. [Figma 정산하기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16848), [은행 선택](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1839-27229)
+- 뒤풀이 종료 화면에 정산 목록과 하단 정산 추가 버튼을 배치합니다. 정산 현황은 금액 카드, 수금 진행 막대, 미송금·송금 완료 필터와 자동 알림 안내를 사용합니다. 송금 화면은 미송금 합계와 정산자별 계좌·증빙·송금 상태를 표시하며, MY 정산 목록은 밑줄 탭과 상태 필터를 사용합니다. [Figma 정산 등록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16692), [정산 현황](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1805-19959), [송금하기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-17309), [보낼 돈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1755-18107), [받을 돈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1805-19865)
 - 로그아웃 팝업은 너비 272dp·모서리 16dp, 인증 안내 팝업은 너비 285dp입니다. 홈 입력 시트는 가로 여백 10dp와 모서리 16dp를 적용하고 Android 시스템 내비게이션 영역 위에 배치합니다.
 
 인증 그래픽은 벡터 변환에서 생긴 클리핑·음영 차이를 없애기 위해 해당 Figma 그래픽 레이어 자체를 내보낸 PNG를 `drawable-nodpi`에 제공합니다. 화면 전체 이미지를 UI로 사용하지 않습니다.

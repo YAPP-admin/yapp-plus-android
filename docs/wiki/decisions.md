@@ -640,3 +640,12 @@ last_verified: 2026-11-25
 - 근거: 사용자가 소모임 탭 활성화를 요청했습니다. [Figma 모임 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1792-40688) · [Android 이슈 #268](https://github.com/YAPP-admin/yapp-plus-android/issues/268)
 - 적용 상태: 커뮤니티 화면과 [제품 정책](product-policy.md#커뮤니티-모임)에 반영했습니다.
 - 대체: DEC-0070의 모임 탭 비활성 표시를 대체합니다.
+
+## DEC-0080 · 홈 사전 보고 말풍선의 주간 표시 시간
+
+- 기록일: 2026-11-25
+- 결정: 홈의 사전 보고 말풍선은 조회된 세션이 속한 주의 월요일 오전 9시부터 세션 시작 직전까지 표시합니다. 두 시각은 서울 기준입니다.
+- 근거: 사용자가 월요일 오전 9시부터 표시하고 세션 시작 시 숨기도록 요청했습니다. [Android 이슈 #277](https://github.com/YAPP-admin/yapp-plus-android/issues/277)
+- 원본 확인: Figma 홈에서 말풍선 문구와 위치를 확인했습니다. Notion 원문은 연동 계정에서 열리지 않았습니다. [Figma 홈 말풍선](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16229) · [Notion 정책 원문](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84800f9abfef181b090892)
+- 적용 상태: Android 홈과 [제품 정책](product-policy.md#홈-사전-보고와-활동-기간-안내-2026-11-18)에 반영했습니다.
+- 대체한 결정: DEC-0068의 말풍선 표시 조건.

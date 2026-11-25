@@ -29,6 +29,7 @@ import com.yapp.plus.feature.main.home.components.HomeSheetContent
 import com.yapp.plus.feature.main.home.components.HomeWeekCalendar
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
+import com.yapp.plus.feature.main.home.model.shouldShowReportTip
 import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceCard
 import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceOverlays
 import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceViewModel
@@ -70,7 +71,6 @@ fun HomeRoute(
             delay(1000)
         }
     }
-    val canReport = AttendanceReportPolicy.canSubmit(session?.sessionDate, session?.startTime, now)
 
     val verifiedSessionId = interaction.verifiedSessionId
     LaunchedEffect(verifiedSessionId, lifecycleOwner) {
@@ -99,7 +99,7 @@ fun HomeRoute(
             modifier = Modifier.fillMaxSize(),
             noticeState = state.weeklyNotices,
             afterpartyBanner = afterpartyBanner,
-            showReportTip = canReport,
+            showReportTip = shouldShowReportTip(session?.sessionDate, session?.startTime, now),
             showTeamPhotoUploadTip =
                 teamSession != null &&
                     team.card(teamSession, now) == HomeTeamPhotoSessionUiState.AwaitingPhoto,
@@ -172,6 +172,8 @@ fun HomeRoute(
             isDismissible = !interaction.isSubmitting,
         ) {
             if (interaction.sheet != HomeSheet.AttendanceCode) {
+                val canReport =
+                    AttendanceReportPolicy.canSubmit(session?.sessionDate, session?.startTime, now)
                 HomeReportSheet(
                     interaction,
                     interactionViewModel::selectReportType,

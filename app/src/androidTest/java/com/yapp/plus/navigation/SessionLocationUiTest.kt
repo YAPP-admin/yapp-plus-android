@@ -278,7 +278,6 @@ class SessionLocationUiTest {
         ).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
             waitForText("출석하기")
-            composeRule.onNodeWithText(REPORT_TIP).assertIsDisplayed()
             composeRule.onNodeWithText("출결 보고").performClick()
             composeRule.onNodeWithText("지각").performClick()
             val confirm = composeRule.onNodeWithText("확인")

@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-24
+last_verified: 2026-11-25
 ---
 
 # 모듈 구조
@@ -10,7 +10,7 @@ last_verified: 2026-11-24
 
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
-| `:app` | `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션·Firebase 푸시 등록과 공지 이동·기기별 알림 ViewModel과 Android 권한 조율 |
+| `:app` | `com.yapp.plus` namespace; Debug `applicationId` `com.yapp.plus.debug`, Release `com.yapp.plus` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션·Firebase 푸시 등록과 공지 이동·기기별 알림 ViewModel과 Android 권한 조율 |
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:ui` | `com.yapp.plus.core.ui` | 홈·일정이 공유하는 `BaseViewModel`, Domain 결과를 화면 상태에 반영하는 요청 실행, 날짜/시간 포맷터 패턴 문자열 리소스 및 공통 DateFormatter 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |

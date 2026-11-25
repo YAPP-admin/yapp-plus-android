@@ -39,17 +39,17 @@ Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합
 ## 빌드
 
 ```bash
-./gradlew :app:assembleDebug
+./gradlew :app:assembleDebug :app:assembleRelease
 ```
 
-FCM 연동에 사용할 Android 설정은 Firebase 콘솔에서 앱 ID `com.yapp.plus`로 받아 아래 경로에 둡니다. 설정 파일은 Git에서 제외합니다.
+FCM 연동에 사용할 Android 설정은 Firebase 콘솔에서 빌드별 앱 ID로 받아 아래 경로에 둡니다. 설정 파일은 Git에서 제외합니다.
 
-| 빌드 | Firebase 프로젝트 | 설정 파일 |
+| 빌드 | Firebase 프로젝트 | Android 앱 ID | 설정 파일 |
 | --- | --- | --- |
-| Debug | `yappplus-dev` | `app/src/debug/google-services.json` |
-| Release | `yappplus-prod` | `app/src/release/google-services.json` |
+| Debug | `yappplus-dev` | `com.yapp.plus.debug` | `app/src/debug/google-services.json` |
+| Release | `yappplus-prod` | `com.yapp.plus` | `app/src/release/google-services.json` |
 
-설정 파일이 없어도 경고와 함께 빌드할 수 있습니다.
+Google OAuth Android 클라이언트도 패키지명과 서명 SHA-1에 맞게 등록합니다. 디버그 앱은 `com.yapp.plus.debug`와 debug 서명 키를 사용합니다. 설정 파일이 없어도 경고와 함께 빌드할 수 있습니다.
 
 전체 모듈 설정과 연결을 검증합니다.
 
@@ -63,7 +63,7 @@ FCM 연동에 사용할 Android 설정은 Firebase 콘솔에서 앱 ID `com.yapp
 ./gradlew :app:testDebugUnitTest
 ```
 
-현재 `applicationId`와 네임스페이스는 `com.yapp.plus`입니다. 비공개 테스트는 기존 `release/v1.0.1` 브랜치와 같은 Play 앱을 사용하며 실제 개발은 `develop`에서 이어갑니다. 자세한 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를 따릅니다.
+네임스페이스는 `com.yapp.plus`입니다. Debug의 `applicationId`는 `com.yapp.plus.debug`, Release는 `com.yapp.plus`이며 Debug 앱 이름은 `Yapp (Debug)`입니다. 두 앱을 같은 기기에 설치할 수 있습니다. 비공개 테스트는 기존 `release/v1.0.1` 브랜치와 같은 Play 앱을 사용하며 실제 개발은 `develop`에서 이어갑니다. 자세한 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를 따릅니다.
 
 ## 기여
 

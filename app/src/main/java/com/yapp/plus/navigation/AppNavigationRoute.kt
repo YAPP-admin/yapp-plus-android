@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
 
 @Composable
@@ -24,6 +25,7 @@ internal fun AppNavigationRoute(
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination? = null,
     onSessionReady: () -> Unit = {},
+    onHomeEntered: () -> Unit = {},
     pushPostId: Long? = null,
     onPushPostOpened: () -> Unit = {},
     pushSessionId: Long? = null,
@@ -54,6 +56,7 @@ internal fun AppNavigationRoute(
                 isDeletingAccount = authUiState.isWithdrawing,
                 hasDeleteAccountError = authUiState.hasWithdrawalError,
                 onDeleteAccountErrorDismissed = authViewModel::onWithdrawalErrorDismissed,
+                onHomeEntered = onHomeEntered,
                 onRegistrationCompleted = {
                     authViewModel.onRegistrationCompleted()
                     onRegistrationCompleted()
@@ -68,10 +71,13 @@ internal fun AppNavigationRoute(
                 onPushSettlementOpened = onPushSettlementOpened,
                 startDestination =
                     startDestination
-                        ?: if (authUiState.hasSession) {
-                            AppNavigationDestination.Main
-                        } else {
-                            AppNavigationDestination.Login
+                        ?: when (authUiState.membershipReviewStatus) {
+                            MembershipReviewStatus.Approved -> AppNavigationDestination.Main
+                            MembershipReviewStatus.Pending -> AppNavigationDestination.ApprovalPending
+                            MembershipReviewStatus.Rejected, MembershipReviewStatus.Unknown ->
+                                AppNavigationDestination.ApprovalProblem
+
+                            null -> AppNavigationDestination.Login
                         },
                 modifier =
                     Modifier

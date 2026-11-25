@@ -7,6 +7,7 @@ import com.yapp.plus.domain.auth.AuthOperationResult
 import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,16 +27,20 @@ internal class AppAuthViewModel
 
         init {
             viewModelScope.launch {
-                val hasSession =
+                val reviewStatus =
                     try {
-                        authRepository.hasStoredSession()
+                        authRepository.storedSessionReviewStatus()
                     } catch (exception: CancellationException) {
                         throw exception
                     } catch (exception: Exception) {
-                        false
+                        MembershipReviewStatus.Unknown
                     }
                 mutableUiState.update {
-                    it.copy(isCheckingSession = false, hasSession = hasSession)
+                    it.copy(
+                        isCheckingSession = false,
+                        hasSession = reviewStatus == MembershipReviewStatus.Approved,
+                        membershipReviewStatus = reviewStatus,
+                    )
                 }
             }
         }
@@ -52,12 +57,28 @@ internal class AppAuthViewModel
             when (result) {
                 AuthResult.SignedIn ->
                     mutableUiState.update {
-                        it.copy(hasSession = true, registrationToken = null)
+                        it.copy(
+                            hasSession = true,
+                            membershipReviewStatus = MembershipReviewStatus.Approved,
+                            registrationToken = null,
+                        )
+                    }
+
+                is AuthResult.ApprovalRequired ->
+                    mutableUiState.update {
+                        it.copy(
+                            hasSession = false,
+                            membershipReviewStatus = result.reviewStatus,
+                            registrationToken = null,
+                        )
                     }
 
                 is AuthResult.SignupRequired ->
                     mutableUiState.update {
-                        it.copy(registrationToken = result.registrationToken)
+                        it.copy(
+                            membershipReviewStatus = null,
+                            registrationToken = result.registrationToken,
+                        )
                     }
 
                 is AuthResult.Failed ->
@@ -70,7 +91,11 @@ internal class AppAuthViewModel
 
         fun onRegistrationCompleted() {
             mutableUiState.update {
-                it.copy(hasSession = true, registrationToken = null)
+                it.copy(
+                    hasSession = true,
+                    membershipReviewStatus = MembershipReviewStatus.Approved,
+                    registrationToken = null,
+                )
             }
         }
 
@@ -151,7 +176,11 @@ internal class AppAuthViewModel
             when (result) {
                 AuthOperationResult.Success ->
                     mutableUiState.update {
-                        it.copy(hasSession = false, registrationToken = null)
+                        it.copy(
+                            hasSession = false,
+                            membershipReviewStatus = null,
+                            registrationToken = null,
+                        )
                     }
 
                 AuthOperationResult.Failure, AuthOperationResult.NotSupported ->

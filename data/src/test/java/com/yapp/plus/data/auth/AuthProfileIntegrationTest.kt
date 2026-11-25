@@ -7,6 +7,7 @@ import com.yapp.plus.data.auth.datasource.session.SessionTokenLocalDataSource
 import com.yapp.plus.data.auth.repository.AuthRepositoryImpl
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import com.yapp.plus.domain.signup.Name
 import com.yapp.plus.domain.signup.PhoneNumber
 import kotlinx.coroutines.test.runTest
@@ -22,7 +23,13 @@ class AuthProfileIntegrationTest {
             val tokens = TokenStore(persistence = local)
             val remote =
                 FakeAuthDataSource().apply {
-                    authenticationResult = AuthResponseResult.SignedIn("access", "refresh", "서버 이름")
+                    authenticationResult =
+                        AuthResponseResult.SignedIn(
+                            "access",
+                            "refresh",
+                            "서버 이름",
+                            MembershipReviewStatus.Approved,
+                        )
                 }
             val repository = AuthRepositoryImpl(remote, tokens, local)
             assertEquals(
@@ -45,7 +52,13 @@ class AuthProfileIntegrationTest {
             val tokens = TokenStore()
             val remote =
                 FakeAuthDataSource().apply {
-                    authenticationResult = AuthResponseResult.SignedIn("access", "refresh", "이름")
+                    authenticationResult =
+                        AuthResponseResult.SignedIn(
+                            "access",
+                            "refresh",
+                            "이름",
+                            MembershipReviewStatus.Approved,
+                        )
                 }
             val profile =
                 object : SessionProfileDataSource {
@@ -55,6 +68,13 @@ class AuthProfileIntegrationTest {
                         storageKey: String,
                         name: String?,
                     ): Boolean = error("disk failure")
+
+                    override suspend fun fetchReviewStatus(storageKey: String): String? = null
+
+                    override suspend fun updateReviewStatus(
+                        storageKey: String,
+                        reviewStatus: String,
+                    ): Boolean = true
                 }
             val repository = AuthRepositoryImpl(remote, tokens, profile)
             assertTrue(

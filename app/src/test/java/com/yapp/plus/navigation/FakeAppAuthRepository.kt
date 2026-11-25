@@ -4,11 +4,13 @@ import com.yapp.plus.domain.auth.AuthOperationResult
 import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import com.yapp.plus.domain.signup.Name
 import com.yapp.plus.domain.signup.PhoneNumber
 
 internal class FakeAppAuthRepository(
     var storedSessionExists: Boolean = true,
+    var reviewStatus: MembershipReviewStatus? = if (storedSessionExists) MembershipReviewStatus.Approved else null,
 ) : AuthRepository {
     var logoutOperation: suspend () -> AuthOperationResult = { AuthOperationResult.Success }
     var withdrawalOperation: suspend () -> AuthOperationResult = { AuthOperationResult.Success }
@@ -18,6 +20,8 @@ internal class FakeAppAuthRepository(
         private set
 
     override suspend fun hasStoredSession(): Boolean = storedSessionExists
+
+    override suspend fun storedSessionReviewStatus(): MembershipReviewStatus? = reviewStatus
 
     override suspend fun authenticateWithGoogle(credential: GoogleLoginCredential): AuthResult =
         error("Unexpected Google authentication")

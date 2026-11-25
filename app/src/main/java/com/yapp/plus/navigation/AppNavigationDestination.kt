@@ -11,6 +11,12 @@ internal sealed interface AppNavigationDestination {
     data object SignUp : AppNavigationDestination
 
     @Serializable
+    data object ApprovalPending : AppNavigationDestination
+
+    @Serializable
+    data object ApprovalProblem : AppNavigationDestination
+
+    @Serializable
     data object Main : AppNavigationDestination
 
     @Serializable

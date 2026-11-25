@@ -3,6 +3,7 @@ package com.yapp.plus.navigation
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.auth.AuthOperationResult
 import com.yapp.plus.domain.auth.AuthRepository
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +40,7 @@ class AppAuthViewModelTest {
     @Test
     fun noStoredSessionBlocksBothOperations() =
         runTest(dispatcher) {
-            val repository = FakeAppAuthRepository(storedSessionExists = false)
+            val repository = FakeAppAuthRepository(storedSessionExists = false, reviewStatus = null)
             val viewModel = createViewModel(repository)
             runCurrent()
             viewModel.logout()
@@ -48,6 +49,22 @@ class AppAuthViewModelTest {
             assertFalse(viewModel.uiState.value.hasSession)
             assertEquals(0, repository.logoutRequestCount)
             assertEquals(0, repository.withdrawalRequestCount)
+        }
+
+    @Test
+    fun initializationSetsReviewStatusAndSessionAccordingToApproval() =
+        runTest(dispatcher) {
+            val approvedRepo = FakeAppAuthRepository(reviewStatus = MembershipReviewStatus.Approved)
+            val approvedVm = createViewModel(approvedRepo)
+            runCurrent()
+            assertTrue(approvedVm.uiState.value.hasSession)
+            assertEquals(MembershipReviewStatus.Approved, approvedVm.uiState.value.membershipReviewStatus)
+
+            val pendingRepo = FakeAppAuthRepository(reviewStatus = MembershipReviewStatus.Pending)
+            val pendingVm = createViewModel(pendingRepo)
+            runCurrent()
+            assertFalse(pendingVm.uiState.value.hasSession)
+            assertEquals(MembershipReviewStatus.Pending, pendingVm.uiState.value.membershipReviewStatus)
         }
 
     @Test

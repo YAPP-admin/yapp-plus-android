@@ -3,6 +3,10 @@ package com.yapp.plus.domain.auth
 sealed interface AuthResult {
     data object SignedIn : AuthResult
 
+    data class ApprovalRequired(
+        val reviewStatus: MembershipReviewStatus,
+    ) : AuthResult
+
     class SignupRequired(
         val registrationToken: String,
     ) : AuthResult {

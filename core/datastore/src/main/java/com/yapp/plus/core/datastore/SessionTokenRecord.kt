@@ -8,6 +8,7 @@ data class SessionTokenRecord(
     val refreshToken: String? = null,
     val storageKey: String? = null,
     val userName: String? = null,
+    val reviewStatus: String? = null,
 ) {
     init {
         require(

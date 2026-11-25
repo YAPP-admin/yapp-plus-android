@@ -14,6 +14,9 @@ interface AuthRepository {
 
     suspend fun hasStoredSession(): Boolean
 
+    suspend fun storedSessionReviewStatus(): MembershipReviewStatus? =
+        if (hasStoredSession()) MembershipReviewStatus.Unknown else null
+
     suspend fun logout(): AuthOperationResult = AuthOperationResult.NotSupported
 
     suspend fun withdraw(): AuthOperationResult = AuthOperationResult.NotSupported

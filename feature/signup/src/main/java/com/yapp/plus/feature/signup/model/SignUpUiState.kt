@@ -7,6 +7,7 @@ data class SignUpUiState(
     val name: String = "",
     val phoneNumber: String = "",
     val step: SignUpStep = SignUpStep.Name,
+    val authStatus: AuthStatus = AuthStatus.Complete,
     val isSubmitting: Boolean = false,
     val failure: AuthFailure? = null,
     val nameError: RegistrationFieldError.Reason? = null,

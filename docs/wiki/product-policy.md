@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-25
+last_verified: 2026-11-26
 ---
 
 # 제품 정책
@@ -41,13 +41,14 @@ last_verified: 2026-11-25
 
 - 한국 날짜 기준(Asia/Seoul)으로 활동 중인 기수가 하나일 때 해당 기수의 `AVAILABLE` 사전 등록 명단을 확인합니다. 이름의 앞뒤 공백을 제외하고 정규화한 E.164 전화번호와 함께 비교합니다. 두 값이 일치하고 명단의 직군·역할이 유효하면 즉시 자동 승인합니다. 명단의 기수·직군·회원 구분을 소속에 반영하고 일치한 명단 항목을 `MATCHED`로 변경합니다.
 - 자동 승인 조건을 충족하지 않으면 `PENDING`으로 가입합니다. 운영진은 백오피스에서 수동으로 승인하거나 거절할 수 있습니다. 이후 명단이 등록돼도 기존 대기 계정에 자동 승인을 소급 적용하지 않습니다.
-- 두 경우 모두 가입 성공 시 승인 상태 없이 `200 OK`와 `SIGNED_IN` 세션을 반환합니다. Android는 공통 가입 완료 화면을 사용합니다. 별도 승인 대기 화면과 대기 상태 복원은 Android 가입 범위에서 제외합니다.
+- 가입과 Google 재인증의 `SIGNED_IN` 응답은 `user.reviewStatus`를 반환합니다. Android는 `APPROVED`일 때만 메인에 진입합니다. `PENDING`은 [Figma 승인 대기 화면](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40229)을 표시하고, `REJECTED`·누락·알 수 없는 값은 문의 가능한 문제 화면을 표시합니다. 이 상태들에서는 앱 메인과 푸시 목적지에 진입할 수 없습니다.
+- 승인 상태는 토큰 쌍과 같은 암호화 세션 레코드에 저장해 앱을 다시 열어도 접근을 차단합니다. 기존 세션처럼 상태가 없는 경우 `UNKNOWN`으로 간주해 메인에 진입시키지 않습니다. 승인 대기 화면의 뒤로가기는 로그인으로 이동하며, Google 재인증으로 서버의 최신 승인 상태를 다시 받습니다. 승인 상태를 백그라운드에서 조회하거나 대기 화면에서 자동 갱신하지 않습니다.
 
 ## 로그인·가입 구현 범위
 
 개발 앱은 Google Credential Manager의 서버 Client ID에 Web Client ID를 사용합니다. 매 요청마다 원본 nonce를 만들고 그 SHA-256 소문자 hex를 Google 요청에 넣은 뒤, 받은 ID Token과 원본 nonce를 `POST /api/auth/oidc/google/native-authentications`에 보냅니다. Google Client Secret은 클라이언트에 포함하지 않습니다. ID Token·원본 nonce는 메모리에서만 전달하고 저장하거나 로그로 남기지 않습니다.
 
-Google 인증의 `SIGNED_IN` 응답은 access/refresh token 쌍을 암호화 저장하고 메인으로 이동합니다. `SIGNUP_REQUIRED` 응답의 일회용 registration token은 App 메모리에만 두고 가입 화면으로 전달합니다. 가입은 `POST /api/users`에 registration token·이름·E.164 전화번호를 보냅니다. 성공 응답의 세션을 저장하고 가입 완료 화면을 거쳐 메인으로 이동합니다. 앱 시작 때 저장 세션을 복원해 메인 또는 로그인 화면을 선택합니다. 로그인 실패는 재시도할 수 있고, 가입 실패는 입력을 유지하며 응답 코드에 맞춰 재시도 또는 다시 로그인할 수 있습니다.
+Google 인증과 가입의 `SIGNED_IN` 응답은 access/refresh token 쌍과 `user.reviewStatus`를 암호화 저장합니다. `APPROVED`이면 메인으로 이동하고, `PENDING`이면 Figma 승인 대기 화면, `REJECTED`·누락·알 수 없는 값이면 문의 가능한 문제 화면으로 이동합니다. `SIGNUP_REQUIRED` 응답의 일회용 registration token은 App 메모리에만 두고 가입 화면으로 전달합니다. 가입은 `POST /api/users`에 registration token·이름·E.164 전화번호를 보냅니다. 가입이 `APPROVED`이면 가입 완료 화면을 거쳐 메인으로 이동하며, 그 외 상태는 메인 진입 없이 해당 상태 화면을 표시합니다. 앱 시작 때 저장 세션의 승인 상태를 복원해 `APPROVED`만 메인으로, `PENDING`은 승인 대기 화면으로, 그 외 상태는 문의 화면으로 보냅니다. 로그인 실패는 재시도할 수 있고, 가입 실패는 입력을 유지하며 응답 코드에 맞춰 재시도 또는 다시 로그인할 수 있습니다.
 
 가입 이름·휴대폰 입력은 `:feature:signup`에서 관리하고 복원합니다. 한국 휴대폰 번호는 E.164 형식으로 변환해 보냅니다. registration token은 Navigation 인자나 `SavedStateHandle`에 저장하지 않으며, 프로세스 종료 후 유실되면 Google 로그인을 다시 진행합니다. 과거 완료 단계가 저장돼 있어도 휴대폰 입력으로 복원합니다.
 
@@ -64,8 +65,8 @@ Google 인증의 `SIGNED_IN` 응답은 access/refresh token 쌍을 암호화 저
 | 출석 인증 | `POST /api/attendance-verifications`; 서버 확인 후에만 완료 표시 |
 | 사전 보고 | `POST /api/attendance-reports`. 홈에서 지각·조퇴·결석을 선택하고 30자 이내의 필수 사유를 입력하면 서버 결과를 표시합니다. |
 | 세션 갱신 | `POST /api/auth/session-renewals`; 암호화 저장·복원과 401 뒤 한 번 재시도 구현 |
-| Google 로그인 | `POST /api/auth/oidc/google/native-authentications`; `SIGNED_IN` 세션 저장·메인 이동, `SIGNUP_REQUIRED` 가입 토큰을 Signup으로 전달 |
-| 회원가입 | `POST /api/users`; registration token·이름·E.164 전화번호 제출, 성공 응답 세션 저장 |
+| Google 로그인 | `POST /api/auth/oidc/google/native-authentications`; `SIGNED_IN`의 `user.reviewStatus` 저장, `APPROVED`만 메인 진입, `SIGNUP_REQUIRED` 가입 토큰을 Signup으로 전달 |
+| 회원가입 | `POST /api/users`; registration token·이름·E.164 전화번호 제출, 성공 응답의 세션·`user.reviewStatus` 저장 |
 | 로그아웃 | `DELETE /api/auth/sessions/current`; 현재 refresh token을 전달하고 성공 응답 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동. 실패하면 세션을 유지하고 다시 시도 |
 | My 출석 점수 | `GET /api/attendance-scores/me`; 확정 점수·출석/지각/결석 횟수 표시. 자격 없음·현재 기수 없음은 값 없는 요약(`—`) |
 | My 출석 이력 | `GET /api/attendance-history`; 총/시작 세션 수와 최종 출석 상태·TEAM 검토 상태·cursor 연결 |
@@ -101,8 +102,10 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 
 ## 코드 출석 위치 조건
 
-- 코드 입력 가능 여부는 서버 출석 상태를 따릅니다. 출석 가능한 세션에서 4자리 코드를 확인할 때만 Android가 정확한 위치 권한을 요청하거나 현재 위치를 조회합니다.
+- 홈 탭에 진입할 때 정밀 위치 권한이 없으면 Android가 대략적·정확한 위치 권한을 요청합니다. 이 권한 요청 시점에는 위치를 조회하지 않습니다.
+- 코드 입력 가능 여부는 서버 출석 상태를 따릅니다. 출석 가능한 세션에서 사용자가 4자리 코드를 확인할 때 현재 위치를 조회합니다.
 - 유효한 세션 좌표, 정확한 위치 권한, 이번 시도에서 수신한 위치의 오차 50m 이하, 세션까지 반올림 전 직선거리 100m 이내를 모두 충족하면 `sessionId`와 `code`를 전송합니다. 위치 판정은 기기에서 하고 기기 위치와 계산값은 서버 전송과 영구 저장 없이 처리합니다.
+- 홈 진입에 따른 위치 권한 자동 요청은 권한별 한 번만 표시합니다. 거부 뒤에도 코드 출석 확인을 누르면 기존 위치 권한 요청 흐름으로 다시 요청할 수 있습니다.
 - 권한 부족, 위치 기능 꺼짐, 측정 실패·시간 초과, 정확도 부족, 범위 초과와 세션 좌표 누락을 안내합니다. 입력을 유지하며, 설정 복귀 후 사용자가 다시 확인해야 새 위치를 측정합니다. 위치 확인 중 화면에서 이탈한 시도의 응답은 코드 전송에 사용하지 않습니다.
 - 근거는 사용자 요청, [iOS 위치 출석 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/026-location-attendance/spec.md), [Android 이슈 #217](https://github.com/YAPP-admin/yapp-plus-android/issues/217)입니다.
 
@@ -120,8 +123,9 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 - 설정의 알림 토글은 현재 기기의 수신 여부를 뜻합니다. 화면에는 Figma의 **알림** 행을 유지하고, 기기별 동작을 설명하는 상시 문구를 추가하지 않습니다. 계정 전체의 알림 동의 값을 서버에 저장하지 않습니다. 알림함 조회와 다른 기기의 등록은 유지합니다.
 - 설치별 선택은 세션과 분리한 백업 제외 DataStore에 저장합니다. 앱 재시작·로그아웃·재로그인에도 유지하며 재설치 후 복원은 보장하지 않습니다. 기존 초기 ON 동작을 유지하고 저장 내용이 손상되면 OFF로 복구합니다. 설정 화면에 진입하거나 시스템 앱 알림 설정에서 돌아올 때 Android 앱 권한·알림 채널 상태로 선택을 갱신합니다.
 - 알림 토글을 누르면 현재 ON/OFF와 무관하게 Android 앱 알림 설정을 엽니다. 설정 화면은 시스템이 허용한 상태를 표시하며, 앱 권한 요청 대화상자나 별도 휴대폰 설정 행을 제공하지 않습니다.
+- 홈 탭에 진입할 때 Android 13 이상에서 알림 권한이 없고 저장된 알림 선택이 ON이면 시스템 권한을 요청합니다. 선택이 OFF이면 자동 요청하지 않습니다. 알림과 위치 권한이 모두 필요하면 알림 요청을 먼저 표시합니다. 홈 진입에 따른 각 권한 자동 요청은 권한별 한 번으로 제한합니다.
 - 선택을 갱신한 뒤 시작·로그인·토큰 갱신·화면 복귀의 자동 동기화가 기기를 등록·해제합니다. 등록은 FID·FCM 토큰으로 `PUT /api/users/me/notification-devices/{installationId}`, 해제는 현재 세션의 FID에 `DELETE`를 호출하며 등록이 없어도 DELETE는 성공할 수 있습니다. 서버 실패는 시스템 설정이나 화면 상태를 되돌리지 않고 설정 화면에 재시도 버튼을 표시하지 않습니다. 이후 앱 복귀·로그인·토큰 갱신 동기화에서 다시 시도합니다.
-- OFF 상태는 시작·로그인·FCM 토큰 변경 시 재등록하지 않고 현재 기기 등록을 해제합니다. 메모리 캐시가 없는 앱 재시작에도 해제 요청을 보냅니다. 요청과 자동 동기화는 직렬화하며 도중에 세션이 바뀌어도 이전 세션 요청으로 설정을 저장하지 않습니다. 저장 선택이 OFF이면 로그인 때 Android 권한을 자동 요청하지 않습니다.
+- OFF 상태는 시작·로그인·FCM 토큰 변경 시 재등록하지 않고 현재 기기 등록을 해제합니다. 메모리 캐시가 없는 앱 재시작에도 해제 요청을 보냅니다. 요청과 자동 동기화는 직렬화하며 도중에 세션이 바뀌어도 이전 세션 요청으로 설정을 저장하지 않습니다. 저장 선택이 OFF이면 로그인·홈 진입 때 Android 알림 권한을 자동 요청하지 않습니다.
 - 로그아웃은 서버가 현재 세션의 등록을 해제하고 통합 탈퇴는 전체 등록을 해제합니다. 서버에서 이미 전송한 푸시는 OFF 처리 뒤에도 도착할 수 있습니다. 실제 수신은 Firebase 설정·Android 권한·서버 발송 상태에 의존합니다.
 - 근거: 사용자 승인(2026-11-09), [이슈 #199](https://github.com/YAPP-admin/yapp-plus-android/issues/199), [백엔드 API 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/e2c2612a8652dc9c76f6ce7b6c26e97dbe8348c6/APIDOC.md). 계정 전체 알림 설정 조회·변경 API는 확인되지 않았습니다.
 

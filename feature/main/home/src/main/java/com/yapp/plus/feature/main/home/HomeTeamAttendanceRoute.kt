@@ -25,11 +25,7 @@ import com.yapp.plus.feature.main.home.components.HomeTeamSubmittedPhotoThumbnai
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamAttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState
-import com.yapp.plus.feature.main.home.model.canUploadTeamPhoto
-import com.yapp.plus.feature.main.home.model.card
-import com.yapp.plus.feature.main.home.model.selection
 import com.yapp.plus.feature.main.home.model.teamTimeFormat
-import com.yapp.plus.feature.main.home.model.teamTimeLabel
 import com.yapp.plus.feature.main.home.model.teamZone
 import java.time.Instant
 

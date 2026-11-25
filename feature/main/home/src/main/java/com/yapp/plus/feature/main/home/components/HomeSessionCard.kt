@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
@@ -25,14 +26,17 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
+import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.homeSessionStartFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -104,7 +108,7 @@ internal fun HomeSessionContent(
     onScoreClick: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        HomeSessionVenue(location = session.location, address = session.address)
+        HomeSessionVenue(location = session.location)
         val titleResource =
             if (session.sessionDate == now.toLocalDate()) {
                 R.string.home_today_title
@@ -142,27 +146,19 @@ internal fun HomeSessionContent(
 }
 
 @Composable
-internal fun HomeSessionVenue(
-    location: String?,
-    address: String?,
-) {
-    val venue = listOfNotNull(location, address).joinToString("\n")
+internal fun HomeSessionVenue(location: String) {
     Row(
-        verticalAlignment = if (address == null) Alignment.CenterVertically else Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        if (venue.isNotEmpty()) {
-            Icon(
-                painterResource(DesignSystemR.drawable.ic_map_pin),
-                null,
-                Modifier
-                    .padding(top = if (address == null) 0.dp else 2.dp)
-                    .size(14.dp),
-                YappHomeColor.placeholder,
-            )
-        }
+        Icon(
+            painterResource(DesignSystemR.drawable.ic_map_pin),
+            null,
+            Modifier
+                .size(14.dp),
+            YappHomeColor.placeholder,
+        )
         YappText(
-            venue.ifEmpty { stringResource(R.string.attendance_home_session_label) },
+            location,
             YappHomeTypography.label,
             YappHomeColor.subtle,
         )
@@ -199,7 +195,33 @@ private fun attendanceNotOpenText(
             session.startTime?.isAfter(now.toLocalTime()) == true ->
             stringResource(
                 R.string.home_attendance_opens,
-                session.startTime.format(DateTimeFormatter.ofPattern("HH:mm")),
+                session.startTime.format(AppDateFormatter.timeHourMinute),
             )
         else -> stringResource(R.string.attendance_status_not_open)
     }
+
+@Preview(name = "Home session card", widthDp = 361)
+@Composable
+private fun HomeSessionCardPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        HomeSessionCard(
+            state =
+                AttendanceUiState.Content(
+                    CurrentWeekSessionUiModel(
+                        weekStartDateLabel = "10월 18일",
+                        weekEndDateLabel = "10월 24일",
+                        dateLabel = "10월 24일 (토)",
+                        name = "OT 세션",
+                        startTimeLabel = "오후 2시",
+                        location = "DMC 첨단산업센터",
+                        attendanceStatus = AttendanceStatusUiModel.Available,
+                        sessionId = 1,
+                        weekStartDate = LocalDate.of(2026, 10, 18),
+                        sessionDate = LocalDate.of(2026, 10, 24),
+                        startTime = LocalTime.of(14, 0),
+                        address = "서울특별시 마포구 월드컵북로 396",
+                    ),
+                ),
+        )
+    }
+}

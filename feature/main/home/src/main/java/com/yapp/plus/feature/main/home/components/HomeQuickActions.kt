@@ -29,7 +29,6 @@ private val quickActionHeight = 70.dp
 @Composable
 internal fun HomeQuickActions(
     onSessionsClick: () -> Unit,
-    onScoreClick: () -> Unit,
     modifier: Modifier = Modifier,
     onReportClick: () -> Unit = {},
     showReportTip: Boolean = false,

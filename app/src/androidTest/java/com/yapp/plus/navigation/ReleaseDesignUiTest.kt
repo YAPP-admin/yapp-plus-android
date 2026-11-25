@@ -238,8 +238,7 @@ private fun referenceSessions() =
         ScheduleSessionUiModel(
             dateLabel =
                 java.time.LocalDate.of(2026, 9, 12).plusWeeks(index.toLong()).format(
-                    java.time.format.DateTimeFormatter
-                        .ofPattern("M.d (E)", java.util.Locale.KOREAN),
+                    com.yapp.plus.core.ui.formatter.AppDateFormatter.monthDayDotDayOfWeek,
                 ),
             name = if (index % 2 == 0) "팀 세션" else "기획 세션",
             location = if (index % 2 == 0) null else "ICT콤플렉스 6층 커뮤니티라운지",

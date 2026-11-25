@@ -36,7 +36,7 @@ fun HomeCalendarDayPreview() {
 @Preview(widthDp = 361)
 @Composable
 fun HomeQuickActionsPreview() {
-    YappTheme { HomeQuickActions({}, {}) }
+    YappTheme { HomeQuickActions({}) }
 }
 
 @Preview(widthDp = 176)

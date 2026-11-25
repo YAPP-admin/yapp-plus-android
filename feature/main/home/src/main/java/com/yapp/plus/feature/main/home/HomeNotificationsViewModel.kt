@@ -2,6 +2,7 @@ package com.yapp.plus.feature.main.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import com.yapp.plus.domain.notification.Notification
 import com.yapp.plus.domain.notification.NotificationRepository
 import com.yapp.plus.feature.main.home.model.HomeNotificationUiModel
@@ -13,8 +14,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -81,14 +80,12 @@ internal class HomeNotificationsViewModel
         }
     }
 
-private val notificationDateFormat = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN)
-
 private fun List<Notification>.toUniqueUiItems(): List<HomeNotificationUiModel> =
     distinctBy { it.id }.map {
         HomeNotificationUiModel(
             id = it.id,
             message = it.content,
-            dateLabel = it.sentDate.format(notificationDateFormat),
+            dateLabel = it.sentDate.format(AppDateFormatter.monthDay),
             postId = it.postId,
             sessionId = it.sessionId,
             settlement = it.settlement,

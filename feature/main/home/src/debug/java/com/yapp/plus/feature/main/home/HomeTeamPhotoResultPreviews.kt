@@ -111,7 +111,7 @@ private fun TeamPhotoHomePreview(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
                 thumbnail = { TeamPhotoPreviewThumbnail(it) },
             )
-            HomeQuickActions({}, {}, Modifier.padding(horizontal = 16.dp))
+            HomeQuickActions({}, Modifier.padding(horizontal = 16.dp))
         }
         if (sheet != null) {
             HomeTeamPhotoResultSheet(

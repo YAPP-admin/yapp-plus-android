@@ -1,11 +1,12 @@
 package com.yapp.plus.feature.main.home.model
 
+import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import com.yapp.plus.domain.session.SessionCoordinates
 import com.yapp.plus.domain.session.SessionType
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 data class CurrentWeekSessionUiModel(
     val weekStartDateLabel: String,
@@ -13,7 +14,7 @@ data class CurrentWeekSessionUiModel(
     val dateLabel: String,
     val name: String,
     val startTimeLabel: String,
-    val location: String?,
+    val location: String,
     val attendanceStatus: AttendanceStatusUiModel,
     val sessionId: Long = 0,
     val weekStartDate: LocalDate? = null,
@@ -23,6 +24,23 @@ data class CurrentWeekSessionUiModel(
     val coordinates: SessionCoordinates? = null,
     val endTime: LocalTime? = null,
     val type: SessionType? = null,
-)
+) {
+    fun canUploadTeamPhoto(now: Instant): Boolean {
+        if (type != SessionType.TEAM) return false
+        val date = sessionDate ?: return false
+        val start = startTime ?: return false
+        val end = endTime ?: return false
+        val localNow = now.atZone(teamZone).toLocalDateTime()
+        return (
+            attendanceStatus == AttendanceStatusUiModel.Available ||
+                attendanceStatus == AttendanceStatusUiModel.PendingApproval
+        ) &&
+            localNow >= date.atTime(start) &&
+            localNow < date.atTime(end)
+    }
 
-internal val homeSessionStartFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d'일' HH:mm", Locale.KOREAN)
+    fun teamTimeLabel(): String =
+        "${startTime?.format(teamTimeFormat).orEmpty()} - ${endTime?.format(teamTimeFormat).orEmpty()}"
+}
+
+internal val homeSessionStartFormat: DateTimeFormatter get() = AppDateFormatter.dayOfMonthTime

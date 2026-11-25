@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -33,6 +34,8 @@ import com.yapp.plus.feature.main.home.HomeNotificationsRoute
 import com.yapp.plus.feature.signup.SignUpRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
+private const val SETTLEMENT_CREATED_RECIPIENTS = "settlementCreatedRecipients"
 
 @Composable
 internal fun AppNavHost(
@@ -220,8 +223,15 @@ internal fun AppNavHost(
         }
         composable<AppNavigationDestination.Afterparty> { entry ->
             val id = entry.toRoute<AppNavigationDestination.Afterparty>().id
+            val recipientCount by entry.savedStateHandle
+                .getStateFlow<Int?>(SETTLEMENT_CREATED_RECIPIENTS, null)
+                .collectAsStateWithLifecycle()
             AfterpartyRoute(
                 id = id,
+                settlementRecipientCount = recipientCount,
+                onDismissSettlementNotice = {
+                    entry.savedStateHandle[SETTLEMENT_CREATED_RECIPIENTS] = null
+                },
                 onBack = { navController.navigateBackFrom(entry, onExit) },
                 onSettlementClick = { navController.navigateFrom(entry, AppNavigationDestination.Settlement(id, it)) },
                 onAddSettlement = { navController.navigateFrom(entry, AppNavigationDestination.SettlementEditor(id)) },
@@ -250,7 +260,15 @@ internal fun AppNavHost(
                 afterpartyId = target.afterpartyId,
                 settlementId = target.settlementId,
                 onBack = onBack,
-                onSaved = onBack,
+                onSaved = { count: Int? ->
+                    if (count != null) {
+                        navController.previousBackStackEntry
+                            ?.takeIf { it.destination.hasRoute<AppNavigationDestination.Afterparty>() }
+                            ?.savedStateHandle
+                            ?.set(SETTLEMENT_CREATED_RECIPIENTS, count)
+                    }
+                    onBack()
+                },
                 onSavingChanged = { isSaving = it },
             )
         }

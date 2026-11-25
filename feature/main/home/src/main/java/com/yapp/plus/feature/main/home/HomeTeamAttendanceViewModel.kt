@@ -14,7 +14,6 @@ import com.yapp.plus.feature.main.home.model.HomeTeamAttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoInput
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoReceiptUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoViewerUiState
-import com.yapp.plus.feature.main.home.model.canUploadTeamPhoto
 import com.yapp.plus.feature.main.home.model.teamTimeFormat
 import com.yapp.plus.feature.main.home.model.teamZone
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -25,9 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
+import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 internal fun HomeWeekCalendar(
@@ -80,7 +79,7 @@ internal fun HomeCalendarDay(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(if (dateContent == null) 4.dp else 2.dp),
         ) {
-            YappText(date.format(dayFormatter), YappHomeTypography.day, YappHomeColor.subtle)
+            YappText(date.format(AppDateFormatter.dayOfWeek), YappHomeTypography.day, YappHomeColor.subtle)
             if (dateContent != null) {
                 dateContent(date.dayOfMonth)
                 return@Column
@@ -100,7 +99,6 @@ internal fun HomeCalendarDay(
 }
 
 private const val DAYS_IN_WEEK = 7
-private val dayFormatter = DateTimeFormatter.ofPattern("E", Locale.KOREAN)
 
 private fun DrawScope.drawCalendarSeparator(
     x: Float,

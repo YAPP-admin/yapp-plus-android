@@ -1,10 +1,10 @@
 package com.yapp.plus.feature.main.schedule.model
 
+import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import com.yapp.plus.domain.session.CurrentGenerationSchedule
 import com.yapp.plus.domain.session.ScheduledSession
 import com.yapp.plus.domain.session.SessionType
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -21,11 +21,13 @@ internal object SessionScheduleUiMapper {
     private fun ScheduledSession.toUiModel(now: LocalDateTime): ScheduleSessionUiModel =
         ScheduleSessionUiModel(
             dateLabel =
-                "${date.format(dateFormatter)} " +
+                "${date.format(AppDateFormatter.monthDayDot)} " +
                     "(${dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)})",
             name = name,
             location = location?.takeUnless(String::isBlank),
-            timeLabel = "${startTime.format(timeFormatter)} ~ ${endTime.format(timeFormatter)}",
+            timeLabel = "${startTime.format(
+                AppDateFormatter.timeAmPmHour,
+            )} ~ ${endTime.format(AppDateFormatter.timeAmPmHour)}",
             type = type.toUiModel(),
             status = statusAt(now),
             address = locationDetails?.addressLine,
@@ -47,7 +49,4 @@ internal object SessionScheduleUiMapper {
             SessionType.REGULAR -> ScheduleTypeUiModel.Regular
             SessionType.TEAM -> ScheduleTypeUiModel.Team
         }
-
-    private val dateFormatter = DateTimeFormatter.ofPattern("M.d", Locale.KOREAN)
-    private val timeFormatter = DateTimeFormatter.ofPattern("a h시", Locale.KOREAN)
 }

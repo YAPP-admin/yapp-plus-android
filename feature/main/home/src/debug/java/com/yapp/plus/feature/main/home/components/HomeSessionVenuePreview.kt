@@ -12,7 +12,6 @@ private fun HomeSessionVenuePreview() {
     YappTheme {
         HomeSessionVenue(
             location = stringResource(R.string.attendance_home_demo_session_location),
-            address = stringResource(R.string.attendance_home_demo_session_address),
         )
     }
 }

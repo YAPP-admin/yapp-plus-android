@@ -7,7 +7,6 @@ import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.feature.main.board.model.BoardCategory
 import com.yapp.plus.feature.main.board.model.BoardUiState
 import com.yapp.plus.feature.main.board.model.NoticeUiState
-import com.yapp.plus.feature.main.board.model.toNoticeType
 import com.yapp.plus.feature.main.board.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException

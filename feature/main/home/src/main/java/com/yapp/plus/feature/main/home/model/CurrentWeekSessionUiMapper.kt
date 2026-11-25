@@ -1,9 +1,8 @@
 package com.yapp.plus.feature.main.home.model
 
+import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.domain.session.CurrentWeekSchedule
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 internal object CurrentWeekSessionUiMapper {
     fun toUiState(schedule: CurrentWeekSchedule): AttendanceUiState<CurrentWeekSessionUiModel> {
@@ -11,12 +10,12 @@ internal object CurrentWeekSessionUiMapper {
 
         return AttendanceUiState.Content(
             CurrentWeekSessionUiModel(
-                weekStartDateLabel = schedule.weekStartDate.format(weekDateFormatter),
-                weekEndDateLabel = schedule.weekEndDate.format(weekDateFormatter),
-                dateLabel = session.date.format(sessionDateFormatter),
+                weekStartDateLabel = schedule.weekStartDate.format(AppDateFormatter.monthDay),
+                weekEndDateLabel = schedule.weekEndDate.format(AppDateFormatter.monthDay),
+                dateLabel = session.date.format(AppDateFormatter.monthDayDayOfWeek),
                 name = session.name,
-                startTimeLabel = session.startTime.format(timeFormatter),
-                location = session.location?.takeUnless(String::isBlank),
+                startTimeLabel = session.startTime.format(AppDateFormatter.timeAmPmHour),
+                location = session.location,
                 attendanceStatus = session.attendanceStatus.toUiModel(),
                 sessionId = session.sessionId,
                 weekStartDate = schedule.weekStartDate,
@@ -38,8 +37,4 @@ internal object CurrentWeekSessionUiMapper {
             AttendanceStatus.CHECKED_IN -> AttendanceStatusUiModel.CheckedIn
             AttendanceStatus.PENDING_APPROVAL -> AttendanceStatusUiModel.PendingApproval
         }
-
-    private val weekDateFormatter = DateTimeFormatter.ofPattern("M월 d일", Locale.KOREAN)
-    private val sessionDateFormatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-    private val timeFormatter = DateTimeFormatter.ofPattern("a h시", Locale.KOREAN)
 }

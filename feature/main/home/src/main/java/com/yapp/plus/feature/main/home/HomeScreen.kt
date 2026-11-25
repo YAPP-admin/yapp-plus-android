@@ -97,7 +97,6 @@ fun HomeScreen(
                 Spacer(Modifier.height(10.dp))
                 HomeQuickActions(
                     onSessionsClick = onSessionsClick,
-                    onScoreClick = onScoreClick,
                     onReportClick = onReportClick,
                     showReportTip = showReportTip,
                 )

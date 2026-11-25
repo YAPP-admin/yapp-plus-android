@@ -21,10 +21,9 @@ import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
+import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import com.yapp.plus.domain.notice.NoticeAssignment
 import com.yapp.plus.feature.main.board.R
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -37,9 +36,7 @@ internal fun BoardAssignmentInfo(assignment: NoticeAssignment) {
         ) {
             BoardAssignmentRow(stringResource(R.string.board_assignment_deadline)) {
                 YappText(
-                    assignment.deadlineDate.format(
-                        DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 (E)", Locale.KOREAN),
-                    ),
+                    assignment.deadlineDate.format(AppDateFormatter.yearMonthDayKoreanDayOfWeek),
                     YappTypography.scaleT4Medium,
                     YappMainColor.textSecondary,
                 )

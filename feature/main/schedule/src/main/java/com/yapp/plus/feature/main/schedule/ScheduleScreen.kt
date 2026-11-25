@@ -88,7 +88,7 @@ fun ScheduleScreen(
 @Composable
 private fun ScheduleLoading(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(color = YappMainColor.brand)

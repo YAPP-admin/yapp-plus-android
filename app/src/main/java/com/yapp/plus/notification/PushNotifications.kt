@@ -24,48 +24,60 @@ internal const val PUSH_SETTLEMENT = "SETTLEMENT"
 internal const val PUSH_SETTLEMENT_ID = "settlementId"
 internal const val PUSH_AFTERPARTY_ID = "afterpartyId"
 
-internal fun createPushChannel(context: Context) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-    val manager = context.getSystemService(NotificationManager::class.java)
-    val channel =
-        NotificationChannel(
-            context.getString(R.string.push_notification_channel_id),
-            context.getString(R.string.push_notification_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT,
-        )
-    manager.createNotificationChannel(channel)
-}
-
-internal fun canShowPushNotifications(context: Context): Boolean {
-    if (
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
-        PackageManager.PERMISSION_GRANTED
-    ) {
-        return false
+internal object PushNotifications {
+    fun createChannel(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        val manager = context.getSystemService(NotificationManager::class.java)
+        val channel =
+            NotificationChannel(
+                context.getString(R.string.push_notification_channel_id),
+                context.getString(R.string.push_notification_channel_name),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            )
+        manager.createNotificationChannel(channel)
     }
-    if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return false
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return true
-    val manager = context.getSystemService(NotificationManager::class.java)
-    val channel = manager.getNotificationChannel(context.getString(R.string.push_notification_channel_id))
-    return channel?.importance != NotificationManager.IMPORTANCE_NONE
+
+    fun canShow(context: Context): Boolean {
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+        if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return false
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return true
+        val manager = context.getSystemService(NotificationManager::class.java)
+        val channel = manager.getNotificationChannel(context.getString(R.string.push_notification_channel_id))
+        return channel?.importance != NotificationManager.IMPORTANCE_NONE
+    }
+
+    fun parsePostId(intent: Intent): Long? {
+        if (intent.getStringExtra(PUSH_SOURCE) != PUSH_POST) return null
+        return intent.getStringExtra(PUSH_POST_ID)?.toLongOrNull()?.takeIf { it > 0 }
+    }
+
+    fun parseSessionId(intent: Intent): Long? {
+        if (intent.getStringExtra(PUSH_SOURCE) != PUSH_SESSION_REMINDER) return null
+        if (intent.getStringExtra(PUSH_NAVIGATION_TARGET) != PUSH_SESSION_SCHEDULE) return null
+        return intent.getStringExtra(PUSH_SESSION_ID)?.toLongOrNull()?.takeIf { it > 0 }
+    }
+
+    fun parseSettlement(intent: Intent): SettlementNotificationTarget? {
+        if (intent.getStringExtra(PUSH_SOURCE) != PUSH_SETTLEMENT) return null
+        if (intent.getStringExtra(PUSH_NAVIGATION_TARGET) != PUSH_SETTLEMENT) return null
+        val afterpartyId = intent.getStringExtra(PUSH_AFTERPARTY_ID)?.toLongOrNull()?.takeIf { it > 0 } ?: return null
+        val settlementId = intent.getStringExtra(PUSH_SETTLEMENT_ID)?.toLongOrNull()?.takeIf { it > 0 } ?: return null
+        return SettlementNotificationTarget(afterpartyId, settlementId)
+    }
 }
 
-internal fun Intent.pushPostId(): Long? {
-    if (getStringExtra(PUSH_SOURCE) != PUSH_POST) return null
-    return getStringExtra(PUSH_POST_ID)?.toLongOrNull()?.takeIf { it > 0 }
-}
+internal fun createPushChannel(context: Context) = PushNotifications.createChannel(context)
 
-internal fun Intent.pushSessionId(): Long? {
-    if (getStringExtra(PUSH_SOURCE) != PUSH_SESSION_REMINDER) return null
-    if (getStringExtra(PUSH_NAVIGATION_TARGET) != PUSH_SESSION_SCHEDULE) return null
-    return getStringExtra(PUSH_SESSION_ID)?.toLongOrNull()?.takeIf { it > 0 }
-}
+internal fun canShowPushNotifications(context: Context): Boolean = PushNotifications.canShow(context)
 
-internal fun Intent.pushSettlement(): SettlementNotificationTarget? {
-    if (getStringExtra(PUSH_SOURCE) != PUSH_SETTLEMENT) return null
-    if (getStringExtra(PUSH_NAVIGATION_TARGET) != PUSH_SETTLEMENT) return null
-    val afterpartyId = getStringExtra(PUSH_AFTERPARTY_ID)?.toLongOrNull()?.takeIf { it > 0 } ?: return null
-    val settlementId = getStringExtra(PUSH_SETTLEMENT_ID)?.toLongOrNull()?.takeIf { it > 0 } ?: return null
-    return SettlementNotificationTarget(afterpartyId, settlementId)
-}
+internal fun Intent.pushPostId(): Long? = PushNotifications.parsePostId(this)
+
+internal fun Intent.pushSessionId(): Long? = PushNotifications.parseSessionId(this)
+
+internal fun Intent.pushSettlement(): SettlementNotificationTarget? = PushNotifications.parseSettlement(this)

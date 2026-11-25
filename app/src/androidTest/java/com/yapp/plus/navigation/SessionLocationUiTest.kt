@@ -23,6 +23,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.di.AuthE2ETestEntryPoint
 import com.yapp.plus.domain.session.AttendanceStatus
+import com.yapp.plus.domain.session.SessionType
 import com.yapp.plus.testing.NavigationTestActivity
 import dagger.hilt.android.EntryPointAccessors
 import io.ktor.client.HttpClient
@@ -239,6 +240,35 @@ class SessionLocationUiTest {
     }
 
     @Test
+    fun teamApprovalAfterRefreshRemembersConfirmationAcrossTabs() {
+        val attendanceStatus = AtomicReference(AttendanceStatus.PENDING_APPROVAL)
+        installApiFixtures(
+            includeLocation = false,
+            currentAttendanceStatus = attendanceStatus::get,
+            weeklySessionType = SessionType.TEAM,
+        ).use {
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            waitForText("출석 확인 중이에요")
+            val scenario = composeRule.activityRule.scenario
+            scenario.moveToState(Lifecycle.State.CREATED)
+            attendanceStatus.set(AttendanceStatus.CHECKED_IN)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+
+            val approvalTitle = "팀 세션 출석이 완료됐어요!"
+            waitForText(approvalTitle)
+            composeRule.onNodeWithText(approvalTitle).assertIsDisplayed()
+            composeRule.onNodeWithText("확인").performClick()
+            composeRule.onNodeWithText(approvalTitle).assertDoesNotExist()
+            composeRule.onNodeWithText("출석했어요!").assertIsNotEnabled()
+
+            composeRule.onNodeWithText("일정").performClick()
+            composeRule.onNodeWithText("홈").performClick()
+            waitForText("출석했어요!")
+            composeRule.onNodeWithText(approvalTitle).assertDoesNotExist()
+        }
+    }
+
+    @Test
     fun reportConfirmRequiresNonBlankReasonBeforeSubmitting() {
         val reportBody = AtomicReference<String>()
         installApiFixtures(
@@ -293,6 +323,7 @@ class SessionLocationUiTest {
         currentAttendanceStatus: () -> AttendanceStatus = { AttendanceStatus.AVAILABLE },
         weeklySessionDate: LocalDate = LocalDate.of(2026, 11, 14),
         onReport: (String) -> Unit = { error("Unexpected attendance report") },
+        weeklySessionType: SessionType = SessionType.REGULAR,
     ): HttpClient {
         val client =
             HttpClient(
@@ -305,8 +336,10 @@ class SessionLocationUiTest {
                                     venueLatitude,
                                     currentAttendanceStatus(),
                                     weeklySessionDate,
+                                    weeklySessionType,
                                 )
                             "sessions" -> generationSessions(includeLocation)
+                            "team-attendance-photos" -> """{"photo":null}"""
                             "attendance-verifications" -> {
                                 onVerification()
                                 """{"verified":true,"checkedInAt":"2026-11-18T05:00:00Z"}"""
@@ -358,11 +391,12 @@ class SessionLocationUiTest {
         venueLatitude: Double,
         attendanceStatus: AttendanceStatus,
         sessionDate: LocalDate,
+        sessionType: SessionType,
     ): String {
         val locationDetails = if (includeLocation) locationDetails(venueLatitude) else ""
         return """{"weekStartDate":"${sessionDate.minusDays(6)}","weekEndDate":"$sessionDate",
             "session":{"sessionId":12,"name":"개발 세션","date":"$sessionDate","startTime":"14:00",
-            "endTime":"18:00","type":"REGULAR","location":"DMC 첨단산업센터",
+            "endTime":"18:00","type":"${sessionType.name}","location":"DMC 첨단산업센터",
             "attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
     }
 

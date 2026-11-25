@@ -127,7 +127,12 @@ fun HomeRoute(
         }
     }
     if (teamSession != null) {
-        HomeTeamAttendanceOverlays(teamSession, team, teamViewModel) {
+        HomeTeamAttendanceOverlays(
+            session = teamSession,
+            state = team,
+            viewModel = teamViewModel,
+            canShowApproval = interaction.sheet == HomeSheet.None,
+        ) {
             if (!teamViewModel.state.value.isSubmitting) {
                 teamViewModel.closeFlow()
                 teamViewModel.refresh(teamSession)
@@ -165,8 +170,9 @@ fun HomeRoute(
                     sessionId = session?.sessionId,
                     coordinates = session?.coordinates,
                     isAvailable = session?.attendanceStatus == AttendanceStatusUiModel.Available,
-                    isCheckingLocation = interaction.submissionStage == HomeSubmissionStage.RequestingLocationPermission ||
-                        interaction.submissionStage == HomeSubmissionStage.CheckingLocation,
+                    isCheckingLocation =
+                        interaction.submissionStage == HomeSubmissionStage.RequestingLocationPermission ||
+                            interaction.submissionStage == HomeSubmissionStage.CheckingLocation,
                     locationIssue = interaction.locationIssue,
                     sheetContent = { isCheckingLocation, locationIssue, onConfirm, onLocationRecovery ->
                         HomeSheetContent(

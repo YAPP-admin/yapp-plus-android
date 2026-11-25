@@ -25,6 +25,7 @@ import com.yapp.plus.feature.main.home.components.HomeTeamSubmittedPhotoThumbnai
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeTeamAttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState
+import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState
 import com.yapp.plus.feature.main.home.model.teamTimeFormat
 import com.yapp.plus.feature.main.home.model.teamZone
 import java.time.Instant
@@ -41,8 +42,9 @@ internal fun HomeTeamAttendanceCard(
     var viewingResult by remember(session.sessionId) { mutableStateOf(false) }
     val photo = state.photo
     val canUpload = session.canUploadTeamPhoto(now)
+    val cardState = state.card(session, now)
     HomeTeamPhotoSessionCard(
-        state = state.card(session, now),
+        state = cardState,
         sessionTimeLabel = session.teamTimeLabel(),
         weekStartDate = checkNotNull(session.weekStartDate),
         sessionDate = session.sessionDate,
@@ -55,7 +57,7 @@ internal fun HomeTeamAttendanceCard(
                 { modifier -> HomeTeamSubmittedPhotoThumbnail(image, modifier) }
             },
     )
-    if (viewingResult) {
+    if (viewingResult && cardState != HomeTeamPhotoSessionUiState.Approved) {
         val result =
             when {
                 state.isAbsent -> HomeTeamPhotoResultSheetState.ConfirmedAbsent(reason = null)
@@ -87,6 +89,7 @@ internal fun HomeTeamAttendanceOverlays(
     session: CurrentWeekSessionUiModel,
     state: HomeTeamAttendanceUiState,
     viewModel: HomeTeamAttendanceViewModel,
+    canShowApproval: Boolean,
     onFinish: () -> Unit,
 ) {
     val pickPhoto = rememberHomeTeamPhotoPicker(viewModel)
@@ -104,6 +107,12 @@ internal fun HomeTeamAttendanceOverlays(
                 onTakePhoto = { pickPhoto(true) },
                 onDismiss = viewModel::closeFlow,
                 errorResource = state.error,
+            )
+        state.uploadFailed ->
+            HomeTeamPhotoResultSheet(
+                state = HomeTeamPhotoResultSheetState.UploadFailed,
+                onConfirm = onFinish,
+                onRetry = { viewModel.submit() },
             )
         bitmap != null || state.receipt != null ->
             Dialog(
@@ -136,5 +145,10 @@ internal fun HomeTeamAttendanceOverlays(
                         )
                 }
             }
+        canShowApproval && state.shouldShowApproval(session) ->
+            HomeTeamPhotoResultSheet(
+                state = HomeTeamPhotoResultSheetState.Approved,
+                onConfirm = { viewModel.acknowledgeApproval(session.sessionId) },
+            )
     }
 }

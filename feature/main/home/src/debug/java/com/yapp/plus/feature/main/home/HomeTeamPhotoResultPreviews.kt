@@ -129,10 +129,11 @@ private fun TeamPhotoHomePreview(
 private fun teamPhotoPreviewReceipt() =
     HomeTeamPhotoReceiptUiModel(
         teamName = stringResource(R.string.home_team_result_preview_team),
-        uploadTimeLabel = stringResource(R.string.home_team_result_preview_time),
+        submittedTimeLabel = stringResource(R.string.home_team_result_preview_time),
         attendeeCount = 4,
         teamMemberCount = 5,
         attendeeNamesLabel = stringResource(R.string.home_team_result_preview_members),
+        uploadTimeLabel = stringResource(R.string.home_team_result_preview_time),
     )
 
 @Composable

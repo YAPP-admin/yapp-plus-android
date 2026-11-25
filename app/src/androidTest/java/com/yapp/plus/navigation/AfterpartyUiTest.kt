@@ -1,7 +1,9 @@
 package com.yapp.plus.navigation
 
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
@@ -185,7 +187,7 @@ class AfterpartyUiTest {
     }
 
     @Test
-    fun settlementNotificationOpensDetail() {
+    fun settlementNotificationAnnouncesItsActualDestination() {
         openCommunity(AfterpartyUiFixtures(), startInCommunity = false) {
             openSettlementNotification()
             waitFor("테스트 정산자님 정산")
@@ -198,7 +200,11 @@ class AfterpartyUiTest {
         }
         compose.onNodeWithContentDescription("알림").performClick()
         waitFor("뒤풀이 정산이 등록됐어요")
-        compose.onNodeWithText("뒤풀이 정산이 등록됐어요").assertIsDisplayed().performClick()
+        val opensSettlement =
+            SemanticsMatcher("opens settlement details") {
+                it.config.getOrNull(SemanticsActions.OnClick)?.label == "정산 상세 보기"
+            }
+        compose.onNode(opensSettlement).assertIsDisplayed().performClick()
     }
 
     private fun openCommunity(

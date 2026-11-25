@@ -155,10 +155,10 @@ internal fun HomeNotificationItem(
             Modifier.clickable(
                 onClickLabel =
                     stringResource(
-                        if (notification.sessionId != null) {
-                            R.string.home_notifications_open_schedule
-                        } else {
-                            R.string.home_notifications_open_post
+                        when {
+                            notification.settlement != null -> R.string.home_notifications_open_settlement
+                            notification.sessionId != null -> R.string.home_notifications_open_schedule
+                            else -> R.string.home_notifications_open_post
                         },
                     ),
                 role = Role.Button,

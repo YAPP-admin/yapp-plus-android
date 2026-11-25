@@ -131,7 +131,12 @@ fun HomeRoute(
         }
     }
     if (teamSession != null) {
-        HomeTeamAttendanceOverlays(teamSession, team, teamViewModel) {
+        HomeTeamAttendanceOverlays(
+            session = teamSession,
+            state = team,
+            viewModel = teamViewModel,
+            canShowApproval = interaction.sheet == HomeSheet.None,
+        ) {
             if (!teamViewModel.state.value.isSubmitting) {
                 teamViewModel.closeFlow()
                 teamViewModel.refresh(teamSession)

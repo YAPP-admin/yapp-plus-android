@@ -41,9 +41,9 @@ import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState.Uploa
 internal fun HomeTeamPhotoResultSheet(
     state: HomeTeamPhotoResultSheetState,
     onConfirm: () -> Unit,
-    onRetry: () -> Unit,
-    onContactStaff: () -> Unit,
-    onDismiss: () -> Unit,
+    onRetry: () -> Unit = {},
+    onContactStaff: () -> Unit = {},
+    onDismiss: () -> Unit = onConfirm,
 ) {
     val title =
         when (state) {

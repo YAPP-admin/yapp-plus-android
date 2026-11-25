@@ -1,5 +1,6 @@
 package com.yapp.plus.feature.main.home
 
+import androidx.lifecycle.SavedStateHandle
 import com.yapp.plus.domain.attendance.AttendanceHistoryPage
 import com.yapp.plus.domain.attendance.AttendanceReadRepository
 import com.yapp.plus.domain.attendance.TeamAttendanceMember
@@ -17,6 +18,7 @@ import com.yapp.plus.feature.main.home.model.HomeTeamPhotoInput
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoViewerUiState
 import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -53,6 +55,90 @@ class HomeTeamAttendanceViewModelTest {
         repeat(2) { viewModel.submit(Clock.fixed(open, ZoneOffset.UTC)) }
         assertEquals(1, repository.attempts)
         assertTrue(viewModel.state.value.uncertain)
+        assertFalse(viewModel.state.value.uploadFailed)
+    }
+
+    @Test
+    fun retriesUploadFailureWithTheSamePhotoAndMembers() {
+        val repository = FakeTeamAttendance().apply { failUpload = true }
+        val viewModel = editing(repository)
+        val photo = checkNotNull(viewModel.state.value.input)
+        viewModel.selectMember(12L, selected = true)
+
+        viewModel.submit(Clock.fixed(open, ZoneOffset.UTC))
+
+        assertTrue(viewModel.state.value.uploadFailed)
+        assertEquals(photo, viewModel.state.value.input)
+        assertEquals(0, repository.attempts)
+
+        repository.failUpload = false
+        viewModel.submit(Clock.fixed(open, ZoneOffset.UTC))
+
+        assertFalse(viewModel.state.value.uploadFailed)
+        assertEquals(2, repository.uploadAttempts)
+        assertEquals(setOf(11L, 12L), repository.selected)
+        assertNotNull(viewModel.state.value.receipt)
+    }
+
+    @Test
+    fun receiptShowsRealUploadTimeAfterTheMatchingPhotoIsLoaded() {
+        val repository = FakeTeamAttendance()
+        val viewModel = editing(repository)
+        val response = CompletableDeferred<TeamAttendancePhoto?>()
+        repository.photoResponse = response
+
+        viewModel.submit(Clock.fixed(open, ZoneOffset.UTC))
+
+        val receiptBeforeLookup = checkNotNull(viewModel.state.value.receipt)
+        assertEquals("14:00", receiptBeforeLookup.submittedTimeLabel)
+        assertNull(receiptBeforeLookup.uploadTimeLabel)
+
+        response.complete(photo(1L, Instant.MAX).copy(uploadedTime = LocalTime.of(13, 57)))
+
+        val receiptAfterLookup = checkNotNull(viewModel.state.value.receipt)
+        assertEquals("13:57", receiptAfterLookup.uploadTimeLabel)
+    }
+
+    @Test
+    fun receiptKeepsSubmissionTimeWhenLatestPhotoIsDifferent() {
+        val repository = FakeTeamAttendance()
+        val viewModel = editing(repository)
+        repository.latestPhoto = photo(2L, Instant.MAX).copy(uploadedTime = LocalTime.of(13, 57))
+
+        viewModel.submit(Clock.fixed(open, ZoneOffset.UTC))
+
+        val receipt = checkNotNull(viewModel.state.value.receipt)
+        assertEquals("14:00", receipt.submittedTimeLabel)
+        assertNull(receipt.uploadTimeLabel)
+    }
+
+    @Test
+    fun approvalNeedsPersonalCheckInAndStaysAcknowledgedForTheSession() {
+        val repository =
+            FakeTeamAttendance().apply {
+                latestPhoto = photo(1L, Instant.MAX).copy(status = TeamAttendancePhotoStatus.APPROVED)
+            }
+        val savedState = SavedStateHandle()
+        val viewModel = home(repository, savedState)
+
+        assertFalse(viewModel.state.value.shouldShowApproval(session))
+
+        val approvedSession = session.copy(attendanceStatus = AttendanceStatusUiModel.CheckedIn)
+        viewModel.refresh(approvedSession)
+        assertTrue(viewModel.state.value.shouldShowApproval(approvedSession))
+
+        viewModel.acknowledgeApproval(approvedSession.sessionId)
+        viewModel.clear()
+        viewModel.refresh(approvedSession)
+        assertFalse(viewModel.state.value.shouldShowApproval(approvedSession))
+
+        val recreatedViewModel = home(repository, savedState)
+        recreatedViewModel.refresh(approvedSession)
+        assertFalse(recreatedViewModel.state.value.shouldShowApproval(approvedSession))
+
+        val nextSession = approvedSession.copy(sessionId = 43L)
+        recreatedViewModel.refresh(nextSession)
+        assertTrue(recreatedViewModel.state.value.shouldShowApproval(nextSession))
     }
 
     @Test
@@ -139,25 +225,28 @@ class HomeTeamAttendanceViewModelTest {
             it.photoPicked(HomeTeamPhotoInput(byteArrayOf(1), "image/jpeg", null))
         }
 
-    private fun home(repository: FakeTeamAttendance) =
-        HomeTeamAttendanceViewModel(repository, repository, repository).also {
-            it.refresh(
-                CurrentWeekSessionUiModel(
-                    weekStartDateLabel = "",
-                    weekEndDateLabel = "",
-                    dateLabel = "",
-                    name = "",
-                    startTimeLabel = "",
-                    location = "팀별 자율 장소",
-                    attendanceStatus = AttendanceStatusUiModel.Available,
-                    sessionId = 42L,
-                    sessionDate = LocalDate.of(2026, 11, 28),
-                    startTime = LocalTime.of(14, 0),
-                    endTime = LocalTime.of(18, 0),
-                    type = SessionType.TEAM,
-                ),
-            )
-        }
+    private fun home(
+        repository: FakeTeamAttendance,
+        savedState: SavedStateHandle = SavedStateHandle(),
+    ) = HomeTeamAttendanceViewModel(repository, repository, repository, savedState).also {
+        it.refresh(session)
+    }
+
+    private val session =
+        CurrentWeekSessionUiModel(
+            weekStartDateLabel = "",
+            weekEndDateLabel = "",
+            dateLabel = "",
+            name = "",
+            startTimeLabel = "",
+            location = "팀별 자율 장소",
+            attendanceStatus = AttendanceStatusUiModel.Available,
+            sessionId = 42L,
+            sessionDate = LocalDate.of(2026, 11, 28),
+            startTime = LocalTime.of(14, 0),
+            endTime = LocalTime.of(18, 0),
+            type = SessionType.TEAM,
+        )
 
     private fun photo(
         photoId: Long,
@@ -185,6 +274,8 @@ internal class FakeTeamAttendance(
     AttendanceReadRepository {
     var selected: Set<Long> = emptySet()
     var attempts = 0
+    var uploadAttempts = 0
+    var failUpload = false
 
     var latestPhoto: TeamAttendancePhoto? = null
     var photoResponse: CompletableDeferred<TeamAttendancePhoto?>? = null
@@ -209,7 +300,11 @@ internal class FakeTeamAttendance(
         filename: String,
         contentType: String,
         bytes: ByteArray,
-    ) = "key"
+    ): String {
+        uploadAttempts++
+        check(!failUpload)
+        return "key"
+    }
 
     override suspend fun submitPhoto(
         sessionId: Long,

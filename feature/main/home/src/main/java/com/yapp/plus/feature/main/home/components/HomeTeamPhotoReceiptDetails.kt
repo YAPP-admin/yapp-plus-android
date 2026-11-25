@@ -28,10 +28,17 @@ import com.yapp.plus.feature.main.home.model.HomeTeamPhotoReceiptUiModel
 
 @Composable
 internal fun HomeTeamPhotoReceiptDetails(receipt: HomeTeamPhotoReceiptUiModel) {
+    val uploadTime = receipt.uploadTimeLabel
+    val timeLabel =
+        if (uploadTime == null) {
+            R.string.home_team_result_receipt_time
+        } else {
+            R.string.home_team_result_receipt_upload_time
+        }
     val facts =
         listOf(
             R.string.home_team_result_receipt_team to receipt.teamName,
-            R.string.home_team_result_receipt_time to receipt.uploadTimeLabel,
+            timeLabel to (uploadTime ?: receipt.submittedTimeLabel),
             R.string.home_team_result_receipt_count to
                 stringResource(
                     R.string.home_team_result_count,

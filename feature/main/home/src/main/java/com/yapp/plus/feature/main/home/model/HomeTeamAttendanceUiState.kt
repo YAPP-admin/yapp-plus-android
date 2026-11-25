@@ -17,16 +17,23 @@ internal data class HomeTeamAttendanceUiState(
     val roster: TeamAttendanceRoster? = null,
     val selected: Set<Long> = emptySet(),
     val isSubmitting: Boolean = false,
+    val uploadFailed: Boolean = false,
     val error: Int? = null,
     val uncertain: Boolean = false,
     val receipt: HomeTeamPhotoReceiptUiModel? = null,
     val photoViewer: HomeTeamPhotoViewerUiState? = null,
+    val acknowledgedApprovalSessionId: Long? = null,
 ) {
     val isActive: Boolean
         get() = guide || preparing || input != null || receipt != null || photoViewer != null
 
     val photo: TeamAttendancePhoto?
         get() = (latest as? AttendanceUiState.Content)?.value
+
+    fun shouldShowApproval(session: CurrentWeekSessionUiModel): Boolean =
+        sessionId == session.sessionId &&
+            session.attendanceStatus == AttendanceStatusUiModel.CheckedIn &&
+            acknowledgedApprovalSessionId != session.sessionId
 
     fun card(
         session: CurrentWeekSessionUiModel,

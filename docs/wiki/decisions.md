@@ -617,3 +617,10 @@ last_verified: 2026-11-25
 - 결정: 이번 주 세션 객체의 `location`은 필수 문자열입니다. 장소명이 누락되거나 null인 세션 응답은 기존 일정 조회 실패 경로로 처리합니다.
 - 근거: 사용자가 이번 주 세션 `location`의 non-null 계약을 확인했습니다. [백엔드 주간 세션 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#사용자-앱-이번-주-세션) · [Android 모델 변경](https://github.com/YAPP-admin/yapp-plus-android/commit/762a6d7d9bfafde214f92e3e64092bb4b2c6b6c3)
 - 적용 상태: [제품 정책](product-policy.md#현재-서버-연결)과 Data·Home 테스트에 반영했습니다.
+
+## DEC-0078 · 팀 출석 승인과 업로드 실패 안내
+
+- 기록일: 2026-11-25
+- 결정: 본인의 팀 세션 출석이 확정되면 홈에서 승인 안내를 표시합니다. 사진 업로드 단계의 실패는 선택을 보존해 재시도할 수 있게 안내합니다. 제출 결과가 불확실한 경우 홈에서 상태를 확인하도록 안내합니다.
+- 근거: 사용자가 확인한 디자인 차이 수정을 요청했습니다. [Figma 팀 출석 승인](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-23597) · [Figma 업로드 실패](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24549) · [사용자 팀 사진 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/d3110417a8b24644629a966b80cbf5bf1db4e9f1/APIDOC.md#L337-L361) · [Android 이슈 #264](https://github.com/YAPP-admin/yapp-plus-android/issues/264)
+- 적용 상태: 홈의 팀 사진 흐름과 [제품 정책](product-policy.md#사용자-팀-출석-조회)에 반영했습니다.

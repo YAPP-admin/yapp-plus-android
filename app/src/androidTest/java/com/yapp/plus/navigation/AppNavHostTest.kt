@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -20,14 +21,30 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.di.AuthE2ETestEntryPoint
 import com.yapp.plus.testing.NavigationTestActivity
+import dagger.hilt.android.EntryPointAccessors
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.plugin
+import io.ktor.client.request.request
+import io.ktor.http.HttpHeaders
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDate
+import java.util.concurrent.atomic.AtomicReference
 
 @RunWith(AndroidJUnit4::class)
 class AppNavHostTest {
@@ -108,21 +125,94 @@ class AppNavHostTest {
 
     @Test
     fun opensInboxFromHomeAndReturnsToItFromTheNoticeDetail() {
+        withInboxFixtures {
+            openInbox()
+            navigateRepeatedly(AppNavigationDestination.NotificationPost(postId = 42))
+            assertCurrentRoute<AppNavigationDestination.NotificationPost>()
+            composeRule.runOnIdle {
+                val route =
+                    checkNotNull(navController.currentBackStackEntry)
+                        .toRoute<AppNavigationDestination.NotificationPost>()
+                assertEquals(42L, route.postId)
+            }
+            popAndAssert<AppNavigationDestination.Notifications>()
+            popAndAssert<AppNavigationDestination.Main>()
+        }
+    }
+
+    @Test
+    fun opensTheMatchingScheduleSessionAndReturnsToTheInbox() {
+        withInboxFixtures {
+            openInbox()
+            waitForText("이번 주 세션 알림")
+            composeRule.onNodeWithText("이번 주 세션 알림").performClick()
+            assertCurrentRoute<AppNavigationDestination.NotificationSchedule>()
+            waitForText("테스트 세션 71")
+            composeRule.onNodeWithText("테스트 세션 71").assertIsDisplayed()
+            popAndAssert<AppNavigationDestination.Notifications>()
+            waitForText("이번 주 세션 알림")
+        }
+    }
+
+    private fun openInbox() {
         composeRule.runOnIdle { authenticated.value = true }
         assertCurrentRoute<AppNavigationDestination.Main>()
+        composeRule.waitUntil(10_000) {
+            composeRule.onAllNodesWithContentDescription("알림").fetchSemanticsNodes().isNotEmpty()
+        }
         composeRule.onNodeWithContentDescription("알림").performClick()
         assertCurrentRoute<AppNavigationDestination.Notifications>()
+    }
 
-        navigateRepeatedly(AppNavigationDestination.NotificationPost(postId = 42))
-        assertCurrentRoute<AppNavigationDestination.NotificationPost>()
-        composeRule.runOnIdle {
-            val route =
-                checkNotNull(navController.currentBackStackEntry)
-                    .toRoute<AppNavigationDestination.NotificationPost>()
-            assertEquals(42L, route.postId)
+    private fun waitForText(text: String) {
+        composeRule.waitUntil(10_000) { composeRule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
+    }
+
+    private fun withInboxFixtures(block: () -> Unit) {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val entryPoint = EntryPointAccessors.fromApplication(context, AuthE2ETestEntryPoint::class.java)
+        val engine =
+            MockEngine { request ->
+                val body =
+                    when (request.url.encodedPath.substringAfterLast('/')) {
+                        "current-week" ->
+                            """{"weekStartDate":"2026-11-22","weekEndDate":"2026-11-28","session":null}"""
+                        "posts" -> """{"totalPostCount":0,"items":[],"nextCursor":null}"""
+                        "notifications" ->
+                            """
+                            {"items":[{"id":7,"content":"이번 주 세션 알림","sentDate":"2026-11-25",
+                             "type":"SESSION_REMINDER","sessionId":71,"postId":null,
+                             "navigationTarget":"SESSION_SCHEDULE"}],"nextCursor":null}
+                            """.trimIndent()
+                        "sessions" -> scheduleFixture()
+                        else -> "{}"
+                    }
+                respond(body, headers = headersOf(HttpHeaders.ContentType, "application/json"))
+            }
+        HttpClient(engine) { install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) } }.use { fake ->
+            val active = AtomicReference<HttpClient?>(fake)
+            entryPoint.authenticatedClient().plugin(HttpSend).intercept { request ->
+                val client = active.get() ?: return@intercept execute(request)
+                client.request(request).call
+            }
+            try {
+                block()
+            } finally {
+                active.set(null)
+            }
         }
-        popAndAssert<AppNavigationDestination.Notifications>()
-        popAndAssert<AppNavigationDestination.Main>()
+    }
+
+    private fun scheduleFixture(): String {
+        val sessions =
+            (48..71).joinToString { id ->
+                val date = LocalDate.of(2026, 1, 3).plusWeeks((id - 48).toLong())
+                """
+                {"sessionId":$id,"name":"테스트 세션 $id","date":"$date","dayOfWeek":"SATURDAY",
+                 "startTime":"14:00","endTime":"18:00","type":"TEAM","location":null}
+                """.trimIndent()
+            }
+        return """{"generationId":31,"generationNumber":31,"sessions":[$sessions]}"""
     }
 
     @Test

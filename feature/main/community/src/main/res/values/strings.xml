@@ -2,6 +2,9 @@
     <string name="community_title">커뮤니티</string>
     <string name="community_afterparties">뒤풀이</string>
     <string name="community_gatherings">모임</string>
+    <string name="community_small_groups">소모임</string>
+    <string name="community_meetups">번개</string>
+    <string name="community_gatherings_preparing">모임 목록을 준비 중이에요</string>
     <string name="community_all">전체</string>
     <string name="community_open">진행 중</string>
     <string name="community_closed">투표 마감</string>

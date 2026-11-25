@@ -271,3 +271,8 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 - 납부자용 응답에 송금 완료 날짜와 정산 알림 확인 상태가 없으므로, 송금 완료 날짜와 정산 목록의 미확인 표시를 보류합니다.
 - 정산 작성·수정 화면의 소수점 보기는 총 금액을 정산 인원으로 나눈 결과를 소수 둘째 자리까지 표시합니다. 실제 정산 요청에는 사용자가 확인한 원 단위 인당 금액을 전송합니다. [Figma 정산하기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16848), [사용자 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#L1557-L1572)
 - 근거: [사용자 API 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/45e4cdf55d43f5cfcbb0a876a9ec48d52e06f3d4/APIDOC.md#afterparty--기수-초대-및-참석-조사), [Figma 뒤풀이](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1421-13412), [Android 이슈 #238](https://github.com/YAPP-admin/yapp-plus-android/issues/238).
+
+## 커뮤니티 모임
+
+- 커뮤니티에서 `뒤풀이`와 `모임`을 선택할 수 있습니다. 모임 탭을 처음 열면 `소모임`을 선택하고 `전체·소모임·번개` 필터를 제공합니다. 탭을 오갈 때 각 화면의 선택 상태를 유지합니다. [Figma 모임 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1792-40688)
+- 사용자 모임 목록 API가 연결되기 전에는 모임 목록이 준비 중이라고 안내합니다. [Android 이슈 #268](https://github.com/YAPP-admin/yapp-plus-android/issues/268)

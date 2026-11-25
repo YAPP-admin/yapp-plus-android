@@ -103,7 +103,6 @@ class AfterpartyUiTest {
         openCommunity(AfterpartyUiFixtures(includeEndedAfterparty = true)) {
             waitFor("테스트 뒤풀이")
             compose.onNodeWithText("뒤풀이").assertIsSelected()
-            compose.onNodeWithText("모임").assertIsNotEnabled()
             compose.onNodeWithText("전체").assertIsSelected()
             val openParty =
                 hasText("테스트 뒤풀이") and
@@ -122,6 +121,20 @@ class AfterpartyUiTest {
                     hasText("투표 마감") and
                     hasText("32명 투표 완료")
             compose.onNode(endedParty).assertIsDisplayed()
+
+            compose.onNodeWithText("모임").performClick().assertIsSelected()
+            compose.onNodeWithText("모임 목록을 준비 중이에요").assertIsDisplayed()
+            compose.onNodeWithText("소모임").assertIsSelected()
+            compose.onNodeWithText("지난 뒤풀이").assertDoesNotExist()
+            compose.onNodeWithText("전체").performClick().assertIsSelected()
+            compose.onNodeWithText("번개").performClick().assertIsSelected()
+
+            compose.onNodeWithText("뒤풀이").performClick().assertIsSelected()
+            closedFilter.assertIsSelected()
+            compose.onNode(endedParty).assertIsDisplayed()
+
+            compose.onNodeWithText("모임").performClick()
+            compose.onNodeWithText("번개").assertIsSelected()
         }
     }
 

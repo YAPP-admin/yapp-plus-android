@@ -36,10 +36,10 @@ import com.yapp.plus.domain.afterparty.SettlementPaymentStatus
 import com.yapp.plus.domain.result.YappResult
 import com.yapp.plus.feature.main.community.components.CommunityEmptyState
 import com.yapp.plus.feature.main.community.components.CommunityError
+import com.yapp.plus.feature.main.community.components.CommunityFilterChip
 import com.yapp.plus.feature.main.community.components.CommunityHeader
 import com.yapp.plus.feature.main.community.components.CommunityLoading
 import com.yapp.plus.feature.main.community.components.CommunityTab
-import com.yapp.plus.feature.main.community.components.CommunityVoteFilter
 import com.yapp.plus.feature.main.community.components.SettlementBadge
 import com.yapp.plus.feature.main.community.components.SettlementPaymentBadge
 import com.yapp.plus.feature.main.community.components.label
@@ -146,7 +146,7 @@ internal fun SettlementListFilters(
                     status == SettlementPaymentStatus.UNPAID -> R.string.community_receiving
                     else -> R.string.community_received
                 }
-            CommunityVoteFilter(stringResource(label), filter == status) { onFilter(status) }
+            CommunityFilterChip(stringResource(label), filter == status) { onFilter(status) }
         }
     }
 }

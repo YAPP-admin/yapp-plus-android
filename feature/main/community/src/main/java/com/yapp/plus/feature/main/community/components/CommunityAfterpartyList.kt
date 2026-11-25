@@ -1,5 +1,6 @@
 package com.yapp.plus.feature.main.community.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,10 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.main.YappIconLabel
 import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
@@ -44,8 +41,18 @@ private val seoul = ZoneId.of("Asia/Seoul")
 private val afterpartyDateFormat =
     DateTimeFormatter.ofPattern("MM.dd (E) HH:mm", Locale.KOREAN).withZone(seoul)
 
+internal enum class CommunitySection(
+    @StringRes val label: Int,
+) {
+    Afterparties(R.string.community_afterparties),
+    Gatherings(R.string.community_gatherings),
+}
+
 @Composable
-internal fun CommunityAfterpartyTabs() {
+internal fun CommunityTabs(
+    selectedSection: CommunitySection,
+    onSelect: (CommunitySection) -> Unit,
+) {
     Box(Modifier.fillMaxWidth()) {
         HorizontalDivider(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -57,16 +64,14 @@ internal fun CommunityAfterpartyTabs() {
                 .padding(horizontal = 16.dp)
                 .selectableGroup(),
         ) {
-            CommunityTab(
-                label = stringResource(R.string.community_afterparties),
-                isSelected = true,
-                modifier = Modifier.weight(1f),
-            )
-            CommunityTab(
-                label = stringResource(R.string.community_gatherings),
-                isSelected = false,
-                modifier = Modifier.weight(1f),
-            )
+            for (section in CommunitySection.entries) {
+                CommunityTab(
+                    label = stringResource(section.label),
+                    isSelected = section == selectedSection,
+                    modifier = Modifier.weight(1f),
+                    onClick = { onSelect(section) },
+                )
+            }
         }
     }
 }
@@ -76,20 +81,13 @@ internal fun CommunityTab(
     label: String,
     isSelected: Boolean,
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
+    onClick: () -> Unit,
 ) {
-    val selection =
-        if (onClick == null) {
-            Modifier.semantics(mergeDescendants = true) {
-                role = Role.Tab
-                selected = isSelected
-                if (!isSelected) disabled()
-            }
-        } else {
-            Modifier.noRippleSelectable(selected = isSelected, role = Role.Tab, onClick = onClick)
-        }
     Box(
-        modifier = modifier.heightIn(min = 44.dp).then(selection),
+        modifier =
+            modifier
+                .heightIn(min = 44.dp)
+                .noRippleSelectable(selected = isSelected, role = Role.Tab, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         YappText(
@@ -123,7 +121,7 @@ internal fun CommunityVoteFilters(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         for (filter in AfterpartyFilter.entries) {
-            CommunityVoteFilter(
+            CommunityFilterChip(
                 label = stringResource(filter.label()),
                 isSelected = filter == selectedFilter,
                 onClick = { onFilter(filter) },
@@ -133,7 +131,7 @@ internal fun CommunityVoteFilters(
 }
 
 @Composable
-internal fun CommunityVoteFilter(
+internal fun CommunityFilterChip(
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,

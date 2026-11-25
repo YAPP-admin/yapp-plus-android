@@ -33,7 +33,6 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     onNotificationsClick: (() -> Unit)? = null,
     onSessionsClick: () -> Unit = {},
-    onScoreClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
     onAttendanceComplete: () -> Unit = {},
     onContactStaff: () -> Unit = {},
@@ -100,7 +99,6 @@ fun HomeRoute(
                 }
             },
             onSessionsClick = onSessionsClick,
-            onScoreClick = onScoreClick,
             onReportClick = interactionViewModel::openReport,
             onNoticeClick = onNoticeClick,
             teamSessionCard =

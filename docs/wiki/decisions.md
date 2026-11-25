@@ -602,3 +602,18 @@ last_verified: 2026-11-25
 - 결정: Android에 Figma의 정산 등록 완료, 정산 현황, 송금, 보낼 돈·받을 돈을 연결합니다. 서버가 돌려준 요청 인원과 수금 현황을 표시하고, 정산 상태는 사용자 API로 변경합니다.
 - 근거: 사용자가 남은 정산 흐름에 Figma 디자인을 적용해 달라고 요청했습니다. [Figma 정산 등록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16692), [Figma 정산 현황](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1805-19959), [사용자 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#L1557-L1572)
 - 적용 상태: Android와 [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산)에 반영했습니다. 송금 완료 날짜와 정산 목록의 미확인 표시는 사용자 응답에 필요한 값이 추가될 때까지 보류합니다.
+
+## DEC-0075 · 홈 정규 세션의 출석 완료 카드
+
+- 기록일: 2026-11-25
+- 결정: 홈에서 정규 세션의 `CHECKED_IN`을 달력의 주황색 출석 배지와 회색 비활성 `출석했어요!` 버튼으로 표시합니다. 출석 점수와 내역은 My 탭에서 확인합니다.
+- 근거: 사용자가 홈 출석 완료 카드를 Figma에 맞게 적용해 달라고 요청했습니다. [Figma 출석 후 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-18070) · [앱 기능 명세](https://docs.google.com/spreadsheets/d/1K-2VwMPkoT8kq-bujUIMetTPKal11Iql2GUmMd1M7eE/edit#gid=848576421&range=E12:J12) · [Android 이슈 #261](https://github.com/YAPP-admin/yapp-plus-android/issues/261)
+- 대체한 결정: DEC-0055·DEC-0056의 홈 출석 완료 카드에서 My 점수 확인으로 이동하는 동작.
+- 적용 상태: Android 홈 카드, [제품 정책](product-policy.md#수정된-홈-화면과-연결-흐름)과 [홈 디자인 토큰](design-system.md#수정된-홈-디자인-토큰)에 반영했습니다.
+
+## DEC-0076 · 이번 주 세션의 필수 장소명
+
+- 기록일: 2026-11-25
+- 결정: 이번 주 세션 객체의 `location`은 필수 문자열입니다. 장소명이 누락되거나 null인 세션 응답은 기존 일정 조회 실패 경로로 처리합니다.
+- 근거: 사용자가 이번 주 세션 `location`의 non-null 계약을 확인했습니다. [백엔드 주간 세션 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#사용자-앱-이번-주-세션) · [Android 모델 변경](https://github.com/YAPP-admin/yapp-plus-android/commit/762a6d7d9bfafde214f92e3e64092bb4b2c6b6c3)
+- 적용 상태: [제품 정책](product-policy.md#현재-서버-연결)과 Data·Home 테스트에 반영했습니다.

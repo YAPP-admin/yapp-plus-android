@@ -12,4 +12,5 @@ enum class YappButtonSize {
     Settings,
     HomePrimary,
     HomeSecondary,
+    HomeSecondarySmall,
 }

@@ -143,13 +143,13 @@ class HomeTeamAttendanceViewModelTest {
         HomeTeamAttendanceViewModel(repository, repository, repository).also {
             it.refresh(
                 CurrentWeekSessionUiModel(
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    null,
-                    AttendanceStatusUiModel.Available,
+                    weekStartDateLabel = "",
+                    weekEndDateLabel = "",
+                    dateLabel = "",
+                    name = "",
+                    startTimeLabel = "",
+                    location = "팀별 자율 장소",
+                    attendanceStatus = AttendanceStatusUiModel.Available,
                     sessionId = 42L,
                     sessionDate = LocalDate.of(2026, 11, 28),
                     startTime = LocalTime.of(14, 0),

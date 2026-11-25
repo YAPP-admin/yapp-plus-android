@@ -34,7 +34,8 @@ class SessionScheduleRemoteDataSourceTest {
             val response =
                 """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
                 "sessionId":12,"name":"세션","date":"2026-10-24","startTime":"14:00",
-                "endTime":"18:00:00","type":"TEAM","attendanceStatus":"AVAILABLE"}}"""
+                "endTime":"18:00:00","type":"TEAM","attendanceStatus":"AVAILABLE",
+                "location":"팀별 자율 장소"}}"""
             createClient(
                 response = response,
                 path = "sessions/current-week",
@@ -50,7 +51,7 @@ class SessionScheduleRemoteDataSourceTest {
                         startTime = LocalTime.of(14, 0),
                         endTime = LocalTime.of(18, 0),
                         type = SessionType.TEAM,
-                        location = null,
+                        location = "팀별 자율 장소",
                         attendanceStatus = AttendanceStatus.AVAILABLE,
                     ),
                     result.session,
@@ -75,13 +76,32 @@ class SessionScheduleRemoteDataSourceTest {
                 val response =
                     """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
                     "sessionId":12,"name":"세션","date":"2026-10-24","startTime":"14:00",
-                    "endTime":"18:00","type":"TEAM","attendanceStatus":"$wireStatus"}}"""
+                    "endTime":"18:00","type":"TEAM","attendanceStatus":"$wireStatus",
+                    "location":"팀별 자율 장소"}}"""
                 createClient(response).use { client ->
                     val repository =
                         SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(client))
                     val result = repository.fetchCurrentWeekSchedule() as YappResult.Success
                     val session = requireNotNull(result.value.session)
                     assertEquals(domainStatus, session.attendanceStatus)
+                }
+            }
+        }
+
+    @Test
+    fun `weekly session without a non-null location is unavailable`() =
+        runTest {
+            for (locationField in listOf("", ""","location":null""")) {
+                val response =
+                    """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
+                    "sessionId":12,"name":"세션","date":"2026-10-24","startTime":"14:00",
+                    "endTime":"18:00","type":"REGULAR","attendanceStatus":"AVAILABLE"$locationField}}"""
+                createClient(response).use {
+                    val repository = SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(it))
+                    assertEquals(
+                        YappResult.Failure(ScheduleFailure.Unavailable),
+                        repository.fetchCurrentWeekSchedule(),
+                    )
                 }
             }
         }

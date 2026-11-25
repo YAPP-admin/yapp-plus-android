@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -44,7 +46,6 @@ fun HomeSessionCard(
     state: AttendanceUiState<CurrentWeekSessionUiModel>,
     modifier: Modifier = Modifier,
     onAttendanceClick: () -> Unit = {},
-    onScoreClick: () -> Unit = {},
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
 ) {
     Surface(
@@ -82,7 +83,6 @@ fun HomeSessionCard(
                         session = state.value,
                         now = now,
                         onAttendanceClick = onAttendanceClick,
-                        onScoreClick = onScoreClick,
                     )
             }
         }
@@ -105,8 +105,9 @@ internal fun HomeSessionContent(
     session: CurrentWeekSessionUiModel,
     now: LocalDateTime,
     onAttendanceClick: () -> Unit,
-    onScoreClick: () -> Unit,
 ) {
+    val attendanceStatus = session.attendanceStatus
+    val isCheckedIn = attendanceStatus == AttendanceStatusUiModel.CheckedIn
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         HomeSessionVenue(location = session.location)
         val titleResource =
@@ -121,26 +122,26 @@ internal fun HomeSessionContent(
             YappHomeColor.text,
         )
     }
-    session.weekStartDate?.let {
-        HomeWeekCalendar(it, session.sessionDate, now.toLocalDate())
+    session.weekStartDate?.let { weekStartDate ->
+        HomeWeekCalendar(
+            weekStartDate = weekStartDate,
+            sessionDate = session.sessionDate,
+            today = now.toLocalDate(),
+            isSessionAttended = isCheckedIn,
+        )
     }
-    val attendanceStatus = session.attendanceStatus
-    val isCheckedIn = attendanceStatus == AttendanceStatusUiModel.CheckedIn
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        if (isCheckedIn) {
-            YappText(
-                stringResource(attendanceStatus.messageResource),
-                YappHomeTypography.label,
-                YappHomeColor.text,
-            )
-        }
+    val minimumActionSize =
+        if (isCheckedIn) 0.dp else LocalMinimumInteractiveComponentSize.current
+    val actionSize =
+        if (isCheckedIn) YappButtonSize.HomeSecondarySmall else YappButtonSize.HomeSecondary
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides minimumActionSize) {
         YappButton(
             text = attendanceButtonText(session, now),
-            onClick = if (isCheckedIn) onScoreClick else onAttendanceClick,
+            onClick = onAttendanceClick,
             modifier = Modifier.fillMaxWidth(),
-            enabled = isCheckedIn || attendanceStatus == AttendanceStatusUiModel.Available,
+            enabled = attendanceStatus == AttendanceStatusUiModel.Available,
             variant = YappButtonVariant.HomeAttendance,
-            size = YappButtonSize.HomeSecondary,
+            size = actionSize,
         )
     }
 }
@@ -149,6 +150,7 @@ internal fun HomeSessionContent(
 internal fun HomeSessionVenue(location: String) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             painterResource(DesignSystemR.drawable.ic_map_pin),
@@ -171,9 +173,9 @@ private fun attendanceButtonText(
     now: LocalDateTime,
 ): String =
     when (val status = session.attendanceStatus) {
-        AttendanceStatusUiModel.CheckedIn -> stringResource(R.string.home_score_check)
         AttendanceStatusUiModel.Available -> stringResource(R.string.attendance_home_session_action)
         AttendanceStatusUiModel.NotOpen -> attendanceNotOpenText(session, now)
+        AttendanceStatusUiModel.CheckedIn,
         AttendanceStatusUiModel.NotEligible,
         AttendanceStatusUiModel.PendingApproval,
         -> stringResource(status.messageResource)

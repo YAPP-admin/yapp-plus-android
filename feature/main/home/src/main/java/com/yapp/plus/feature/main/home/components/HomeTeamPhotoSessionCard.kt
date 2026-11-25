@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
@@ -28,7 +27,6 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
-import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.home.R
@@ -59,28 +57,6 @@ internal fun HomeTeamPhotoSessionCard(
     onViewPhoto: (() -> Unit)? = null,
     thumbnail: (@Composable (Modifier) -> Unit)? = null,
 ) {
-    val sessionDayContent: (@Composable (Int) -> Unit)? =
-        if (state == Approved) {
-            { day ->
-                Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_home_team_result_attended),
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp),
-                    )
-                    YappText(day.toString(), YappTypography.scaleT2Medium, YappHomeColor.surface)
-                }
-                YappText(
-                    text = stringResource(R.string.home_team_result_attended_marker),
-                    style = YappHomeTypography.day,
-                    color = YappHomeColor.brand,
-                    modifier = Modifier.fillMaxWidth().background(YappMainColor.brandWeak),
-                    textAlign = TextAlign.Center,
-                )
-            }
-        } else {
-            null
-        }
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = YappHomeColor.surface,
@@ -113,8 +89,8 @@ internal fun HomeTeamPhotoSessionCard(
                     weekStartDate = weekStartDate,
                     sessionDate = sessionDate,
                     today = today,
+                    isSessionAttended = state == Approved,
                     dayHeight = 58.dp,
-                    sessionDayContent = sessionDayContent,
                 )
                 if (state is Pending) HomeTeamPhotoPendingDetails(state, thumbnail, onViewPhoto)
             }

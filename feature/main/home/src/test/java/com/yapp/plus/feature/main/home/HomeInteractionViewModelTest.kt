@@ -38,7 +38,7 @@ class HomeInteractionViewModelTest {
             dateLabel = "",
             name = "정규 세션",
             startTimeLabel = "",
-            location = null,
+            location = "DMC 첨단산업센터",
             attendanceStatus = AttendanceStatusUiModel.Available,
             sessionId = 42L,
             coordinates = SessionCoordinates(latitude = 37.58, longitude = 126.88),

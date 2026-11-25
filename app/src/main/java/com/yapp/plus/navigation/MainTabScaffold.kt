@@ -95,7 +95,6 @@ internal fun MainTabScaffold(
                             selectedTab = MainTab.Board
                         },
                         onAttendanceComplete = onAttendanceComplete,
-                        onScoreClick = { selectedTab = MainTab.My },
                         onContactStaff = { runCatching { uriHandler.openUri(contactChannelUrl) } },
                     )
                 MainTab.Schedule -> ScheduleRoute(targetSessionId = scheduleSessionId)

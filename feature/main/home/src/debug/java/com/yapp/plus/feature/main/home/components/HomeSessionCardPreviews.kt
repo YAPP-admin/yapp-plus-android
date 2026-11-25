@@ -58,7 +58,9 @@ private fun HomeAttendanceCompletedPreview() {
         HomeSessionCard(
             state =
                 AttendanceUiState.Content(
-                    sampleSession(AttendanceStatusUiModel.CheckedIn),
+                    sampleSession(AttendanceStatusUiModel.CheckedIn).copy(
+                        name = stringResource(R.string.attendance_home_demo_completed_session_name),
+                    ),
                 ),
         )
     }

@@ -17,8 +17,6 @@ private fun SettingsScreenPreview() {
                 SettingsNotificationSection(
                     state = NotificationSettingsUiState(isEnabled = true),
                     onEnabledChange = {},
-                    onRetry = {},
-                    onOpenSettings = {},
                 )
             },
         )

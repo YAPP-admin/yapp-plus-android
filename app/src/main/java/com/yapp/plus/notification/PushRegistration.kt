@@ -29,6 +29,14 @@ internal class PushRegistration(
 
     suspend fun fetchEnabled(): Boolean = preferences.fetchEnabled()
 
+    suspend fun synchronizeSystemPermission(enabled: Boolean) {
+        mutex.withLock {
+            if (hasPermission() != enabled) return
+            preferences.updateEnabled(enabled)
+        }
+        synchronize()
+    }
+
     fun synchronize() {
         if (!isConfigured()) return
         scope.launch {

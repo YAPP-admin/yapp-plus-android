@@ -6,7 +6,7 @@ last_verified: 2026-11-25
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0063`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0064`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -427,7 +427,7 @@ last_verified: 2026-11-25
 - 결정: 조회 실패 시 스위치 자리에 restart_alt 원형 버튼을 표시합니다. 재조회 중에는 비활성화하고 성공하면 스위치로 복원합니다. 조회 실패의 별도 텍스트 재시도 행을 제거하며 ON/OFF 변경 실패의 재시도는 유지합니다.
 - 이유: 알림 제어 위치에서 조회를 다시 시도할 수 있도록 합니다.
 - 근거: 사용자의 디자인 변경 요청, [Google restart_alt 아이콘](https://fonts.google.com/icons?icon.query=restart_alt), [PR #201](https://github.com/YAPP-admin/yapp-plus-android/pull/201).
-- 반영: [제품 정책](product-policy.md#알림-조회-실패의-재시도-버튼), 설정 UI·Preview·UI 테스트. 아이콘은 공식 SVG에서 변환하고 Apache-2.0 라이선스를 앱 assets에 포함합니다.
+- 반영: [제품 정책](product-policy.md#android-시스템-알림-설정), 설정 UI·Preview·UI 테스트. 아이콘은 공식 SVG에서 변환하고 Apache-2.0 라이선스를 앱 assets에 포함합니다.
 - 적용 상태: UI는 PR #201에 반영했고 App ViewModel·Route에서 실제 재조회와 중복 요청 방지를 연결했습니다.
 - 대체한 결정: 기존 알림 조회 실패의 텍스트 재시도 행을 원형 버튼으로 변경합니다.
 
@@ -516,3 +516,14 @@ last_verified: 2026-11-25
 - 결정: Android 커뮤니티에서 초대 목록·단일 참석 응답·참석자 조회를 제공하고, 정산은 사용자 계약의 자격·증빙·revision·납부 상태를 따릅니다.
 - 근거: [사용자 뒤풀이 및 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/45e4cdf55d43f5cfcbb0a876a9ec48d52e06f3d4/APIDOC.md#afterparty--기수-초대-및-참석-조사), [Figma 뒤풀이](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1421-13412), [Android 이슈 #238](https://github.com/YAPP-admin/yapp-plus-android/issues/238).
 - 적용 상태: [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산) 및 Android 커뮤니티·홈·My·알림 이동에 적용했습니다.
+
+
+## DEC-0063 · 알림 토글에서 Android 시스템 설정 열기
+
+- 기록일: 2026-11-25
+- 결정: 설정 화면에서 별도의 “휴대폰 설정에서 알림 허용하기” 행을 제거합니다. 알림 토글은 현재 상태와 무관하게 Android 앱 알림 설정을 열고, 돌아온 뒤 Android 권한·알림 채널 상태를 표시합니다. 기기별 선택은 시스템 상태에 맞추고 서버 등록·해제는 백그라운드에서 동기화합니다. 서버 실패는 화면의 설정 실패·재시도 UI로 노출하지 않습니다.
+- 이유: 사용자가 별도 행 대신 상단 알림 토글에서 시스템 알림 설정 기능을 제공하라고 명확히 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), [기기별 알림 설정](product-policy.md#기기별-알림-설정), [이슈 #199](https://github.com/YAPP-admin/yapp-plus-android/issues/199).
+- 반영: [제품 정책](product-policy.md#기기별-알림-설정), [설계 패턴](design-patterns.md), AGENTS.md, App 알림 Route·ViewModel·기기 동기화와 `:feature:setting`의 토글 섹션.
+- 대체한 결정: DEC-0050의 Android 권한과 앱 선택을 별도로 화면에서 조작하는 흐름. 기기별 선택 저장과 YAPP 서버 기기 API 계약은 유지합니다.
+- 적용 상태: 앱 알림 설정을 토글에서 열고 화면 복귀 시 시스템 상태와 저장 선택을 맞춘 뒤 자동 동기화를 요청합니다.

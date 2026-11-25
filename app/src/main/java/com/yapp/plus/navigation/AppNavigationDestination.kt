@@ -23,4 +23,9 @@ internal sealed interface AppNavigationDestination {
     data class NotificationPost(
         val postId: Long,
     ) : AppNavigationDestination
+
+    @Serializable
+    data class NotificationSchedule(
+        val sessionId: Long,
+    ) : AppNavigationDestination
 }

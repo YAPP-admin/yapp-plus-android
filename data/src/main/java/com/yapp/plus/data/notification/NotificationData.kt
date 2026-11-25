@@ -9,14 +9,18 @@ data class NotificationData(
     val sentDate: String,
     val type: String,
     val postId: Long?,
+    val sessionId: Long? = null,
+    val navigationTarget: String? = null,
 ) {
     internal fun toDomain(): Notification {
         require(id > 0 && content.isNotBlank())
         when (type) {
-            "GENERAL" -> require(postId == null)
+            "GENERAL", "SESSION_REMINDER" -> require(postId == null)
             "POST" -> require(postId != null && postId > 0)
             else -> error("Unknown notification type")
         }
-        return Notification(id, content, LocalDate.parse(sentDate), postId)
+        val scheduleId =
+            sessionId?.takeIf { it > 0 && type == "SESSION_REMINDER" && navigationTarget == "SESSION_SCHEDULE" }
+        return Notification(id, content, LocalDate.parse(sentDate), postId, sessionId = scheduleId)
     }
 }

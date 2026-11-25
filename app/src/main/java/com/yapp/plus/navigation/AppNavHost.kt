@@ -48,6 +48,8 @@ internal fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     pushPostId: Long? = null,
     onPushPostOpened: () -> Unit = {},
+    pushSessionId: Long? = null,
+    onPushSessionOpened: () -> Unit = {},
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     LaunchedEffect(sessionAuthenticated, registrationToken, currentEntry) {
@@ -91,6 +93,19 @@ internal fun AppNavHost(
         }
         onPushPostOpened()
     }
+    LaunchedEffect(sessionAuthenticated, pushSessionId, currentEntry) {
+        val entry = currentEntry ?: return@LaunchedEffect
+        if (sessionAuthenticated != true || pushSessionId == null) return@LaunchedEffect
+        if (!entry.destination.isAuthenticatedDestination()) return@LaunchedEffect
+        val destination = AppNavigationDestination.NotificationSchedule(pushSessionId)
+        val isAlreadyOpen =
+            entry.destination.hasRoute<AppNavigationDestination.NotificationSchedule>() &&
+                entry.toRoute<AppNavigationDestination.NotificationSchedule>() == destination
+        if (!isAlreadyOpen) {
+            navController.navigate(destination) { launchSingleTop = true }
+        }
+        onPushSessionOpened()
+    }
     BackHandler(
         enabled = currentEntry != null && navController.previousBackStackEntry == null,
         onBack = onExit,
@@ -100,6 +115,26 @@ internal fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier.fillMaxSize(),
     ) {
+        val mainContent: @Composable (NavBackStackEntry, Long?) -> Unit = { entry, sessionId ->
+            MainTabScaffold(
+                initialTab = if (sessionId == null) MainTab.Home else MainTab.Schedule,
+                scheduleSessionId = sessionId,
+                onNotificationsClick = {
+                    navController.navigateFrom(entry, AppNavigationDestination.Notifications)
+                },
+                onAttendanceComplete = {
+                    navController.navigateFrom(entry, AppNavigationDestination.AttendanceComplete)
+                },
+                onLogout = onLogout,
+                isLoggingOut = isLoggingOut,
+                hasLogoutError = hasLogoutError,
+                onLogoutErrorDismissed = onLogoutErrorDismissed,
+                onDeleteAccount = onDeleteAccount,
+                isDeletingAccount = isDeletingAccount,
+                hasDeleteAccountError = hasDeleteAccountError,
+                onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
+            )
+        }
         composable<AppNavigationDestination.Login> { entry ->
             LoginRoute(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
@@ -134,23 +169,9 @@ internal fun AppNavHost(
                 modifier = Modifier.fillMaxSize(),
             )
         }
-        composable<AppNavigationDestination.Main> { entry ->
-            MainTabScaffold(
-                onNotificationsClick = {
-                    navController.navigateFrom(entry, AppNavigationDestination.Notifications)
-                },
-                onAttendanceComplete = {
-                    navController.navigateFrom(entry, AppNavigationDestination.AttendanceComplete)
-                },
-                onLogout = onLogout,
-                isLoggingOut = isLoggingOut,
-                hasLogoutError = hasLogoutError,
-                onLogoutErrorDismissed = onLogoutErrorDismissed,
-                onDeleteAccount = onDeleteAccount,
-                isDeletingAccount = isDeletingAccount,
-                hasDeleteAccountError = hasDeleteAccountError,
-                onDeleteAccountErrorDismissed = onDeleteAccountErrorDismissed,
-            )
+        composable<AppNavigationDestination.Main> { entry -> mainContent(entry, null) }
+        composable<AppNavigationDestination.NotificationSchedule> { entry ->
+            mainContent(entry, entry.toRoute<AppNavigationDestination.NotificationSchedule>().sessionId)
         }
         composable<AppNavigationDestination.AttendanceComplete> { entry ->
             HomeAttendanceCompleteScreen(
@@ -162,6 +183,9 @@ internal fun AppNavHost(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
                 onPostClick = {
                     navController.navigateFrom(entry, AppNavigationDestination.NotificationPost(it))
+                },
+                onSessionClick = {
+                    navController.navigateFrom(entry, AppNavigationDestination.NotificationSchedule(it))
                 },
             )
         }
@@ -179,7 +203,8 @@ private fun NavDestination.isAuthenticatedDestination(): Boolean =
     hasRoute<AppNavigationDestination.Main>() ||
         hasRoute<AppNavigationDestination.AttendanceComplete>() ||
         hasRoute<AppNavigationDestination.Notifications>() ||
-        hasRoute<AppNavigationDestination.NotificationPost>()
+        hasRoute<AppNavigationDestination.NotificationPost>() ||
+        hasRoute<AppNavigationDestination.NotificationSchedule>()
 
 private fun NavHostController.navigateToAuthenticatedMain(entry: NavBackStackEntry) {
     if (!canNavigateFrom(entry)) return

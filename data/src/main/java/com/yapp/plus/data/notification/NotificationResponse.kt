@@ -9,6 +9,8 @@ internal data class NotificationResponse(
     val sentDate: String,
     val type: String,
     val postId: Long?,
+    val sessionId: Long? = null,
+    val navigationTarget: String? = null,
 ) {
-    fun toData(): NotificationData = NotificationData(id, content, sentDate, type, postId)
+    fun toData(): NotificationData = NotificationData(id, content, sentDate, type, postId, sessionId, navigationTarget)
 }

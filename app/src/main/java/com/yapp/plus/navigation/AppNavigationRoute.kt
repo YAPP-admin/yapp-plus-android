@@ -25,6 +25,8 @@ internal fun AppNavigationRoute(
     onSessionReady: () -> Unit = {},
     pushPostId: Long? = null,
     onPushPostOpened: () -> Unit = {},
+    pushSessionId: Long? = null,
+    onPushSessionOpened: () -> Unit = {},
 ) {
     val authViewModel: AppAuthViewModel = hiltViewModel()
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
@@ -57,6 +59,8 @@ internal fun AppNavigationRoute(
                 sessionAuthenticated = authUiState.hasSession,
                 pushPostId = pushPostId.takeIf { authUiState.hasSession },
                 onPushPostOpened = onPushPostOpened,
+                pushSessionId = pushSessionId.takeIf { authUiState.hasSession },
+                onPushSessionOpened = onPushSessionOpened,
                 startDestination =
                     startDestination
                         ?: if (authUiState.hasSession) {

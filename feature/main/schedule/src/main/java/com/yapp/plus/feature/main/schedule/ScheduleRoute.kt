@@ -9,7 +9,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.plus.feature.main.schedule.model.ScheduleUiState
 
 @Composable
-fun ScheduleRoute(modifier: Modifier = Modifier) {
+fun ScheduleRoute(
+    modifier: Modifier = Modifier,
+    targetSessionId: Long? = null,
+) {
     val viewModel: ScheduleViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(viewModel) {
@@ -19,5 +22,6 @@ fun ScheduleRoute(modifier: Modifier = Modifier) {
     ScheduleScreen(
         state = state,
         modifier = modifier,
+        targetSessionId = targetSessionId,
     )
 }

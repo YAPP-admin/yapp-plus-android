@@ -16,6 +16,7 @@ last_verified: 2026-11-14
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·출석 인증·사전 보고·주간 공지·알림함 연결; 별도 점수 진입 숨김 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 분류·커서 목록·Markdown 상세·과제·첨부 이미지·읽음 확인 API 연결 |
+| `:feature:main:community` | `com.yapp.plus.feature.main.community` | 뒤풀이·정산 요청 상태와 ViewModel 준비. App 연결은 후속 |
 | `:feature:main:my` | `com.yapp.plus.feature.main.my` | Figma 요약·규칙·별도 이력 UI, 출석 점수·커서 조회 ViewModel·오류 재시도; 본인 프로필 조회·세션 이름 대체 표시; 미확인 면제권 UI 유지; 이용 문의는 App에서 카카오톡 채널 연결 |
 | `:feature:setting` | `com.yapp.plus.feature.setting` | 약관·기기별 알림 상태/오류/권한 안내 UI·Figma 로그아웃/회원 탈퇴 확인·진행·오류 재시도 UI; 앱 버전·확장 안내 제거; 인증 요청은 App 콜백 사용 |
 | `:feature:login` | `com.yapp.plus.feature.login` | Google Credential Manager ID 토큰·원본 nonce 획득, nonce 해시·취소·중복 요청·인증 오류 재시도 |

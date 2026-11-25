@@ -12,7 +12,7 @@ data class CurrentWeekSessionData(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val type: SessionType,
-    val location: String?,
+    val location: String,
     val attendanceStatus: AttendanceStatus,
     val locationDetails: SessionLocationData? = null,
 )

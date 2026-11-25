@@ -10,7 +10,7 @@ internal data class CurrentWeekSessionResponse(
     val startTime: String,
     val endTime: String,
     val type: String,
-    val location: String? = null,
+    val location: String,
     val attendanceStatus: String,
     val roadAddress: String? = null,
     val latitude: Double? = null,

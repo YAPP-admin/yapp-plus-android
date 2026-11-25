@@ -6,7 +6,7 @@
 
 19개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. Hilt 앱 진입점과 Ktor API client·JSON 직렬화가 있고, 이번 주 세션과 현재 기수 일정 조회는 Domain·Data·Feature·App에 연결했습니다. 홈은 세션과 출석 인증 API를 사용하고 일정 탭은 현재 기수 세션을 조회합니다. 홈 사전 보고도 지각·조퇴·결석 선택과 사유 입력을 서버에 연결했습니다.
 
-로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager ID Token과 원본 nonce를 YAPP native-authentication API에 보내고, `SIGNED_IN` 세션을 암호화 저장하거나 `SIGNUP_REQUIRED` 토큰으로 기존 회원가입 입력 흐름을 진행합니다. 가입 성공 시 세션을 저장하고, 앱 시작 시 저장 세션을 복원해 메인 또는 로그인 화면을 엽니다.
+로그인·회원가입 UI는 별도 Feature입니다. Google Credential Manager ID Token과 원본 nonce를 YAPP native-authentication API에 보내고, `SIGNED_IN` 세션과 `user.reviewStatus`를 암호화 저장하거나 `SIGNUP_REQUIRED` 토큰으로 기존 회원가입 입력 흐름을 진행합니다. `APPROVED`만 메인에 진입하며 `PENDING`은 승인 대기 화면, `REJECTED`·누락·알 수 없는 상태는 문의 화면을 표시합니다. 앱 시작 시 세션 승인 상태를 복원해 같은 진입 기준을 적용합니다.
 
 홈 주간 공지와 게시판 목록·상세·읽음 확인은 사용자 공지 API에 연결했습니다. My는 사용자 출석 점수·커서 기반 이력 API를 연결했고, 이름은 인증 성공 응답에서 저장·복원하며 본인 프로필은 사용자 API를 조회합니다. 지각 면제권은 Figma UI를 유지하고 API 연결을 기다립니다. 문의는 YAPP 카카오톡 채널을 엽니다. 미확인 조회값과 진행률은 `—`로 표시하며 알림 토글은 설치별 선택을 저장하고 현재 기기의 푸시 등록·해제에 연결합니다. 설정의 로그아웃과 YAPP 통합 탈퇴는 Domain·Data·App에 연결했습니다. 홈은 일정·사전 보고·공지와 코드 출석·팀 출석·알림함 하위 모듈로 나눕니다. 게시판·My·일정은 각각 `:feature:main:board`, `:feature:main:my`, `:feature:main:schedule`로 분리되어 있으며 커뮤니티는 `:feature:main:community`에서 뒤풀이 투표와 정산 기능을 제공하며 App이 탭·설정·출석 내역·정산 이동을 관리합니다.
 

@@ -7,4 +7,11 @@ interface SessionProfileDataSource {
         storageKey: String,
         name: String?,
     ): Boolean
+
+    suspend fun fetchReviewStatus(storageKey: String): String?
+
+    suspend fun updateReviewStatus(
+        storageKey: String,
+        reviewStatus: String,
+    ): Boolean
 }

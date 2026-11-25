@@ -21,6 +21,7 @@ fun SignUpRoute(
     onBack: () -> Unit,
     registrationToken: String? = null,
     onRegistrationCompleted: () -> Unit = {},
+    onReportError: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: SignUpViewModel = hiltViewModel(),
 ) {
@@ -36,15 +37,26 @@ fun SignUpRoute(
         when (uiState.step) {
             SignUpStep.Name -> onBack()
             SignUpStep.Phone -> viewModel.goBack()
-            SignUpStep.Complete -> onRegistrationCompleted()
+            SignUpStep.Complete ->
+                if (uiState.authStatus == AuthStatus.Complete) {
+                    onRegistrationCompleted()
+                } else {
+                    onBack()
+                }
         }
     }
     BackHandler(enabled = !uiState.isSubmitting, onBack = navigateBack)
     if (uiState.step == SignUpStep.Complete) {
         AuthStatusContent(
-            status = AuthStatus.Complete,
-            onBack = onRegistrationCompleted,
-            onAction = onRegistrationCompleted,
+            status = uiState.authStatus,
+            onBack = navigateBack,
+            onAction = {
+                when (uiState.authStatus) {
+                    AuthStatus.Complete -> onRegistrationCompleted()
+                    AuthStatus.Pending -> Unit
+                    AuthStatus.Problem -> onReportError()
+                }
+            },
             modifier = modifier,
         )
     } else {

@@ -34,6 +34,10 @@ class SessionTokenLocalDataSource(
                         previous.userName.takeIf {
                             previous.storageKey == tokens.storageKey
                         },
+                    reviewStatus =
+                        previous.reviewStatus.takeIf {
+                            previous.storageKey == tokens.storageKey
+                        },
                 )
             }
         }
@@ -50,6 +54,28 @@ class SessionTokenLocalDataSource(
             dataStore.updateSession { current ->
                 if (current.accessToken != null && current.storageKey == storageKey) {
                     current.copy(userName = name)
+                } else {
+                    current
+                }
+            }
+        return updated.accessToken != null && updated.storageKey == storageKey
+    }
+
+    override suspend fun fetchReviewStatus(storageKey: String): String? =
+        dataStore.fetchTokens().let { record ->
+            record.reviewStatus.takeIf {
+                record.accessToken != null && record.storageKey == storageKey
+            }
+        }
+
+    override suspend fun updateReviewStatus(
+        storageKey: String,
+        reviewStatus: String,
+    ): Boolean {
+        val updated =
+            dataStore.updateSession { current ->
+                if (current.accessToken != null && current.storageKey == storageKey) {
+                    current.copy(reviewStatus = reviewStatus)
                 } else {
                     current
                 }

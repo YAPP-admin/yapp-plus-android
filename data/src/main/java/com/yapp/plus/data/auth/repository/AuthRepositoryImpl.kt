@@ -12,6 +12,7 @@ import com.yapp.plus.domain.auth.AuthOperationResult
 import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import com.yapp.plus.domain.signup.Name
 import com.yapp.plus.domain.signup.PhoneNumber
 import kotlinx.coroutines.CancellationException
@@ -47,6 +48,13 @@ class AuthRepositoryImpl(
 
     override suspend fun hasStoredSession(): Boolean = tokenStore.currentTokens() != null
 
+    override suspend fun storedSessionReviewStatus(): MembershipReviewStatus? {
+        val tokens = tokenStore.currentTokens() ?: return null
+        return MembershipReviewStatus.fromValue(
+            profileSource.fetchReviewStatus(tokens.storageKey),
+        )
+    }
+
     override suspend fun logout(): AuthOperationResult =
         runSessionOperation {
             val refreshToken =
@@ -77,7 +85,11 @@ class AuthRepositoryImpl(
             when (val result = responseResult) {
                 is AuthResponseResult.SignedIn -> {
                     saveSession(result)
-                    AuthResult.SignedIn
+                    if (result.reviewStatus == MembershipReviewStatus.Approved) {
+                        AuthResult.SignedIn
+                    } else {
+                        AuthResult.ApprovalRequired(result.reviewStatus)
+                    }
                 }
 
                 is AuthResponseResult.SignupRequired ->
@@ -97,6 +109,12 @@ class AuthRepositoryImpl(
         tokenStore.updateTokens(tokens)
         try {
             check(profileSource.updateName(tokens.storageKey, result.userName))
+            check(
+                profileSource.updateReviewStatus(
+                    tokens.storageKey,
+                    result.reviewStatus.value,
+                ),
+            )
         } catch (exception: Exception) {
             kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {
                 tokenStore.replaceTokens(tokens, null)

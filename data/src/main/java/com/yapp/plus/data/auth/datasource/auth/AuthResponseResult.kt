@@ -1,6 +1,7 @@
 package com.yapp.plus.data.auth.datasource.auth
 
 import com.yapp.plus.domain.auth.AuthFailure
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import com.yapp.plus.domain.auth.RegistrationFieldError
 
 sealed interface AuthResponseResult {
@@ -8,6 +9,7 @@ sealed interface AuthResponseResult {
         val accessToken: String,
         val refreshToken: String,
         val userName: String? = null,
+        val reviewStatus: MembershipReviewStatus = MembershipReviewStatus.Unknown,
     ) : AuthResponseResult
 
     class SignupRequired(

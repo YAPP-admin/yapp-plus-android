@@ -25,6 +25,7 @@ import androidx.navigation.toRoute
 import com.yapp.plus.R
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
 import com.yapp.plus.feature.login.LoginRoute
 import com.yapp.plus.feature.main.board.BoardRoute
@@ -34,7 +35,9 @@ import com.yapp.plus.feature.main.community.SettlementEditorRoute
 import com.yapp.plus.feature.main.community.SettlementRoute
 import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.main.home.notification.HomeNotificationsRoute
+import com.yapp.plus.feature.signup.AuthStatusContent
 import com.yapp.plus.feature.signup.SignUpRoute
+import com.yapp.plus.feature.signup.model.AuthStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -60,6 +63,7 @@ internal fun AppNavHost(
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
     navController: NavHostController = rememberNavController(),
+    onHomeEntered: () -> Unit = {},
     pushPostId: Long? = null,
     onPushPostOpened: () -> Unit = {},
     pushSessionId: Long? = null,
@@ -145,6 +149,7 @@ internal fun AppNavHost(
         val mainContent: @Composable (NavBackStackEntry, Long?) -> Unit = { entry, sessionId ->
             MainTabScaffold(
                 initialTab = if (sessionId == null) MainTab.Home else MainTab.Schedule,
+                onHomeEntered = onHomeEntered,
                 scheduleSessionId = sessionId,
                 onAfterpartyClick = { navController.navigateFrom(entry, AppNavigationDestination.Afterparty(it)) },
                 onSettlementsClick = { navController.navigateFrom(entry, AppNavigationDestination.MySettlements) },
@@ -178,6 +183,14 @@ internal fun AppNavHost(
                                 true
                             }
 
+                            is AuthResult.ApprovalRequired -> {
+                                navController.navigateFrom(
+                                    entry,
+                                    result.reviewStatus.toDestination(),
+                                )
+                                true
+                            }
+
                             is AuthResult.SignupRequired -> {
                                 navController.navigateFrom(entry, AppNavigationDestination.SignUp)
                                 true
@@ -191,6 +204,8 @@ internal fun AppNavHost(
             )
         }
         composable<AppNavigationDestination.SignUp> { entry ->
+            val uriHandler = LocalUriHandler.current
+            val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
             SignUpRoute(
                 onBack = { navController.navigateBackFromSignUp(entry, onExit) },
                 registrationToken = registrationToken,
@@ -198,7 +213,25 @@ internal fun AppNavHost(
                     onRegistrationCompleted()
                     navController.navigateToAuthenticatedMain(entry)
                 },
+                onReportError = { runCatching { uriHandler.openUri(contactChannelUrl) } },
                 modifier = Modifier.fillMaxSize(),
+            )
+        }
+        composable<AppNavigationDestination.ApprovalPending> { entry ->
+            val onBack = { navController.navigateBackToLogin(entry) }
+            ReviewStatusContent(
+                status = AuthStatus.Pending,
+                onBack = onBack,
+                onAction = {},
+            )
+        }
+        composable<AppNavigationDestination.ApprovalProblem> { entry ->
+            val uriHandler = LocalUriHandler.current
+            val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
+            ReviewStatusContent(
+                status = AuthStatus.Problem,
+                onBack = { navController.navigateBackToLogin(entry) },
+                onAction = { runCatching { uriHandler.openUri(contactChannelUrl) } },
             )
         }
         composable<AppNavigationDestination.Main> { entry -> mainContent(entry, null) }
@@ -296,6 +329,28 @@ internal fun AppNavHost(
     }
 }
 
+@Composable
+private fun ReviewStatusContent(
+    status: AuthStatus,
+    onBack: () -> Unit,
+    onAction: () -> Unit,
+) {
+    BackHandler(onBack = onBack)
+    AuthStatusContent(
+        status = status,
+        onBack = onBack,
+        onAction = onAction,
+        modifier = Modifier.fillMaxSize(),
+    )
+}
+
+private fun MembershipReviewStatus.toDestination(): AppNavigationDestination =
+    if (this == MembershipReviewStatus.Pending) {
+        AppNavigationDestination.ApprovalPending
+    } else {
+        AppNavigationDestination.ApprovalProblem
+    }
+
 private fun NavDestination.isAuthenticatedDestination(): Boolean =
     hasRoute<AppNavigationDestination.Main>() ||
         hasRoute<AppNavigationDestination.AttendanceComplete>() ||
@@ -312,6 +367,18 @@ private fun NavHostController.navigateToAuthenticatedMain(entry: NavBackStackEnt
     navigate(AppNavigationDestination.Main) {
         popUpTo<AppNavigationDestination.Login> { inclusive = true }
         launchSingleTop = true
+    }
+}
+
+private fun NavHostController.navigateBackToLogin(entry: NavBackStackEntry) {
+    if (!canNavigateFrom(entry)) return
+    if (previousBackStackEntry?.destination?.hasRoute<AppNavigationDestination.Login>() == true) {
+        popBackStack()
+    } else {
+        navigate(AppNavigationDestination.Login) {
+            popUpTo(graph.id) { inclusive = false }
+            launchSingleTop = true
+        }
     }
 }
 

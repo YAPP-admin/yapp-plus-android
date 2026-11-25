@@ -2,6 +2,7 @@ package com.yapp.plus.data.auth.model.response.auth
 
 import com.yapp.plus.data.auth.datasource.auth.AuthResponseResult
 import com.yapp.plus.domain.auth.AuthFailure
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,6 +30,7 @@ internal data class AuthenticationResponse(
                 accessToken,
                 refreshToken,
                 user?.name?.takeIf(String::isNotBlank),
+                MembershipReviewStatus.fromValue(user?.reviewStatus),
             )
         }
     }

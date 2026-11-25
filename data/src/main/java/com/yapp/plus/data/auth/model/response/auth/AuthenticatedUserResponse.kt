@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class AuthenticatedUserResponse(
     val name: String,
+    val reviewStatus: String? = null,
 )

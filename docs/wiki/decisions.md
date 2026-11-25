@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-25
+last_verified: 2026-11-26
 ---
 
 # 결정 기록
@@ -684,3 +684,23 @@ last_verified: 2026-11-25
 - 근거: 사용자 디자인 정합성 수정 요청, [Figma 출결 보고 완료](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=526-13920), [Figma 팀 사진 반려](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24774), [Figma 공지 상세 오류](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40786), [서버 팀 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/710ebabad349cb5d8b5c47a896cc5ca7df68bbe8/APIDOC.md#L339-L362). 연결된 계정에서 Notion 정책 원문을 열 수 없었습니다.
 - 반영: 홈·팀 출석·게시판, [공통 컴포넌트](design-system-components.md#홈-figma-변형), [제품 정책](product-policy.md#오류-안내와-복구).
 - 관련 이슈: [#263 출결 보고 토스트](https://github.com/YAPP-admin/yapp-plus-android/issues/263), [#264 팀 출석 안내](https://github.com/YAPP-admin/yapp-plus-android/issues/264), [#232 Android 오류 화면](https://github.com/YAPP-admin/yapp-plus-android/issues/232).
+
+## DEC-0085 · 승인 전 앱 진입 차단
+
+- 기록일: 2026-11-26
+- 결정: Google 인증·가입 응답의 `user.reviewStatus`가 `APPROVED`일 때만 메인과 인증된 푸시 목적지에 진입합니다. `PENDING`은 기존 Figma 승인 대기 화면을 사용합니다. `REJECTED`·누락·알 수 없는 값은 문의 가능한 문제 화면으로 보냅니다. 승인 상태는 암호화 세션 레코드에 저장해 앱 재시작에도 유지하며, 승인 대기 사용자는 로그인으로 돌아가 Google 재인증해 최신 상태를 받습니다.
+- 이유: 사용자가 운영진 승인 전에는 앱을 사용할 수 없도록 하고 기존 승인 대기 화면을 사용하라고 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-26), [Figma 승인 대기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40229), [인증 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md), [Android 이슈 #284](https://github.com/YAPP-admin/yapp-plus-android/issues/284). 연결된 Notion 정책 원문은 현재 연동 계정에서 찾을 수 없었습니다.
+- 반영: [제품 정책](product-policy.md#회원가입과-승인), [설계 패턴](design-patterns.md#google-크레덴셜과-세션-작업), AGENTS.md, README, Domain 인증 결과, Data 인증 응답·세션 저장, App 인증 내비게이션, Signup 승인 상태 화면.
+- 적용 상태: `APPROVED`만 메인에 연결하고 `PENDING`·`REJECTED`·미확인 상태의 앱 진입을 차단했습니다. 승인 상태는 token storage key로 계정에 묶어 저장하며, 기존 상태 없는 세션은 `UNKNOWN`입니다.
+- 대체한 결정: DEC-0052의 Android 승인 대기 화면·상태 복원 제외 정책.
+
+## DEC-0086 · 홈 진입 시 알림·위치 권한 요청
+
+- 기록일: 2026-11-26
+- 결정: 홈 탭에 진입할 때 Android 13 이상에서 알림 권한이 없고 저장된 알림 선택이 ON이면 알림 권한을 먼저 요청합니다. 정밀 위치 권한이 없으면 대략적·정확한 위치 권한을 이어서 요청합니다. 홈 진입에 따른 각 권한 자동 요청은 권한별 한 번만 표시합니다. 위치 조회는 출석 가능한 세션에서 사용자가 코드 출석을 확인할 때만 수행합니다.
+- 이유: 사용자가 홈 진입 시 알림·위치 권한을 요청하도록 명시했습니다. 기존 알림 OFF 선택과 코드 확인 시 위치 조회 정책은 유지합니다.
+- 근거: 사용자 명시 요청(2026-11-26), [Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16033)에는 앱 자체 권한 안내 UI가 없습니다. 연결된 Notion 정책 원문은 현재 계정에서 404로 열리지 않았습니다.
+- 반영: [제품 정책](product-policy.md#코드-출석-위치-조건), [제품 정책](product-policy.md#기기별-알림-설정), [설계 패턴](design-patterns.md), App의 MainActivity·홈 탭 진입 콜백.
+- 적용 상태: 홈 탭 진입을 App의 권한 요청 시작점으로 연결하고, 필요한 권한 요청을 순서대로 표시합니다.
+- 대체한 결정: DEC-0057의 코드 확인 시 위치 권한 요청 시점. 알림의 설치별 선택과 시스템 설정 동작(DEC-0050, DEC-0072)은 유지합니다.

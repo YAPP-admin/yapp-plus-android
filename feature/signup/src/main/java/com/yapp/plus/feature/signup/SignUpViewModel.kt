@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import com.yapp.plus.domain.auth.AuthFailure
 import com.yapp.plus.domain.auth.AuthRepository
 import com.yapp.plus.domain.auth.AuthResult
+import com.yapp.plus.domain.auth.MembershipReviewStatus
 import com.yapp.plus.domain.auth.RegistrationFieldError
 import com.yapp.plus.domain.signup.Name
 import com.yapp.plus.domain.signup.PhoneNumber
+import com.yapp.plus.feature.signup.model.AuthStatus
 import com.yapp.plus.feature.signup.model.SignUpStep
 import com.yapp.plus.feature.signup.model.SignUpUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -105,22 +107,35 @@ class SignUpViewModel
 
         private fun applyResult(result: AuthResult) {
             when (result) {
-                AuthResult.SignedIn -> {
-                    savedStateHandle[STEP_KEY] = SignUpStep.Complete.name
-                    savedStateHandle[CAN_SUBMIT_FROM_NAME_KEY] = false
-                    mutableUiState.update {
-                        it.copy(
-                            step = SignUpStep.Complete,
-                            isSubmitting = false,
-                            canSubmitFromName = false,
-                        )
-                    }
+                AuthResult.SignedIn -> setCompletionStatus(AuthStatus.Complete)
+
+                is AuthResult.ApprovalRequired -> {
+                    val status =
+                        if (result.reviewStatus == MembershipReviewStatus.Pending) {
+                            AuthStatus.Pending
+                        } else {
+                            AuthStatus.Problem
+                        }
+                    setCompletionStatus(status)
                 }
 
                 is AuthResult.SignupRequired ->
                     applyFailure(AuthResult.Failed(AuthFailure.AuthenticationRejected))
 
                 is AuthResult.Failed -> applyFailure(result)
+            }
+        }
+
+        private fun setCompletionStatus(status: AuthStatus) {
+            savedStateHandle[STEP_KEY] = SignUpStep.Complete.name
+            savedStateHandle[CAN_SUBMIT_FROM_NAME_KEY] = false
+            mutableUiState.update {
+                it.copy(
+                    step = SignUpStep.Complete,
+                    authStatus = status,
+                    isSubmitting = false,
+                    canSubmitFromName = false,
+                )
             }
         }
 

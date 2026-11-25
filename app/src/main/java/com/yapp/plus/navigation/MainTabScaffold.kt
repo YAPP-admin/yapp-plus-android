@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,6 +31,7 @@ import com.yapp.plus.notification.NotificationSettingsRoute
 internal fun MainTabScaffold(
     modifier: Modifier = Modifier,
     initialTab: MainTab = MainTab.Home,
+    onHomeEntered: () -> Unit = {},
     onAttendanceComplete: () -> Unit = {},
     onNotificationsClick: (() -> Unit)? = null,
     onLogout: (() -> Unit)? = null,
@@ -50,6 +52,9 @@ internal fun MainTabScaffold(
     var isSettingsVisible by rememberSaveable { mutableStateOf(false) }
     var isMyHistoryVisible by rememberSaveable { mutableStateOf(false) }
     var selectedNoticeId by rememberSaveable { mutableStateOf<Long?>(null) }
+    LaunchedEffect(selectedTab) {
+        if (selectedTab == MainTab.Home) onHomeEntered()
+    }
     BackHandler(enabled = selectedTab == MainTab.Board && selectedNoticeId != null) {
         selectedNoticeId = null
     }

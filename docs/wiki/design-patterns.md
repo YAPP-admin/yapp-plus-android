@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-25
+last_verified: 2026-11-26
 ---
 
 # 설계 패턴
@@ -51,7 +51,7 @@ last_verified: 2026-11-25
 - Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
 
-알림 선택은 `NotificationPreferenceRepository` → DataSource → 백업 제외 DataStore로 저장합니다. 세션 저장소와 분리하고 손상된 값은 OFF로 복구합니다. App singleton이 저장소와 Firebase·서버 기기 API를 조립합니다. 설정 ViewModel·Route는 Android 앱 알림 설정을 열고 복귀 시 시스템 권한 상태를 선택에 반영합니다. App 조율자는 자동 동기화와 기기 등록·해제를 직렬화하며 서버 실패는 설정 화면에 전달하지 않습니다.
+알림 선택은 `NotificationPreferenceRepository` → DataSource → 백업 제외 DataStore로 저장합니다. 세션 저장소와 분리하고 손상된 값은 OFF로 복구합니다. App singleton이 저장소와 Firebase·서버 기기 API를 조립합니다. 설정 ViewModel·Route는 Android 앱 알림 설정을 열고 복귀 시 시스템 권한 상태를 선택에 반영합니다. App의 MainActivity는 홈 탭 진입 때 저장 선택이 ON인 경우 알림 권한을, 정밀 위치 권한이 없는 경우 위치 권한을 순서대로 한 번 요청합니다. App 조율자는 자동 동기화와 기기 등록·해제를 직렬화하며 서버 실패는 설정 화면에 전달하지 않습니다.
 
 ## 객체 조립과 화면 이동
 
@@ -70,8 +70,8 @@ last_verified: 2026-11-25
 ## Google 크레덴셜과 세션 작업
 
 - `GoogleLoginCredential`은 ID 토큰과 원본 nonce를 전달하며 영구 저장·로그 출력을 금지합니다. Google 요청에는 nonce의 SHA-256 hex를 보내고 App 콜백에는 원본을 전달합니다.
-- Credential Manager 요청은 중복 입력·취소·실패·재시도를 처리합니다. App은 `POST /api/auth/oidc/google/native-authentications` 결과에 따라 YAPP 세션을 저장해 메인으로 이동하거나, 일회용 가입 토큰을 메모리에 두고 Signup 목적지로 이동합니다. 서버 응답에 필요한 access/refresh token 쌍이 없으면 로그인 성공으로 처리하지 않습니다.
-- 앱 시작 시 저장된 YAPP 세션 복원을 기다린 뒤 세션이 있으면 메인, 없으면 로그인으로 시작합니다. 서버 로그인 교환 실패는 로그인 재시도 오류로 표시합니다.
+- Credential Manager 요청은 중복 입력·취소·실패·재시도를 처리합니다. App은 `POST /api/auth/oidc/google/native-authentications` 결과에서 access/refresh token과 `user.reviewStatus`를 처리합니다. `APPROVED`만 메인에 진입하고, `PENDING`은 승인 대기 화면, `REJECTED`·누락·알 수 없는 값은 문의 화면을 표시합니다. `SIGNUP_REQUIRED`의 일회용 가입 토큰은 메모리에 두고 Signup 목적지로 전달합니다. 서버 응답에 필요한 access/refresh token 쌍이 없으면 로그인 성공으로 처리하지 않습니다.
+- 앱 시작 시 저장된 YAPP 세션과 `reviewStatus` 복원을 기다립니다. `APPROVED`는 메인, `PENDING`은 승인 대기, `REJECTED`·누락·알 수 없는 값은 문의 화면으로 시작하며 세션 상태를 확인하지 못하면 메인 접근을 허용하지 않습니다. 승인 대기 화면에서 로그인으로 돌아와 Google 재인증하면 최신 서버 상태를 다시 받습니다.
 - 공지와 사전 보고는 ViewModel에서 실제 Repository 요청·재시도·중복 입력을 관리합니다. 공지 상세 조회는 자동으로 읽음 처리하지 않으며 확인 버튼 뒤 서버 성공을 반영합니다. My 본인 프로필은 출석과 별도로 조회·재시도하며 로딩·실패 시 세션 이름을 표시합니다. 지각 면제권·문의·설정 알림은 Figma UI를 유지합니다. 미확인 조회값은 `—`로 표시합니다. 알림 선택은 Domain 계약 → Data → 백업 제외 DataStore에 저장합니다. 설정 Feature는 상태와 콜백을 렌더링하고 App ViewModel·Route가 Android 앱 알림 설정을 엽니다. App의 푸시 조율자는 시스템 권한 상태에 따라 선택을 동기화하고 기기 등록·해제를 백그라운드에서 처리합니다. App의 문의 콜백은 YAPP 카카오톡 채널을 엽니다. 실제 회원 값이나 서버 저장 성공을 임의로 만들지 않습니다. My 점수·출석 이력은 별도 요청 상태와 재시도를 제공합니다.
 - 서버 인증 결과를 받은 뒤 `NavController`를 조작하는 구간은 `Dispatchers.Main.immediate`에서 실행합니다. 실제 신규 계정 E2E에서 확인한 메인 스레드 위반 예외를 이 경계에서 방지합니다.
 - 설정의 로그아웃·통합 탈퇴는 `AppAuthViewModel`이 각각의 진행·오류 상태와 중복·교차 실행 방지를 관리합니다. Domain Repository 결과가 성공일 때만 `hasSession`을 해제해 App 인증 내비게이션이 로그인 화면으로 돌아가며, 실패하면 현재 세션을 유지합니다. 코루틴 취소는 전파하고 `finally`에서 진행 상태를 해제합니다. 로그아웃 오류는 설정에서 다시 요청할 수 있고 통합 탈퇴 오류는 안내를 닫고 기존 탈퇴 확인 흐름을 다시 열어 재요청합니다.
@@ -96,7 +96,7 @@ last_verified: 2026-11-25
 - YAPP access/refresh token 쌍은 DataStore에 함께 저장합니다. Network의 `TokenPersistence` 계약을 Data의 `SessionTokenLocalDataSource`가 구현하고, 실제 직렬화·암호화·파일 관리는 `:core:datastore`가 담당합니다. App이 저장소와 client를 singleton으로 조립합니다. 첫 인증 요청은 저장된 세션의 비동기 복원을 기다립니다.
 - 로그인 결과는 suspend `TokenStore.updateTokens`로 공급합니다. 갱신 결과의 조건부 교체와 세션 삭제는 같은 Mutex로 직렬화하고, 저장이 끝난 뒤 메모리 상태를 갱신합니다. 저장 도중 호출자가 취소돼도 디스크·메모리 반영 구간은 끝까지 완료합니다. 저장 실패는 호출자에게 전파하며 성공으로 처리하지 않습니다.
 - `:core:datastore`는 DataStore 1.2.1의 단일 불변 레코드와 `updateData`를 사용합니다. Android Keystore의 AES-256-GCM 키로 암호화하고 `noBackupFilesDir`에 저장합니다. API base URL별 파일을 분리해 개발·운영·모킹 환경의 세션을 섞지 않습니다. 파일 손상·복호화 불가는 빈 세션으로 복구하고 일반 I/O 실패는 전파합니다. 토큰과 직렬화 원문은 로그에 남기지 않습니다.
-- 세션 레코드는 토큰 쌍과 함께 선택적 사용자 이름과 로그인별 `storageKey`를 보관할 수 있습니다. 토큰 갱신·프로세스 복원은 이 키와 이름을 유지하고, 새 로그인·로그아웃은 이전 이름을 지웁니다. 이름 갱신은 현재 키가 일치할 때만 허용해 지연된 응답이 다른 계정에 반영되지 않도록 합니다. 인증·가입 응답의 이름 저장과 My 표시를 연결했습니다. 이름 저장에 실패하면 해당 로그인 세션을 정리해 불완전한 성공을 반환하지 않습니다. 이름이 없는 기존 레코드도 복원합니다.
+- 세션 레코드는 토큰 쌍과 함께 선택적 사용자 이름·멤버십 `reviewStatus`·로그인별 `storageKey`를 보관할 수 있습니다. 토큰 갱신·프로세스 복원은 같은 키의 이름과 승인 상태를 유지하고, 새 로그인·로그아웃은 이전 값을 지웁니다. 이름·승인 상태 갱신은 현재 키가 일치할 때만 허용해 지연된 응답이 다른 계정에 반영되지 않도록 합니다. 인증·가입 응답의 이름과 승인 상태를 같은 암호화 레코드에 저장합니다. 이름 또는 승인 상태 저장에 실패하면 해당 로그인 세션을 정리해 불완전한 성공을 반환하지 않습니다. 값이 없는 기존 레코드는 복원하되 승인 상태는 `UNKNOWN`으로 처리합니다.
 - 저장된 세션이 없으면 인증 토큰을 공급하지 않습니다. `local.properties` access-token 주입 경로는 제거했습니다. Google ID 토큰·nonce와 일회용 가입 토큰은 세션 저장소에 넣지 않습니다. Google 인증·가입의 성공 세션은 suspend `TokenStore.updateTokens`로 공급합니다. refresh 거절 뒤 로그인 화면으로 이동하는 인증 만료 UI는 후속입니다.
 
 업무 정책·상태 전이·매핑·오류 처리의 경계 조건을 기존 테스트 도구로 검증합니다. Repository 테스트 대역은 가능한 경우 Fake를 사용합니다. 여러 모듈에서 재사용할 Fake·테스트 도구가 생기면 테스트 의존성으로만 연결합니다. 변경 모듈과 영향받는 호출부부터 검증하고 실제 결과를 기록합니다.

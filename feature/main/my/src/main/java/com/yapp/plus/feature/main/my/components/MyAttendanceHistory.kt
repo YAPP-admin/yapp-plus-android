@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -120,7 +119,10 @@ internal fun MyHistoryRow(item: MyAttendanceHistoryItem) {
 
 @Composable
 internal fun MyHistoryEmpty(modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth().heightIn(min = 240.dp), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier.fillMaxWidth().heightIn(min = 240.dp).padding(bottom = 32.dp),
+        contentAlignment = Alignment.Center,
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -150,11 +152,10 @@ internal fun MyAbsenceWarning() {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
+        Image(
             painterResource(DesignSystemR.drawable.ic_status_info),
             contentDescription = null,
             modifier = Modifier.size(18.dp),
-            tint = YappMainColor.textFaint,
         )
         YappText(
             stringResource(R.string.my_absence_warning),

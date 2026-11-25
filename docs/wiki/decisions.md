@@ -515,4 +515,4 @@ last_verified: 2026-11-25
 - 기록일: 2026-11-25
 - 결정: Android 커뮤니티에서 초대 목록·단일 참석 응답·참석자 조회를 제공하고, 정산은 사용자 계약의 자격·증빙·revision·납부 상태를 따릅니다.
 - 근거: [사용자 뒤풀이 및 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/45e4cdf55d43f5cfcbb0a876a9ec48d52e06f3d4/APIDOC.md#afterparty--기수-초대-및-참석-조사), [Figma 뒤풀이](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1421-13412), [Android 이슈 #238](https://github.com/YAPP-admin/yapp-plus-android/issues/238).
-- 적용 상태: [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산) 및 Android Domain 계약에 반영했습니다. Data와 커뮤니티·홈·My·알림 연결은 후속입니다.
+- 적용 상태: [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산) 및 Android 커뮤니티·홈·My·알림 이동에 적용했습니다.

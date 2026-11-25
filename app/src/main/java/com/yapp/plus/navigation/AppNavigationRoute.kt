@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.notification.SettlementNotificationTarget
 
 @Composable
 internal fun AppNavigationRoute(
@@ -27,6 +28,8 @@ internal fun AppNavigationRoute(
     onPushPostOpened: () -> Unit = {},
     pushSessionId: Long? = null,
     onPushSessionOpened: () -> Unit = {},
+    pushSettlement: SettlementNotificationTarget? = null,
+    onPushSettlementOpened: () -> Unit = {},
 ) {
     val authViewModel: AppAuthViewModel = hiltViewModel()
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
@@ -61,6 +64,8 @@ internal fun AppNavigationRoute(
                 onPushPostOpened = onPushPostOpened,
                 pushSessionId = pushSessionId.takeIf { authUiState.hasSession },
                 onPushSessionOpened = onPushSessionOpened,
+                pushSettlement = pushSettlement.takeIf { authUiState.hasSession },
+                onPushSettlementOpened = onPushSettlementOpened,
                 startDestination =
                     startDestination
                         ?: if (authUiState.hasSession) {

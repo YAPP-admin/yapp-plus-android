@@ -6,7 +6,6 @@ import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiModel
-import com.yapp.plus.feature.main.home.model.HomeNotificationUiModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -51,26 +50,6 @@ internal object HomePreviewData {
                 3,
                 stringResource(R.string.home_preview_notice_staff),
                 isSessionNotice = false,
-            ),
-        )
-
-    @Composable
-    fun notifications(): List<HomeNotificationUiModel> =
-        listOf(
-            HomeNotificationUiModel(
-                1,
-                stringResource(R.string.home_preview_notification_session),
-                stringResource(R.string.home_preview_notification_date),
-            ),
-            HomeNotificationUiModel(
-                2,
-                stringResource(R.string.home_preview_notification_place),
-                stringResource(R.string.home_preview_notification_date),
-            ),
-            HomeNotificationUiModel(
-                3,
-                stringResource(R.string.home_preview_notification_notice),
-                stringResource(R.string.home_preview_notification_date),
             ),
         )
 }

@@ -35,6 +35,7 @@ android {
 
 dependencies {
     implementation(project(":feature:main:home"))
+    implementation(project(":feature:main:home:notification"))
     implementation(project(":feature:main:board"))
     implementation(project(":feature:main:community"))
     implementation(project(":feature:main:my"))

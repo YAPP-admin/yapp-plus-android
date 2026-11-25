@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home
+package com.yapp.plus.feature.main.home.notification
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

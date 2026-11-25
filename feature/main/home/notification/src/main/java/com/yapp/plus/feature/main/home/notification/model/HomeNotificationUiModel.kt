@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home.model
+package com.yapp.plus.feature.main.home.notification.model
 
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
 

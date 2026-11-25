@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home
+package com.yapp.plus.feature.main.home.notification
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +27,10 @@ import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
-import com.yapp.plus.feature.main.home.components.HomeEmptyState
-import com.yapp.plus.feature.main.home.components.HomeTopBar
-import com.yapp.plus.feature.main.home.model.HomeNotificationUiModel
-import com.yapp.plus.feature.main.home.model.HomeNotificationsUiState
+import com.yapp.plus.feature.main.home.notification.components.HomeEmptyState
+import com.yapp.plus.feature.main.home.notification.components.HomeTopBar
+import com.yapp.plus.feature.main.home.notification.model.HomeNotificationUiModel
+import com.yapp.plus.feature.main.home.notification.model.HomeNotificationsUiState
 
 @Composable
 internal fun HomeNotificationsScreen(
@@ -65,7 +65,6 @@ internal fun HomeNotificationsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun NotificationList(
     state: HomeNotificationsUiState.Content,

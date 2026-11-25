@@ -1,13 +1,13 @@
-package com.yapp.plus.feature.main.home
+package com.yapp.plus.feature.main.home.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.core.ui.formatter.AppDateFormatter
 import com.yapp.plus.domain.notification.Notification
 import com.yapp.plus.domain.notification.NotificationRepository
-import com.yapp.plus.feature.main.home.model.HomeNotificationUiModel
-import com.yapp.plus.feature.main.home.model.HomeNotificationsUiState
-import com.yapp.plus.feature.main.home.model.HomeNotificationsUiState.Content
+import com.yapp.plus.feature.main.home.notification.model.HomeNotificationUiModel
+import com.yapp.plus.feature.main.home.notification.model.HomeNotificationsUiState
+import com.yapp.plus.feature.main.home.notification.model.HomeNotificationsUiState.Content
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job

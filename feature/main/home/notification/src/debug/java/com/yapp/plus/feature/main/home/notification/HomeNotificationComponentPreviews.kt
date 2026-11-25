@@ -1,15 +1,15 @@
-package com.yapp.plus.feature.main.home
+package com.yapp.plus.feature.main.home.notification
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.yapp.plus.core.designsystem.theme.YappTheme
-import com.yapp.plus.feature.main.home.model.HomeNotificationsUiState
+import com.yapp.plus.feature.main.home.notification.model.HomeNotificationsUiState
 
 @Preview(name = "알림 항목", showBackground = true)
 @Composable
 fun HomeNotificationItemPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeNotificationItem(HomePreviewData.notifications().first(), onClick = {})
+        HomeNotificationItem(HomeNotificationPreviewData.notifications().first(), onClick = {})
     }
 }
 

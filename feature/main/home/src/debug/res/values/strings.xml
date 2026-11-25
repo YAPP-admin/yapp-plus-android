@@ -10,10 +10,6 @@
     <string name="home_preview_notice_session">5주차 개발-디자인 세션 공지</string>
     <string name="home_preview_notice_survey">뒷풀이 참석 여부 수요 조사</string>
     <string name="home_preview_notice_staff">운영진 공지 사항</string>
-    <string name="home_preview_notification_session">내일 세션이 있어요.\n내일 오후 2시, 정기 세션이 열려요. 늦지 않게 와 주세요.</string>
-    <string name="home_preview_notification_place">세션 장소가 바뀌었어요. 이번 주 세션은 3층 세미나실에서 진행해요</string>
-    <string name="home_preview_notification_notice">새 공지가 올라왔어요. 게시판을 확인해 주세요.</string>
-    <string name="home_preview_notification_date">10월 1일</string>
     <string name="home_preview_reason">가족 결혼식 일정이 있습니다.</string>
     <string name="home_preview_session_name">유저 플로우 리뷰</string>
 </resources>

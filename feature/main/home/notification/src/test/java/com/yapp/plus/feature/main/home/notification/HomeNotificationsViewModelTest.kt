@@ -1,9 +1,9 @@
-package com.yapp.plus.feature.main.home
+package com.yapp.plus.feature.main.home.notification
 
 import com.yapp.plus.domain.notification.Notification
 import com.yapp.plus.domain.notification.NotificationPage
 import com.yapp.plus.domain.notification.NotificationRepository
-import com.yapp.plus.feature.main.home.model.HomeNotificationsUiState
+import com.yapp.plus.feature.main.home.notification.model.HomeNotificationsUiState
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

@@ -28,6 +28,8 @@ Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand
 | `backgroundBasement` | `#F3F4F5` | Compact 보조 버튼 배경 |
 | `kakaoContainer` | `#FAE300` | 카카오 버튼 배경 |
 
+가입의 `다음` 버튼은 활성 상태에 브랜드 색상을 사용합니다. 비활성 상태에는 Figma의 배경 `#F3F4F5`와 글자 `#D1D3D8`을 사용합니다. [Figma 이름 입력](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=321-11558)
+
 ## 아이콘
 
 [YAPP Figma 아이콘 모음](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=3-57816)의 탭 아이콘 4개와 Lucide 영역의 아이콘 17개를 `:core:designsystem/src/main/res/drawable/`에 제공합니다. 모두 원본 경로·색상·선 두께를 보존한 24dp VectorDrawable이며, Feature는 공통 디자인시스템의 `R.drawable`을 참조합니다.

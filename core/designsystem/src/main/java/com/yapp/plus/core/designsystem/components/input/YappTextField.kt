@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
@@ -52,6 +53,7 @@ fun YappTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     textStyle: TextStyle? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     val metrics = InputMetrics.from(size, variant)
     val isAuth = variant == YappTextFieldVariant.Auth
@@ -99,6 +101,7 @@ fun YappTextField(
                     enabled = enabled,
                     singleLine = true,
                     keyboardOptions = keyboardOptions,
+                    visualTransformation = visualTransformation,
                     keyboardActions = keyboardActions,
                     interactionSource = interactionSource,
                     textStyle = (textStyle ?: inputTextStyle(size, variant)).copy(color = textColor),

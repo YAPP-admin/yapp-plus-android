@@ -122,7 +122,7 @@ private fun AfterpartyInformationPreview() = YappTheme { AfterpartyInformation(p
 
 @Preview(showBackground = true)
 @Composable
-private fun AfterpartyVotePreview() = YappTheme { AfterpartyVote(party, false) {} }
+private fun AfterpartyContentPreview() = YappTheme { AfterpartyContent(party, false, {}) {} }
 
 @Preview(showBackground = true)
 @Composable

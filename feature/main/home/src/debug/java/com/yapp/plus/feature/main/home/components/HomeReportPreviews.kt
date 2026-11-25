@@ -1,10 +1,16 @@
 package com.yapp.plus.feature.main.home.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
@@ -60,8 +66,19 @@ private fun HomeReportOptionPreview() {
     YappTheme { HomeReportOption(AttendanceReportType.LATE, true, {}) }
 }
 
-@Preview(widthDp = 353, showBackground = true)
+@Preview(name = "Report submitted", widthDp = 393, heightDp = 320, showBackground = true)
 @Composable
 private fun HomeReportConfirmationPreview() {
-    YappTheme { HomeReportConfirmation({}) }
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(YappHomeColor.background)
+                    .safeDrawingPadding(),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            HomeReportConfirmation(onDismiss = {})
+        }
+    }
 }

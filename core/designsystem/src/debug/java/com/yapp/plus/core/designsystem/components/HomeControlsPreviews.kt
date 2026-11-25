@@ -70,11 +70,11 @@ private fun HomeSheetHandlePreview() {
 
 @Preview(widthDp = 361)
 @Composable
-private fun HomeActionToastPreview() {
+private fun ReportSnackbarPreview() {
     YappTheme {
         YappToast(
             text = stringResource(R.string.yapp_preview_home_report_complete),
-            variant = YappToastVariant.Home,
+            variant = YappToastVariant.Snackbar,
             modifier = Modifier.fillMaxWidth(),
             showIcon = false,
             actionText = stringResource(R.string.yapp_preview_home_confirm),

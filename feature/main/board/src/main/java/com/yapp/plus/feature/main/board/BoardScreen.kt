@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,6 +29,7 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.components.BoardCategorySelector
 import com.yapp.plus.feature.main.board.components.BoardNoticeCard
 import com.yapp.plus.feature.main.board.components.BoardNoticeDetail
+import com.yapp.plus.feature.main.board.components.BoardNoticeDetailError
 import com.yapp.plus.feature.main.board.components.BoardNoticeError
 import com.yapp.plus.feature.main.board.components.BoardNoticeState
 import com.yapp.plus.feature.main.board.model.BoardCategory
@@ -52,6 +54,7 @@ fun BoardScreen(
     onMarkRead: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
+    val isDetailError = detail == NoticeUiState.Error
     val toastManager = remember { YappToastManager() }
     val readErrorMessage = stringResource(R.string.board_read_error)
 
@@ -81,9 +84,15 @@ fun BoardScreen(
             } else {
                 val category = (detail as? NoticeUiState.Content)?.value?.category
                 YappDetailHeader(
-                    title = stringResource(category?.labelResource ?: R.string.board_title),
+                    title =
+                        if (isDetailError) {
+                            ""
+                        } else {
+                            stringResource(category?.labelResource ?: R.string.board_title)
+                        },
                     backDescription = stringResource(R.string.board_back),
                     onBack = onBack,
+                    modifier = if (isDetailError) Modifier.height(51.dp) else Modifier,
                 )
             }
             Column(
@@ -91,9 +100,11 @@ fun BoardScreen(
                     Modifier
                         .weight(1f)
                         .padding(horizontal = 20.dp)
-                        .padding(top = 10.dp),
+                        .padding(top = if (isDetailError) 14.dp else 10.dp),
             ) {
-                if (detail != null) {
+                if (isDetailError) {
+                    BoardNoticeDetailError(Modifier.fillMaxSize())
+                } else if (detail != null) {
                     BoardNoticeState(detail, R.string.board_missing, Modifier.weight(1f)) {
                         key(it.id) {
                             BoardNoticeDetail(it, onMarkRead, isMarkingRead)

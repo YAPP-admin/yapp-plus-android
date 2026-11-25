@@ -62,7 +62,7 @@ fun HomeTeamAttendanceCard(
                 photo?.status == TeamAttendancePhotoStatus.REJECTED ->
                     HomeTeamPhotoResultSheetState.Rejected(
                         retryDeadlineLabel = session.endTime?.takeIf { canUpload }?.format(teamTimeFormat),
-                        reason = null,
+                        reason = photo.rejectionReason,
                         canRetry = canUpload,
                     )
                 else -> null

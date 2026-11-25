@@ -51,6 +51,7 @@ YappText(
 - `YappButtonVariant.Kakao`와 `YappButtonSize.Social`은 높이 최소 54dp, 16sp/24sp, 12dp 모서리입니다. Feature가 제공자 로고를 36dp `leadingIcon` 슬롯에 전달하며 컴포넌트는 실제 인증을 수행하지 않습니다. 현재 로그인 화면은 Figma의 Google 버튼에 맞춰 `OutlinedAssistive`와 `Social` 변형을 사용하고, 18dp Google 로고를 슬롯 가운데 표시합니다.
 - `YappTextFieldVariant.Auth`는 기존 `size` 대신 54dp 높이와 12dp 모서리를 사용합니다. `title`을 생략하면 라벨과 라벨 간격이 없습니다. 실제 포커스를 반영하되 호출부의 오류·성공 상태를 덮어쓰지 않습니다. 입력값과 검증은 호출부가 소유하며 `keyboardOptions`·`keyboardActions`로 IME를 연결합니다.
 - `YappAlertDialogVariant.Compact`는 기본 최대 너비 285dp(호출부의 `compactWidth`로 조정), 16dp 모서리, 왼쪽 정렬 제목·본문, 44dp 높이와 8dp 모서리 버튼, 45% 배경 dim을 사용합니다. 닫기·제보 같은 행동은 호출부 콜백에 전달합니다.
+- `AuthErrorDialog`의 `YappAlertDialogVariant.AuthError`는 최대 너비 285dp와 왼쪽 정렬 문구, 높이 40dp의 가로 버튼 두 개, 45.5% 배경 dim을 사용합니다. 보조 버튼은 회색 배경과 `foregroundNeutral` 글자, 기본 버튼은 브랜드 배경과 흰 글자를 사용합니다. [Figma 로그인 오류 팝업](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=375-11316)
 
 표현 상태는 `src/debug`의 `AuthComponentsPreview.kt`에서 확인합니다. 화면·상태 전이와 제공자 로고 리소스는 각 Feature가 소유합니다.
 
@@ -67,6 +68,7 @@ YappText(
 - `YappButtonSize.HomePrimary`는 52dp·16sp/22sp·12dp 모서리, `HomeSecondary`는 44dp·14sp/19sp·8dp 모서리입니다. 홈 출석 버튼의 `HomeAttendance` 변형은 활성 상태에 검정 배경과 흰 글자를, 비활성 상태에 `#F3F4F5` 배경과 `#D1D3D8` 글자를 사용합니다.
 - `YappBottomSheetVariant.Home`은 가로 바깥 여백 10dp, 모서리 16dp, 52×4dp 핸들을 포함한 32dp 상단 영역, 본문 가로/하단 여백 18dp와 46% dim을 제공합니다. `isDismissible=false`이면 제출 중 숨김 전이를 막습니다. 기존 기본 변형은 유지합니다.
 - `YappToastVariant.Home`은 가로 전체 너비, 46dp 최소 높이, 8dp 모서리와 확인 액션을 제공합니다. 메시지·닫기 상태는 Feature에서 전달합니다.
+- `YappToastVariant.Snackbar`는 가로 전체 너비, 8dp 모서리, 내부 좌우 18dp·상하 14dp 여백, 흰색 본문과 주황색 확인 액션을 제공합니다. 홈은 출결 보고 완료 시 탭 바 위에 좌우 16dp·하단 14dp 여백을 두고 표시합니다. [Figma 출결 보고 완료](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=526-13920)
 - `YappTextFieldVariant.Home`은 보고 사유 입력의 50dp 높이·12dp 모서리를 제공하며 `textStyle`로 홈 서체를 전달합니다. `YappMainHeader.iconTint`는 홈의 알림 색상을 선택하며 기본 호출부 표현은 유지합니다.
 - 새로운 변형의 개별 Preview는 `src/debug`의 `components/HomeControlsPreviews.kt`에 둡니다.
 

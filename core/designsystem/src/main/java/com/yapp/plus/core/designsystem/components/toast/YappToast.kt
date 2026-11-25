@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -41,14 +42,16 @@ fun YappToast(
     onAction: () -> Unit = {},
 ) {
     val isHome = variant == YappToastVariant.Home
-    val shape = RoundedCornerShape(if (isHome) 8.dp else 12.dp)
+    val isSnackbar = variant == YappToastVariant.Snackbar
+    val isFullWidth = isHome || isSnackbar
+    val shape = RoundedCornerShape(if (isFullWidth) 8.dp else 12.dp)
     val statusColor =
         when (type) {
             YappToastType.Default -> YappColor.success
             YappToastType.Error -> YappColor.error
         }
     val backgroundColor =
-        if (isHome) {
+        if (isFullWidth) {
             YappHomeColor.action
         } else {
             when (color) {
@@ -59,6 +62,7 @@ fun YappToast(
     val textColor =
         when {
             type == YappToastType.Error -> YappColor.error
+            isSnackbar -> YappColor.white
             color == YappToastColor.Dark -> YappColor.white
             else -> YappColor.black
         }
@@ -67,15 +71,27 @@ fun YappToast(
             YappToastType.Default -> R.drawable.ic_yapp_toast_success
             YappToastType.Error -> R.drawable.ic_yapp_toast_error
         }
+    val minimumHeight =
+        when (variant) {
+            YappToastVariant.Default -> 40.dp
+            YappToastVariant.Home -> 46.dp
+            YappToastVariant.Snackbar -> 44.dp
+        }
+    val messageStyle =
+        when (variant) {
+            YappToastVariant.Default -> YappTypography.label2Medium
+            YappToastVariant.Home -> YappHomeTypography.caption
+            YappToastVariant.Snackbar -> YappTypography.scaleT4Regular
+        }
 
     Row(
         modifier =
             modifier
-                .widthIn(max = if (isHome) Dp.Infinity else 320.dp)
-                .defaultMinSize(minHeight = if (isHome) 46.dp else 40.dp)
+                .widthIn(max = if (isFullWidth) Dp.Infinity else 320.dp)
+                .defaultMinSize(minHeight = minimumHeight)
                 .shadow(
                     elevation =
-                        if (isHome) {
+                        if (isFullWidth) {
                             0.dp
                         } else if (color == YappToastColor.Dark) {
                             8.dp
@@ -87,7 +103,10 @@ fun YappToast(
                     spotColor = YappColor.toastShadow,
                 ).clip(shape)
                 .background(backgroundColor)
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .padding(
+                    horizontal = if (isSnackbar) 18.dp else 16.dp,
+                    vertical = if (isSnackbar) 14.dp else 10.dp,
+                ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -102,14 +121,17 @@ fun YappToast(
         Text(
             text = text,
             modifier = Modifier.weight(1f),
-            style = if (isHome) YappHomeTypography.caption else YappTypography.label2Medium,
+            style = messageStyle,
             color = textColor,
         )
         actionText?.let {
             Text(
                 text = it,
-                modifier = Modifier.noRippleClickable(onClick = onAction).padding(vertical = 4.dp),
-                style = YappHomeTypography.caption,
+                modifier =
+                    Modifier
+                        .noRippleClickable(role = Role.Button, onClick = onAction)
+                        .padding(vertical = if (isSnackbar) 0.dp else 4.dp),
+                style = if (isSnackbar) YappTypography.scaleT4Bold else YappHomeTypography.caption,
                 color = YappHomeColor.brand,
             )
         }

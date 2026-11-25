@@ -31,7 +31,7 @@ last_verified: 2026-11-25
 ## 개발과 비공개 테스트 배포
 
 - `release/v1.0.1`은 기존 비공개 테스트 버전을 보존합니다. 실제 서비스 개발은 `develop` 기반 작업 브랜치에서 진행합니다.
-- Release 빌드는 같은 Google Play 앱과 `applicationId` `com.yapp.plus`를 사용하고 비공개 테스트 트랙으로 배포합니다. Debug 빌드는 `com.yapp.plus.debug`를 사용해 Release와 같은 기기에 설치할 수 있습니다.
+- Release 빌드는 같은 Google Play 앱, `applicationId` `com.yapp.plus`, 런처 이름 `YAPP+`를 사용하고 비공개 테스트 트랙으로 배포합니다. Debug 빌드는 `com.yapp.plus.debug`와 `YAPP+ (Debug)`를 사용해 Release와 같은 기기에 설치할 수 있습니다.
 - 임시 테스트 브랜치를 실제 개발 브랜치에 통째로 병합하지 않습니다. 필요한 수정만 검토해 반영하고, 실제 서비스의 배포 후보는 최신 `develop`에서 새 릴리즈 브랜치로 준비합니다.
 - 임시 테스트 전용 백엔드 구현·SQL·문서는 개발 버전에서 제거합니다. 기존 배포의 외부 서비스와 데이터는 유지합니다.
 
@@ -132,6 +132,10 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 ## 오류 안내와 복구
 
 홈·일정·게시판·MY는 조회 실패 시 안내를 표시합니다. 화면 재진입 시 필요한 조회를 다시 실행하며 알림함에서는 기존 당겨서 새로고침도 사용할 수 있습니다. 로그인·가입·공지 읽음·탈퇴는 실패 뒤 기존 동작을 통해 다시 요청할 수 있습니다. 팀 사진의 `다시 업로드하기`는 Figma의 업로드 실패·반려 상태에서 사용합니다. [Figma 로그인 오류](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=375-11225), [Figma 게시판 오류](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40786)
+
+로그인 오류 팝업에서 `닫기`는 팝업을 닫고, `제보하기`는 기존 YAPP 카카오톡 문의 채널을 엽니다. [DEC-0083](decisions.md#dec-0083--로그인-오류-팝업과-제보-채널)
+
+공지 상세 조회가 실패하면 상단 뒤로가기, 왼쪽 정렬 오류 안내, 일러스트를 표시합니다. [Figma 공지 상세 오류](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40786)
 
 ## 일정·출석 정책
 
@@ -254,7 +258,8 @@ Notion 표에는 출석·지각·결석의 시간 구간이 제시되어 있지�
 
 - `GET /api/sessions/{sessionId}/team-members`는 현재 팀의 선택 가능한 PLAYER와 본인 표시 `isMe`를 제공합니다. 선택·제출에는 기수 소속 ID인 `membershipId`를 사용합니다. 직군은 없을 수 있습니다.
 - `GET /api/sessions/{sessionId}/team-attendance-photos`는 권한이 있는 최신 제출의 사진 상태, 업로더 이름, 업로드·제출 시각, 선택 인원 수를 제공합니다. 사진이 없으면 `photo: null`입니다. 이미지 링크는 만료되거나 없을 수 있습니다.
-- 홈은 제출 안내의 한국 시간 세션 구간 안에서 팀원 선택과 제출을 허용하며, 서버 검토 상태와 업로드 정보를 표시합니다. 결석은 개인 출석 이력으로 확인합니다. 사용자 응답에 제출 당시 참석자 명단과 반려 사유는 없으며, 현재 팀 명단을 그 대신 사용하지 않습니다.
+- 홈은 제출 안내의 한국 시간 세션 구간 안에서 팀원 선택과 제출을 허용하며, 서버 검토 상태와 업로드 정보를 표시합니다. 결석은 개인 출석 이력으로 확인합니다. 사용자 응답은 제출 당시 선택 인원 수를 제공하며, 현재 팀 명단으로 제출 당시 참석자를 추정하지 않습니다.
+- 사용자 응답의 `photo.rejectionReason`은 반려된 사진에 운영진이 사유를 저장했을 때 문자열로 제공됩니다. 앱은 해당 사유를 반려 시트에 표시하고, 값이 없거나 공백이면 사유 영역을 숨깁니다. [서버 팀 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/710ebabad349cb5d8b5c47a896cc5ca7df68bbe8/APIDOC.md#L339-L362) · [Figma 팀 사진 반려](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24774)
 - 팀 사진 검토 카드에는 서버가 이미지 링크를 제공한 경우 열람 진입점을 표시하고, 링크가 유효한 동안 썸네일을 불러옵니다. 열람 시 최신 링크를 조회하며 원래 선택한 사진이 교체되거나 링크가 사라지면 사진을 표시하지 않습니다. 이미지는 앱의 메모리·디스크 이미지 캐시에 저장하지 않습니다. 검토 중에는 사진을 열람할 수 있으며 세션 시간 안의 반려 안내에서 다시 업로드할 수 있습니다. [Figma 팀 사진 검토](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728)
 - 본인의 팀 세션이 `CHECKED_IN`이면 홈에서 승인 안내를 표시합니다. 확인한 세션의 안내는 같은 홈 저장 상태에서 반복 표시하지 않습니다. [Figma 팀 출석 승인](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-23597)
 - 사진 업로드 단계가 실패하면 선택한 사진과 팀원을 보존한 채 실패 안내에서 재시도합니다. 최종 제출 결과가 불확실하면 홈 조회로 접수 상태를 확인하도록 안내합니다. 제출 완료 화면은 최종 제출 시각을 먼저 표시하고, 같은 사진의 `uploadedTime`을 확인하면 업로드 시각을 표시합니다. [Figma 업로드 실패](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24549) · [Figma 제출 완료](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=913-12843)

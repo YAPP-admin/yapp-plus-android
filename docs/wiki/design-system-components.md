@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-25
+last_verified: 2026-11-26
 ---
 
 # 디자인시스템 공통 컴포넌트
@@ -51,6 +51,7 @@ YappText(
 - `YappButtonVariant.Kakao`와 `YappButtonSize.Social`은 높이 최소 54dp, 16sp/24sp, 12dp 모서리입니다. Feature가 제공자 로고를 36dp `leadingIcon` 슬롯에 전달하며 컴포넌트는 실제 인증을 수행하지 않습니다. 현재 로그인 화면은 Figma의 Google 버튼에 맞춰 `OutlinedAssistive`와 `Social` 변형을 사용하고, 18dp Google 로고를 슬롯 가운데 표시합니다.
 - `YappTextFieldVariant.Auth`는 기존 `size` 대신 54dp 높이와 12dp 모서리를 사용합니다. `title`을 생략하면 라벨과 라벨 간격이 없습니다. 실제 포커스를 반영하되 호출부의 오류·성공 상태를 덮어쓰지 않습니다. 입력값과 검증은 호출부가 소유하며 `keyboardOptions`·`keyboardActions`로 IME를 연결합니다.
 - `YappAlertDialogVariant.Compact`는 기본 최대 너비 285dp(호출부의 `compactWidth`로 조정), 16dp 모서리, 왼쪽 정렬 제목·본문, 44dp 높이와 8dp 모서리 버튼, 45% 배경 dim을 사용합니다. 닫기·제보 같은 행동은 호출부 콜백에 전달합니다.
+- `YappAlertDialog`는 텍스트와 동작 사이에 선택적 Compose content를 받을 수 있습니다. 진행 중처럼 문구 대신 로딩 인디케이터를 보여 주는 상태에 사용하며 기본 텍스트 레이아웃은 유지합니다.
 - `AuthErrorDialog`의 `YappAlertDialogVariant.AuthError`는 최대 너비 285dp와 왼쪽 정렬 문구, 높이 40dp의 가로 버튼 두 개, 45.5% 배경 dim을 사용합니다. 보조 버튼은 회색 배경과 `foregroundNeutral` 글자, 기본 버튼은 브랜드 배경과 흰 글자를 사용합니다. [Figma 로그인 오류 팝업](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=375-11316)
 
 표현 상태는 `src/debug`의 `AuthComponentsPreview.kt`에서 확인합니다. 화면·상태 전이와 제공자 로고 리소스는 각 Feature가 소유합니다.

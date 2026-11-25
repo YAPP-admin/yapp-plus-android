@@ -684,3 +684,13 @@ last_verified: 2026-11-25
 - 근거: 사용자 디자인 정합성 수정 요청, [Figma 출결 보고 완료](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=526-13920), [Figma 팀 사진 반려](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24774), [Figma 공지 상세 오류](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40786), [서버 팀 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/710ebabad349cb5d8b5c47a896cc5ca7df68bbe8/APIDOC.md#L339-L362). 연결된 계정에서 Notion 정책 원문을 열 수 없었습니다.
 - 반영: 홈·팀 출석·게시판, [공통 컴포넌트](design-system-components.md#홈-figma-변형), [제품 정책](product-policy.md#오류-안내와-복구).
 - 관련 이슈: [#263 출결 보고 토스트](https://github.com/YAPP-admin/yapp-plus-android/issues/263), [#264 팀 출석 안내](https://github.com/YAPP-admin/yapp-plus-android/issues/264), [#232 Android 오류 화면](https://github.com/YAPP-admin/yapp-plus-android/issues/232).
+
+## DEC-0087 · 회원 탈퇴 진행 상태의 로딩 표시
+
+- 기록일: 2026-11-26
+- 결정: 통합 탈퇴 요청 중에는 “탈퇴 처리 중이에요” 텍스트를 화면에서 숨기고, 기존 컴팩트 확인 팝업 안에 브랜드 색상의 원형 로딩 인디케이터를 표시합니다. 취소·확인 동작은 계속 숨기며 접근성 레이블은 유지합니다.
+- 이유: 사용자가 탈퇴 중 텍스트 대신 로딩 프로그래스바를 표시하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-26), [Figma 탈퇴 확인 팝업](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-48230). 진행 상태 표현은 사용자의 이번 요청을 적용합니다.
+- 반영: [제품 정책](product-policy.md#figma-기준-my와-설정), [디자인시스템 공통 컴포넌트](design-system-components.md), `:core:designsystem`의 `YappAlertDialog`, `:feature:setting`의 `AccountDeletionDialog`.
+- 적용 상태: 서버 탈퇴 진행 중에만 텍스트 대신 원형 인디케이터를 표시합니다. 확인 문구와 서버 성공·실패 처리 계약은 유지합니다.
+- 대체한 결정: 없음.

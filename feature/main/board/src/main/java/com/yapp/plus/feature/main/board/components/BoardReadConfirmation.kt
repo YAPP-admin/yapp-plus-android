@@ -47,7 +47,7 @@ internal fun BoardReadConfirmation(
             onClick = onMarkRead,
             enabled = !notice.isRead && !isMarkingRead,
             modifier = Modifier.padding(top = 14.dp),
-            color = YappMainColor.brand,
+            color = if (notice.isRead) YappMainColor.brand else YappMainColor.basement,
             shape = RoundedCornerShape(999.dp),
         ) {
             Row(
@@ -56,7 +56,9 @@ internal fun BoardReadConfirmation(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    painterResource(R.drawable.ic_notice_read_active),
+                    painterResource(
+                        if (notice.isRead) R.drawable.ic_notice_read_active else R.drawable.ic_notice_read,
+                    ),
                     null,
                     Modifier.size(22.dp),
                     tint = Color.Unspecified,
@@ -66,7 +68,7 @@ internal fun BoardReadConfirmation(
                         if (notice.isRead) R.string.board_read_done else R.string.board_read_action,
                     ),
                     YappTypography.scaleT4Bold,
-                    YappMainColor.surface,
+                    if (notice.isRead) YappMainColor.surface else YappMainColor.textSecondary,
                 )
             }
         }

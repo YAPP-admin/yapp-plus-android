@@ -29,7 +29,7 @@ import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.attendance.components.HomeCodeInput
-import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceLocationIssue
+import com.yapp.plus.core.ui.model.HomeAttendanceLocationIssue
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 
@@ -70,7 +70,7 @@ internal fun HomeSheetContent(
             val actionRes = issue?.actionResource
             if (actionRes != null) {
                 YappButton(
-                    text = stringResource(actionRes as Int),
+                    text = stringResource(actionRes),
                     onClick = { onLocationRecovery(issue) },
                     modifier = Modifier.fillMaxWidth(),
                     variant = YappButtonVariant.OutlinedAssistive,

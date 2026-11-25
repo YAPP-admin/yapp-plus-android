@@ -1,0 +1,8 @@
+<resources>
+    <string name="home_team_result_preview_team">Web 4팀 채소집</string>
+    <string name="home_team_result_preview_time">14:25</string>
+    <string name="home_team_result_preview_members">강야뿌, 김야뿌, 이야뿌, 최야뿌</string>
+    <string name="home_team_result_preview_uploader">강야뿌</string>
+    <string name="home_team_result_preview_deadline">18:00</string>
+    <string name="home_team_result_preview_reason">사진에서 확인되지 않았어요</string>
+</resources>

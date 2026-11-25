@@ -1,0 +1,13 @@
+<resources>
+    <string name="attendance_home_title">YAPP</string>
+    <string name="attendance_home_notifications">알림</string>
+    <string name="home_back">뒤로</string>
+    <string name="home_confirm">확인</string>
+    <string name="home_submitting">처리 중</string>
+    <string name="home_submit_error">요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="session_inactive">현재 활동 기간이 아니에요.</string>
+    <string name="home_session_starts">%1$s에 세션이 시작돼요</string>
+    <string name="attendance_status_not_open">지금은 출석할 수 없어요</string>
+    <string name="attendance_status_not_eligible">이번 세션은 출석 대상이 아니에요</string>
+    <string name="home_attended">출석했어요!</string>
+</resources>

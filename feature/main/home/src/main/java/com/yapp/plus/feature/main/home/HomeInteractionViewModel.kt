@@ -13,7 +13,7 @@ import com.yapp.plus.domain.session.SessionDistanceRepository
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceAttempt
-import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceLocationIssue
+import com.yapp.plus.core.ui.model.HomeAttendanceLocationIssue
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage

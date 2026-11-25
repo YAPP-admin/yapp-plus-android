@@ -8,6 +8,7 @@ android {
 
 dependencies {
     api(project(":domain"))
+    api(libs.androidx.core.ktx)
     api(libs.androidx.lifecycle.viewmodel.ktx)
     api(libs.kotlinx.coroutines.core)
     testImplementation(libs.junit)

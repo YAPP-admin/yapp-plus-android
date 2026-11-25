@@ -2,7 +2,7 @@ package com.yapp.plus.feature.main.home.model
 
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.attendance.AttendanceReportType
-import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceLocationIssue
+import com.yapp.plus.core.ui.model.HomeAttendanceLocationIssue
 
 data class HomeInteractionUiState(
     val sheet: HomeSheet = HomeSheet.None,

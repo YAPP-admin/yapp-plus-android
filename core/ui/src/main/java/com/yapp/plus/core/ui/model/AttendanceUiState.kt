@@ -1,0 +1,15 @@
+package com.yapp.plus.core.ui.model
+
+sealed interface AttendanceUiState<out T> {
+    data object Loading : AttendanceUiState<Nothing>
+
+    data object Inactive : AttendanceUiState<Nothing>
+
+    data object Empty : AttendanceUiState<Nothing>
+
+    data object Error : AttendanceUiState<Nothing>
+
+    data class Content<T>(
+        val value: T,
+    ) : AttendanceUiState<T>
+}

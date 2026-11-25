@@ -15,6 +15,10 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,10 +32,12 @@ import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.domain.afterparty.AfterpartyFilter
 import com.yapp.plus.feature.main.community.CommunityListState.LoadingIndicator
 import com.yapp.plus.feature.main.community.components.CommunityAfterpartyRow
-import com.yapp.plus.feature.main.community.components.CommunityAfterpartyTabs
 import com.yapp.plus.feature.main.community.components.CommunityEmptyState
 import com.yapp.plus.feature.main.community.components.CommunityError
+import com.yapp.plus.feature.main.community.components.CommunityGatherings
 import com.yapp.plus.feature.main.community.components.CommunityLoading
+import com.yapp.plus.feature.main.community.components.CommunitySection
+import com.yapp.plus.feature.main.community.components.CommunityTabs
 import com.yapp.plus.feature.main.community.components.CommunityVoteFilters
 import java.time.Instant
 
@@ -49,7 +55,6 @@ fun CommunityRoute(onAfterpartyClick: (Long) -> Unit) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CommunityList(
     state: CommunityListState,
@@ -59,9 +64,8 @@ internal fun CommunityList(
     onAfterpartyClick: (Long) -> Unit,
     now: Instant = Instant.now(),
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
-    val isRefreshing = state.loading == LoadingIndicator.PullToRefresh
-    val isListLoading = state.loading == LoadingIndicator.List
+    var section by rememberSaveable { mutableStateOf(CommunitySection.Afterparties) }
+    val sectionState = rememberSaveableStateHolder()
 
     Column(
         Modifier
@@ -69,54 +73,84 @@ internal fun CommunityList(
             .background(YappMainColor.surface),
     ) {
         YappMainHeader(title = stringResource(R.string.community_title))
-        CommunityAfterpartyTabs()
-        CommunityVoteFilters(selectedFilter = state.filter, onFilter = onFilter)
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = onRefresh,
-            state = pullToRefreshState,
-            indicator = {
-                if (!isListLoading) {
-                    PullToRefreshDefaults.Indicator(
-                        state = pullToRefreshState,
-                        isRefreshing = isRefreshing,
-                        modifier = Modifier.align(Alignment.TopCenter),
+        CommunityTabs(selectedSection = section, onSelect = { section = it })
+        sectionState.SaveableStateProvider(section.name) {
+            when (section) {
+                CommunitySection.Afterparties ->
+                    CommunityAfterpartyList(
+                        state = state,
+                        onFilter = onFilter,
+                        onRefresh = onRefresh,
+                        onMore = onMore,
+                        onAfterpartyClick = onAfterpartyClick,
+                        now = now,
                     )
+                CommunitySection.Gatherings -> CommunityGatherings()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CommunityAfterpartyList(
+    state: CommunityListState,
+    onFilter: (AfterpartyFilter) -> Unit,
+    onRefresh: () -> Unit,
+    onMore: () -> Unit,
+    onAfterpartyClick: (Long) -> Unit,
+    now: Instant,
+) {
+    val pullToRefreshState = rememberPullToRefreshState()
+    val isRefreshing = state.loading == LoadingIndicator.PullToRefresh
+    val isListLoading = state.loading == LoadingIndicator.List
+
+    CommunityVoteFilters(selectedFilter = state.filter, onFilter = onFilter)
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        state = pullToRefreshState,
+        indicator = {
+            if (!isListLoading) {
+                PullToRefreshDefaults.Indicator(
+                    state = pullToRefreshState,
+                    isRefreshing = isRefreshing,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            }
+        },
+    ) {
+        if (state.loading == null && !state.hasError && state.items.isEmpty()) {
+            val emptyMessage =
+                when (state.filter) {
+                    AfterpartyFilter.ALL, AfterpartyFilter.OPEN -> stringResource(R.string.community_empty_open)
+                    AfterpartyFilter.CLOSED -> stringResource(R.string.community_empty_closed)
                 }
-            },
-        ) {
-            if (state.loading == null && !state.hasError && state.items.isEmpty()) {
-                val emptyMessage =
-                    when (state.filter) {
-                        AfterpartyFilter.ALL, AfterpartyFilter.OPEN -> stringResource(R.string.community_empty_open)
-                        AfterpartyFilter.CLOSED -> stringResource(R.string.community_empty_closed)
-                    }
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CommunityEmptyState(text = emptyMessage)
-                }
-            } else {
-                LazyColumn(
+            Box(
+                modifier =
                     Modifier
                         .fillMaxSize()
                         .padding(horizontal = 20.dp),
-                ) {
-                    items(state.items, key = { it.id }) { item ->
-                        CommunityAfterpartyRow(item, now) { onAfterpartyClick(item.id) }
+                contentAlignment = Alignment.Center,
+            ) {
+                CommunityEmptyState(text = emptyMessage)
+            }
+        } else {
+            LazyColumn(
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+            ) {
+                items(state.items, key = { it.id }) { item ->
+                    CommunityAfterpartyRow(item, now) { onAfterpartyClick(item.id) }
+                }
+                item {
+                    when {
+                        isListLoading -> CommunityLoading(Modifier.fillMaxWidth().padding(24.dp))
+                        state.hasError -> CommunityError()
                     }
-                    item {
-                        when {
-                            isListLoading -> CommunityLoading(Modifier.fillMaxWidth().padding(24.dp))
-                            state.hasError -> CommunityError()
-                        }
-                        if (state.loading == null && !state.hasError && state.nextCursor != null) {
-                            LaunchedEffect(state.nextCursor) { onMore() }
-                        }
+                    if (state.loading == null && !state.hasError && state.nextCursor != null) {
+                        LaunchedEffect(state.nextCursor) { onMore() }
                     }
                 }
             }

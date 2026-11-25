@@ -632,3 +632,11 @@ last_verified: 2026-11-25
 - 결정: 본인의 팀 세션 출석이 확정되면 홈에서 승인 안내를 표시합니다. 사진 업로드 단계의 실패는 선택을 보존해 재시도할 수 있게 안내합니다. 제출 결과가 불확실한 경우 홈에서 상태를 확인하도록 안내합니다.
 - 근거: 사용자가 확인한 디자인 차이 수정을 요청했습니다. [Figma 팀 출석 승인](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-23597) · [Figma 업로드 실패](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24549) · [사용자 팀 사진 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/d3110417a8b24644629a966b80cbf5bf1db4e9f1/APIDOC.md#L337-L361) · [Android 이슈 #264](https://github.com/YAPP-admin/yapp-plus-android/issues/264)
 - 적용 상태: 홈의 팀 사진 흐름과 [제품 정책](product-policy.md#사용자-팀-출석-조회)에 반영했습니다.
+
+## DEC-0079 · 커뮤니티 모임 탭 활성화
+
+- 기록일: 2026-11-25
+- 결정: 커뮤니티에서 `모임`을 선택할 수 있게 하고 `전체·소모임·번개` 필터를 표시합니다. 모임 목록 API 연결 전에는 준비 중 안내를 표시합니다.
+- 근거: 사용자가 소모임 탭 활성화를 요청했습니다. [Figma 모임 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1792-40688) · [Android 이슈 #268](https://github.com/YAPP-admin/yapp-plus-android/issues/268)
+- 적용 상태: 커뮤니티 화면과 [제품 정책](product-policy.md#커뮤니티-모임)에 반영했습니다.
+- 대체: DEC-0070의 모임 탭 비활성 표시를 대체합니다.

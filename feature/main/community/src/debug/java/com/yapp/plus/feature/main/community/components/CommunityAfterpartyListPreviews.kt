@@ -22,7 +22,10 @@ internal val afterpartyPreviewItems =
 
 @Preview(showBackground = true, widthDp = 393)
 @Composable
-private fun CommunityAfterpartyTabsPreview() = YappTheme { CommunityAfterpartyTabs() }
+private fun CommunityAfterpartyTabsPreview() =
+    YappTheme {
+        CommunityTabs(selectedSection = CommunitySection.Afterparties, onSelect = {})
+    }
 
 @Preview(showBackground = true, widthDp = 393)
 @Composable

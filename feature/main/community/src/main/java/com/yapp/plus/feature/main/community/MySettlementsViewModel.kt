@@ -6,8 +6,6 @@ import com.yapp.plus.domain.afterparty.AfterpartyFailure
 import com.yapp.plus.domain.afterparty.AfterpartyFilter
 import com.yapp.plus.domain.afterparty.AfterpartyRepository
 import com.yapp.plus.domain.afterparty.AfterpartyResult
-import com.yapp.plus.domain.afterparty.AfterpartySummary
-import com.yapp.plus.domain.afterparty.SettlementItem
 import com.yapp.plus.domain.afterparty.SettlementRepository
 import com.yapp.plus.domain.result.YappResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +23,7 @@ internal class MySettlementsViewModel
         private val settlements: SettlementRepository,
     ) : ViewModel() {
         private val mutableState =
-            MutableStateFlow<AfterpartyResult<List<Pair<AfterpartySummary, SettlementItem>>>?>(null)
+            MutableStateFlow<AfterpartyResult<List<AfterpartySettlements>>?>(null)
         val state = mutableState.asStateFlow()
         private var load: Job? = null
 
@@ -34,7 +32,7 @@ internal class MySettlementsViewModel
             load = viewModelScope.launch { mutableState.value = fetchRows() }
         }
 
-        private suspend fun fetchRows(): AfterpartyResult<List<Pair<AfterpartySummary, SettlementItem>>> {
+        private suspend fun fetchRows(): AfterpartyResult<List<AfterpartySettlements>> {
             val afterparties =
                 when (
                     val result =
@@ -45,12 +43,19 @@ internal class MySettlementsViewModel
                     is YappResult.Failure -> return result
                     is YappResult.Success -> result.value
                 }
-            val rows = mutableListOf<Pair<AfterpartySummary, SettlementItem>>()
+            val rows = mutableListOf<AfterpartySettlements>()
             for (party in afterparties) {
                 when (val result = fetchAllPages({ item -> item.id }) { settlements.fetchSettlements(party.id, it) }) {
                     is YappResult.Failure ->
                         if (result.reason !in unavailableParties) return result
-                    is YappResult.Success -> rows.addAll(result.value.map { party to it })
+                    is YappResult.Success ->
+                        rows.add(
+                            AfterpartySettlements(
+                                afterparty = party,
+                                items = result.value,
+                                ownerSummaries = settlements.fetchOwnerSummaries(party.id, result.value),
+                            ),
+                        )
                 }
             }
             return YappResult.Success(rows)

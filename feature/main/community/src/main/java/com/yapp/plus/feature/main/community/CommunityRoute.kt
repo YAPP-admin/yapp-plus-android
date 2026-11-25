@@ -1,15 +1,14 @@
 package com.yapp.plus.feature.main.community
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -25,22 +24,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
-import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
-import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappMainColor
-import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.domain.afterparty.AfterpartyFilter
-import com.yapp.plus.domain.afterparty.AfterpartyState
-import com.yapp.plus.domain.afterparty.AfterpartySummary
 import com.yapp.plus.feature.main.community.CommunityListState.LoadingIndicator
-import com.yapp.plus.feature.main.community.components.CommunityCaption
+import com.yapp.plus.feature.main.community.components.CommunityAfterpartyRow
+import com.yapp.plus.feature.main.community.components.CommunityAfterpartyTabs
+import com.yapp.plus.feature.main.community.components.CommunityEmptyState
 import com.yapp.plus.feature.main.community.components.CommunityError
-import com.yapp.plus.feature.main.community.components.CommunityFilters
 import com.yapp.plus.feature.main.community.components.CommunityLoading
-import com.yapp.plus.feature.main.community.components.CommunityTitle
+import com.yapp.plus.feature.main.community.components.CommunityVoteFilters
 import java.time.Instant
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 
 @Composable
 fun CommunityRoute(onAfterpartyClick: (Long) -> Unit) {
@@ -64,20 +57,20 @@ internal fun CommunityList(
     onRefresh: () -> Unit,
     onMore: () -> Unit,
     onAfterpartyClick: (Long) -> Unit,
+    now: Instant = Instant.now(),
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
     val isRefreshing = state.loading == LoadingIndicator.PullToRefresh
     val isListLoading = state.loading == LoadingIndicator.List
 
-    Column(Modifier.fillMaxSize()) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(YappMainColor.surface),
+    ) {
         YappMainHeader(title = stringResource(R.string.community_title))
-        Column(
-            Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            CommunityTitle(stringResource(R.string.community_afterparties))
-            CommunityFilters(AfterpartyFilter.entries, state.filter, { stringResource(it.label()) }, onFilter)
-        }
+        CommunityAfterpartyTabs()
+        CommunityVoteFilters(selectedFilter = state.filter, onFilter = onFilter)
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
@@ -92,71 +85,41 @@ internal fun CommunityList(
                 }
             },
         ) {
-            LazyColumn(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
-                items(state.items, key = { it.id }) { item ->
-                    CommunityAfterpartyRow(item, onClick = { onAfterpartyClick(item.id) })
-                }
-                item {
-                    when {
-                        isListLoading -> CommunityLoading()
-                        state.hasError -> CommunityError()
-                        state.loading == null && state.items.isEmpty() ->
-                            CommunityCaption(
-                                stringResource(R.string.community_empty),
-                                Modifier.padding(vertical = 24.dp),
-                            )
+            if (state.loading == null && !state.hasError && state.items.isEmpty()) {
+                val emptyMessage =
+                    when (state.filter) {
+                        AfterpartyFilter.ALL, AfterpartyFilter.OPEN -> stringResource(R.string.community_empty_open)
+                        AfterpartyFilter.CLOSED -> stringResource(R.string.community_empty_closed)
                     }
-                    if (state.loading == null && !state.hasError && state.nextCursor != null) {
-                        LaunchedEffect(state.nextCursor) { onMore() }
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CommunityEmptyState(text = emptyMessage)
+                }
+            } else {
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                ) {
+                    items(state.items, key = { it.id }) { item ->
+                        CommunityAfterpartyRow(item, now) { onAfterpartyClick(item.id) }
+                    }
+                    item {
+                        when {
+                            isListLoading -> CommunityLoading(Modifier.fillMaxWidth().padding(24.dp))
+                            state.hasError -> CommunityError()
+                        }
+                        if (state.loading == null && !state.hasError && state.nextCursor != null) {
+                            LaunchedEffect(state.nextCursor) { onMore() }
+                        }
                     }
                 }
             }
         }
     }
 }
-
-@Composable
-internal fun CommunityAfterpartyRow(
-    item: AfterpartySummary,
-    onClick: () -> Unit,
-) {
-    YappClickableSurface(onClick = onClick, color = YappMainColor.surface) {
-        Column(Modifier.fillMaxWidth().padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            YappText(
-                text = afterpartyStatusLabel(item),
-                style = YappTypography.scaleT2Medium,
-                color = if (item.state == AfterpartyState.OPEN) YappMainColor.brand else YappMainColor.textSubtle,
-            )
-            CommunityTitle(item.title)
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                CommunityCaption(item.schedule.startsAtDisplay)
-                CommunityCaption(stringResource(R.string.community_responded, item.respondedCount))
-            }
-        }
-    }
-    HorizontalDivider(color = YappMainColor.divider)
-}
-
-@Composable
-private fun afterpartyStatusLabel(item: AfterpartySummary): String {
-    val today = Instant.now().atZone(korea).toLocalDate()
-    val deadline =
-        item.schedule.deadline
-            .atZone(korea)
-            .toLocalDate()
-    return when {
-        item.state == AfterpartyState.ENDED -> stringResource(R.string.community_ended)
-        !Instant.now().isBefore(item.schedule.deadline) -> stringResource(R.string.community_closed)
-        deadline == today -> stringResource(R.string.community_today)
-        else -> stringResource(R.string.community_dday, ChronoUnit.DAYS.between(today, deadline))
-    }
-}
-
-private fun AfterpartyFilter.label(): Int =
-    when (this) {
-        AfterpartyFilter.ALL -> R.string.community_all
-        AfterpartyFilter.OPEN -> R.string.community_open
-        AfterpartyFilter.CLOSED -> R.string.community_closed
-    }
-
-private val korea = ZoneId.of("Asia/Seoul")

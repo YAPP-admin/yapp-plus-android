@@ -1,14 +1,16 @@
 <resources>
     <string name="community_title">커뮤니티</string>
     <string name="community_afterparties">뒤풀이</string>
+    <string name="community_gatherings">모임</string>
     <string name="community_all">전체</string>
     <string name="community_open">진행 중</string>
     <string name="community_closed">투표 마감</string>
-    <string name="community_ended">종료</string>
     <string name="community_dday">D-%1$d</string>
     <string name="community_today">D-DAY</string>
     <string name="community_responded">%1$d명 투표 완료</string>
     <string name="community_empty">초대받은 뒤풀이가 없어요</string>
+    <string name="community_empty_open">진행중인 뒤풀이가 없어요</string>
+    <string name="community_empty_closed">마감된 뒤풀이가 없어요</string>
     <string name="community_back">뒤로 가기</string>
     <string name="community_vote">투표하기</string>
     <string name="community_attendance">참석 여부</string>
@@ -33,7 +35,8 @@
     <string name="community_request_error">요청을 처리하지 못했어요.</string>
     <string name="community_settlement">정산</string>
     <string name="community_my_settlements">뒤풀이 정산</string>
-    <string name="community_settlement_guide">계산한 사람이 직접 정산해요. 따로 계산한 사람이 있다면 각자 정산할 수 있어요.</string>
+    <string name="community_receiving_settlements">회식 정산</string>
+    <string name="community_settlement_guide">계산한 사람이 직접 정산해요. 운영진이 아니어도 되고, 따로 계산한 사람이 있다면 각자 정산하면 돼요.</string>
     <string name="community_settlement_empty">아직 정산이 없어요</string>
     <string name="community_settlement_add">정산 추가하기</string>
     <string name="community_settlement_title">%1$s님 정산</string>
@@ -48,7 +51,7 @@
     <string name="community_paid_action">송금했어요</string>
     <string name="community_undo_payment">되돌리기</string>
     <string name="community_pay_guide">계좌로 직접 보낸 뒤 ‘송금했어요’를 눌러 주세요.</string>
-    <string name="community_reminder">송금하지 않은 사람에게 24시간마다 송금 요청 알림을 자동으로 보내요.</string>
+    <string name="community_reminder">송금하지 않은 사람에게 24시간마다\n송금 요청 알림을 자동으로 보내요.</string>
     <string name="community_account_holder">예금주 %1$s</string>
     <string name="community_copy">복사</string>
     <string name="community_copied">계좌번호를 복사했어요</string>
@@ -59,23 +62,55 @@
     <string name="community_settlement_editor_edit">정산 수정</string>
     <string name="community_candidates">정산할 사람</string>
     <string name="community_selected_count">총 정산 인원 %1$d명</string>
+    <string name="community_roster_count">정산할 사람 %1$d명</string>
+    <string name="community_selected_names">%1$s 외 %2$d명</string>
+    <string name="community_roster_guide">참석으로 답한 사람 중 정산할 사람을 선택해 주세요.</string>
+    <string name="community_roster_excluded">제외</string>
+    <string name="community_roster_next">다음</string>
     <string name="community_search">이름으로 찾기</string>
     <string name="community_total_amount">총 금액</string>
-    <string name="community_per_person">1인당 금액</string>
+    <string name="community_total_amount_placeholder">금액을 입력해 주세요</string>
+    <string name="community_per_person">1인 당 금액</string>
+    <string name="community_won_unit">원</string>
+    <string name="community_split_empty">총 금액 ÷ 선택 인원</string>
+    <string name="community_split_formula">%1$s ÷ %2$d명</string>
+    <string name="community_show_decimal">소수점 포함 금액보기</string>
     <string name="community_proofs">증빙 사진</string>
+    <string name="community_optional">(선택)</string>
     <string name="community_add_photo">사진 추가 (%1$d/%2$d)</string>
+    <string name="community_photo_count">%1$d/%2$d</string>
+    <string name="community_cover_photo">대표 사진</string>
     <string name="community_remove_photo">사진 삭제</string>
-    <string name="community_photo_guide">영수증이나 결제 내역을 최대 5장까지 올릴 수 있어요.</string>
+    <string name="community_photo_guide">영수증이나 결제 내역 캡처를 올려 주세요. 최대 5장까지 올릴 수 있어요.</string>
     <string name="community_bank_account">받을 계좌</string>
     <string name="community_bank">은행 선택</string>
     <string name="community_account">계좌번호</string>
     <string name="community_holder">예금주</string>
-    <string name="community_account_guide">정산받는 사람에게 은행, 계좌번호, 예금주가 표시돼요.</string>
+    <string name="community_account_guide">정산받는 사람에게 은행, 계좌번호, 예금주가 그대로 보여요.</string>
     <string name="community_settlement_submit">정산 요청하기 (%1$d명)</string>
-    <string name="community_settlement_save">저장하기</string>
     <string name="community_sending">보내는 중</string>
     <string name="community_to_pay">보낼 돈</string>
     <string name="community_to_receive">받을 돈</string>
+    <string name="community_position_pm">PM</string>
+    <string name="community_position_designer">Designer</string>
+    <string name="community_position_web">Web</string>
+    <string name="community_position_mobile">Mobile</string>
+    <string name="community_position_android">Android</string>
+    <string name="community_position_ios">iOS</string>
+    <string name="community_position_server">Server</string>
+    <string name="community_position_ai">AI Native</string>
+    <string-array name="community_editor_banks">
+        <item>토스뱅크</item>
+        <item>카카오뱅크</item>
+        <item>KB국민은행</item>
+        <item>신한은행</item>
+        <item>우리은행</item>
+        <item>하나은행</item>
+        <item>NH농협은행</item>
+        <item>IBK기업은행</item>
+        <item>케이뱅크</item>
+        <item>새마을금고</item>
+    </string-array>
     <string-array name="community_banks">
         <item>하나</item><item>KB국민</item><item>기업</item><item>농협</item><item>경남</item><item>광주</item>
         <item>부산</item><item>산업</item><item>수협</item><item>신한</item><item>우리</item><item>전북</item>
@@ -83,4 +118,25 @@
         <item>SC제일</item><item>한국씨티</item><item>새마을</item><item>산림조합</item><item>신협</item>
         <item>우체국</item><item>저축</item>
     </string-array>
+    <string name="community_ended">종료</string>
+    <string name="community_meeting_date">회식 날짜</string>
+    <string name="community_settlement_deadline">마감 기한</string>
+    <string name="community_settlement_created">%1$d명에게 정산을 요청했어요</string>
+    <string name="community_unknown_value">—</string>
+    <string name="community_own_settlement">내 정산</string>
+    <string name="community_paid_total">" / %1$d명"</string>
+    <string name="community_payments_complete">송금을 완료했어요!</string>
+    <string name="community_all_payments_received">정산을 모두 받았어요</string>
+    <string name="community_payment_done">완료</string>
+    <string name="community_receiving">받는 중</string>
+    <string name="community_received">정산 완료</string>
+    <string name="community_list_remaining">남은 금액 %1$s</string>
+    <string name="community_receive_count">%1$d/%2$d명 송금</string>
+    <string name="community_remaining_total">남은 금액</string>
+    <string name="community_payment_progress">%1$d / %2$d 완료</string>
+    <string name="community_bank_number">%1$s %2$s</string>
+    <string name="community_extra_photos">+%1$d</string>
+    <string name="community_marked_paid">송금 완료로 표시했어요</string>
+    <string name="community_undo_title">송금 완료를 되돌릴까요?</string>
+    <string name="community_undo_guide">다시 미송금 상태로 바꿔요.</string>
 </resources>

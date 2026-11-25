@@ -111,7 +111,10 @@ internal class SettlementEditorViewModel
                             )
                         }
                     when (result) {
-                        is YappResult.Success -> mutableState.update { it.copy(savedId = result.value.item.id) }
+                        is YappResult.Success ->
+                            mutableState.update {
+                                it.copy(savedId = result.value.item.id, savedRecipientCount = result.value.debtorCount)
+                            }
                         is YappResult.Failure -> showSubmissionFailure(result.reason, settlementId == null)
                     }
                 } finally {

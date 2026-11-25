@@ -1,17 +1,22 @@
 package com.yapp.plus.feature.main.community.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.main.YappDetailHeader
 import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
@@ -21,6 +26,7 @@ import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.domain.afterparty.AfterpartyFailure
 import com.yapp.plus.domain.afterparty.AfterpartyPerson
 import com.yapp.plus.feature.main.community.R
+import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun CommunityHeader(
@@ -44,8 +50,35 @@ internal fun CommunityCaption(
 }
 
 @Composable
+internal fun CommunityEmptyState(
+    modifier: Modifier = Modifier,
+    text: String = stringResource(R.string.community_empty),
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
+    ) {
+        Image(
+            painter = painterResource(DesignSystemR.drawable.graphic_none),
+            contentDescription = null,
+            modifier = Modifier.size(width = 90.dp, height = 74.dp),
+        )
+        YappText(
+            text = text,
+            style = YappTypography.scaleT5Regular,
+            color = YappMainColor.textSecondary,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
 internal fun CommunityLoading(modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
         CircularProgressIndicator(color = YappMainColor.brand)
     }
 }

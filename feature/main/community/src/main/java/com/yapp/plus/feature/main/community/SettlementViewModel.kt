@@ -2,7 +2,9 @@ package com.yapp.plus.feature.main.community
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.domain.afterparty.AfterpartyFailure
 import com.yapp.plus.domain.afterparty.AfterpartyRepository
+import com.yapp.plus.domain.afterparty.AfterpartyResult
 import com.yapp.plus.domain.afterparty.SettlementDetail
 import com.yapp.plus.domain.afterparty.SettlementPaymentStatus
 import com.yapp.plus.domain.afterparty.SettlementRepository
@@ -10,6 +12,7 @@ import com.yapp.plus.domain.result.YappResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,30 +51,69 @@ internal class SettlementViewModel
             loadPeople(detail, filter)
         }
 
-        fun updatePayment(status: SettlementPaymentStatus) {
-            val detail = state.value.detail.valueOrNull() ?: return
-            if (state.value.submitting || detail.item.isCreator || detail.item.paymentStatus == status) return
+        fun updatePayment(
+            settlementId: Long,
+            status: SettlementPaymentStatus,
+        ) {
+            val current = state.value
+            if (current.submittingSettlementId != null) return
+            val detail =
+                current.payments.valueOrNull()?.firstOrNull { it.item.id == settlementId }
+                    ?: current.detail.valueOrNull()?.takeIf { it.item.id == settlementId }
+                    ?: return
+            val payment = detail.item.paymentStatus
+            if (detail.item.isCreator || payment == null || payment == status) return
+
             operation?.cancel()
-            mutableState.update { it.copy(submitting = true, failure = null) }
-            operation =
-                viewModelScope.launch {
-                    try {
-                        when (val result = repository.updatePayment(detail.item.afterpartyId, detail.item.id, status)) {
-                            is YappResult.Failure -> mutableState.update { it.copy(failure = result.reason) }
-                            is YappResult.Success ->
-                                mutableState.update {
-                                    it.copy(
-                                        detail =
-                                            YappResult.Success(
-                                                detail.copy(item = detail.item.copy(paymentStatus = result.value)),
-                                            ),
-                                    )
-                                }
-                        }
-                    } finally {
-                        mutableState.update { it.copy(submitting = false) }
-                    }
+            mutableState.update {
+                it.copy(submittingSettlementId = settlementId, failure = null, paymentCompleted = false)
+            }
+            operation = viewModelScope.launch { submitPayment(detail, status) }
+        }
+
+        fun dismissPaymentNotice() {
+            mutableState.update { it.copy(paymentCompleted = false) }
+        }
+
+        private suspend fun submitPayment(
+            detail: SettlementDetail,
+            status: SettlementPaymentStatus,
+        ) {
+            val item = detail.item
+            try {
+                when (val result = repository.updatePayment(item.afterpartyId, item.id, status)) {
+                    is YappResult.Failure -> mutableState.update { it.copy(failure = result.reason) }
+                    is YappResult.Success -> updatePaymentResult(detail, result.value)
                 }
+            } finally {
+                mutableState.update { it.copy(submittingSettlementId = null) }
+            }
+        }
+
+        private fun updatePaymentResult(
+            detail: SettlementDetail,
+            status: SettlementPaymentStatus,
+        ) {
+            val changed = detail.copy(item = detail.item.copy(paymentStatus = status))
+            mutableState.update { current ->
+                current.copy(
+                    detail =
+                        if (current.detail
+                                .valueOrNull()
+                                ?.item
+                                ?.id == detail.item.id
+                        ) {
+                            YappResult.Success(changed)
+                        } else {
+                            current.detail
+                        },
+                    payments =
+                        current.payments.valueOrNull()?.let { payments ->
+                            YappResult.Success(payments.map { if (it.item.id == detail.item.id) changed else it })
+                        } ?: current.payments,
+                    paymentCompleted = status == SettlementPaymentStatus.PAID,
+                )
+            }
         }
 
         private suspend fun fetchDetail(
@@ -82,12 +124,64 @@ internal class SettlementViewModel
             val result = repository.fetchSettlement(afterpartyId, settlementId)
             ensureActive()
             mutableState.update { it.copy(detail = result) }
-            val detail = result.valueOrNull()?.takeIf { it.item.isCreator }
-            if (detail != null) loadPeople(detail, state.value.filter)
-            val summary = detail?.let { repository.fetchSummary(afterpartyId, settlementId) }
+            val detail = result.valueOrNull()
+            if (detail != null) {
+                if (detail.item.isCreator) {
+                    loadPeople(detail, state.value.filter)
+                    val summary = repository.fetchSummary(afterpartyId, settlementId)
+                    mutableState.update { it.copy(summary = summary) }
+                } else {
+                    val payments = loadPayments(detail)
+                    mutableState.update { it.copy(payments = payments) }
+                }
+            }
             val event = party.await()
-            mutableState.update { it.copy(summary = summary, afterparty = event) }
+            mutableState.update { it.copy(afterparty = event) }
         }
+
+        private suspend fun loadPayments(anchor: SettlementDetail): AfterpartyResult<List<SettlementDetail>> =
+            coroutineScope {
+                val afterpartyId = anchor.item.afterpartyId
+                val result =
+                    fetchAllPages({ item -> item.id }) { cursor ->
+                        repository.fetchSettlements(afterpartyId, cursor)
+                    }
+                val items =
+                    when (result) {
+                        is YappResult.Failure -> return@coroutineScope result
+                        is YappResult.Success -> result.value.filter { !it.isCreator && it.paymentStatus != null }
+                    }
+                val details = mutableListOf<SettlementDetail>()
+                for (batch in items.chunked(4)) {
+                    val results =
+                        batch
+                            .map { item ->
+                                async {
+                                    if (item.id == anchor.item.id) {
+                                        YappResult.Success(anchor)
+                                    } else {
+                                        repository.fetchSettlement(afterpartyId, item.id)
+                                    }
+                                }
+                            }.awaitAll()
+                    for (detail in results) {
+                        when (detail) {
+                            is YappResult.Failure -> {
+                                if (detail.reason !in inaccessiblePayments) return@coroutineScope detail
+                            }
+                            is YappResult.Success -> {
+                                if (!detail.value.item.isCreator && detail.value.item.paymentStatus != null) {
+                                    details.add(detail.value)
+                                }
+                            }
+                        }
+                    }
+                }
+                if (details.none { it.item.id == anchor.item.id } && anchor.item.paymentStatus != null) {
+                    details.add(0, anchor)
+                }
+                YappResult.Success(details)
+            }
 
         private fun loadPeople(
             detail: SettlementDetail,
@@ -105,3 +199,5 @@ internal class SettlementViewModel
                 }
         }
     }
+
+private val inaccessiblePayments = setOf(AfterpartyFailure.NotFound, AfterpartyFailure.Forbidden)

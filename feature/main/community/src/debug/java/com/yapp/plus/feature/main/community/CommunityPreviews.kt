@@ -1,9 +1,14 @@
 package com.yapp.plus.feature.main.community
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.domain.afterparty.AfterpartyDetail
 import com.yapp.plus.domain.afterparty.AfterpartyFilter
@@ -17,7 +22,9 @@ import com.yapp.plus.domain.afterparty.SettlementBank
 import com.yapp.plus.domain.afterparty.SettlementDetail
 import com.yapp.plus.domain.afterparty.SettlementItem
 import com.yapp.plus.domain.afterparty.SettlementPaymentStatus
+import com.yapp.plus.domain.afterparty.SettlementPhoto
 import com.yapp.plus.domain.afterparty.SettlementSummary
+import com.yapp.plus.domain.profile.UserPosition
 import com.yapp.plus.domain.result.YappResult
 import com.yapp.plus.feature.main.community.components.CommunityCaption
 import com.yapp.plus.feature.main.community.components.CommunityError
@@ -27,7 +34,11 @@ import com.yapp.plus.feature.main.community.components.CommunityLoading
 import com.yapp.plus.feature.main.community.components.CommunityPerson
 import com.yapp.plus.feature.main.community.components.CommunityTitle
 import com.yapp.plus.feature.main.community.components.ProtectedPhoto
+import com.yapp.plus.feature.main.community.components.SettlementPayment
 import com.yapp.plus.feature.main.community.components.SettlementRow
+import com.yapp.plus.feature.main.community.components.SettlementTotals
+import com.yapp.plus.feature.main.community.components.afterpartyPreviewItems
+import com.yapp.plus.feature.main.community.components.afterpartyPreviewTime
 import java.time.Instant
 
 private val schedule =
@@ -61,18 +72,56 @@ private val settlement =
         0,
     )
 private val person = AfterpartyPerson(2, "박야뿌", "1팀", null, false)
+private val finishedParty = party.copy(state = AfterpartyState.ENDED, response = AfterpartyResponse.ATTENDING)
+private val finishedSummary = AfterpartySummary(party.id, party.title, schedule, AfterpartyState.ENDED, 31)
+private val ownerRow = row.copy(id = 4, isCreator = true, paymentStatus = null)
+private val ownerSummary = SettlementSummary(48_000, 24_000, 2, 1)
+private val paidSettlement =
+    settlement.copy(
+        item = row.copy(id = 5, creatorName = "이야뿌", paymentStatus = SettlementPaymentStatus.PAID),
+        account = settlement.account.copy(holder = "이야뿌"),
+        photos = listOf(SettlementPhoto(1, null, null), SettlementPhoto(2, null, null)),
+    )
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 393, heightDp = 690)
 @Composable
 fun CommunityListPreview() =
     YappTheme {
-        val summary = AfterpartySummary(party.id, party.title, schedule, AfterpartyState.OPEN, 12)
         CommunityList(
-            state = CommunityListState(items = listOf(summary), loading = null),
+            state = CommunityListState(items = afterpartyPreviewItems, loading = null),
             onFilter = {},
             onRefresh = {},
             onMore = {},
             onAfterpartyClick = {},
+            now = afterpartyPreviewTime,
+        )
+    }
+
+@Preview(showBackground = true, widthDp = 393, heightDp = 690)
+@Composable
+fun CommunityListEmptyOpenPreview() =
+    YappTheme {
+        CommunityList(
+            state = CommunityListState(items = emptyList(), filter = AfterpartyFilter.OPEN, loading = null),
+            onFilter = {},
+            onRefresh = {},
+            onMore = {},
+            onAfterpartyClick = {},
+            now = afterpartyPreviewTime,
+        )
+    }
+
+@Preview(showBackground = true, widthDp = 393, heightDp = 690)
+@Composable
+fun CommunityListEmptyClosedPreview() =
+    YappTheme {
+        CommunityList(
+            state = CommunityListState(items = emptyList(), filter = AfterpartyFilter.CLOSED, loading = null),
+            onFilter = {},
+            onRefresh = {},
+            onMore = {},
+            onAfterpartyClick = {},
+            now = afterpartyPreviewTime,
         )
     }
 
@@ -89,31 +138,98 @@ fun AfterpartyScreenPreview() =
         )
     }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 393, heightDp = 740)
+@Composable
+fun FinishedAfterpartySettlementPreview() =
+    YappTheme {
+        AfterpartyScreen(
+            state =
+                AfterpartyScreenState(
+                    detail = YappResult.Success(finishedParty),
+                    settlements = YappResult.Success(listOf(ownerRow, row)),
+                    ownerSummaries = mapOf(ownerRow.id to ownerSummary),
+                ),
+            onBack = {},
+            onSettlementClick = {},
+            onAddSettlement = {},
+            onVote = {},
+            settlementRecipientCount = 31,
+        )
+    }
+
+@Preview(showBackground = true, widthDp = 393, heightDp = 740)
 @Composable
 fun SettlementScreenPreview() =
     YappTheme {
-        SettlementScreen(SettlementScreenState(detail = YappResult.Success(settlement)), {}, {}, {}, {}, {})
+        SettlementScreen(
+            state =
+                SettlementScreenState(
+                    detail = YappResult.Success(settlement),
+                    afterparty = finishedParty,
+                    payments = YappResult.Success(listOf(settlement, paidSettlement)),
+                ),
+            onBack = {},
+            onEdit = {},
+            onFilter = {},
+            onPayment = { _, _ -> },
+            onReload = {},
+        )
     }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 393, heightDp = 740)
 @Composable
 fun SettlementOwnerPreview() =
     YappTheme {
-        Column {
-            SettlementOwner(
-                SettlementScreenState(summary = YappResult.Success(SettlementSummary(48_000, 24_000, 2, 1))),
-                {},
-                {},
-            )
-        }
+        SettlementScreen(
+            state =
+                SettlementScreenState(
+                    detail = YappResult.Success(settlement.copy(item = ownerRow)),
+                    afterparty = finishedParty,
+                    summary = YappResult.Success(ownerSummary),
+                    people = YappResult.Success(listOf(person.copy(position = UserPosition.DESIGN))),
+                ),
+            onBack = {},
+            onEdit = {},
+            onFilter = {},
+            onPayment = { _, _ -> },
+            onReload = {},
+        )
     }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 393, heightDp = 650)
 @Composable
-private fun CommunityAfterpartyRowPreview() =
+fun MyPayableSettlementsPreview() =
     YappTheme {
-        CommunityAfterpartyRow(AfterpartySummary(1, party.title, schedule, AfterpartyState.CLOSED, 12)) {}
+        MySettlementsScreen(
+            YappResult.Success(
+                listOf(AfterpartySettlements(finishedSummary, listOf(row, paidSettlement.item), emptyMap())),
+            ),
+            {},
+            { _, _ -> },
+        )
+    }
+
+@Preview(showBackground = true, widthDp = 393)
+@Composable
+fun MyReceivingSettlementsPreview() =
+    YappTheme {
+        Column(Modifier.fillMaxSize().background(YappMainColor.surface)) {
+            CommunityHeader("회식 정산") {}
+            SettlementListTabs(true) {}
+            SettlementListFilters(true, null) {}
+            Column(Modifier.padding(horizontal = 20.dp)) {
+                MySettlementListRow(
+                    MySettlementRow(
+                        afterparty = finishedSummary,
+                        settlementId = ownerRow.id,
+                        status = SettlementPaymentStatus.UNPAID,
+                        summary = ownerSummary,
+                    ),
+                    isReceiving = true,
+                    onClick = {},
+                )
+            }
+        }
     }
 
 @Preview(showBackground = true)

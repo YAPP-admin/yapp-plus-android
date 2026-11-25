@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.yapp.plus.domain.afterparty.AfterpartyFailure
 import com.yapp.plus.domain.afterparty.AfterpartyRepository
 import com.yapp.plus.domain.afterparty.AfterpartyResponse
+import com.yapp.plus.domain.afterparty.AfterpartyState
 import com.yapp.plus.domain.afterparty.SettlementRepository
 import com.yapp.plus.domain.result.YappResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -82,13 +83,16 @@ internal class AfterpartyViewModel
             }
             mutableState.update { it.copy(detail = result) }
             val detail = result.valueOrNull() ?: return
-            if (detail.response == AfterpartyResponse.UNANSWERED) {
+            val showSettlementOnly =
+                detail.state == AfterpartyState.ENDED && detail.response == AfterpartyResponse.ATTENDING
+            val canShowAttendees = detail.response != AfterpartyResponse.UNANSWERED && !showSettlementOnly
+            if (!canShowAttendees) {
                 mutableState.update { it.copy(attendees = null) }
             }
             coroutineScope {
                 val roster =
                     async {
-                        if (detail.response != AfterpartyResponse.UNANSWERED) {
+                        if (canShowAttendees) {
                             val people =
                                 fetchAllPages({ member -> member.recipientId }) { cursor ->
                                     parties.fetchAttendees(id, cursor)
@@ -100,6 +104,9 @@ internal class AfterpartyViewModel
                 val rows = fetchAllPages({ item -> item.id }) { cursor -> settlements.fetchSettlements(id, cursor) }
                 ensureActive()
                 mutableState.update { it.copy(settlements = rows) }
+                val summaries = settlements.fetchOwnerSummaries(id, rows.valueOrNull().orEmpty())
+                ensureActive()
+                mutableState.update { it.copy(ownerSummaries = summaries) }
                 roster.await()
             }
         }

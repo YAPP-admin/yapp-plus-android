@@ -23,6 +23,7 @@ internal data class SettlementEditorState(
     val failure: AfterpartyFailure? = null,
     val blocked: Boolean = false,
     val savedId: Long? = null,
+    val savedRecipientCount: Int? = null,
 ) {
     val peopleCount: Int get() = selected.size + 1
 

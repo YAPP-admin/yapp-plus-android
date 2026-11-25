@@ -15,5 +15,7 @@ internal data class SettlementScreenState(
     val people: AfterpartyResult<List<AfterpartyPerson>>? = null,
     val filter: SettlementPaymentStatus = SettlementPaymentStatus.UNPAID,
     val failure: AfterpartyFailure? = null,
-    val submitting: Boolean = false,
+    val payments: AfterpartyResult<List<SettlementDetail>>? = null,
+    val submittingSettlementId: Long? = null,
+    val paymentCompleted: Boolean = false,
 )

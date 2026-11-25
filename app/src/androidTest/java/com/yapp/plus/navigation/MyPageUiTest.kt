@@ -23,6 +23,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.domain.profile.MembershipStatus
 import com.yapp.plus.feature.main.my.MyAttendanceHistoryScreen
 import com.yapp.plus.feature.main.my.MyPreviewData
 import com.yapp.plus.feature.main.my.MyScreen
@@ -160,6 +161,17 @@ class MyPageUiTest {
         composeRule.onNodeWithText(savedName).assertIsDisplayed()
         composeRule.onNodeWithText("92점").assertIsDisplayed()
         composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
+    }
+
+    @Test
+    fun showsStaffMembershipInMyProfile() {
+        val staff = MyPreviewData.profile.copy(role = MembershipStatus.STAFF)
+        composeRule.setContent {
+            YappTheme {
+                MyScreen(state = MyPreviewData.state.copy(profile = MyProfileUiState.Content(staff)))
+            }
+        }
+        composeRule.onNodeWithText("운영진").assertIsDisplayed()
     }
 
     private fun saveScreenshot(name: String) {

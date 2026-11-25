@@ -6,10 +6,10 @@ enum class MembershipReviewStatus(
     Approved("APPROVED"),
     Pending("PENDING"),
     Rejected("REJECTED"),
-    Unknown("UNKNOWN");
+    Unknown("UNKNOWN"),
+    ;
 
     companion object {
-        fun fromValue(value: String?): MembershipReviewStatus =
-            entries.firstOrNull { it.value == value } ?: Unknown
+        fun fromValue(value: String?): MembershipReviewStatus = entries.firstOrNull { it.value == value } ?: Unknown
     }
 }

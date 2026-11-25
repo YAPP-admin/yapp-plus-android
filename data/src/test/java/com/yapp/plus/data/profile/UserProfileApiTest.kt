@@ -34,6 +34,22 @@ class UserProfileApiTest {
         }
 
     @Test
+    fun mapsStaffMembershipSelectedByServer() =
+        runTest {
+            val profile =
+                fetchProfile(
+                    """
+                    {"userId":1,"name":"회원","membershipStatus":"STAFF","generationId":12,
+                     "generationNumber":29,"position":"DESIGN"}
+                    """.trimIndent(),
+                )
+            assertEquals(
+                UserMembership(MembershipStatus.STAFF, 12, 29, UserPosition.DESIGN),
+                profile.membership,
+            )
+        }
+
+    @Test
     fun acceptsNoMembershipAndPreservesUnknownEnums() =
         runTest {
             assertEquals(

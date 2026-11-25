@@ -39,7 +39,7 @@ last_verified: 2026-11-14
 
 My는 본인 프로필 API가 선택한 기수의 회원 구분과 직군을 표시합니다. 앱 권한과 운영진 직책은 별도의 개념입니다.
 
-- 회원 구분은 `PLAYER`를 활동회원, `OB`를 OB, `COMPLETED_MEMBER`를 수료회원, `DEFERRED`를 유예 회원으로 표시합니다.
+- 회원 구분은 `PLAYER`를 활동회원, `OB`를 OB, `COMPLETED_MEMBER`를 수료회원, `DEFERRED`를 유예 회원, `STAFF`를 운영진으로 표시합니다. [사용자 프로필 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#L1448)
 - 직군은 `PM`을 PM, `DESIGN`을 Design, `WEB`을 Web, `MOBILE`을 Mobile, `ANDROID`를 Android, `IOS`를 iOS, `SERVER`를 Server, `AI_NATIVE`를 AI Native로 표시합니다.
 - 소속이 없으면 회원 구분·기수·직군을 `—`로 표시합니다. 직군이 비어 있거나 앱이 모르는 회원 구분·직군을 받으면 해당 필드만 `—`로 표시합니다. 조회 계약과 적용 상태는 [제품 정책](product-policy.md#my-본인-프로필-조회)을 따릅니다.
 

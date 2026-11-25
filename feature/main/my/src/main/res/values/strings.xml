@@ -55,6 +55,7 @@
     <string name="my_profile_role_ob">OB</string>
     <string name="my_profile_role_completed">수료회원</string>
     <string name="my_profile_role_deferred">유예 회원</string>
+    <string name="my_profile_role_staff">운영진</string>
     <string name="my_profile_position_pm">PM</string>
     <string name="my_profile_position_design">Design</string>
     <string name="my_profile_position_web">Web</string>

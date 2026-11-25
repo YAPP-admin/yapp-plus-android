@@ -5,5 +5,6 @@ enum class MembershipStatus {
     OB,
     COMPLETED_MEMBER,
     DEFERRED,
+    STAFF,
     UNKNOWN,
 }

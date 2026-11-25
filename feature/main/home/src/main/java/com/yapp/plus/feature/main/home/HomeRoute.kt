@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,6 +92,7 @@ fun HomeRoute(
             modifier = Modifier.fillMaxSize(),
             noticeState = state.weeklyNotices,
             afterpartyBanner = afterpartyBanner,
+            showReportTip = canReport,
             onNotificationsClick = onNotificationsClick,
             onAttendanceClick = {
                 session?.takeUnless { it.type == SessionType.TEAM }?.let {
@@ -116,13 +116,6 @@ fun HomeRoute(
                         )
                     }
                 },
-            distanceContent = {
-                session?.coordinates?.let { coordinates ->
-                    key(session.sessionId, coordinates) {
-                        HomeDistanceRoute(coordinates)
-                    }
-                }
-            },
         )
         if (interaction.isReportComplete) {
             HomeReportConfirmation(

@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.setting.R
@@ -38,17 +39,19 @@ internal fun SettingsNotificationRetryRow(
             color = YappMainColor.textPrimary,
         )
         Box(Modifier.size(width = 52.dp, height = 48.dp), contentAlignment = Alignment.Center) {
-            IconButton(
-                onClick = onRetry,
-                enabled = !isRetrying,
-                modifier = Modifier.size(48.dp).border(1.dp, YappMainColor.border, CircleShape),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_restart_alt),
-                    contentDescription = stringResource(R.string.settings_notifications_reload),
-                    tint = if (isRetrying) YappMainColor.textFaint else YappMainColor.textSecondary,
-                    modifier = Modifier.size(24.dp),
-                )
+            WithoutRipple {
+                IconButton(
+                    onClick = onRetry,
+                    enabled = !isRetrying,
+                    modifier = Modifier.size(48.dp).border(1.dp, YappMainColor.border, CircleShape),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_restart_alt),
+                        contentDescription = stringResource(R.string.settings_notifications_reload),
+                        tint = if (isRetrying) YappMainColor.textFaint else YappMainColor.textSecondary,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
@@ -28,16 +29,18 @@ fun YappDetailHeader(
         modifier = modifier.fillMaxWidth().height(54.dp),
         contentAlignment = Alignment.Center,
     ) {
-        IconButton(
-            onClick = onBack,
-            modifier = Modifier.align(Alignment.CenterStart).padding(start = 4.dp).size(48.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_chevron_left),
-                contentDescription = backDescription,
-                modifier = Modifier.size(24.dp),
-                tint = YappMainColor.textSecondary,
-            )
+        WithoutRipple {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = 4.dp).size(48.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_chevron_left),
+                    contentDescription = backDescription,
+                    modifier = Modifier.size(24.dp),
+                    tint = YappMainColor.textSecondary,
+                )
+            }
         }
         YappText(
             text = title,

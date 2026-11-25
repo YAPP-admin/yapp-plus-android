@@ -23,6 +23,7 @@ import com.yapp.plus.core.designsystem.components.auth.AuthHeading
 import com.yapp.plus.core.designsystem.components.auth.AuthLayout
 import com.yapp.plus.core.designsystem.components.auth.AuthPrimaryAction
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.signup.model.AuthStatus
@@ -99,13 +100,15 @@ internal fun AuthStatusAction(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                TextButton(onClick = onAction, enabled = isEnabled) {
-                    YappText(
-                        text = stringResource(R.string.auth_contact),
-                        style =
-                            YappTypography.scaleT6Bold,
-                        color = YappAuthColor.textSubtle,
-                    )
+                WithoutRipple {
+                    TextButton(onClick = onAction, enabled = isEnabled) {
+                        YappText(
+                            text = stringResource(R.string.auth_contact),
+                            style =
+                                YappTypography.scaleT6Bold,
+                            color = YappAuthColor.textSubtle,
+                        )
+                    }
                 }
             }
     }

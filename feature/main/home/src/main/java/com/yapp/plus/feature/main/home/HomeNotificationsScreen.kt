@@ -1,7 +1,6 @@
 package com.yapp.plus.feature.main.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +23,7 @@ import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
@@ -152,7 +152,7 @@ internal fun HomeNotificationItem(
         if (onClick == null) {
             Modifier
         } else {
-            Modifier.clickable(
+            Modifier.noRippleClickable(
                 onClickLabel =
                     stringResource(
                         when {

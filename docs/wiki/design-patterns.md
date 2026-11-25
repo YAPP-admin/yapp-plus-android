@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-24
+last_verified: 2026-11-25
 ---
 
 # 설계 패턴
@@ -14,6 +14,7 @@ last_verified: 2026-11-24
 - Content는 상태와 콜백을 받아 화면을 그립니다. 하위 UI 컴포넌트는 Repository·DataSource를 호출하거나 화면 이동을 직접 조립하지 않습니다.
 - 펼침 여부 같은 일시적인 UI 상태는 Composable에서, 업무 처리·공유·복원이 필요한 화면 상태는 ViewModel에서 관리합니다.
 - 공통 텍스트·버튼·색상·타이포그래피는 Designsystem에서 제공하고 반복되는 변형은 공통 컴포넌트의 variant로 추가합니다.
+- 버튼과 클릭 가능한 행·탭·선택 컨트롤에는 리플을 표시하지 않습니다. Designsystem의 `noRippleClickable`, `noRippleSelectable`, `noRippleToggleable`로 Compose 동작과 접근성 정보를 유지합니다. 클릭 가능한 Material3 Surface는 `YappClickableSurface`를 사용하고 다른 Material3 버튼은 해당 컴포넌트에 `WithoutRipple`을 적용합니다.
 
 ## Preview
 
@@ -27,6 +28,7 @@ last_verified: 2026-11-24
 - ViewModel은 읽기 전용 `StateFlow<UiState>`를 노출하고 Activity·Context를 보관하지 않습니다.
 - 로딩·실패·재시도 상태를 명시합니다. 여러 요청이 있는 화면에서는 요청별 상태와 중복 요청 처리 방식을 정합니다.
 - 홈 초기 조회는 이번 주 세션과 주간 공지를 병렬로 요청합니다. My는 본인 프로필과 출석 점수를 병렬로 요청하고, 출석 내역 화면에 진입할 때 첫 이력 페이지를 함께 조회합니다. 각 화면은 초기 요청이 끝날 때까지 로딩 표시를 하나만 보여 줍니다. 요청별 실패·재시도와 이력 페이지 조회 상태는 각각 유지합니다.
+- 커뮤니티 목록은 진입·필터 변경·다음 페이지 조회 때 목록 안에 로딩 표시를 보여 줍니다. 당겨서 새로고침할 때는 기존 목록을 유지하고 상단 로딩 표시만 사용합니다.
 - 중요한 처리 결과는 UI 상태로 표현합니다. 화면 이동·Snackbar 같은 일회성 효과와 구분하고 유실 가능한 효과만으로 전달하지 않습니다.
 - 업무 정책은 Domain에서 처리하고 ViewModel은 화면 상태와 요청을 조율합니다.
 - 비동기 작업은 Coroutines·Flow를 사용하며 코루틴 취소 예외를 전파합니다.

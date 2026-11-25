@@ -29,6 +29,7 @@ import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
+import com.yapp.plus.feature.main.home.model.homeSessionStartFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -41,7 +42,6 @@ fun HomeSessionCard(
     onAttendanceClick: () -> Unit = {},
     onScoreClick: () -> Unit = {},
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
-    distanceContent: @Composable () -> Unit = {},
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -73,15 +73,13 @@ fun HomeSessionCard(
                         Modifier.padding(vertical = 24.dp),
                     )
                 AttendanceUiState.Error -> HomeSessionError()
-                is AttendanceUiState.Content -> {
+                is AttendanceUiState.Content ->
                     HomeSessionContent(
                         session = state.value,
                         now = now,
                         onAttendanceClick = onAttendanceClick,
                         onScoreClick = onScoreClick,
                     )
-                    distanceContent()
-                }
             }
         }
     }
@@ -137,7 +135,7 @@ internal fun HomeSessionContent(
             onClick = if (isCheckedIn) onScoreClick else onAttendanceClick,
             modifier = Modifier.fillMaxWidth(),
             enabled = isCheckedIn || attendanceStatus == AttendanceStatusUiModel.Available,
-            variant = YappButtonVariant.SolidNeutral,
+            variant = YappButtonVariant.HomeAttendance,
             size = YappButtonSize.HomeSecondary,
         )
     }
@@ -194,11 +192,8 @@ private fun attendanceNotOpenText(
         session.sessionDate?.isAfter(now.toLocalDate()) == true ->
             stringResource(
                 R.string.home_session_starts,
-                session.sessionDate.format(DateTimeFormatter.ofPattern("M/d")) + " " +
-                    (
-                        session.startTime?.format(DateTimeFormatter.ofPattern("HH:mm"))
-                            ?: session.startTimeLabel
-                    ),
+                session.startTime?.let { session.sessionDate.atTime(it).format(homeSessionStartFormat) }
+                    ?: "${session.sessionDate.dayOfMonth}일 ${session.startTimeLabel}",
             )
         session.sessionDate == now.toLocalDate() &&
             session.startTime?.isAfter(now.toLocalTime()) == true ->

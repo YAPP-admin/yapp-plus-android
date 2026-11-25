@@ -9,11 +9,11 @@ import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.home.model.HomeNotificationsUiState
 
-@Preview(name = "Home updated", widthDp = 393, heightDp = 692)
+@Preview(name = "Home - None", widthDp = 393, heightDp = 692)
 @Composable
 fun UpdatedHomePreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeScreen(HomePreviewData.state(), now = HomePreviewData.now)
+        HomeScreen(HomePreviewData.state(), now = HomePreviewData.now, showReportTip = true)
     }
 }
 

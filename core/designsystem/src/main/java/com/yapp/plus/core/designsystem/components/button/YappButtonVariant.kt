@@ -10,4 +10,5 @@ enum class YappButtonVariant {
     AuthPrimary,
     Kakao,
     SolidNeutral,
+    HomeAttendance,
 }

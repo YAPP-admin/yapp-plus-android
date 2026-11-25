@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.noRippleToggleable
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.home.R
@@ -44,7 +44,7 @@ internal fun HomeTeamPhotoMemberRow(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .toggleable(
+                    .noRippleToggleable(
                         value = member.isSelected,
                         enabled = isEnabled,
                         role = Role.Checkbox,

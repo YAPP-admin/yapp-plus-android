@@ -22,7 +22,7 @@ internal object CurrentWeekSessionUiMapper {
                 weekStartDate = schedule.weekStartDate,
                 sessionDate = session.date,
                 startTime = session.startTime,
-                address = session.locationDetails?.addressLine,
+                address = session.locationDetails?.roadAddress?.takeUnless(String::isBlank),
                 coordinates = session.locationDetails?.coordinates,
                 endTime = session.endTime,
                 type = session.type,

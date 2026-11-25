@@ -64,55 +64,62 @@ class SessionLocationUiTest {
     }
 
     @Test
-    fun distanceFlowKeepsCodeAttendanceAvailableWithAndWithoutPermission() {
+    fun sessionWithCoordinatesShowsVenueAndCodeAttendanceWithoutDistanceActions() {
+        installApiFixtures(includeLocation = true).use {
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            waitForText(ROAD_ADDRESS, substring = true)
+            composeRule.onNodeWithText(ROAD_ADDRESS, substring = true).assertIsDisplayed()
+            composeRule.onNodeWithText(FULL_ADDRESS, substring = true).assertDoesNotExist()
+            composeRule.onNodeWithText(CHECK_DISTANCE).assertDoesNotExist()
+            composeRule.onNodeWithText("거리 다시 확인").assertDoesNotExist()
+            composeRule.onNodeWithText("출석하기").assertIsEnabled().performClick()
+            composeRule.onNodeWithText("출석 코드를 입력해 주세요").assertIsDisplayed()
+            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+            composeRule.onNodeWithText("일정").performClick()
+            waitForText(FULL_ADDRESS, substring = true)
+        }
+    }
+
+    @Test
+    fun codeAttendanceRejectsInvalidLocationBeforeSendingVerification() {
         val phase = InstrumentationRegistry.getArguments().getString("sessionLocationPhase")
-        assumeTrue(phase in listOf("precise", "approximate", "denied", "disabled", "unavailable"))
+        val locationError =
+            when (phase) {
+                "precise" -> "세션 장소에서 100m 이내로 이동한 뒤 다시 시도해 주세요."
+                "denied" -> "출석하려면 위치 권한을 허용해 주세요."
+                "disabled" -> "휴대폰의 위치 기능을 켜 주세요"
+                else -> null
+            }
+        assumeTrue(locationError != null)
         val verifications = AtomicInteger()
         installApiFixtures(
             includeLocation = true,
             onVerification = { verifications.incrementAndGet() },
         ).use {
             assertLocationPermission(phase)
-            composeRule.setContent {
-                YappTheme { MainTabScaffold() }
-            }
-            waitForText(CHECK_DISTANCE)
-            composeRule.onNodeWithText(ADDRESS, substring = true).assertIsDisplayed()
-            composeRule.onNodeWithText("출석하기").assertIsEnabled()
-
-            composeRule.onNodeWithText(CHECK_DISTANCE).performClick()
-            assertLocationResult(phase)
-
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            waitForText("출석하기")
             composeRule.onNodeWithText("출석하기").assertIsEnabled().performClick()
-            composeRule.onNodeWithText("출석 코드를 입력해 주세요").assertIsDisplayed()
-            val locationError =
-                when (phase) {
-                    "precise" -> "세션 장소에서 100m 이내로 이동한 뒤 다시 시도해 주세요."
-                    "denied" -> "출석하려면 위치 권한을 허용해 주세요."
-                    "disabled" -> "휴대폰의 위치 기능을 켜 주세요"
-                    else -> null
-                }
-            if (locationError != null) {
-                composeRule.onNode(hasSetTextAction()).performTextInput("1234")
-                composeRule.onNodeWithText("확인").performClick()
-                waitForText(locationError)
-                composeRule.onNodeWithText("확인").assertIsEnabled()
-                assertEquals(0, verifications.get())
-            }
-            instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
-            composeRule.onNodeWithText("일정").performClick()
-            waitForText(ADDRESS, substring = true)
+            composeRule.onNode(hasSetTextAction()).performTextInput("1234")
+            composeRule.onNodeWithText("확인").performClick()
+            waitForText(requireNotNull(locationError))
+            composeRule.onNodeWithText("확인").assertIsEnabled()
+            assertEquals(0, verifications.get())
         }
     }
 
     @Test
     fun existingSessionKeepsItsVenueAndCodeAttendance() {
-        installApiFixtures(includeLocation = false).use {
+        installApiFixtures(
+            includeLocation = false,
+            weeklySessionDate = LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(1),
+        ).use {
             composeRule.setContent {
                 YappTheme { MainTabScaffold() }
             }
             waitForText("DMC 첨단산업센터")
             composeRule.onNodeWithText(CHECK_DISTANCE).assertDoesNotExist()
+            composeRule.onNodeWithText(REPORT_TIP).assertDoesNotExist()
             composeRule.onNodeWithText("출석하기").assertIsEnabled()
             composeRule.onNodeWithText("일정").performClick()
             waitForText("DMC 첨단산업센터")
@@ -235,6 +242,7 @@ class SessionLocationUiTest {
         ).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
             waitForText("출석하기")
+            composeRule.onNodeWithText(REPORT_TIP).assertIsDisplayed()
             composeRule.onNodeWithText("출결 보고").performClick()
             composeRule.onNodeWithText("지각").performClick()
             val confirm = composeRule.onNodeWithText("확인")
@@ -261,6 +269,7 @@ class SessionLocationUiTest {
         installApiFixtures(includeLocation = false, inactive = true).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
             waitForText("현재 활동 기간이 아니에요.")
+            composeRule.onNodeWithText(REPORT_TIP).assertDoesNotExist()
             composeRule.onNodeWithText("출결 보고").performClick()
             composeRule.onNodeWithText("결석").performClick()
             composeRule.onNodeWithText("확인").assertIsNotEnabled()
@@ -361,32 +370,13 @@ class SessionLocationUiTest {
             "startTime":"14:00","endTime":"18:00","type":"TEAM"}]}"""
     }
 
-    private fun assertLocationResult(phase: String?) {
-        when (phase) {
-            "precise" -> waitForText("세션 장소까지 약 111 m")
-            "approximate" -> {
-                waitForText("대략적인 위치로 계산했어요", substring = true)
-                waitForText("세션 장소까지 약", substring = true)
-            }
-            "denied" -> {
-                waitForText("거리 확인에는 위치 권한이 필요해요")
-                composeRule.onNodeWithText("위치 설정 열기").assertIsEnabled()
-            }
-            "disabled" -> waitForText("휴대폰의 위치 기능을 켜 주세요")
-            "unavailable" -> {
-                waitForText("현재 위치를 확인하지 못했어요. 다시 시도해 주세요")
-                composeRule.onNodeWithText(CHECK_DISTANCE).assertIsEnabled()
-            }
-        }
-    }
-
     private fun assertLocationPermission(phase: String?) {
         val hasFine = context.checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED
-        val hasCoarse = context.checkSelfPermission(ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED
-        when (phase) {
-            "denied" -> check(!hasFine && !hasCoarse)
-            "approximate" -> check(!hasFine && hasCoarse)
-            else -> check(hasFine)
+        if (phase == "denied") {
+            val hasCoarse = context.checkSelfPermission(ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED
+            check(!hasFine && !hasCoarse)
+        } else {
+            check(hasFine)
         }
     }
 
@@ -433,7 +423,9 @@ class SessionLocationUiTest {
 
     private companion object {
         const val CHECK_DISTANCE = "세션 장소까지 거리 확인"
-        const val ADDRESS = "서울특별시 마포구 월드컵북로 396 2층"
+        const val REPORT_TIP = "세션 시작 전에\n미리 보고해 주세요"
+        const val ROAD_ADDRESS = "서울특별시 마포구 월드컵북로 396"
+        const val FULL_ADDRESS = "$ROAD_ADDRESS 2층"
         const val VENUE_LATITUDE = 37.58
         const val MOCK_LOCATION_LATITUDE = 37.581
 

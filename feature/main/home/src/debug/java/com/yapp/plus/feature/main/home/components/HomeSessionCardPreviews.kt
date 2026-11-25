@@ -9,22 +9,12 @@ import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
-import com.yapp.plus.feature.main.home.model.SessionDistanceUiState
 
 @Preview(name = "Home session card", widthDp = 361)
 @Composable
 private fun HomeSessionCardPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        HomeSessionCard(
-            state = AttendanceUiState.Content(sampleSession()),
-            distanceContent = {
-                HomeSessionDistance(
-                    state = SessionDistanceUiState.Idle,
-                    onMeasure = {},
-                    onOpenSettings = {},
-                )
-            },
-        )
+        HomeSessionCard(state = AttendanceUiState.Content(sampleSession()))
     }
 }
 

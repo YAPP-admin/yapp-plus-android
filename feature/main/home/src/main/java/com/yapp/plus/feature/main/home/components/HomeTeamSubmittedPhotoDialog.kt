@@ -19,6 +19,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.domain.attendance.TeamAttendancePhotoImage
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoViewerUiState
@@ -53,8 +54,10 @@ internal fun HomeTeamSubmittedPhotoDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onClose) {
-                Text(stringResource(R.string.home_confirm))
+            WithoutRipple {
+                TextButton(onClick = onClose) {
+                    Text(stringResource(R.string.home_confirm))
+                }
             }
         },
     )

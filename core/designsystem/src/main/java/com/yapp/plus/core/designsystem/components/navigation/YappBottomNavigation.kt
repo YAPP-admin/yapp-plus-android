@@ -13,8 +13,11 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.theme.YappMainColor
+import com.yapp.plus.core.designsystem.theme.YappTheme
 
 private val navigationDividerHeight = 1.dp
 private val navigationHorizontalPadding = 20.dp
@@ -52,5 +55,38 @@ fun YappBottomNavigation(
             verticalAlignment = Alignment.CenterVertically,
             content = content,
         )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 393)
+@Composable
+private fun YappBottomNavigationPreview() {
+    YappTheme(darkTheme = false, dynamicColor = false) {
+        YappBottomNavigation {
+            YappBottomNavigationItem(
+                label = "홈",
+                iconResource = R.drawable.ic_navigation_house,
+                isSelected = true,
+                onClick = {},
+            )
+            YappBottomNavigationItem(
+                label = "일정",
+                iconResource = R.drawable.ic_navigation_calendar,
+                isSelected = false,
+                onClick = {},
+            )
+            YappBottomNavigationItem(
+                label = "게시판",
+                iconResource = R.drawable.ic_navigation_presentation,
+                isSelected = false,
+                onClick = {},
+            )
+            YappBottomNavigationItem(
+                label = "마이",
+                iconResource = R.drawable.ic_navigation_user,
+                isSelected = false,
+                onClick = {},
+            )
+        }
     }
 }

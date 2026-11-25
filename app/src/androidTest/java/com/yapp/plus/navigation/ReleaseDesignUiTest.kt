@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -39,6 +40,7 @@ import com.yapp.plus.feature.main.board.model.BoardNoticeUiModel
 import com.yapp.plus.feature.main.board.model.NoticeUiState
 import com.yapp.plus.feature.main.home.AvailableHomePreview
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
+import com.yapp.plus.feature.main.home.UpdatedHomePreview
 import com.yapp.plus.feature.main.my.MyPreviewData
 import com.yapp.plus.feature.main.my.MyScreen
 import com.yapp.plus.feature.main.schedule.ScheduleScreen
@@ -126,6 +128,21 @@ class ReleaseDesignUiTest {
             }
         }
         composeRule.onNodeWithText("다음").assertIsDisplayed().assertHeightIsEqualTo(52.dp)
+    }
+
+    @Test
+    fun homeSessionStartActionUsesFigmaDateAndDisabledColors() {
+        composeRule.setContent { UpdatedHomePreview() }
+        val button =
+            composeRule
+                .onNodeWithText("7일 14:00에 세션이 시작돼요")
+                .assertIsDisplayed()
+                .assertIsNotEnabled()
+        val bitmap = button.captureToImage().asAndroidBitmap()
+        assertEquals(0xFFF3F4F5.toInt(), bitmap.getPixel(bitmap.width / 8, bitmap.height / 2))
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        assertTrue(pixels.contains(0xFFD1D3D8.toInt()))
     }
 
     @Test

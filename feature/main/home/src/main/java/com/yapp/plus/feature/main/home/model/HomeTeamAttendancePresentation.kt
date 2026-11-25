@@ -50,7 +50,7 @@ internal fun HomeTeamAttendanceUiState.card(
         isAbsent || photo?.status == TeamAttendancePhotoStatus.REJECTED ->
             HomeTeamPhotoSessionUiState.ResultAvailable
         sessionStart != null && localNow.isBefore(sessionStart) ->
-            HomeTeamPhotoSessionUiState.BeforeStart(sessionStart.format(startLabelFormat))
+            HomeTeamPhotoSessionUiState.BeforeStart(sessionStart.format(homeSessionStartFormat))
         session.canUploadTeamPhoto(now) && photo == null -> HomeTeamPhotoSessionUiState.AwaitingPhoto
         else -> HomeTeamPhotoSessionUiState.Closed
     }
@@ -84,5 +84,3 @@ private fun UserPosition.label(): String? =
         UserPosition.UNKNOWN -> null
         else -> name.lowercase().replaceFirstChar(Char::uppercase)
     }
-
-private val startLabelFormat = DateTimeFormatter.ofPattern("M/d HH:mm")

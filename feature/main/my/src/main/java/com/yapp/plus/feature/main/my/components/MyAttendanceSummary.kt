@@ -1,7 +1,6 @@
 package com.yapp.plus.feature.main.my.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -10,6 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.feature.main.my.R
 import com.yapp.plus.feature.main.my.model.MyAttendanceScoreState
 
@@ -54,7 +54,7 @@ internal fun MyAttendanceSummary(
                         painter = painterResource(R.drawable.ic_attendance_rules),
                         contentDescription = stringResource(R.string.my_attendance_rules),
                         modifier =
-                            Modifier.size(20.dp).clickable(
+                            Modifier.size(20.dp).noRippleClickable(
                                 role = Role.Button,
                                 onClick = onRulesClick,
                             ),

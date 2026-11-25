@@ -1,7 +1,6 @@
 package com.yapp.plus.feature.setting.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -21,6 +19,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.main.YappDetailHeader
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.noRippleClickable
+import com.yapp.plus.core.designsystem.modifier.noRippleToggleable
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.setting.R
@@ -51,7 +51,7 @@ fun SettingsNotificationRow(
             modifier
                 .fillMaxWidth()
                 .height(60.dp)
-                .toggleable(
+                .noRippleToggleable(
                     value = enabled,
                     enabled = isInteractive,
                     role = Role.Switch,
@@ -96,7 +96,7 @@ fun SettingsLinkRow(
             modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+                .noRippleClickable(enabled = enabled, role = Role.Button, onClick = onClick)
                 .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,

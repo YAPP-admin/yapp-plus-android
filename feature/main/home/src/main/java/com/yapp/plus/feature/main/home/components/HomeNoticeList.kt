@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
@@ -89,7 +90,7 @@ internal fun HomeNoticeCard(
         } else {
             R.string.home_notice_operation
         }
-    Surface(
+    YappClickableSurface(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
         color = YappHomeColor.surface,

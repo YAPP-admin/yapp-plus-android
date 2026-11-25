@@ -31,6 +31,7 @@
 - Kotlin 변경에는 [코딩 컨벤션](docs/wiki/coding-conventions.md)을 항상 적용한다. 서식 기준은 `.editorconfig`에도 기록한다.
 - 승인된 모듈 상태·의존성·파일 배치는 [모듈 구조](docs/wiki/module-structure.md), 화면·데이터 구현은 [설계 패턴](docs/wiki/design-patterns.md)을 따른다.
 - 출석 정책과 API 계약은 [제품 정책](docs/wiki/product-policy.md)에서 확인된 요구사항만 구현한다.
+- 사용자에게 보이는 UI나 제품 동작을 바꾸기 전에 [Figma·Notion 원본 확인 절차](docs/wiki/README.md#figmanotion-원본-확인)를 적용한다. 근거가 없는 화면 요소나 상태는 임의로 추가하지 않는다.
 - 다른 프로젝트 문서는 참고 자료다. 승인되지 않은 규칙·구현체·작업 승인 절차를 그대로 적용하지 않는다.
 
 ## 세션 정책과 지식 후보의 자동 유지보수

@@ -22,6 +22,7 @@ internal object YappColor {
     val foregroundMuted = Color(0xFF555D6D)
     val foregroundSubtle = Color(0xFF868B94)
     val foregroundFaint = Color(0xFFB0B3BA)
+    val foregroundDisabled = Color(0xFFD1D3D8)
     val strokeNeutralWeak = Color(0xFFDCDEE3)
     val backgroundBasement = Color(0xFFF3F4F5)
     val kakaoContainer = Color(0xFFFAE300)

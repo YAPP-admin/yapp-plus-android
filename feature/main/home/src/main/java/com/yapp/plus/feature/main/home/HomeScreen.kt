@@ -49,9 +49,9 @@ fun HomeScreen(
     noticeState: HomeNoticeUiState = HomeNoticeUiState.Empty,
     now: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")),
     isLoading: Boolean = false,
-    distanceContent: @Composable () -> Unit = {},
     teamSessionCard: (@Composable () -> Unit)? = null,
     afterpartyBanner: (@Composable () -> Unit)? = null,
+    showReportTip: Boolean = false,
 ) {
     if (isLoading) {
         Box(
@@ -93,13 +93,13 @@ fun HomeScreen(
                     now = now,
                     onAttendanceClick = onAttendanceClick,
                     onScoreClick = onScoreClick,
-                    distanceContent = distanceContent,
                 )
                 Spacer(Modifier.height(10.dp))
                 HomeQuickActions(
                     onSessionsClick = onSessionsClick,
                     onScoreClick = onScoreClick,
                     onReportClick = onReportClick,
+                    showReportTip = showReportTip,
                 )
                 Spacer(Modifier.height(40.dp))
                 Box(Modifier.weight(1f).fillMaxWidth().heightIn(min = 220.dp)) {

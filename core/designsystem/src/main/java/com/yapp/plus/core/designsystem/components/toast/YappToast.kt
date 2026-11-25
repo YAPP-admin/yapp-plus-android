@@ -2,7 +2,6 @@ package com.yapp.plus.core.designsystem.components.toast
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
+import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
@@ -108,7 +108,7 @@ fun YappToast(
         actionText?.let {
             Text(
                 text = it,
-                modifier = Modifier.clickable(onClick = onAction).padding(vertical = 4.dp),
+                modifier = Modifier.noRippleClickable(onClick = onAction).padding(vertical = 4.dp),
                 style = YappHomeTypography.caption,
                 color = YappHomeColor.brand,
             )

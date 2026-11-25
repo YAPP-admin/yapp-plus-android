@@ -30,7 +30,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
+import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.designsystem.theme.YappTypography
@@ -56,7 +58,7 @@ fun YappDropdown(
         )
         Spacer(Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
-            Surface(
+            YappClickableSurface(
                 onClick = { expanded = !expanded },
                 modifier = Modifier.fillMaxWidth().height(metrics.height),
                 enabled = enabled,
@@ -114,31 +116,33 @@ fun YappDropdown(
                 border = BorderStroke(1.dp, YappColor.border),
             ) {
                 options.forEach { option ->
-                    DropdownMenuItem(
-                        text = {
-                            YappText(
-                                option,
-                                style = YappTypography.body1NormalRegular,
-                                color = YappColor.textPrimary,
-                            )
-                        },
-                        onClick = {
-                            onOptionSelected(option)
-                            expanded = false
-                        },
-                        modifier =
-                            Modifier
-                                .width(320.dp)
-                                .height(metrics.menuItemHeight)
-                                .background(
-                                    if (option == selectedOption) {
-                                        YappColor.selectionOverlay
-                                    } else {
-                                        YappColor.transparent
-                                    },
-                                ),
-                        contentPadding = PaddingValues(horizontal = 8.dp),
-                    )
+                    WithoutRipple {
+                        DropdownMenuItem(
+                            text = {
+                                YappText(
+                                    option,
+                                    style = YappTypography.body1NormalRegular,
+                                    color = YappColor.textPrimary,
+                                )
+                            },
+                            onClick = {
+                                onOptionSelected(option)
+                                expanded = false
+                            },
+                            modifier =
+                                Modifier
+                                    .width(320.dp)
+                                    .height(metrics.menuItemHeight)
+                                    .background(
+                                        if (option == selectedOption) {
+                                            YappColor.selectionOverlay
+                                        } else {
+                                            YappColor.transparent
+                                        },
+                                    ),
+                            contentPadding = PaddingValues(horizontal = 8.dp),
+                        )
+                    }
                 }
             }
         }

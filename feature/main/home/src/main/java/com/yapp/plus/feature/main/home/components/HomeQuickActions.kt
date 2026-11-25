@@ -5,11 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,10 +18,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.feature.main.home.R
+
+private val quickActionHeight = 70.dp
 
 @Composable
 internal fun HomeQuickActions(
@@ -28,6 +32,7 @@ internal fun HomeQuickActions(
     onScoreClick: () -> Unit,
     modifier: Modifier = Modifier,
     onReportClick: () -> Unit = {},
+    showReportTip: Boolean = false,
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         HomeQuickAction(
@@ -37,14 +42,21 @@ internal fun HomeQuickActions(
             onClick = onSessionsClick,
             modifier = Modifier.weight(1f),
         )
-        HomeQuickAction(
-            title = stringResource(R.string.home_report),
-            description = stringResource(R.string.home_report_before),
-            image = R.drawable.graphic_report,
-            onClick = onReportClick,
-            modifier = Modifier.weight(1f),
-            imageModifier = Modifier.size(width = 102.dp, height = 70.dp),
-        )
+        Box(Modifier.weight(1f)) {
+            HomeQuickAction(
+                title = stringResource(R.string.home_report),
+                description = stringResource(R.string.home_report_before),
+                image = R.drawable.graphic_report,
+                onClick = onReportClick,
+                modifier = Modifier.fillMaxWidth(),
+                imageModifier = Modifier.size(width = 102.dp, height = quickActionHeight),
+            )
+            if (showReportTip) {
+                Box(Modifier.matchParentSize(), contentAlignment = Alignment.TopCenter) {
+                    HomeReportTip(Modifier.offset(y = quickActionHeight + 9.dp))
+                }
+            }
+        }
     }
 }
 
@@ -58,14 +70,14 @@ internal fun HomeQuickAction(
     imageModifier: Modifier = Modifier.size(width = 101.5.dp, height = 70.dp),
     enabled: Boolean = true,
 ) {
-    Surface(
+    YappClickableSurface(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         color = YappHomeColor.surface,
     ) {
-        Box(Modifier.height(70.dp)) {
+        Box(Modifier.height(quickActionHeight)) {
             Image(
                 painterResource(image),
                 null,

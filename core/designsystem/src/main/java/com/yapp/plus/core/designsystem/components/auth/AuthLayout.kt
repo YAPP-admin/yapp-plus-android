@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappAuthColor
 
 @Composable
@@ -47,12 +48,14 @@ fun AuthLayout(
                         .padding(start = 4.dp),
             ) {
                 if (showBack) {
-                    IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_auth_back),
-                            contentDescription = stringResource(R.string.yapp_auth_back),
-                            modifier = Modifier.size(24.dp),
-                        )
+                    WithoutRipple {
+                        IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_auth_back),
+                                contentDescription = stringResource(R.string.yapp_auth_back),
+                                modifier = Modifier.size(24.dp),
+                            )
+                        }
                     }
                 }
             }

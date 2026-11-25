@@ -110,10 +110,13 @@ Figma의 Bold 표기는 해당 스타일의 실제 글꼴 굵기를 따릅니다
 
 ## 수정된 홈 디자인 토큰
 
-[Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284)은 `YappHomeColor`와 `YappHomeTypography`로 표현합니다. 배경 `#F3F4F5`, 검정 액션 `#2A3038`, 비활성 액션 `#555D6D`의 50% 투명도, 오류 `#FA342C`와 원본의 11–26sp·15–35sp 스타일을 사용합니다. 공통 기본값과 다른 탭의 표현은 유지합니다.
+[Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284)은 `YappHomeColor`와 `YappHomeTypography`로 표현합니다. 배경 `#F3F4F5`, 검정 액션 `#2A3038`, 오류 `#FA342C`와 원본의 11–26sp·15–35sp 스타일을 사용합니다. 공통 기본값과 다른 탭의 표현은 유지합니다.
+
+홈의 비활성 출석 버튼은 배경 `#F3F4F5`와 글자 `#D1D3D8`을 사용합니다. 세션 시작 안내의 날짜와 시간은 `7일 14:00에 세션이 시작돼요` 형식으로 표시합니다. [Figma 메인 - None](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16229)
 
 홈 빠른 메뉴의 두 그래픽과 출석 완료의 캐릭터·좌우 장식, tooltip 화살표·코드 오류 아이콘은 해당 Figma 레이어를 PNG로 직접 내보낸 `:feature:main:home`의 `drawable-nodpi/home_*.png`입니다. 빠른 메뉴는 원본 카드에서 실제 보이는 101.5×70dp 영역을 유지합니다. 기존 YAPP 로고와 빈 상태 벡터도 재사용하며, 작은 빈 상태는 원본의 50% 투명도를 적용합니다. 완료 그래픽의 원형 배경은 Figma Frame의 채움·반경으로 구성하고, 세 레이어는 Motion context의 공통 2초 타임라인을 Compose에서 재생합니다. 시스템 애니메이션이 꺼져 있으면 정적인 완료 그래픽을 표시합니다.
 
+선택된 출결 보고 유형은 `#1A1C20` 테두리와 흰색 가운데를 둘러싼 같은 색의 링을 표시합니다. 홈의 `ic_home_report_radio_*`는 기본·선택 상태의 Figma 원본을 변환한 24dp VectorDrawable입니다. [Figma 출결 보고](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=652-5401)
 
 ## 개발 화면의 원본 정합성
 

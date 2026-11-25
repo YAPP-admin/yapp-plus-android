@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
@@ -46,13 +47,15 @@ fun YappMainHeader(
             leadingContent()
         }
         if (iconResource != null) {
-            IconButton(onClick = onIconClick, modifier = Modifier.size(24.dp)) {
-                Icon(
-                    painter = painterResource(iconResource),
-                    contentDescription = iconDescription,
-                    modifier = Modifier.size(24.dp),
-                    tint = iconTint,
-                )
+            WithoutRipple {
+                IconButton(onClick = onIconClick, modifier = Modifier.size(24.dp)) {
+                    Icon(
+                        painter = painterResource(iconResource),
+                        contentDescription = iconDescription,
+                        modifier = Modifier.size(24.dp),
+                        tint = iconTint,
+                    )
+                }
             }
         }
     }

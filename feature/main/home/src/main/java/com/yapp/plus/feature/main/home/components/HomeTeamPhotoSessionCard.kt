@@ -2,7 +2,6 @@ package com.yapp.plus.feature.main.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.core.designsystem.theme.YappMainColor
@@ -167,7 +167,7 @@ internal fun HomeTeamPhotoSessionAction(
         text = label,
         onClick = { action?.invoke() },
         modifier = Modifier.fillMaxWidth(),
-        variant = YappButtonVariant.SolidNeutral,
+        variant = YappButtonVariant.HomeAttendance,
         size = YappButtonSize.HomeSecondary,
         enabled = action != null,
     )
@@ -181,7 +181,7 @@ internal fun HomeTeamPhotoPendingDetails(
 ) {
     val photoAction =
         onViewPhoto?.let {
-            Modifier.clickable(
+            Modifier.noRippleClickable(
                 onClickLabel = stringResource(R.string.home_team_result_view_photo),
                 role = Role.Button,
                 onClick = it,

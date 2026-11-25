@@ -4,6 +4,8 @@ import com.yapp.plus.domain.session.SessionCoordinates
 import com.yapp.plus.domain.session.SessionType
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class CurrentWeekSessionUiModel(
     val weekStartDateLabel: String,
@@ -22,3 +24,5 @@ data class CurrentWeekSessionUiModel(
     val endTime: LocalTime? = null,
     val type: SessionType? = null,
 )
+
+internal val homeSessionStartFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("d'일' HH:mm", Locale.KOREAN)

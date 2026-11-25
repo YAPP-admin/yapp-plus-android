@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +26,7 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
+import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappMainColor
@@ -113,7 +113,7 @@ internal fun HomeTeamPhotoResultSheet(
             }
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 if (state is ConfirmedAbsent) {
-                    Surface(
+                    YappClickableSurface(
                         onClick = onContactStaff,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(8.dp),

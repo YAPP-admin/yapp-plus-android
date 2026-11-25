@@ -1,6 +1,5 @@
 package com.yapp.plus.feature.main.board.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.noRippleClickable
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.domain.notice.NoticeAssignment
@@ -53,7 +53,7 @@ internal fun BoardAssignmentInfo(assignment: NoticeAssignment) {
             }
             BoardAssignmentRow(stringResource(R.string.board_assignment_method)) {
                 Row(
-                    Modifier.clickable {
+                    Modifier.noRippleClickable {
                         runCatching {
                             handler.openUri(
                                 assignment.submissionUrl,

@@ -1,25 +1,22 @@
 package com.yapp.plus.feature.main.home.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -29,6 +26,7 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.input.YappTextField
 import com.yapp.plus.core.designsystem.components.input.YappTextFieldVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.noRippleSelectable
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.domain.attendance.AttendanceReportType
@@ -124,15 +122,23 @@ internal fun HomeReportOption(
     selected: Boolean,
     onClick: () -> Unit,
 ) {
+    val borderColor = if (selected) YappMainColor.textPrimary else YappMainColor.divider
+    val radioIcon =
+        if (selected) {
+            R.drawable.ic_home_report_radio_selected
+        } else {
+            R.drawable.ic_home_report_radio_default
+        }
+
     Surface(
         color = YappMainColor.surface,
         shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(1.dp, if (selected) YappMainColor.brand else YappMainColor.divider),
+        border = BorderStroke(1.dp, borderColor),
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .selectable(
+                .noRippleSelectable(
                     selected,
                     role = Role.RadioButton,
                     onClick = onClick,
@@ -145,22 +151,11 @@ internal fun HomeReportOption(
                 YappTypography.scaleT4Medium,
                 YappMainColor.textPrimary,
             )
-            Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
-                Box(
-                    Modifier
-                        .size(20.dp)
-                        .border(
-                            1.dp,
-                            if (selected) YappMainColor.brand else YappMainColor.divider,
-                            CircleShape,
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (selected) {
-                        Box(Modifier.size(10.dp).background(YappMainColor.brand, CircleShape))
-                    }
-                }
-            }
+            Image(
+                painter = painterResource(radioIcon),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+            )
         }
     }
 }

@@ -46,11 +46,11 @@ private fun HomeButtonVariantsPreview() {
             YappButton(stringResource(R.string.yapp_preview_home_confirm), {
             }, variant = YappButtonVariant.SolidBrand, size = YappButtonSize.HomePrimary)
             YappButton(stringResource(R.string.yapp_preview_home_check_in), {
-            }, variant = YappButtonVariant.SolidNeutral, size = YappButtonSize.HomeSecondary)
+            }, variant = YappButtonVariant.HomeAttendance, size = YappButtonSize.HomeSecondary)
             YappButton(
                 stringResource(R.string.yapp_preview_home_attended),
                 {},
-                variant = YappButtonVariant.SolidNeutral,
+                variant = YappButtonVariant.HomeAttendance,
                 size = YappButtonSize.HomeSecondary,
                 enabled = false,
             )

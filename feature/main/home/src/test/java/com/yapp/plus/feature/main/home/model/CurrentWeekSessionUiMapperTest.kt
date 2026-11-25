@@ -63,7 +63,7 @@ class CurrentWeekSessionUiMapperTest {
                     weekStartDate = LocalDate.of(2026, 10, 18),
                     sessionDate = LocalDate.of(2026, 10, 24),
                     startTime = LocalTime.of(14, 0),
-                    address = "서울특별시 마포구 월드컵북로 396 2층",
+                    address = "서울특별시 마포구 월드컵북로 396",
                     coordinates = SessionCoordinates(latitude = 37.58, longitude = 126.88),
                 ),
             ),

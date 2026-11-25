@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.noRippleSelectable
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.board.R
@@ -65,7 +65,7 @@ fun BoardCategoryChip(
         modifier =
             modifier
                 .width(IntrinsicSize.Max)
-                .selectable(selected = isSelected, role = Role.Tab, onClick = onClick),
+                .noRippleSelectable(selected = isSelected, role = Role.Tab, onClick = onClick),
     ) {
         YappText(
             stringResource(category.labelResource),

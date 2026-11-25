@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
+import com.yapp.plus.core.designsystem.modifier.WithoutRipple
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
 import com.yapp.plus.feature.main.home.R
@@ -26,16 +27,18 @@ internal fun HomeTopBar(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.fillMaxWidth().heightIn(min = 54.dp)) {
-        IconButton(
-            onClick = onBack,
-            modifier = Modifier.align(Alignment.CenterStart).padding(start = 4.dp),
-        ) {
-            Icon(
-                painterResource(DesignSystemR.drawable.ic_chevron_left),
-                stringResource(R.string.home_back),
-                Modifier.size(24.dp),
-                YappHomeColor.muted,
-            )
+        WithoutRipple {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = 4.dp),
+            ) {
+                Icon(
+                    painterResource(DesignSystemR.drawable.ic_chevron_left),
+                    stringResource(R.string.home_back),
+                    Modifier.size(24.dp),
+                    YappHomeColor.muted,
+                )
+            }
         }
         YappText(
             title,

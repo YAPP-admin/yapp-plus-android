@@ -19,6 +19,13 @@ internal data class ButtonColors(
             enabled: Boolean,
         ): ButtonColors =
             when (variant) {
+                YappButtonVariant.HomeAttendance ->
+                    ButtonColors(
+                        container = if (enabled) YappHomeColor.action else YappColor.backgroundBasement,
+                        content = if (enabled) YappColor.white else YappColor.foregroundDisabled,
+                        border = null,
+                    )
+
                 YappButtonVariant.SolidNeutral ->
                     ButtonColors(
                         container =

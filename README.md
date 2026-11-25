@@ -31,7 +31,7 @@ MVVM + 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙은 필�
 
 - Android Studio와 Android SDK 37
 - JDK 25 (Gradle daemon JVM 설정으로 자동 선택)
-- Kotlin 2.2.10, Android Gradle Plugin 9.5.0-alpha02, Gradle 9.6.0
+- Kotlin 2.2.10, Android Gradle Plugin 9.4.0, Gradle 9.6.0
 - minSdk 24, targetSdk 37
 
 Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합니다. 로컬 SDK 경로는 `local.properties`에 설정하며 이 파일은 Git에서 제외됩니다.

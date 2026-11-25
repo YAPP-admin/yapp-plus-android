@@ -54,7 +54,6 @@ fun Modifier.noRippleToggleable(
     )
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun WithoutRipple(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalRippleConfiguration provides null, content = content)
 }

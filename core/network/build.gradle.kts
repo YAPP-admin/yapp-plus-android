@@ -18,11 +18,7 @@ fun apiBaseUrl(environment: String): String {
             .getProperty("yapp.api.$environment.host")
             ?.trimEnd('/')
             ?.takeIf(String::isNotBlank)
-            ?: if (environment == "mock") {
-                error("Set yapp.api.mock.host in local.properties to use the Mock API")
-            } else {
-                return ""
-            }
+            ?: return ""
 
     return "$apiHost/api/"
 }
@@ -42,24 +38,6 @@ fun buildConfigString(value: String): String =
         append('"')
     }
 
-val debugApiTarget =
-    localProperties
-        .getProperty("yapp.api.debug.target")
-        ?.trim()
-        ?.takeIf(String::isNotBlank)
-        ?: "dev"
-
-check(debugApiTarget in setOf("dev", "mock")) {
-    "yapp.api.debug.target must be either 'dev' or 'mock'"
-}
-
-fun mockApiExample(propertyName: String): String =
-    if (debugApiTarget == "mock") {
-        localProperties.getProperty(propertyName, "").trim()
-    } else {
-        ""
-    }
-
 android {
     namespace = "com.yapp.plus.core.network"
 
@@ -69,25 +47,11 @@ android {
 
     buildTypes {
         getByName("debug") {
-            buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl(debugApiTarget)}\"")
-            buildConfigField("Boolean", "MOCK_API_ENABLED", (debugApiTarget == "mock").toString())
-            buildConfigField(
-                "String",
-                "CURRENT_WEEK_MOCK_EXAMPLE",
-                buildConfigString(mockApiExample("yapp.api.mock.example.current-week")),
-            )
-            buildConfigField(
-                "String",
-                "CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE",
-                buildConfigString(mockApiExample("yapp.api.mock.example.generation-sessions")),
-            )
+            buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl("dev")}\"")
         }
 
         getByName("release") {
             buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl("prod")}\"")
-            buildConfigField("Boolean", "MOCK_API_ENABLED", "false")
-            buildConfigField("String", "CURRENT_WEEK_MOCK_EXAMPLE", "\"\"")
-            buildConfigField("String", "CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE", "\"\"")
         }
     }
 }

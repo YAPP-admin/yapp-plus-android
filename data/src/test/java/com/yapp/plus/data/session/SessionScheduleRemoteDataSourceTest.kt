@@ -1,6 +1,5 @@
 package com.yapp.plus.data.session
 
-import com.yapp.plus.core.network.BuildConfig
 import com.yapp.plus.domain.result.YappResult
 import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.domain.session.ScheduleFailure
@@ -39,7 +38,6 @@ class SessionScheduleRemoteDataSourceTest {
             createClient(
                 response = response,
                 path = "sessions/current-week",
-                example = BuildConfig.CURRENT_WEEK_MOCK_EXAMPLE,
             ).use {
                 val result = SessionScheduleRemoteDataSource(it).fetchCurrentWeekSchedule()
                 assertEquals(LocalDate.of(2026, 10, 18), result.weekStartDate)
@@ -129,7 +127,6 @@ class SessionScheduleRemoteDataSourceTest {
             createClient(
                 response = response,
                 path = path,
-                example = BuildConfig.CURRENT_GENERATION_SESSIONS_MOCK_EXAMPLE,
             ).use {
                 val expected =
                     ScheduledSessionData(
@@ -247,7 +244,6 @@ class SessionScheduleRemoteDataSourceTest {
     private fun createClient(
         response: String,
         path: String? = null,
-        example: String? = null,
         status: HttpStatusCode = HttpStatusCode.OK,
     ): HttpClient =
         HttpClient(
@@ -255,8 +251,6 @@ class SessionScheduleRemoteDataSourceTest {
                 assertEquals(HttpMethod.Get, request.method)
                 if (path != null) {
                     assertEquals("/api/$path", request.url.encodedPath)
-                    val prefer = example?.takeIf { BuildConfig.MOCK_API_ENABLED && it.isNotBlank() }
-                    assertEquals(prefer?.let { "example=$it" }, request.headers[HttpHeaders.Prefer])
                 }
                 respond(
                     response,

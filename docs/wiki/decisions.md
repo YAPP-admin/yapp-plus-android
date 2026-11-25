@@ -6,7 +6,7 @@ last_verified: 2026-11-25
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0074`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0083`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -659,3 +659,28 @@ last_verified: 2026-11-25
 - 반영: [제품 정책](product-policy.md#개발과-비공개-테스트-배포), [모듈 구조](module-structure.md), [README](../../README.md), [기여 규칙](../../CONTRIBUTING.md), [AGENTS.md](../../AGENTS.md), App Gradle 설정과 Debug 앱 이름.
 - 적용 상태: Gradle Debug applicationId 접미사와 Debug 런처 이름을 적용했습니다. Firebase 설정 파일은 비밀 설정 파일이므로 저장소 외부에서 각 앱 ID로 관리합니다.
 - 대체한 결정: 없음. Release 앱 ID와 Play 배포 경로는 유지합니다.
+
+## DEC-0082 · Android 런처 이름 YAPP+
+
+- 기록일: 2026-11-25
+- 결정: Release 앱 런처 이름은 `YAPP+`, Debug 앱 이름은 `YAPP+ (Debug)`로 표시합니다. 앱 ID는 Release `com.yapp.plus`, Debug `com.yapp.plus.debug`를 유지하고 기존 아이콘을 바꾸지 않습니다.
+- 이유: 사용자가 앱 이름을 `YAPP+`로 변경하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), Google Play Console 화면에서 확인한 최신 프로덕션 `1.0.2 (5)`.
+- 반영: [제품 정책](product-policy.md#개발과-비공개-테스트-배포), [모듈 구조](module-structure.md), [README](../../README.md), [기여 규칙](../../CONTRIBUTING.md), [AGENTS.md](../../AGENTS.md), App 이름 리소스.
+- 적용 상태: 런처 이름을 반영하고 다음 릴리즈를 `versionName` `1.0.3`, `versionCode` `6`으로 설정했습니다. Release AAB는 `release/v1.0.3`에서 생성합니다.
+- 대체한 결정: DEC-0047의 Android 앱 표시 이름과 DEC-0081의 variant 런처 이름만 대체합니다. 아이콘과 앱 ID는 유지합니다.
+
+## DEC-0083 · 로그인 오류 팝업과 제보 채널
+
+- 기록일: 2026-11-26
+- 결정: 로그인 오류 팝업에 Figma의 문구와 `닫기`·`제보하기` 버튼을 표시합니다. 제보 버튼은 기존 YAPP 카카오톡 문의 채널을 엽니다.
+- 근거: 사용자가 첨부한 디자인과 수정 요청, [Figma 로그인 오류 팝업](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=375-11316), [기존 문의 채널 DEC-0049](#dec-0049--my-이용-문의-채널), [Android 이슈 #232](https://github.com/YAPP-admin/yapp-plus-android/issues/232). 연결된 계정에서 Notion 정책 원문을 열 수 없었습니다.
+- 반영: Android 로그인 화면, [제품 정책](product-policy.md#오류-안내와-복구), [공통 컴포넌트](design-system-components.md).
+
+## DEC-0084 · 출결 보고 완료, 팀 사진 반려, 공지 상세 오류 화면
+
+- 기록일: 2026-11-26
+- 결정: 출결 보고 완료 토스트는 Figma의 색상·타이포그래피·여백을 적용합니다. 팀 사진 반려 시트는 서버에서 제공한 반려 사유를 표시하고, 내용이 없으면 해당 영역을 표시하지 않습니다. 공지 상세 조회 실패는 뒤로가기와 왼쪽 정렬 제목·설명, 일러스트가 있는 화면으로 표시합니다.
+- 근거: 사용자 디자인 정합성 수정 요청, [Figma 출결 보고 완료](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=526-13920), [Figma 팀 사진 반려](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24774), [Figma 공지 상세 오류](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40786), [서버 팀 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/710ebabad349cb5d8b5c47a896cc5ca7df68bbe8/APIDOC.md#L339-L362). 연결된 계정에서 Notion 정책 원문을 열 수 없었습니다.
+- 반영: 홈·팀 출석·게시판, [공통 컴포넌트](design-system-components.md#홈-figma-변형), [제품 정책](product-policy.md#오류-안내와-복구).
+- 관련 이슈: [#263 출결 보고 토스트](https://github.com/YAPP-admin/yapp-plus-android/issues/263), [#264 팀 출석 안내](https://github.com/YAPP-admin/yapp-plus-android/issues/264), [#232 Android 오류 화면](https://github.com/YAPP-admin/yapp-plus-android/issues/232).

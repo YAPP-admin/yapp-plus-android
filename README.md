@@ -42,6 +42,12 @@ Android Studio에서 프로젝트 루트를 열고 Gradle 동기화를 실행합
 ./gradlew :app:assembleDebug :app:assembleRelease
 ```
 
+Release App Bundle 생성:
+
+```bash
+./gradlew :app:bundleRelease
+```
+
 FCM 연동에 사용할 Android 설정은 Firebase 콘솔에서 빌드별 앱 ID로 받아 아래 경로에 둡니다. 설정 파일은 Git에서 제외합니다.
 
 | 빌드 | Firebase 프로젝트 | Android 앱 ID | 설정 파일 |
@@ -63,7 +69,7 @@ Google OAuth Android 클라이언트도 패키지명과 서명 SHA-1에 맞게 �
 ./gradlew :app:testDebugUnitTest
 ```
 
-네임스페이스는 `com.yapp.plus`입니다. Debug의 `applicationId`는 `com.yapp.plus.debug`, Release는 `com.yapp.plus`이며 Debug 앱 이름은 `Yapp (Debug)`입니다. 두 앱을 같은 기기에 설치할 수 있습니다. 비공개 테스트는 기존 `release/v1.0.1` 브랜치와 같은 Play 앱을 사용하며 실제 개발은 `develop`에서 이어갑니다. 자세한 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를 따릅니다.
+네임스페이스는 `com.yapp.plus`입니다. Debug는 `com.yapp.plus.debug` / `YAPP+ (Debug)`, Release는 `com.yapp.plus` / `YAPP+`를 사용해 두 앱을 같은 기기에 설치할 수 있습니다. 비공개 테스트는 기존 `release/v1.0.1` 브랜치와 같은 Play 앱을 사용하며 실제 개발은 `develop`에서 이어갑니다. 자세한 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를 따릅니다.
 
 ## 기여
 

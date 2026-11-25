@@ -17,6 +17,7 @@ internal data class TeamPhotoDetailsResponse(
     val submittedAt: String,
     val uploader: TeamPhotoUploaderResponse,
     val selectedMemberCount: Int,
+    val rejectionReason: String? = null,
 ) {
     fun toData(): TeamPhotoDetailsData =
         TeamPhotoDetailsData(
@@ -31,5 +32,6 @@ internal data class TeamPhotoDetailsResponse(
             submittedAt = Instant.parse(submittedAt),
             uploaderName = uploader.name,
             selectedMemberCount = selectedMemberCount,
+            rejectionReason = rejectionReason,
         )
 }

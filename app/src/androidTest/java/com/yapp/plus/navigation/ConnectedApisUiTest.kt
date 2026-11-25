@@ -90,17 +90,26 @@ class ConnectedApisUiTest {
         composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
     }
 
-    @Test fun loginFailureClosesWithoutStartingAnotherRequest() {
+    @Test fun loginFailureCanBeReportedAndClosed() {
         var showError by mutableStateOf(true)
+        var reportCount = 0
         composeRule.setContent {
             YappTheme {
-                if (showError) LoginErrorDialog { showError = false }
+                if (showError) {
+                    LoginErrorDialog(
+                        onDismiss = { showError = false },
+                        onReport = { reportCount++ },
+                    )
+                }
             }
         }
-        composeRule.onNodeWithText("로그인을 완료하지 못했어요").assertIsDisplayed()
+        val title = composeRule.onNodeWithText("앗, 예기치 못한 오류가 발생했어요!")
+        title.assertIsDisplayed()
         composeRule.onNodeWithText("다시 시도").assertDoesNotExist()
+        composeRule.onNodeWithText("제보하기").assertIsDisplayed().performClick()
+        composeRule.runOnIdle { assertEquals(1, reportCount) }
         composeRule.onNodeWithText("닫기").performClick()
-        composeRule.onNodeWithText("로그인을 완료하지 못했어요").assertDoesNotExist()
+        title.assertDoesNotExist()
     }
 
     @Test fun reportTypeMatchesFigmaOptions() {

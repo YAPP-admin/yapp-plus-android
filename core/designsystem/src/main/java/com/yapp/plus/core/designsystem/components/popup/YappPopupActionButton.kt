@@ -24,7 +24,7 @@ internal fun YappPopupActionButton(
     variant: YappAlertDialogVariant = YappAlertDialogVariant.Default,
     onClick: () -> Unit,
 ) {
-    val isCompact = variant == YappAlertDialogVariant.Compact
+    val isCompact = variant.isCompact
     val cornerRadius =
         when {
             isCompact -> 8.dp
@@ -41,6 +41,7 @@ internal fun YappPopupActionButton(
     val contentColor =
         when {
             primary -> YappColor.white
+            variant == YappAlertDialogVariant.AuthError -> YappColor.foregroundNeutral
             isCompact -> YappColor.foregroundSubtle
             else -> YappColor.primary
         }

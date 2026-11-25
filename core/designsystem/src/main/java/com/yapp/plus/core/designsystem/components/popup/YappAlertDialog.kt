@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextGeometricTransform
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -28,9 +29,16 @@ import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 
+private const val AUTH_ERROR_DIALOG_DIM_AMOUNT = 0.455f
 private const val COMPACT_DIALOG_DIM_AMOUNT = 0.45f
 private const val DEFAULT_DIALOG_DIM_AMOUNT = 0.52f
 private val compactDialogMaxWidth = 285.dp
+
+// Android rounds glyph widths, which can wrap the auth title at the design width.
+private val authErrorTitleStyle =
+    YappTypography.scaleT6Bold.copy(
+        textGeometricTransform = TextGeometricTransform(scaleX = 0.99f),
+    )
 
 @Composable
 fun YappAlertDialog(
@@ -47,23 +55,40 @@ fun YappAlertDialog(
     variant: YappAlertDialogVariant = YappAlertDialogVariant.Default,
     compactWidth: Dp = compactDialogMaxWidth,
 ) {
-    val isCompact = variant == YappAlertDialogVariant.Compact
+    val isCompact = variant.isCompact
     val shape = RoundedCornerShape(if (isCompact) 16.dp else 20.dp)
     val elevation = if (isCompact) 0.dp else 36.dp
     val horizontalPadding = if (isCompact) 20.dp else 16.dp
     val widthModifier = if (isCompact) Modifier.widthIn(max = compactWidth) else Modifier
     val textAlign = if (isCompact) TextAlign.Start else TextAlign.Center
+    val titleStyle =
+        when {
+            variant == YappAlertDialogVariant.AuthError -> authErrorTitleStyle
+            isCompact -> YappTypography.scaleT6Bold
+            else -> YappTypography.headline1Bold
+        }
     val titleColor = if (isCompact) YappColor.foregroundNeutral else YappColor.textPrimary
     val bodyColor = if (isCompact) YappColor.foregroundMuted else YappColor.textSecondary
+    val actionHeight =
+        when {
+            variant == YappAlertDialogVariant.AuthError -> 40.dp
+            isCompact -> 44.dp
+            buttonLayout == YappAlertButtonLayout.Horizontal -> 56.dp
+            else -> 48.dp
+        }
+    val dimAmount =
+        when (variant) {
+            YappAlertDialogVariant.AuthError -> AUTH_ERROR_DIALOG_DIM_AMOUNT
+            YappAlertDialogVariant.Compact -> COMPACT_DIALOG_DIM_AMOUNT
+            YappAlertDialogVariant.Default -> DEFAULT_DIALOG_DIM_AMOUNT
+        }
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
         SideEffect {
-            dialogWindow?.setDimAmount(
-                if (isCompact) COMPACT_DIALOG_DIM_AMOUNT else DEFAULT_DIALOG_DIM_AMOUNT,
-            )
+            dialogWindow?.setDimAmount(dimAmount)
         }
 
         Box(
@@ -93,12 +118,7 @@ fun YappAlertDialog(
                             YappText(
                                 text = it,
                                 modifier = Modifier.fillMaxWidth(),
-                                style =
-                                    if (isCompact) {
-                                        YappTypography.scaleT6Bold
-                                    } else {
-                                        YappTypography.headline1Bold
-                                    },
+                                style = titleStyle,
                                 color = titleColor,
                                 textAlign = textAlign,
                             )
@@ -135,7 +155,7 @@ fun YappAlertDialog(
                                     YappPopupActionButton(
                                         text = dismissText,
                                         primary = false,
-                                        height = if (isCompact) 44.dp else 56.dp,
+                                        height = actionHeight,
                                         variant = variant,
                                         modifier = Modifier.weight(1f),
                                         onClick = onDismiss,
@@ -144,7 +164,7 @@ fun YappAlertDialog(
                                 YappPopupActionButton(
                                     text = confirmText,
                                     primary = true,
-                                    height = if (isCompact) 44.dp else 56.dp,
+                                    height = actionHeight,
                                     variant = variant,
                                     modifier = Modifier.weight(1f),
                                     onClick = onConfirm,
@@ -160,7 +180,7 @@ fun YappAlertDialog(
                                 YappPopupActionButton(
                                     text = confirmText,
                                     primary = true,
-                                    height = if (isCompact) 44.dp else 48.dp,
+                                    height = actionHeight,
                                     variant = variant,
                                     modifier = Modifier.fillMaxWidth(),
                                     onClick = onConfirm,
@@ -169,7 +189,7 @@ fun YappAlertDialog(
                                     YappPopupActionButton(
                                         text = it,
                                         primary = false,
-                                        height = if (isCompact) 44.dp else 48.dp,
+                                        height = actionHeight,
                                         variant = variant,
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = onDismiss,

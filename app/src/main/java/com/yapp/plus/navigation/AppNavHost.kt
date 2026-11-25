@@ -9,6 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -20,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.yapp.plus.R
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
@@ -162,6 +165,8 @@ internal fun AppNavHost(
             )
         }
         composable<AppNavigationDestination.Login> { entry ->
+            val uriHandler = LocalUriHandler.current
+            val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
             LoginRoute(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
                 onGoogleCredentialReceived = { credential ->
@@ -182,6 +187,7 @@ internal fun AppNavHost(
                         }
                     }
                 },
+                onReportError = { runCatching { uriHandler.openUri(contactChannelUrl) } },
             )
         }
         composable<AppNavigationDestination.SignUp> { entry ->

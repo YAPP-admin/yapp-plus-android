@@ -54,7 +54,7 @@ PR 제목은 변경 내용을 한국어로 작성합니다. `chore:`, `feat:`, `
 
 ## 임시 비공개 테스트와 실제 개발
 
-`release/v1.0.1`은 기존 비공개 테스트 버전을 보존합니다. 실제 YAPP 서버를 기준으로 한 개발은 `develop`과 그 작업 브랜치에서 진행합니다. Release 빌드는 `com.yapp.plus`와 기존 Google Play 앱을 사용하고, Debug 빌드는 `com.yapp.plus.debug`를 사용해 두 앱을 같은 기기에 설치할 수 있습니다. 임시 배포는 Play 비공개 테스트 트랙으로 제공합니다.
+`release/v1.0.1`은 기존 비공개 테스트 버전을 보존합니다. 실제 YAPP 서버를 기준으로 한 개발은 `develop`과 그 작업 브랜치에서 진행합니다. Release 빌드는 `com.yapp.plus`와 기존 Google Play 앱, 런처 이름 `YAPP+`를 사용하고, Debug 빌드는 `com.yapp.plus.debug`와 `YAPP+ (Debug)`를 사용해 두 앱을 같은 기기에 설치할 수 있습니다. 임시 배포는 Play 비공개 테스트 트랙으로 제공합니다.
 
 임시 `release/v1.0.1`은 아래 일반 릴리즈의 양방향 병합 대상에서 제외합니다. 임시 테스트 코드를 `develop`에 통째로 재병합하지 않으며 양쪽에 필요한 수정은 검토 후 선별해 반영합니다. 실제 서비스 배포 후보는 최신 `develop`에서 새 릴리즈 브랜치로 준비합니다. 현재 CI는 앱 번들을 빌드하며 Play 업로드 단계는 없습니다.
 

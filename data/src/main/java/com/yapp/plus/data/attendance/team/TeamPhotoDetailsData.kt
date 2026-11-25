@@ -19,6 +19,7 @@ data class TeamPhotoDetailsData(
     val submittedAt: Instant,
     val uploaderName: String?,
     val selectedMemberCount: Int,
+    val rejectionReason: String?,
 ) {
     fun toDomain(): TeamAttendancePhoto {
         require(photoId > 0 && teamId > 0 && selectedMemberCount >= 0)
@@ -33,6 +34,7 @@ data class TeamPhotoDetailsData(
             submittedAt = submittedAt,
             uploaderName = uploaderName,
             selectedMemberCount = selectedMemberCount,
+            rejectionReason = rejectionReason,
         )
     }
 

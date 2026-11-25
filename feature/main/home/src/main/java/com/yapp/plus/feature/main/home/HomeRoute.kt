@@ -2,7 +2,6 @@ package com.yapp.plus.feature.main.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -138,8 +137,8 @@ fun HomeRoute(
         )
         if (interaction.isReportComplete) {
             HomeReportConfirmation(
-                interactionViewModel::acknowledgeReportComplete,
-                Modifier.align(Alignment.BottomCenter).padding(16.dp),
+                onDismiss = interactionViewModel::acknowledgeReportComplete,
+                modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
     }

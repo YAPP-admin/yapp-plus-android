@@ -101,6 +101,25 @@ class TeamAttendanceReadApiTest {
         }
 
     @Test
+    fun `latest rejected photo maps the reason and accepts null or missing reasons`() =
+        runTest {
+            val reason = "사진 속 팀원 두 명의 얼굴이 가려졌어요"
+            val reasons =
+                listOf(
+                    "\"$reason\"" to reason,
+                    "null" to null,
+                    null to null,
+                )
+            for ((reasonJson, expectedReason) in reasons) {
+                val body = photoBody("REJECTED", "null", "null", rejectionReasonJson = reasonJson)
+                client("team-attendance-photos", body).use {
+                    val photo = requireNotNull(repository(it).fetchLatestPhoto(SESSION_ID))
+                    assertEquals(expectedReason, photo.rejectionReason)
+                }
+            }
+        }
+
+    @Test
     fun `only a successful null photo maps to no submission`() =
         runTest {
             val path = "team-attendance-photos"
@@ -135,13 +154,16 @@ class TeamAttendanceReadApiTest {
         status: String,
         url: String,
         expiry: String,
-    ): String =
-        """
-        {"photo":{"photoId":1,"teamId":7,"teamName":"7팀","status":"$status",
-        "imageUrl":$url,"imageUrlExpiresAt":$expiry,"uploadedAt":"2026-11-23T01:59:00Z",
-        "uploadedTime":"10:59","submittedAt":"2026-11-23T02:00:00Z",
-        "uploader":{"userId":1,"name":null},"selectedMemberCount":4}}
-        """.trimIndent()
+        rejectionReasonJson: String? = null,
+    ): String {
+        val reasonField = rejectionReasonJson?.let { ""","rejectionReason":$it""" }.orEmpty()
+        return """
+            {"photo":{"photoId":1,"teamId":7,"teamName":"7팀","status":"$status",
+            "imageUrl":$url,"imageUrlExpiresAt":$expiry,"uploadedAt":"2026-11-23T01:59:00Z",
+            "uploadedTime":"10:59","submittedAt":"2026-11-23T02:00:00Z",
+            "uploader":{"userId":1,"name":null},"selectedMemberCount":4$reasonField}}
+            """.trimIndent()
+    }
 
     private companion object {
         const val SESSION_ID = 42L

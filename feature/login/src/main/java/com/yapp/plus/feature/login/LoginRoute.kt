@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 fun LoginRoute(
     onBack: () -> Unit,
     onGoogleCredentialReceived: suspend (GoogleLoginCredential) -> Boolean,
+    onReportError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: LoginViewModel = hiltViewModel()
@@ -59,6 +60,9 @@ fun LoginRoute(
     )
 
     if (uiState.dialog == LoginUiState.Dialog.Error) {
-        LoginErrorDialog(onDismiss = viewModel::dismissDialog)
+        LoginErrorDialog(
+            onDismiss = viewModel::dismissDialog,
+            onReport = onReportError,
+        )
     }
 }

@@ -5,7 +5,7 @@
 - YAPP 공식 출석 앱의 Android 저장소다. Kotlin과 Jetpack Compose를 사용한다.
 - 승인된 아키텍처는 [Wiki의 아키텍처 문서](docs/wiki/architecture.md)에 기록된 MVVM + 단방향 상태 흐름(UDF) + 필요한 범위의 Clean Architecture다.
 - GitHub 저장소는 `YAPP-admin/yapp-plus-android`다. 브랜치·제목·라벨·변경량 정책의 기준은 [CONTRIBUTING.md](CONTRIBUTING.md)다.
-- `release/v1.0.1`은 기존 비공개 테스트 버전으로 보존하고 실제 개발은 `develop` 기반 작업 브랜치에서 진행한다. Release 빌드는 기존 Play 앱과 앱 ID `com.yapp.plus`를 사용하고 Debug 빌드는 `com.yapp.plus.debug`를 사용한다. 임시 브랜치를 `develop`에 통째로 병합하지 않는다. 실제 서비스 배포는 최신 `develop`에서 새 릴리즈 브랜치로 준비한다.
+- `release/v1.0.1`은 기존 비공개 테스트 버전으로 보존하고 실제 개발은 `develop` 기반 작업 브랜치에서 진행한다. Release 빌드는 기존 Play 앱, 앱 ID `com.yapp.plus`, 런처 이름 `YAPP+`를 사용하고 Debug 빌드는 `com.yapp.plus.debug`, `YAPP+ (Debug)`를 사용한다. 임시 브랜치를 `develop`에 통째로 병합하지 않는다. 실제 서비스 배포는 최신 `develop`에서 새 릴리즈 브랜치로 준비한다.
 - 공통 Gradle convention plugin은 `build-logic/` included build에서 관리하고, 라이브러리 버전은 `gradle/libs.versions.toml`에 둔다.
 - 홈과 일정 탭의 일정 조회는 Domain의 `YappResult`와 `:core:ui`의 `BaseViewModel`을 사용한다. 요청별 상태 처리 기준은 [설계 패턴](docs/wiki/design-patterns.md#홈과-일정-탭의-일정-조회)을 따른다.
 - 실제 개발은 YAPP 서버의 일정·출석 인증·사전 보고 DataSource와 Repository를 App Hilt에서 조립한다. My의 출석 점수·이력은 사용자 API에 연결한다. 공지 목록·상세·읽음과 홈 사전 보고는 사용자 API에 연결한다. 이름은 로그인·가입 응답의 `user.name`을 세션과 함께 저장·복원한다. Firebase 푸시는 앱에서 기기 등록·수신과 공지 이동을 연결한다. 팀 사진 제출 호출을 조립했으며 팀원·사진 조회는 확인된 사용자 API 계약을 기준으로 Data와 화면에 연결한다. My는 이름·기수·회원 구분·직군을 사용자 API에서 조회한다. 지각 면제권은 Figma UI를 유지하고 계약 확인 뒤 연동한다. 알림 토글은 Android 앱 알림 설정을 열고 돌아온 시스템 상태를 설치별 선택에 저장한 뒤 현재 기기의 푸시 등록·해제를 백그라운드로 동기화한다. 이용 문의는 YAPP 카카오톡 채널을 연다. 미확인 조회값은 `—`로 표시한다. 임시 테스트 전용 구현·SQL·운영 문서는 개발 버전에서 제거한다.

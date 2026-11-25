@@ -41,7 +41,10 @@ private fun LoginErrorDialogPreview() {
                         .padding(padding)
                         .consumeWindowInsets(padding),
             )
-            LoginErrorDialog(onDismiss = {})
+            LoginErrorDialog(
+                onDismiss = {},
+                onReport = {},
+            )
         }
     }
 }

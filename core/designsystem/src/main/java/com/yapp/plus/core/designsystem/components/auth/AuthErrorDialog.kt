@@ -26,6 +26,6 @@ fun AuthErrorDialog(
         buttonLayout = YappAlertButtonLayout.Horizontal,
         onConfirm = onReport,
         onDismiss = onDismiss,
-        variant = YappAlertDialogVariant.Compact,
+        variant = YappAlertDialogVariant.AuthError,
     )
 }

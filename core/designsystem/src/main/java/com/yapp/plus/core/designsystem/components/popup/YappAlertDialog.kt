@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
@@ -54,6 +57,7 @@ fun YappAlertDialog(
     onDismiss: () -> Unit,
     variant: YappAlertDialogVariant = YappAlertDialogVariant.Default,
     compactWidth: Dp = compactDialogMaxWidth,
+    content: (@Composable () -> Unit)? = null,
 ) {
     val isCompact = variant.isCompact
     val shape = RoundedCornerShape(if (isCompact) 16.dp else 20.dp)
@@ -143,6 +147,7 @@ fun YappAlertDialog(
                         }
                     }
                 }
+                content?.invoke()
 
                 if (showActions) {
                     when (buttonLayout) {
@@ -230,5 +235,29 @@ private fun YappAlertDialogVerticalPreview() {
         buttonLayout = YappAlertButtonLayout.Vertical,
         onConfirm = {},
         onDismiss = {},
+    )
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 800)
+@Composable
+private fun YappAlertDialogProgressPreview() {
+    YappAlertDialog(
+        onDismissRequest = {},
+        title = null,
+        body = null,
+        confirmText = "",
+        dismissText = null,
+        showActions = false,
+        onConfirm = {},
+        onDismiss = {},
+        variant = YappAlertDialogVariant.Compact,
+        content = {
+            Box(
+                modifier = Modifier.fillMaxWidth().height(64.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(32.dp))
+            }
+        },
     )
 }

@@ -17,49 +17,12 @@ private fun NotificationDisabledPreview() {
     NotificationPreview(NotificationSettingsUiState(isEnabled = false))
 }
 
-@Preview(name = "Loading notification preference", widthDp = 393)
-@Composable
-private fun NotificationLoadingPreview() {
-    NotificationPreview(NotificationSettingsUiState())
-}
-
-@Preview(name = "Updating notification preference", widthDp = 393)
-@Composable
-private fun NotificationUpdatingPreview() {
-    NotificationPreview(NotificationSettingsUiState(isEnabled = true, isUpdating = true))
-}
-
-@Preview(name = "Notification load failure", widthDp = 320)
-@Composable
-private fun NotificationErrorPreview() {
-    NotificationPreview(
-        NotificationSettingsUiState(
-            hasLoadError = true,
-            isPermissionGranted = false,
-        ),
-    )
-}
-
-@Preview(name = "Notification retry in progress", widthDp = 393)
-@Composable
-private fun NotificationRetryingPreview() {
-    NotificationPreview(NotificationSettingsUiState(hasLoadError = true, isLoading = true))
-}
-
-@Preview(name = "Notification update failure", widthDp = 393)
-@Composable
-private fun NotificationUpdateErrorPreview() {
-    NotificationPreview(NotificationSettingsUiState(isEnabled = true, hasUpdateError = true))
-}
-
 @Composable
 private fun NotificationPreview(state: NotificationSettingsUiState) {
     YappTheme(darkTheme = false, dynamicColor = false) {
         SettingsNotificationSection(
             state = state,
             onEnabledChange = {},
-            onRetry = {},
-            onOpenSettings = {},
         )
     }
 }

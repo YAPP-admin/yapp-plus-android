@@ -23,6 +23,26 @@ internal class NotificationSettingsViewModel
         private var request: Job? = null
         private var failedSelection: Boolean? = null
 
+        fun refreshSystemPermission() {
+            val enabled = registration.hasPermission()
+            mutableState.value =
+                NotificationSettingsUiState(
+                    isEnabled = enabled,
+                    isPermissionGranted = enabled,
+                )
+            request?.cancel()
+            request =
+                viewModelScope.launch {
+                    try {
+                        registration.synchronizeSystemPermission(enabled)
+                    } catch (exception: CancellationException) {
+                        throw exception
+                    } catch (_: Exception) {
+                        // Retry synchronization when the screen resumes again.
+                    }
+                }
+        }
+
         fun refresh() {
             if (request?.isActive == true) return
             mutableState.update { it.copy(isLoading = true) }

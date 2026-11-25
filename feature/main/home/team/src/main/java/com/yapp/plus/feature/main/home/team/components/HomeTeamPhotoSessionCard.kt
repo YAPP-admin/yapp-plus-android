@@ -110,12 +110,7 @@ internal fun HomeTeamPhotoSessionAction(
         return
     }
     if (state == LookupFailed) {
-        YappText(
-            stringResource(R.string.home_team_result_lookup_error),
-            YappTypography.scaleT3Medium,
-            YappHomeColor.muted,
-            modifier = Modifier.padding(8.dp),
-        )
+        HomeTeamSessionError(R.string.home_team_result_lookup_error)
         return
     }
     val label =
@@ -140,7 +135,7 @@ internal fun HomeTeamPhotoSessionAction(
         onClick = { action?.invoke() },
         modifier = Modifier.fillMaxWidth(),
         variant = YappButtonVariant.HomeAttendance,
-        size = YappButtonSize.HomeSecondary,
+        size = YappButtonSize.HomeSecondarySmall,
         enabled = action != null,
     )
 }

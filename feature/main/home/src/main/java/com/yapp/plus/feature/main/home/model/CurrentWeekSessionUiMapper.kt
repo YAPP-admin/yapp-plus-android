@@ -1,6 +1,9 @@
 package com.yapp.plus.feature.main.home.model
 
 import com.yapp.plus.core.ui.formatter.AppDateFormatter
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.AttendanceUiState
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.session.AttendanceStatus
 import com.yapp.plus.domain.session.CurrentWeekSchedule
 

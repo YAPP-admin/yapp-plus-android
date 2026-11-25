@@ -1,5 +1,7 @@
 package com.yapp.plus.feature.main.home
 
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.ui.model.HomeAttendanceLocationIssue
 import com.yapp.plus.domain.attendance.AttendanceException
 import com.yapp.plus.domain.attendance.AttendanceLocationReading
@@ -8,8 +10,6 @@ import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.session.SessionCoordinates
 import com.yapp.plus.domain.session.SessionDistance
 import com.yapp.plus.domain.session.SessionDistanceRepository
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
 import kotlinx.coroutines.CompletableDeferred

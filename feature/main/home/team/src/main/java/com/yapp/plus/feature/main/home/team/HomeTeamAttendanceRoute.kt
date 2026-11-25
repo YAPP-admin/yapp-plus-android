@@ -15,15 +15,17 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.yapp.plus.domain.attendance.TeamAttendancePhotoStatus
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
+import com.yapp.plus.domain.attendance.TeamAttendancePhotoStatus
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoGuideSheet
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoResultSheet
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoSessionCard
+import com.yapp.plus.feature.main.home.team.components.HomeTeamSessionError
 import com.yapp.plus.feature.main.home.team.components.HomeTeamSubmittedPhotoDialog
 import com.yapp.plus.feature.main.home.team.components.HomeTeamSubmittedPhotoThumbnail
 import com.yapp.plus.feature.main.home.team.model.HomeTeamAttendanceUiState
 import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoResultSheetState
+import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoSessionUiState
 import com.yapp.plus.feature.main.home.team.model.teamTimeFormat
 import java.time.Instant
 
@@ -40,8 +42,9 @@ fun HomeTeamAttendanceCard(
     var viewingResult by remember(session.sessionId) { mutableStateOf(false) }
     val photo = state.photo
     val canUpload = session.canUploadTeamPhoto(now)
+    val cardState = state.card(session, now)
     HomeTeamPhotoSessionCard(
-        state = state.card(session, now),
+        state = cardState,
         sessionTimeLabel = session.teamTimeLabel(),
         weekCalendar = weekCalendar,
         onUpload = onGuide,
@@ -52,7 +55,7 @@ fun HomeTeamAttendanceCard(
                 { modifier -> HomeTeamSubmittedPhotoThumbnail(image, modifier) }
             },
     )
-    if (viewingResult) {
+    if (viewingResult && cardState != HomeTeamPhotoSessionUiState.Approved) {
         val result =
             when {
                 state.isAbsent -> HomeTeamPhotoResultSheetState.ConfirmedAbsent(reason = null)
@@ -84,8 +87,8 @@ fun HomeTeamAttendanceOverlays(
     session: CurrentWeekSessionUiModel,
     state: HomeTeamAttendanceUiState,
     viewModel: HomeTeamAttendanceViewModel,
+    canShowApproval: Boolean,
     onFinish: () -> Unit,
-    errorContent: @Composable () -> Unit = {},
 ) {
     val pickPhoto = rememberHomeTeamPhotoPicker(viewModel)
     val bitmap = state.input?.preview
@@ -102,6 +105,12 @@ fun HomeTeamAttendanceOverlays(
                 onTakePhoto = { pickPhoto(true) },
                 onDismiss = viewModel::closeFlow,
                 errorResource = state.error,
+            )
+        state.uploadFailed ->
+            HomeTeamPhotoResultSheet(
+                state = HomeTeamPhotoResultSheetState.UploadFailed,
+                onConfirm = onFinish,
+                onRetry = { viewModel.submit() },
             )
         bitmap != null || state.receipt != null ->
             Dialog(
@@ -120,7 +129,7 @@ fun HomeTeamAttendanceOverlays(
                                 if (state.preparing) {
                                     CircularProgressIndicator()
                                 } else {
-                                    errorContent()
+                                    HomeTeamSessionError(R.string.home_team_result_lookup_error)
                                 }
                             }
                         }
@@ -134,5 +143,10 @@ fun HomeTeamAttendanceOverlays(
                         )
                 }
             }
+        canShowApproval && state.shouldShowApproval(session) ->
+            HomeTeamPhotoResultSheet(
+                state = HomeTeamPhotoResultSheetState.Approved,
+                onConfirm = { viewModel.acknowledgeApproval(session.sessionId) },
+            )
     }
 }

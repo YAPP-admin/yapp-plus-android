@@ -18,17 +18,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.session.SessionType
 import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCodeRoute
 import com.yapp.plus.feature.main.home.components.HomeReportConfirmation
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
+import com.yapp.plus.feature.main.home.components.HomeWeekCalendar
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
-import com.yapp.plus.feature.main.home.model.HomeTeamPhotoSessionUiState
+import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceCard
+import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceOverlays
+import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceViewModel
+import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoSessionUiState
+import com.yapp.plus.feature.main.home.team.model.teamZone
 import kotlinx.coroutines.delay
 import java.time.Instant
 
@@ -114,6 +119,16 @@ fun HomeRoute(
                             session = target,
                             state = team,
                             now = now,
+                            weekCalendar = {
+                                HomeWeekCalendar(
+                                    weekStartDate = checkNotNull(target.weekStartDate),
+                                    sessionDate = target.sessionDate,
+                                    today = now.atZone(teamZone).toLocalDate(),
+                                    isSessionAttended =
+                                        target.attendanceStatus == AttendanceStatusUiModel.CheckedIn,
+                                    dayHeight = 58.dp,
+                                )
+                            },
                             onGuide = { teamViewModel.openGuide() },
                             onContact = onContactStaff,
                             onViewPhoto = teamViewModel::openSubmittedPhoto,

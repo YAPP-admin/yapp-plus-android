@@ -3,6 +3,7 @@
     <string name="home_team_result_submitted_description">운영진이 승인하면 출석이 완료돼요</string>
     <string name="home_team_result_receipt_team">팀</string>
     <string name="home_team_result_receipt_time">제출 시간</string>
+    <string name="home_team_result_receipt_upload_time">업로드 시간</string>
     <string name="home_team_result_receipt_count">참석 인원</string>
     <string name="home_team_result_receipt_members">참석자</string>
     <string name="home_team_result_count">%1$d / %2$d명</string>

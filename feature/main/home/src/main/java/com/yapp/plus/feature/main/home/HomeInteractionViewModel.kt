@@ -2,6 +2,8 @@ package com.yapp.plus.feature.main.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.ui.model.HomeAttendanceLocationIssue
 import com.yapp.plus.domain.attendance.AttendanceException
 import com.yapp.plus.domain.attendance.AttendanceLocationFailure
@@ -12,8 +14,6 @@ import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.session.SessionDistanceRepository
 import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceAttempt
-import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage

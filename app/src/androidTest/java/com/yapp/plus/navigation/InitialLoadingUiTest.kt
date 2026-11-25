@@ -10,8 +10,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.yapp.plus.core.designsystem.theme.YappTheme
+import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.HomeScreen
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.my.MyAttendanceHistoryScreen
 import com.yapp.plus.feature.main.my.MyPreviewData

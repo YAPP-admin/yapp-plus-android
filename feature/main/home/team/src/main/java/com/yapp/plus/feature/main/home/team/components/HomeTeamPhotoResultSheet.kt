@@ -19,14 +19,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.button.YappButton
 import com.yapp.plus.core.designsystem.components.button.YappButtonSize
 import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
-import com.yapp.plus.core.designsystem.components.surface.YappClickableSurface
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappMainColor
@@ -43,9 +41,9 @@ import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoResultSheetState.
 internal fun HomeTeamPhotoResultSheet(
     state: HomeTeamPhotoResultSheetState,
     onConfirm: () -> Unit,
-    onRetry: () -> Unit,
-    onContactStaff: () -> Unit,
-    onDismiss: () -> Unit,
+    onRetry: () -> Unit = {},
+    onContactStaff: () -> Unit = {},
+    onDismiss: () -> Unit = onConfirm,
 ) {
     val title =
         when (state) {
@@ -114,20 +112,13 @@ internal fun HomeTeamPhotoResultSheet(
             }
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 if (state is ConfirmedAbsent) {
-                    YappClickableSurface(
+                    YappButton(
+                        text = stringResource(R.string.home_team_result_contact_staff),
                         onClick = onContactStaff,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp),
-                        color = YappHomeColor.background,
-                    ) {
-                        YappText(
-                            text = stringResource(R.string.home_team_result_contact_staff),
-                            style = YappTypography.scaleT5Bold,
-                            color = YappHomeColor.subtle,
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                        variant = YappButtonVariant.SolidNeutralWeak,
+                        size = YappButtonSize.MainAction,
+                    )
                 }
                 YappButton(
                     text =
@@ -137,7 +128,7 @@ internal fun HomeTeamPhotoResultSheet(
                     onClick = if (canRetry) onRetry else onConfirm,
                     modifier = Modifier.fillMaxWidth(),
                     variant = YappButtonVariant.SolidBrand,
-                    size = YappButtonSize.HomePrimary,
+                    size = YappButtonSize.MainAction,
                 )
             }
         }

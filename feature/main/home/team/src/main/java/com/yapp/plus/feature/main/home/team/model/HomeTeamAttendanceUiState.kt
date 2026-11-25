@@ -6,6 +6,7 @@ import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.attendance.TeamAttendancePhoto
 import com.yapp.plus.domain.attendance.TeamAttendancePhotoStatus
 import com.yapp.plus.domain.attendance.TeamAttendanceRoster
+import com.yapp.plus.domain.profile.UserPosition
 import java.time.Instant
 import java.time.LocalDateTime
 
@@ -19,16 +20,23 @@ data class HomeTeamAttendanceUiState(
     val roster: TeamAttendanceRoster? = null,
     val selected: Set<Long> = emptySet(),
     val isSubmitting: Boolean = false,
+    val uploadFailed: Boolean = false,
     val error: Int? = null,
     val uncertain: Boolean = false,
     val receipt: HomeTeamPhotoReceiptUiModel? = null,
     val photoViewer: HomeTeamPhotoViewerUiState? = null,
+    val acknowledgedApprovalSessionId: Long? = null,
 ) {
     val isActive: Boolean
         get() = guide || preparing || input != null || receipt != null || photoViewer != null
 
     val photo: TeamAttendancePhoto?
-        get() = (latest as? AttendanceUiState.Content<TeamAttendancePhoto?>)?.value
+        get() = (latest as? AttendanceUiState.Content)?.value
+
+    fun shouldShowApproval(session: CurrentWeekSessionUiModel): Boolean =
+        sessionId == session.sessionId &&
+            session.attendanceStatus == AttendanceStatusUiModel.CheckedIn &&
+            acknowledgedApprovalSessionId != session.sessionId
 
     fun card(
         session: CurrentWeekSessionUiModel,
@@ -37,40 +45,53 @@ data class HomeTeamAttendanceUiState(
         val photo = photo
         val status = session.attendanceStatus
         val localNow = LocalDateTime.ofInstant(now, teamZone)
-        val date = session.sessionDate
         val start = session.startTime
-        val end = session.endTime
-        val isTeamSessionTime = date != null && start != null && end != null &&
-            localNow >= date.atTime(start) && localNow < date.atTime(end)
-
+        val sessionStart = start?.let { session.sessionDate?.atTime(it) }
         return when {
             status == AttendanceStatusUiModel.NotEligible -> HomeTeamPhotoSessionUiState.NotEligible
-            status == AttendanceStatusUiModel.CheckedIn && photo != null && photo.status == TeamAttendancePhotoStatus.APPROVED -> HomeTeamPhotoSessionUiState.Approved
-            status == AttendanceStatusUiModel.CheckedIn && photo != null && photo.status == TeamAttendancePhotoStatus.REJECTED -> HomeTeamPhotoSessionUiState.Rejected
-            status == AttendanceStatusUiModel.CheckedIn && photo != null && photo.status == TeamAttendancePhotoStatus.PENDING -> HomeTeamPhotoSessionUiState.Reviewing
-            status == AttendanceStatusUiModel.CheckedIn -> HomeTeamPhotoSessionUiState.NotSubmitted
-            status == AttendanceStatusUiModel.PendingApproval && photo != null && photo.status == TeamAttendancePhotoStatus.APPROVED -> HomeTeamPhotoSessionUiState.Approved
-            status == AttendanceStatusUiModel.PendingApproval && photo != null && photo.status == TeamAttendancePhotoStatus.REJECTED -> HomeTeamPhotoSessionUiState.Rejected
-            status == AttendanceStatusUiModel.PendingApproval && photo != null && photo.status == TeamAttendancePhotoStatus.PENDING -> HomeTeamPhotoSessionUiState.Reviewing
+            status == AttendanceStatusUiModel.CheckedIn -> HomeTeamPhotoSessionUiState.Approved
+            sessionId != session.sessionId || latest == AttendanceUiState.Loading ->
+                HomeTeamPhotoSessionUiState.Loading
+            latest == AttendanceUiState.Error -> HomeTeamPhotoSessionUiState.LookupFailed
+            photo?.status == TeamAttendancePhotoStatus.PENDING ->
+                HomeTeamPhotoSessionUiState.Pending(
+                    photo.uploadedTime.format(teamTimeFormat),
+                    photo.uploaderName,
+                    photo.selectedMemberCount,
+                )
             status == AttendanceStatusUiModel.PendingApproval -> HomeTeamPhotoSessionUiState.Reviewing
-            status == AttendanceStatusUiModel.Available && isTeamSessionTime -> HomeTeamPhotoSessionUiState.Active
-            status == AttendanceStatusUiModel.Available -> HomeTeamPhotoSessionUiState.NotSubmitted
-            status == AttendanceStatusUiModel.NotOpen && isTeamSessionTime -> HomeTeamPhotoSessionUiState.Active
-            else -> HomeTeamPhotoSessionUiState.NotOpen
+            isAbsent || photo?.status == TeamAttendancePhotoStatus.REJECTED ->
+                HomeTeamPhotoSessionUiState.ResultAvailable
+            sessionStart != null && localNow.isBefore(sessionStart) ->
+                HomeTeamPhotoSessionUiState.BeforeStart(sessionStart.format(homeSessionStartFormat))
+            session.canUploadTeamPhoto(now) && photo == null -> HomeTeamPhotoSessionUiState.AwaitingPhoto
+            else -> HomeTeamPhotoSessionUiState.Closed
         }
     }
-}
 
-enum class HomeTeamPhotoSessionUiState {
-    NotEligible,
-    NotOpen,
-    Active,
-    NotSubmitted,
-    Reviewing,
-    Approved,
-    Rejected,
-    LookupFailed,
-}
+    fun selection(): HomeTeamPhotoSelectionUiState =
+        HomeTeamPhotoSelectionUiState(
+            members =
+                roster?.members.orEmpty().map { member ->
+                    HomeTeamPhotoMemberUiModel(
+                        membershipId = member.membershipId,
+                        name = member.name,
+                        roleLabel = member.position?.label(),
+                        isCurrentUser = member.membershipId == roster?.selfMembershipId,
+                        isSelected = member.membershipId in selected,
+                    )
+                },
+            canConfirm = roster != null && roster.selfMembershipId in selected && !uncertain,
+            isSubmitting = isSubmitting,
+            errorResource = error,
+        )
 
-val teamZone: java.time.ZoneId = java.time.ZoneId.of("Asia/Seoul")
-val teamTimeFormat: java.time.format.DateTimeFormatter = com.yapp.plus.core.ui.formatter.AppDateFormatter.timeHourMinute
+    private fun UserPosition.label(): String? =
+        when (this) {
+            UserPosition.IOS -> "iOS"
+            UserPosition.AI_NATIVE -> "AI Native"
+            UserPosition.PM -> "PM"
+            UserPosition.UNKNOWN -> null
+            else -> name.lowercase().replaceFirstChar(Char::uppercase)
+        }
+}

@@ -14,9 +14,10 @@ last_verified: 2026-11-24
 | `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
 | `:core:ui` | `com.yapp.plus.core.ui` | 홈·일정이 공유하는 `BaseViewModel`, Domain 결과를 화면 상태에 반영하는 요청 실행, 날짜/시간 포맷터 패턴 문자열 리소스 및 공통 DateFormatter 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
-| `:feature:main:home` | `com.yapp.plus.feature.main.home` | YAPP 이번 주 세션·사전 보고·주간 공지 연결; 별도 점수 진입 숨김 |
+| `:feature:main:home` | `com.yapp.plus.feature.main.home` | 이번 주 세션·사전 보고·주간 공지 화면과 요청을 조율; 팀 출석·코드 출석 모듈을 조립하고 초기 일정·공지 조회는 ViewModel 생애 동안 한 번 요청 |
 | `:feature:main:home:attendance` | `com.yapp.plus.feature.main.home.attendance` | 코드 출석 입력·위치 검증·완료 화면 및 애니메이션 컴포넌트 구현됨; Home 및 App에서 연결 |
 | `:feature:main:home:notification` | `com.yapp.plus.feature.main.home.notification` | 알림함 목록·페이지네이션·새로고침 및 세션/공지/정산 클릭 이동 ViewModel·UI 구현됨; App에서 연결 |
+| `:feature:main:home:team` | `com.yapp.plus.feature.main.home.team` | 팀 출석 조회·팀원/사진 제출·열람 ViewModel·화면·상태·리소스를 소유; Home에서 연결 |
 | `:feature:main:schedule` | `com.yapp.plus.feature.main.schedule` | 현재 기수 일정 API Route·ViewModel·UI 매핑 및 일정 화면·모델 구현됨; App에서 연결 |
 | `:feature:main:board` | `com.yapp.plus.feature.main.board` | 공지 분류·커서 목록·Markdown 상세·과제·첨부 이미지·읽음 확인 API 연결 |
 | `:feature:main:community` | `com.yapp.plus.feature.main.community` | 뒤풀이 목록·참석 응답·참석자·정산 등록/수정/납부 및 MY 정산 화면 |
@@ -30,7 +31,7 @@ last_verified: 2026-11-24
 | `build-logic` | Gradle convention plugins | 별도 included build; 앱 모듈이 아님 |
 | `:core:datastore` | `com.yapp.plus.core.datastore` | DataStore 세션 레코드·Keystore 암호화·백업 제외 파일 저장과 별도 기기 알림 선택 저장 구현됨; Data에서 사용 |
 
-15개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
+19개 Gradle 모듈의 공통 설정은 `build-logic` convention plugin으로 관리합니다. App은 Hilt 진입점과 네트워크·Repository 객체 조립을 갖고, `:core:network`는 Ktor Android client, JSON 직렬화, 환경별 base URL과 인증·세션 갱신 조율을 제공합니다. `:data`는 Network의 영구 저장 계약을 `:core:datastore`에 연결하며 App이 singleton으로 조립합니다. 저장된 최신 토큰 쌍은 첫 인증 요청 전에 복원합니다. 세션 일정 조회의 Domain 계약, `:data`의 DataSource·DTO 매핑·Repository 구현, 홈·일정 Feature의 ViewModel·UI 변환이 연결되어 있습니다. Domain과 Data의 기능별 분리는 규모와 의존 관계에 따라 결정합니다.
 
 코드 출석의 위치 검증은 `:domain`의 `SessionDistanceRepository`와 `:data`의 Android 위치 어댑터를 App Hilt에서 연결합니다. `:feature:main:home`의 출석 코드 Route가 위치 권한과 화면 생명주기를 다루고 ViewModel이 현재 시도의 위치 조회와 코드 제출을 조율합니다.
 

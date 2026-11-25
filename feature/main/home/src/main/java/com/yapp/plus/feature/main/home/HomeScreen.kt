@@ -30,11 +30,11 @@ import com.yapp.plus.core.designsystem.components.main.YappMainHeader
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
+import com.yapp.plus.core.ui.model.AttendanceUiState
+import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.components.HomeNoticeContent
 import com.yapp.plus.feature.main.home.components.HomeQuickActions
 import com.yapp.plus.feature.main.home.components.HomeSessionCard
-import com.yapp.plus.feature.main.home.model.AttendanceUiState
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import java.time.LocalDateTime
 import java.time.ZoneId

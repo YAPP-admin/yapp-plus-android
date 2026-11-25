@@ -125,6 +125,7 @@ private fun TeamPhotoHomePreview(
 internal fun teamPhotoPreviewReceipt() =
     HomeTeamPhotoReceiptUiModel(
         teamName = stringResource(R.string.home_team_result_preview_team),
+        submittedTimeLabel = stringResource(R.string.home_team_result_preview_time),
         uploadTimeLabel = stringResource(R.string.home_team_result_preview_time),
         attendeeCount = 4,
         teamMemberCount = 5,

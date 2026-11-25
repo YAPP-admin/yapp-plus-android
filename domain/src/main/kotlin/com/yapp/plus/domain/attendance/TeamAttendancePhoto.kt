@@ -14,4 +14,5 @@ data class TeamAttendancePhoto(
     val submittedAt: Instant,
     val uploaderName: String?,
     val selectedMemberCount: Int,
+    val rejectionReason: String? = null,
 )

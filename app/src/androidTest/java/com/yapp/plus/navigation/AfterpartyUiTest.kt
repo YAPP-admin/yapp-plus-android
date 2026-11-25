@@ -115,6 +115,76 @@ class AfterpartyUiTest {
     }
 
     @Test
+    fun answeredAfterpartySharesOneLoadingIndicatorWhileBothSectionsLoad() {
+        val sectionsLoading = AtomicInteger()
+        val sectionsResponse = CompletableDeferred<Unit>()
+        val fixtures =
+            AfterpartyUiFixtures(
+                awaitAfterpartySections = {
+                    sectionsLoading.incrementAndGet()
+                    sectionsResponse.await()
+                },
+            )
+        val progress =
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.ProgressBarRangeInfo,
+                ProgressBarRangeInfo.Indeterminate,
+            )
+
+        openCommunity(fixtures) {
+            waitFor("테스트 뒤풀이")
+            compose.onNodeWithText("테스트 뒤풀이").performClick()
+            waitFor("제출하기")
+            compose.onNodeWithText("참석").performClick()
+            compose.onNodeWithText("제출하기").performClick()
+            compose.waitUntil(10_000) { sectionsLoading.get() == 2 }
+            compose.onAllNodes(progress).assertCountEquals(1)
+            sectionsResponse.complete(Unit)
+            waitFor("테스트 참석자")
+            waitFor("테스트 정산자님 정산")
+        }
+    }
+
+    @Test
+    fun settlementOwnerSharesOneLoadingIndicatorWhileSummaryAndPeopleLoad() {
+        val sectionsLoading = AtomicInteger()
+        val summaryResponse = CompletableDeferred<Unit>()
+        val recipientsResponse = CompletableDeferred<Unit>()
+        val fixtures =
+            AfterpartyUiFixtures(
+                isSettlementCreator = true,
+                awaitSettlementSummary = {
+                    sectionsLoading.incrementAndGet()
+                    summaryResponse.await()
+                },
+                awaitSettlementRecipients = {
+                    sectionsLoading.incrementAndGet()
+                    recipientsResponse.await()
+                },
+            )
+        val progress =
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.ProgressBarRangeInfo,
+                ProgressBarRangeInfo.Indeterminate,
+            )
+
+        openCommunity(fixtures, startInCommunity = false) {
+            openSettlementNotification()
+            waitFor("정산 현황")
+            compose.waitUntil(10_000) { sectionsLoading.get() == 2 }
+            compose.onAllNodes(progress).assertCountEquals(1)
+
+            summaryResponse.complete(Unit)
+            waitFor("받을 금액")
+            compose.onAllNodes(progress).assertCountEquals(1)
+
+            recipientsResponse.complete(Unit)
+            waitFor("테스트 납부 대상자")
+            compose.onAllNodes(progress).assertCountEquals(0)
+        }
+    }
+
+    @Test
     fun settlementNotificationOpensDetail() {
         openCommunity(AfterpartyUiFixtures(), startInCommunity = false) {
             openSettlementNotification()
@@ -165,6 +235,10 @@ class AfterpartyUiTest {
 
 internal class AfterpartyUiFixtures(
     private val partyContent: String = "세션 뒤풀이 안내",
+    private val isSettlementCreator: Boolean = false,
+    private val awaitAfterpartySections: suspend () -> Unit = {},
+    private val awaitSettlementSummary: suspend () -> Unit = {},
+    private val awaitSettlementRecipients: suspend () -> Unit = {},
     private val awaitAfterparties: suspend () -> Unit = {},
 ) {
     val votes = AtomicInteger()
@@ -198,8 +272,12 @@ internal class AfterpartyUiFixtures(
                             votes.incrementAndGet()
                             """{"response":"ATTENDING"}"""
                         }
-                        path.endsWith("/afterparties/9/attendees") -> attendees()
+                        path.endsWith("/afterparties/9/attendees") -> {
+                            awaitAfterpartySections()
+                            attendees()
+                        }
                         path.endsWith("/afterparties/9/settlements") -> {
+                            if (votes.get() > 0) awaitAfterpartySections()
                             """{"items":[${settlementItem()}],"nextCursor":null}"""
                         }
                         path.endsWith("/afterparties/9/settlements/13/payment") -> {
@@ -208,6 +286,17 @@ internal class AfterpartyUiFixtures(
                             payments.incrementAndGet()
                             paid.set(true)
                             """{"paymentStatus":"PAID"}"""
+                        }
+                        path.endsWith("/afterparties/9/settlements/13/summary") -> {
+                            awaitSettlementSummary()
+                            """{"expectedReceivableAmount":24000,"perPersonAmount":12000,"debtorCount":2,"paidCount":0}"""
+                        }
+                        path.endsWith("/afterparties/9/settlements/13/recipients") -> {
+                            awaitSettlementRecipients()
+                            """
+                            {"items":[{"recipientId":31,"name":"테스트 납부 대상자","teamName":null,
+                              "position":null,"isMe":false}],"nextCursor":null}
+                            """.trimIndent()
                         }
                         path.endsWith("/afterparties/9/settlements/13") -> settlementDetail()
                         path.endsWith("/afterparties/9") -> afterpartyDetail()
@@ -239,11 +328,12 @@ internal class AfterpartyUiFixtures(
     private fun settlementItem(): String {
         val status =
             when {
+                isSettlementCreator -> "null"
                 paid.get() -> "\"PAID\""
                 else -> "\"UNPAID\""
             }
         return """
-            {"settlementId":13,"afterpartyId":9,"creatorName":"테스트 정산자","isMe":false,
+            {"settlementId":13,"afterpartyId":9,"creatorName":"테스트 정산자","isMe":$isSettlementCreator,
              "participantCount":3,"myAmount":12000,"paymentStatus":$status}
             """.trimIndent()
     }

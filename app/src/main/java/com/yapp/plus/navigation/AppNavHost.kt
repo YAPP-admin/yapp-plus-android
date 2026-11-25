@@ -29,7 +29,7 @@ import com.yapp.plus.feature.main.community.AfterpartyRoute
 import com.yapp.plus.feature.main.community.MySettlementsRoute
 import com.yapp.plus.feature.main.community.SettlementEditorRoute
 import com.yapp.plus.feature.main.community.SettlementRoute
-import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
+import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.main.home.notification.HomeNotificationsRoute
 import com.yapp.plus.feature.signup.SignUpRoute
 import kotlinx.coroutines.Dispatchers

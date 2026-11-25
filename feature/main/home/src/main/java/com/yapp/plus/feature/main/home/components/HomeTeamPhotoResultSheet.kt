@@ -32,6 +32,7 @@ import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.main.home.R
+import com.yapp.plus.feature.main.home.attendance.components.HomeCompletionGraphic
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState.Approved
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoResultSheetState.ConfirmedAbsent

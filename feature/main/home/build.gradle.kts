@@ -8,6 +8,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:main:home:attendance"))
     implementation(project(":domain"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:ui"))

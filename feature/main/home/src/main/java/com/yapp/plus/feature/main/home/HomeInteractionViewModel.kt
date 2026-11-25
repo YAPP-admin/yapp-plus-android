@@ -12,8 +12,8 @@ import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.session.SessionDistanceRepository
 import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
-import com.yapp.plus.feature.main.home.model.HomeAttendanceAttempt
-import com.yapp.plus.feature.main.home.model.HomeAttendanceLocationIssue
+import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceAttempt
+import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceLocationIssue
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
@@ -194,7 +194,11 @@ internal class HomeInteractionViewModel
             val attempt = pendingPermissionAttempt ?: return
             pendingPermissionAttempt = null
             when {
-                !attempt.matches(session) ->
+                !attempt.matches(
+                    session?.sessionId,
+                    session?.coordinates,
+                    session?.attendanceStatus == AttendanceStatusUiModel.Available,
+                ) ->
                     showLocationIssue(HomeAttendanceLocationIssue.SessionUnavailable)
                 hasPrecisePermission -> checkLocation(attempt)
                 hasApproximatePermission ->

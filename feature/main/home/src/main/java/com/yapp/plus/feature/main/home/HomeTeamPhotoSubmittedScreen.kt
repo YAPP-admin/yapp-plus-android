@@ -24,7 +24,7 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
-import com.yapp.plus.feature.main.home.components.HomeCompletionGraphic
+import com.yapp.plus.feature.main.home.attendance.components.HomeCompletionGraphic
 import com.yapp.plus.feature.main.home.components.HomeTeamPhotoReceiptDetails
 import com.yapp.plus.feature.main.home.components.HomeTopBar
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoReceiptUiModel

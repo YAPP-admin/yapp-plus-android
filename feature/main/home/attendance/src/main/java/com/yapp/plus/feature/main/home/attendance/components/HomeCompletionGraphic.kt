@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home.components
+package com.yapp.plus.feature.main.home.attendance.components
 
 import android.animation.ValueAnimator
 import android.os.Build
@@ -15,10 +15,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -31,10 +29,10 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
-import com.yapp.plus.feature.main.home.R
+import com.yapp.plus.feature.main.home.attendance.R
 
 @Composable
-internal fun HomeCompletionGraphic(modifier: Modifier = Modifier) {
+fun HomeCompletionGraphic(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val canAnimate =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -44,8 +42,7 @@ internal fun HomeCompletionGraphic(modifier: Modifier = Modifier) {
                 context.contentResolver,
                 Settings.Global.ANIMATOR_DURATION_SCALE,
                 1f,
-            ) >
-                0f
+            ) > 0f
         }
     val time =
         when {
@@ -94,7 +91,7 @@ internal fun HomeCompletionGraphic(modifier: Modifier = Modifier) {
 }
 
 @Composable
-internal fun completionTime(): Float {
+fun completionTime(): Float {
     val transition = rememberInfiniteTransition(label = "attendance celebration")
     val time by transition.animateFloat(
         initialValue = 0f,
@@ -110,7 +107,7 @@ internal fun completionTime(): Float {
 }
 
 @Composable
-internal fun HomeConfetti(
+fun HomeConfetti(
     isLeft: Boolean,
     scale: Float,
     time: Float,

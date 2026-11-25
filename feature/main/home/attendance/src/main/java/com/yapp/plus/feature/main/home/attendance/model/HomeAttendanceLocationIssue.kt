@@ -1,7 +1,7 @@
-package com.yapp.plus.feature.main.home.model
+package com.yapp.plus.feature.main.home.attendance.model
 
 import androidx.annotation.StringRes
-import com.yapp.plus.feature.main.home.R
+import com.yapp.plus.feature.main.home.attendance.R
 
 enum class HomeAttendanceLocationIssue(
     @param:StringRes val messageResource: Int,

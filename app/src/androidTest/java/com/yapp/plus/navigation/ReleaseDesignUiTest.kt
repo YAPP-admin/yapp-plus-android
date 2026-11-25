@@ -39,7 +39,7 @@ import com.yapp.plus.feature.main.board.model.BoardCategory
 import com.yapp.plus.feature.main.board.model.BoardNoticeUiModel
 import com.yapp.plus.feature.main.board.model.NoticeUiState
 import com.yapp.plus.feature.main.home.AvailableHomePreview
-import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
+import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.main.home.UpdatedHomePreview
 import com.yapp.plus.feature.main.my.MyPreviewData
 import com.yapp.plus.feature.main.my.MyScreen

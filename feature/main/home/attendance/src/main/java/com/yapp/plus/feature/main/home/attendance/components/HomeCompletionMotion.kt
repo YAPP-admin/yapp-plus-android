@@ -1,10 +1,10 @@
-package com.yapp.plus.feature.main.home.components
+package com.yapp.plus.feature.main.home.attendance.components
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.LinearEasing
 
-internal object HomeCompletionMotion {
+object HomeCompletionMotion {
     const val DURATION_MS = 2_000
     private val easeInOut = CubicBezierEasing(0.42f, 0f, 0.58f, 1f)
     private val easeOut = CubicBezierEasing(0f, 0f, 0.58f, 1f)

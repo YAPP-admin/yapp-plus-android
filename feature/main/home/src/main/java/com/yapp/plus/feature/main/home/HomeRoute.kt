@@ -21,10 +21,14 @@ import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.session.SessionType
+import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCodeRoute
 import com.yapp.plus.feature.main.home.components.HomeReportConfirmation
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
+import com.yapp.plus.feature.main.home.components.HomeSheetContent
+import com.yapp.plus.feature.main.home.model.AttendanceStatusUiModel
 import com.yapp.plus.feature.main.home.model.AttendanceUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
+import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
 import kotlinx.coroutines.delay
 import java.time.Instant
 
@@ -158,9 +162,34 @@ fun HomeRoute(
                 )
             } else {
                 HomeAttendanceCodeRoute(
-                    session = session,
-                    state = interaction,
-                    viewModel = interactionViewModel,
+                    sessionId = session?.sessionId,
+                    coordinates = session?.coordinates,
+                    isAvailable = session?.attendanceStatus == AttendanceStatusUiModel.Available,
+                    isCheckingLocation = interaction.submissionStage == HomeSubmissionStage.RequestingLocationPermission ||
+                        interaction.submissionStage == HomeSubmissionStage.CheckingLocation,
+                    locationIssue = interaction.locationIssue,
+                    sheetContent = { isCheckingLocation, locationIssue, onConfirm, onLocationRecovery ->
+                        HomeSheetContent(
+                            state = interaction,
+                            onCodeChange = interactionViewModel::updateCode,
+                            onConfirm = onConfirm,
+                            isCheckingLocation = isCheckingLocation,
+                            locationIssue = locationIssue,
+                            onLocationRecovery = onLocationRecovery,
+                        )
+                    },
+                    onCancelLocation = interactionViewModel::cancelAttendanceLocation,
+                    onConfirmAttendance = { hasPrecisePermission ->
+                        interactionViewModel.confirmAttendance(session, hasPrecisePermission)
+                    },
+                    onPermissionResult = { hasPrecisePermission, hasApproximatePermission ->
+                        interactionViewModel.onAttendancePermissionResult(
+                            session = session,
+                            hasPrecisePermission = hasPrecisePermission,
+                            hasApproximatePermission = hasApproximatePermission,
+                        )
+                    },
+                    onLocationSettingsUnavailable = interactionViewModel::onLocationSettingsUnavailable,
                     onRefreshSession = viewModel::retryCurrentWeekSchedule,
                 )
             }

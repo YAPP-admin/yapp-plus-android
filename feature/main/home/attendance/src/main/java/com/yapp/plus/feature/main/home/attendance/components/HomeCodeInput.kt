@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home.components
+package com.yapp.plus.feature.main.home.attendance.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
-import com.yapp.plus.feature.main.home.R
+import com.yapp.plus.feature.main.home.attendance.R
 
 @Composable
-internal fun HomeCodeInput(
+fun HomeCodeInput(
     value: String,
     onValueChange: (String) -> Unit,
     isError: Boolean,
@@ -83,7 +83,7 @@ internal fun HomeCodeInput(
 }
 
 @Composable
-internal fun HomeCodeDigit(
+fun HomeCodeDigit(
     digit: Char?,
     isActive: Boolean,
     isError: Boolean,

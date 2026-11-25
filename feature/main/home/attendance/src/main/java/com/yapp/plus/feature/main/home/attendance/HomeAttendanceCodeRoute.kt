@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home
+package com.yapp.plus.feature.main.home.attendance
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -17,66 +17,69 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.yapp.plus.feature.main.home.components.HomeSheetContent
-import com.yapp.plus.feature.main.home.model.CurrentWeekSessionUiModel
-import com.yapp.plus.feature.main.home.model.HomeAttendanceLocationIssue
-import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
-import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
+import com.yapp.plus.domain.session.SessionCoordinates
+import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceLocationIssue
 
 @Composable
-internal fun HomeAttendanceCodeRoute(
-    session: CurrentWeekSessionUiModel?,
-    state: HomeInteractionUiState,
-    viewModel: HomeInteractionViewModel,
+fun HomeAttendanceCodeRoute(
+    sessionId: Long?,
+    coordinates: SessionCoordinates?,
+    isAvailable: Boolean,
+    isCheckingLocation: Boolean,
+    locationIssue: HomeAttendanceLocationIssue?,
+    sheetContent: @Composable (
+        isCheckingLocation: Boolean,
+        locationIssue: HomeAttendanceLocationIssue?,
+        onConfirm: () -> Unit,
+        onLocationRecovery: (HomeAttendanceLocationIssue) -> Unit,
+    ) -> Unit,
+    onCancelLocation: () -> Unit,
+    onConfirmAttendance: (hasPrecisePermission: Boolean) -> Boolean,
+    onPermissionResult: (hasPrecisePermission: Boolean, hasApproximatePermission: Boolean) -> Unit,
+    onLocationSettingsUnavailable: () -> Unit,
     onRefreshSession: () -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    LaunchedEffect(session?.sessionId, session?.coordinates, session?.attendanceStatus) {
-        viewModel.cancelAttendanceLocation()
+    LaunchedEffect(sessionId, coordinates, isAvailable) {
+        onCancelLocation()
     }
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                viewModel.onAttendancePermissionResult(
-                    session = session,
-                    hasPrecisePermission = context.hasPermission(ACCESS_FINE_LOCATION),
-                    hasApproximatePermission = context.hasPermission(ACCESS_COARSE_LOCATION),
+                onPermissionResult(
+                    context.hasPermission(ACCESS_FINE_LOCATION),
+                    context.hasPermission(ACCESS_COARSE_LOCATION),
                 )
             } else {
-                viewModel.cancelAttendanceLocation()
+                onCancelLocation()
             }
         }
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.cancelAttendanceLocation() }
-    DisposableEffect(viewModel) { onDispose { viewModel.cancelAttendanceLocation() } }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { onCancelLocation() }
+    DisposableEffect(Unit) { onDispose { onCancelLocation() } }
 
-    HomeSheetContent(
-        state = state,
-        onCodeChange = viewModel::updateCode,
-        onConfirm = {
+    sheetContent(
+        isCheckingLocation,
+        locationIssue,
+        {
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
-                viewModel.confirmAttendance(session, context.hasPermission(ACCESS_FINE_LOCATION))
+                onConfirmAttendance(context.hasPermission(ACCESS_FINE_LOCATION))
             ) {
                 runCatching {
                     permissionLauncher.launch(arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION))
                 }.onFailure {
-                    viewModel.onAttendancePermissionResult(
-                        session = session,
-                        hasPrecisePermission = false,
-                        hasApproximatePermission = context.hasPermission(ACCESS_COARSE_LOCATION),
+                    onPermissionResult(
+                        false,
+                        context.hasPermission(ACCESS_COARSE_LOCATION),
                     )
                 }
             }
         },
-        isCheckingLocation =
-            state.submissionStage == HomeSubmissionStage.RequestingLocationPermission ||
-                state.submissionStage == HomeSubmissionStage.CheckingLocation,
-        locationIssue = state.locationIssue,
-        onLocationRecovery = { issue ->
+        { issue ->
             if (issue == HomeAttendanceLocationIssue.SessionUnavailable) {
                 onRefreshSession()
             } else if (!context.openAttendanceLocationSettings(issue)) {
-                viewModel.onLocationSettingsUnavailable()
+                onLocationSettingsUnavailable()
             }
         },
     )

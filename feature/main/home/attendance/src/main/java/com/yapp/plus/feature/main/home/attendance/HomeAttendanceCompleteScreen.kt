@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home
+package com.yapp.plus.feature.main.home.attendance
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -23,8 +22,8 @@ import com.yapp.plus.core.designsystem.components.button.YappButtonVariant
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.theme.YappHomeColor
 import com.yapp.plus.core.designsystem.theme.YappHomeTypography
-import com.yapp.plus.feature.main.home.components.HomeCompletionGraphic
-import com.yapp.plus.feature.main.home.components.HomeTopBar
+import com.yapp.plus.feature.main.home.attendance.components.HomeCompletionGraphic
+import com.yapp.plus.feature.main.home.attendance.components.HomeTopBar
 
 @Composable
 fun HomeAttendanceCompleteScreen(

@@ -5,6 +5,8 @@ import com.yapp.plus.core.network.ApiHttpClientFactory
 import com.yapp.plus.core.network.auth.TokenPersistence
 import com.yapp.plus.core.network.auth.TokenRefresher
 import com.yapp.plus.core.network.auth.TokenStore
+import com.yapp.plus.data.afterparty.AfterpartyRepositoryImpl
+import com.yapp.plus.data.afterparty.SettlementRepositoryImpl
 import com.yapp.plus.data.attendance.AttendanceDataSource
 import com.yapp.plus.data.attendance.AttendanceRemoteDataSource
 import com.yapp.plus.data.attendance.AttendanceRepositoryImpl
@@ -38,6 +40,8 @@ import com.yapp.plus.data.profile.UserProfileRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleDataSource
 import com.yapp.plus.data.session.SessionScheduleRemoteDataSource
 import com.yapp.plus.data.session.SessionScheduleRepositoryImpl
+import com.yapp.plus.domain.afterparty.AfterpartyRepository
+import com.yapp.plus.domain.afterparty.SettlementRepository
 import com.yapp.plus.domain.attendance.AttendanceReadRepository
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.attendance.TeamAttendanceReadRepository
@@ -159,6 +163,17 @@ object NetworkModule {
     @Singleton
     fun provideTeamAttendanceRead(client: HttpClient): TeamAttendanceReadRepository =
         TeamAttendanceReadRepositoryImpl(TeamAttendanceReadRemoteDataSource(client))
+
+    @Provides
+    @Singleton
+    fun provideAfterpartyRepository(client: HttpClient): AfterpartyRepository = AfterpartyRepositoryImpl.create(client)
+
+    @Provides
+    @Singleton
+    fun provideSettlementRepository(
+        client: HttpClient,
+        @Named("photo-upload") uploadClient: HttpClient,
+    ): SettlementRepository = SettlementRepositoryImpl.create(client, uploadClient)
 
     private const val UNAUTHENTICATED_CLIENT = "unauthenticated"
 

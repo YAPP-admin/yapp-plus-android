@@ -38,6 +38,7 @@ fun HomeRoute(
     onNoticeClick: (Long) -> Unit = {},
     onAttendanceComplete: () -> Unit = {},
     onContactStaff: () -> Unit = {},
+    afterpartyBanner: (@Composable () -> Unit)? = null,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -91,6 +92,7 @@ fun HomeRoute(
             isLoading = state.isLoading,
             modifier = Modifier.fillMaxSize(),
             noticeState = state.weeklyNotices,
+            afterpartyBanner = afterpartyBanner,
             onNotificationsClick = onNotificationsClick,
             onAttendanceClick = {
                 session?.takeUnless { it.type == SessionType.TEAM }?.let {

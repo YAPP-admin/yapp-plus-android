@@ -17,6 +17,7 @@ fun MyRoute(
     isHistoryVisible: Boolean,
     modifier: Modifier = Modifier,
     onContactClick: () -> Unit = {},
+    onSettlementsClick: (() -> Unit)? = null,
 ) {
     val viewModel: MyViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -41,6 +42,7 @@ fun MyRoute(
             onAttendanceHistoryClick = onAttendanceHistoryClick,
             onSettingsClick = onSettingsClick,
             onContactClick = onContactClick,
+            onSettlementsClick = onSettlementsClick,
             modifier = modifier,
         )
     }

@@ -12,5 +12,6 @@ internal enum class MainTab(
     Home(R.string.attendance_tab_home, DesignSystemR.drawable.ic_navigation_house),
     Schedule(R.string.attendance_tab_schedule, DesignSystemR.drawable.ic_navigation_calendar),
     Board(R.string.attendance_tab_board, DesignSystemR.drawable.ic_navigation_presentation),
+    Community(R.string.attendance_tab_community, R.drawable.ic_navigation_community),
     My(R.string.attendance_tab_my, DesignSystemR.drawable.ic_navigation_user),
 }

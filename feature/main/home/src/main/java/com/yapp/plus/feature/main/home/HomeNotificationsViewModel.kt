@@ -91,5 +91,6 @@ private fun List<Notification>.toUniqueUiItems(): List<HomeNotificationUiModel> 
             dateLabel = it.sentDate.format(notificationDateFormat),
             postId = it.postId,
             sessionId = it.sessionId,
+            settlement = it.settlement,
         )
     }

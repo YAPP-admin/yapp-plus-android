@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
@@ -18,8 +21,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
+import com.yapp.plus.domain.notification.SettlementNotificationTarget
 import com.yapp.plus.feature.login.LoginRoute
 import com.yapp.plus.feature.main.board.BoardRoute
+import com.yapp.plus.feature.main.community.AfterpartyRoute
+import com.yapp.plus.feature.main.community.MySettlementsRoute
+import com.yapp.plus.feature.main.community.SettlementEditorRoute
+import com.yapp.plus.feature.main.community.SettlementRoute
 import com.yapp.plus.feature.main.home.HomeAttendanceCompleteScreen
 import com.yapp.plus.feature.main.home.HomeNotificationsRoute
 import com.yapp.plus.feature.signup.SignUpRoute
@@ -50,6 +58,8 @@ internal fun AppNavHost(
     onPushPostOpened: () -> Unit = {},
     pushSessionId: Long? = null,
     onPushSessionOpened: () -> Unit = {},
+    pushSettlement: SettlementNotificationTarget? = null,
+    onPushSettlementOpened: () -> Unit = {},
 ) {
     val currentEntry by navController.currentBackStackEntryAsState()
     LaunchedEffect(sessionAuthenticated, registrationToken, currentEntry) {
@@ -106,6 +116,17 @@ internal fun AppNavHost(
         }
         onPushSessionOpened()
     }
+    LaunchedEffect(sessionAuthenticated, pushSettlement, currentEntry) {
+        val entry = currentEntry ?: return@LaunchedEffect
+        val target = pushSettlement ?: return@LaunchedEffect
+        if (sessionAuthenticated != true || !entry.destination.isAuthenticatedDestination()) return@LaunchedEffect
+        val destination = AppNavigationDestination.Settlement(target.afterpartyId, target.settlementId)
+        val alreadyOpen =
+            entry.destination.hasRoute<AppNavigationDestination.Settlement>() &&
+                entry.toRoute<AppNavigationDestination.Settlement>() == destination
+        if (!alreadyOpen) navController.navigate(destination) { launchSingleTop = true }
+        onPushSettlementOpened()
+    }
     BackHandler(
         enabled = currentEntry != null && navController.previousBackStackEntry == null,
         onBack = onExit,
@@ -119,6 +140,8 @@ internal fun AppNavHost(
             MainTabScaffold(
                 initialTab = if (sessionId == null) MainTab.Home else MainTab.Schedule,
                 scheduleSessionId = sessionId,
+                onAfterpartyClick = { navController.navigateFrom(entry, AppNavigationDestination.Afterparty(it)) },
+                onSettlementsClick = { navController.navigateFrom(entry, AppNavigationDestination.MySettlements) },
                 onNotificationsClick = {
                     navController.navigateFrom(entry, AppNavigationDestination.Notifications)
                 },
@@ -181,11 +204,61 @@ internal fun AppNavHost(
         composable<AppNavigationDestination.Notifications> { entry ->
             HomeNotificationsRoute(
                 onBack = { navController.navigateBackFrom(entry, onExit) },
+                onSettlementClick = { target ->
+                    navController.navigateFrom(
+                        entry,
+                        AppNavigationDestination.Settlement(target.afterpartyId, target.settlementId),
+                    )
+                },
                 onPostClick = {
                     navController.navigateFrom(entry, AppNavigationDestination.NotificationPost(it))
                 },
                 onSessionClick = {
                     navController.navigateFrom(entry, AppNavigationDestination.NotificationSchedule(it))
+                },
+            )
+        }
+        composable<AppNavigationDestination.Afterparty> { entry ->
+            val id = entry.toRoute<AppNavigationDestination.Afterparty>().id
+            AfterpartyRoute(
+                id = id,
+                onBack = { navController.navigateBackFrom(entry, onExit) },
+                onSettlementClick = { navController.navigateFrom(entry, AppNavigationDestination.Settlement(id, it)) },
+                onAddSettlement = { navController.navigateFrom(entry, AppNavigationDestination.SettlementEditor(id)) },
+            )
+        }
+        composable<AppNavigationDestination.Settlement> { entry ->
+            val target = entry.toRoute<AppNavigationDestination.Settlement>()
+            SettlementRoute(
+                afterpartyId = target.afterpartyId,
+                settlementId = target.settlementId,
+                onBack = { navController.navigateBackFrom(entry, onExit) },
+                onEdit = {
+                    navController.navigateFrom(
+                        entry,
+                        AppNavigationDestination.SettlementEditor(target.afterpartyId, target.settlementId),
+                    )
+                },
+            )
+        }
+        composable<AppNavigationDestination.SettlementEditor> { entry ->
+            val target = entry.toRoute<AppNavigationDestination.SettlementEditor>()
+            val onBack = { navController.navigateBackFrom(entry, onExit) }
+            var isSaving by remember { mutableStateOf(false) }
+            BackHandler(enabled = isSaving) {}
+            SettlementEditorRoute(
+                afterpartyId = target.afterpartyId,
+                settlementId = target.settlementId,
+                onBack = onBack,
+                onSaved = onBack,
+                onSavingChanged = { isSaving = it },
+            )
+        }
+        composable<AppNavigationDestination.MySettlements> { entry ->
+            MySettlementsRoute(
+                onBack = { navController.navigateBackFrom(entry, onExit) },
+                onClick = { afterpartyId, settlementId ->
+                    navController.navigateFrom(entry, AppNavigationDestination.Settlement(afterpartyId, settlementId))
                 },
             )
         }
@@ -204,7 +277,11 @@ private fun NavDestination.isAuthenticatedDestination(): Boolean =
         hasRoute<AppNavigationDestination.AttendanceComplete>() ||
         hasRoute<AppNavigationDestination.Notifications>() ||
         hasRoute<AppNavigationDestination.NotificationPost>() ||
-        hasRoute<AppNavigationDestination.NotificationSchedule>()
+        hasRoute<AppNavigationDestination.NotificationSchedule>() ||
+        hasRoute<AppNavigationDestination.Afterparty>() ||
+        hasRoute<AppNavigationDestination.Settlement>() ||
+        hasRoute<AppNavigationDestination.SettlementEditor>() ||
+        hasRoute<AppNavigationDestination.MySettlements>()
 
 private fun NavHostController.navigateToAuthenticatedMain(entry: NavBackStackEntry) {
     if (!canNavigateFrom(entry)) return

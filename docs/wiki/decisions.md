@@ -694,3 +694,13 @@ last_verified: 2026-11-25
 - 반영: [제품 정책](product-policy.md#figma-기준-my와-설정), [디자인시스템 공통 컴포넌트](design-system-components.md), `:core:designsystem`의 `YappAlertDialog`, `:feature:setting`의 `AccountDeletionDialog`.
 - 적용 상태: 서버 탈퇴 진행 중에만 텍스트 대신 원형 인디케이터를 표시합니다. 확인 문구와 서버 성공·실패 처리 계약은 유지합니다.
 - 대체한 결정: 없음.
+
+## DEC-0088 · 이번 주 팀 세션의 장소명 응답 처리
+
+- 기록일: 2026-11-26
+- 결정: 이번 주 세션 조회에서 `TEAM`의 `location: null`을 정상 응답으로 읽습니다. `REGULAR`의 장소명은 필수 문자열입니다.
+- 이유: 장소명이 없는 팀 세션도 홈에서 기존 팀 출석 카드와 출석 상태를 표시해야 합니다.
+- 근거: 실기기에서 받은 서버 응답과 [백엔드 이번 주 세션 응답 모델](https://github.com/YAPP-admin/yapp-plus-backend/blob/b4a9242cf50590240127c0093b41e9dd52111fb2/api/src/main/kotlin/backend/yappplus/session/CurrentWeekSessionController.kt#L38-L52), [Figma 팀 출석 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=810-11509), [Android 이슈 #290](https://github.com/YAPP-admin/yapp-plus-android/issues/290).
+- 반영: [제품 정책](product-policy.md#현재-서버-연결), `:data`의 이번 주 세션 응답 모델과 매핑.
+- 적용 상태: Data는 `TEAM`의 null 장소명을 기존 모델의 빈 문자열로 변환하고 서버의 세션 유형·시각·출석 상태를 전달합니다.
+- 대체한 결정: DEC-0076의 팀 세션 필수 장소명.

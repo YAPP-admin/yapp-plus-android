@@ -65,7 +65,7 @@ class SessionScheduleRemoteDataSourceTest {
         }
 
     @Test
-    fun `weekly response maps checked in and pending approval into domain states`() =
+    fun `weekly team session with a null location preserves attendance status`() =
         runTest {
             val statuses =
                 mapOf(
@@ -77,19 +77,23 @@ class SessionScheduleRemoteDataSourceTest {
                     """{"weekStartDate":"2026-10-18","weekEndDate":"2026-10-24","session":{
                     "sessionId":12,"name":"세션","date":"2026-10-24","startTime":"14:00",
                     "endTime":"18:00","type":"TEAM","attendanceStatus":"$wireStatus",
-                    "location":"팀별 자율 장소"}}"""
+                    "location":null,"roadAddress":null,"latitude":null,"longitude":null,
+                    "detailAddress":null}}"""
                 createClient(response).use { client ->
                     val repository =
                         SessionScheduleRepositoryImpl(SessionScheduleRemoteDataSource(client))
                     val result = repository.fetchCurrentWeekSchedule() as YappResult.Success
                     val session = requireNotNull(result.value.session)
+                    assertEquals(SessionType.TEAM, session.type)
+                    assertEquals("", session.location)
+                    assertNull(session.locationDetails)
                     assertEquals(domainStatus, session.attendanceStatus)
                 }
             }
         }
 
     @Test
-    fun `weekly session without a non-null location is unavailable`() =
+    fun `weekly regular session without a non-null location is unavailable`() =
         runTest {
             for (locationField in listOf("", ""","location":null""")) {
                 val response =

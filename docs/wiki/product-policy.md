@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-25
+last_verified: 2026-11-26
 ---
 
 # 제품 정책
@@ -59,7 +59,7 @@ Google 인증의 `SIGNED_IN` 응답은 access/refresh token 쌍을 암호화 저
 
 | 기능 | 계약과 적용 상태 |
 | --- | --- |
-| 이번 주 세션 | `GET /api/sessions/current-week`로 장소명·주소·기준 좌표와 출석 인증·검토 상태를 조회해 홈에 연결. 세션의 `location`은 필수 문자열이며, `type`·`endTime`으로 홈의 팀 출석 카드와 제출 시간창을 설정 |
+| 이번 주 세션 | `GET /api/sessions/current-week`로 장소명·주소·기준 좌표와 출석 인증·검토 상태를 조회해 홈에 연결. `REGULAR`의 `location`은 필수 문자열이며, `TEAM`은 `location: null`을 정상으로 처리. `type`·`endTime`으로 홈의 팀 출석 카드와 제출 시간창을 설정 |
 | 현재 기수 일정 | `GET /api/generations/current/sessions`로 장소명·주소·기준 좌표를 조회해 일정에 연결 |
 | 출석 인증 | `POST /api/attendance-verifications`; 서버 확인 후에만 완료 표시 |
 | 사전 보고 | `POST /api/attendance-reports`. 홈에서 지각·조퇴·결석을 선택하고 30자 이내의 필수 사유를 입력하면 서버 결과를 표시합니다. |

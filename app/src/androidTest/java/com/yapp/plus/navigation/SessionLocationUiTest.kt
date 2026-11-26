@@ -240,6 +240,22 @@ class SessionLocationUiTest {
     }
 
     @Test
+    fun checkedInTeamSessionWithoutLocationShowsTeamCard() {
+        installApiFixtures(
+            includeLocation = false,
+            currentAttendanceStatus = { AttendanceStatus.CHECKED_IN },
+            weeklySessionType = SessionType.TEAM,
+        ).use {
+            composeRule.setContent { YappTheme { MainTabScaffold() } }
+            val approvalTitle = "팀 세션 출석이 완료됐어요!"
+            waitForText(approvalTitle)
+            composeRule.onNodeWithText("확인").performClick()
+            composeRule.onNodeWithText("이번 주는 팀 세션이에요").assertIsDisplayed()
+            composeRule.onNodeWithText("출석했어요!").assertIsNotEnabled()
+        }
+    }
+
+    @Test
     fun teamApprovalAfterRefreshRemembersConfirmationAcrossTabs() {
         val attendanceStatus = AtomicReference(AttendanceStatus.PENDING_APPROVAL)
         installApiFixtures(
@@ -393,9 +409,10 @@ class SessionLocationUiTest {
         sessionType: SessionType,
     ): String {
         val locationDetails = if (includeLocation) locationDetails(venueLatitude) else ""
+        val location = if (sessionType == SessionType.TEAM) "null" else "\"DMC 첨단산업센터\""
         return """{"weekStartDate":"${sessionDate.minusDays(6)}","weekEndDate":"$sessionDate",
             "session":{"sessionId":12,"name":"개발 세션","date":"$sessionDate","startTime":"14:00",
-            "endTime":"18:00","type":"${sessionType.name}","location":"DMC 첨단산업센터",
+            "endTime":"18:00","type":"${sessionType.name}","location":$location,
             "attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
     }
 

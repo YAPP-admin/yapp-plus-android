@@ -90,7 +90,7 @@ last_verified: 2026-11-26
 - 이유: 후속 로그인·회원가입 모듈에서 공통 표현과 Preview 데이터를 재사용하면서 기능 상태·목적지·업무 정책의 경계를 유지합니다.
 - 근거: 이번 세션의 사용자 승인, [이슈 #33](https://github.com/YAPP-admin/yapp-plus-android/issues/33), 후속 화면 작업 [이슈 #27](https://github.com/YAPP-admin/yapp-plus-android/issues/27).
 - 반영: [코딩 컨벤션](coding-conventions.md), [모듈 구조](module-structure.md), [설계 패턴](design-patterns.md), [공통 컴포넌트](design-system-components.md), `README.md`, `.codex/prompts/yapp-work.md`, `.codex/prompts/yapp-pr.md`.
-- 적용 상태: 공용 표현 5개와 각각의 Preview, 범용 Preview 지원 모듈을 제공합니다. 로그인·회원가입 모듈 분리와 화면 연결은 기반 PR 병합 뒤 후속 작업에서 구현합니다. Hilt 객체 조립 문구는 DEC-0005의 확정 내용과 실제 코드에 맞춰 동기화했습니다.
+- 적용 상태: 공통 표현 5개와 각각의 Preview, 범용 Preview 지원 모듈을 제공합니다. 로그인·회원가입 모듈 분리와 화면 연결은 기반 PR 병합 뒤 후속 작업에서 구현합니다. Hilt 객체 조립 문구는 DEC-0005의 확정 내용과 실제 코드에 맞춰 동기화했습니다.
 - 대체한 결정: 없음. DEC-0008의 기능 상태·검증·인증 연동·카카오 로고의 Feature 소유는 유지합니다.
 
 ## DEC-0010 · 로그인 시작점과 회원가입 진입 요소 제거
@@ -207,7 +207,7 @@ last_verified: 2026-11-26
 
 - 기록일: 2026-10-19
 - 결정: Android 모듈의 Hilt 의존성 주입 선언은 모듈 루트의 `di/` 패키지에 둡니다. 독립 UI 컴포넌트는 `components/` 패키지에 두고 Route·Screen과 분리합니다. 새 컴포넌트 Preview도 `src/debug`에서 같은 `components/` 패키지 경로를 사용합니다.
-- 이유: 의존성 조립과 UI 컴포넌트의 위치를 모듈마다 일관된 경로로 찾아 관리합니다.
+- 이유: 의존성 조립과 UI 컴포넌트의 위치를 모듈마다 일관되게 찾아 관리합니다.
 - 근거: 사용자의 명시 요청.
 - 반영: [모듈 구조](module-structure.md), [디자인시스템 공통 컴포넌트](design-system-components.md).
 - 적용 상태: Designsystem과 메인 Feature의 기존 컴포넌트 패키지 및 debug Preview를 `components/`로 옮기고 참조를 갱신했습니다. 로그인 오류 다이얼로그도 Feature의 `components/`로 분리했습니다. 기존 Hilt 의존성 주입 파일은 이미 `di/`에 있어 그대로 유지합니다.
@@ -286,12 +286,414 @@ last_verified: 2026-11-26
 ## DEC-0036 · 비공개 테스트와 실제 개발 브랜치 분리
 
 - 기록일: 2026-10-25
-- 결정: `release/v1.0.1`은 임시 비공개 테스트 버전으로 보존하고 실제 서비스 개발은 `develop`에서 진행합니다. 같은 앱 ID `com.yapp.plus`와 Play 비공개 테스트 트랙을 사용합니다. 임시 브랜치를 개발 브랜치에 통째로 병합하지으며 필요한 수정만 선별해 반영합니다.
+- 결정: `release/v1.0.1`은 임시 비공개 테스트 버전으로 보존하고 실제 서비스 개발은 `develop`에서 진행합니다. 같은 앱 ID `com.yapp.plus`와 Play 비공개 테스트 트랙을 사용합니다. 임시 브랜치를 개발 브랜치에 통째로 병합하지 않으며 필요한 수정만 선별해 반영합니다.
 - 이유: 배포 중인 테스트 버전을 유지하면서 실제 서비스의 서버 계약에 맞는 개발을 이어가기 위해서입니다.
 - 근거: 현재 세션의 사용자 확정 요청과 [이슈 #125](https://github.com/YAPP-admin/yapp-plus-android/issues/125).
 - 반영: [제품 정책](product-policy.md), [CONTRIBUTING.md](../../CONTRIBUTING.md), `README.md`, `AGENTS.md`.
 - 적용 상태: `release/v1.0.1` 작업 폴더와 브랜치를 보존합니다. 개발 전환은 최신 `develop` 기반의 순차 PR로 진행합니다.
 - 대체한 결정: 일반 릴리즈의 develop 재병합 절차에서 임시 `release/v1.0.1`은 제외합니다.
+
+## DEC-0037 · 개발 버전을 YAPP 서버 계약으로 정리
+
+- 기록일: 2026-10-25
+- 결정: 임시 테스트 백엔드의 구현·전용 계약·SQL·테스트·운영 문서를 개발 브랜치에서 제거합니다. 일정·출석 인증·보고는 기존 YAPP 어댑터로 연결하고 Google 크레덴셜 획득 코드는 유지합니다. 서버 인증 교환·가짜 가입 완료·프로필 저장은 연결하지 않으며 계약 없는 조회는 준비 중으로 표시합니다.
+- 이유: 실제 서버에 없는 API나 로그인 성공을 만들지 않고 서버 구현에 맞춰 기능을 이어가기 위해서입니다.
+- 근거: 사용자의 전체 제거 요청과 Google 크레덴셜만 유지하라는 후속 확정, [이슈 #125](https://github.com/YAPP-admin/yapp-plus-android/issues/125), 백엔드 dev 코드와 OpenAPI.
+- 반영: App·Domain·Data·Login·Signup·Home·Board·My·Setting, [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md).
+- 적용 상태: YAPP 서버 어댑터와 토큰 저장·갱신 기반을 유지하고 임시 테스트 전용 파일과 관련 결정 기록을 개발 문서에서 정리했습니다. 해당 테스트 버전의 소스·문서·배포 데이터는 임시 릴리즈에 보존합니다. 실제 Google 인증·가입·회원 조회·공지·삭제 연결은 서버 계약 확인 후 구현합니다.
+- 대체한 결정: 이전 임시 테스트의 인증·프로필·공지·출석 이력·삭제 연결을 개발 버전에서 종료합니다. 일반 계층 경계와 출석 정책은 유지합니다.
+
+## DEC-0038 · 개발 화면을 원본 Figma에 맞춤
+
+- 기록일: 2026-10-25
+- 결정: `develop`의 앱 화면을 사용자가 지정한 Figma 앱 화면 페이지와 비교해 수정합니다. 실제 프레임의 `scale/t*` 타이포그래피, 배치·간격·색상·그래픽을 적용하며 Android 시스템 영역과 승인된 앱 데이터·기능 범위는 유지합니다.
+- 이유: 개발 중인 앱의 원본 디자인 불일치를 해결하고, 미연동 기능을 화면 정합성을 위해 임의로 활성화하지 않기 위해서입니다.
+- 근거: 현재 세션의 사용자 요청과 [이슈 #126](https://github.com/YAPP-admin/yapp-plus-android/issues/126).
+- 반영: [디자인시스템](design-system.md), [제품 정책](product-policy.md), Core 디자인시스템·Login·SignUp·Home·Board·Schedule·My·Setting·App.
+- 적용 상태: `develop`에서 PR #127·#128을 병합했고 후속 UI 정리 PR도 반영했습니다. 서버 계약이 없는 회원 정보·점수·공지 기능은 연결 전까지 준비 중으로 유지하며 실제 Google 인증·출석 서버 E2E는 이번 화면 비교 범위에 포함하지 않습니다.
+- 대체한 결정: 없음. 비공개 테스트와 실제 서비스 개발의 브랜치 분리 결정은 DEC-0036을 따르고, 서버 연동 범위는 DEC-0037을 따릅니다.
+
+## DEC-0039 · Google 네이티브 인증과 가입을 YAPP 서버에 연결
+
+- 기록일: 2026-10-26
+- 결정: Google Credential Manager의 Web Client ID와 매 로그인별 SHA-256 nonce를 사용해 ID Token·원본 nonce를 `POST /api/auth/oidc/google/native-authentications`로 검증합니다. `SIGNED_IN`의 YAPP token 쌍을 암호화 저장하고, `SIGNUP_REQUIRED`는 일회용 registration token을 메모리에만 유지해 `POST /api/users`의 이름·E.164 전화번호 제출로 이어갑니다. 앱 시작 시 저장된 세션을 복원해 인증 목적지를 정합니다.
+- 이유: 개발 버전의 Google 로그인과 기존 가입 UI를 실제 서버 계약에 연결하고, 인증 정보의 수명과 세션 복원 경계를 분명히 하기 위함입니다.
+- 근거: 사용자 제공 API 계약, [백엔드 APIDOC의 Google Native OIDC 인증 및 가입 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md), [Android Credential Manager 공식 구현 안내](https://developer.android.com/identity/sign-in/credential-manager-siwg-implementation).
+- 반영: `:domain`의 인증 계약과 전화번호 변환, `:data`의 인증·가입 DataSource와 Repository, App Hilt·세션 복원·내비게이션, Login·Signup Feature, `AGENTS.md`, `README.md`, [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), [제품 정책](product-policy.md).
+- 적용 상태: dev API와 통신하도록 로컬 `local.properties`에 제공된 개발 API host를 지정했습니다. 2026-10-27 실기기에서 실제 Google 로그인, 가입, 암호화 세션 저장과 프로세스 재시작 후 메인 복원을 확인했습니다. 인증 후 Navigation의 메인 스레드 위반을 수정했고 앱 빌드·lint, 관련 모듈 단위 테스트 43건을 통과했습니다.
+- 추가 확인: 같은 날 사용자 요청으로 dev 계정을 `DELETE /api/users/me`로 탈퇴시켜 성공 `204`, 기존 세션 거절 `401`, 로컬 token 삭제와 로그인 복귀를 확인했습니다. 서버는 계정·동아리 통합 탈퇴를 제공합니다. 연결 상태는 [제품 정책](product-policy.md#계정-기수-통합-탈퇴)을 따릅니다.
+- 대체한 결정: DEC-0037의 Google 인증 교환·가입 연결 후속 상태를 완료합니다. 공지·회원 프로필·출석 조회 미연동 범위는 유지합니다. 로그아웃·통합 탈퇴 적용 상태는 이후 DEC-0041에서 정합니다.
+
+## DEC-0040 · 가입 필드 오류와 이름 수정 시 전화번호 유지
+
+- 기록일: 2026-10-26
+- 결정: 가입은 이름·전화번호를 함께 제출하고 서버의 `fieldErrors`를 입력별로 표시합니다. 이름만 오류이면 이름 입력으로 돌아가고, 수정 후 기존 전화번호로 바로 재제출합니다. 두 필드 모두 오류이면 이름을 먼저 고친 뒤 전화번호도 수정합니다. 전화번호 중복은 전화번호 입력 오류로 처리합니다.
+- 이유: 오류가 난 입력으로 돌아가 수정하게 하면서 오류가 없는 전화번호의 재입력을 생략하기 위함입니다.
+- 근거: 사용자의 명시적 구현 요청, dev 서버의 입력 오류 응답과 [백엔드 가입 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#8-user-가입-완료).
+- 반영: `RegistrationFieldError`, 가입 오류 DTO·Repository 매핑, Signup ViewModel·Route·입력창·Preview·테스트, App 인증 후 화면 이동과 opt-in 실서버 가입 E2E, [제품 정책](product-policy.md), [설계 패턴](design-patterns.md).
+- 적용 상태: 이름 화면 복귀·전화번호 유지·이름 화면 재제출·수정 상태 복원·동시 필드 오류·전화번호 중복 처리를 로컬 작업 트리에 구현했습니다. 관련 단위 테스트 22건, 변경 모듈 ktlint, App debug 빌드·lint를 통과했습니다. 2026-10-27 Samsung 실기기와 실제 dev 서버에서 Google 신규 인증 → 이름 101자 제출 `400` → 이름 화면 오류 표시 → 이름만 수정 → 동일한 E.164 전화번호로 재제출 `200` → 가입 완료·메인 진입·Activity 재생성을 E2E로 통과했고 프로세스 종료·재시작 후에도 메인 세션 복원을 확인했습니다. 번호 중복 `409`의 입력창 표시도 별도로 확인했습니다. 가입 토큰은 메모리 전용으로 유지하며 만료 시 기존 로그인 복귀를 따릅니다.
+- 대체한 결정: DEC-0039의 일반적인 가입 실패 처리에 필드별 복구 동작을 구체화합니다.
+
+## DEC-0041 · 로그아웃과 계정·기수 통합 탈퇴 연결
+
+- 기록일: 2026-10-27
+- 결정: 로그아웃은 `DELETE /api/auth/sessions/current`에 현재 refresh token을 전달하고 서버 성공 뒤 로컬 token 쌍을 삭제해 로그인 화면으로 이동합니다. 실패하면 현재 세션을 보존하고 재시도할 수 있게 합니다. `DELETE /api/users/me`는 앱 계정만 삭제하는 API가 아니라 모든 기수 소속과 세션을 종료하고 개인정보를 비식별화하는 통합 탈퇴입니다. 사용자가 확인한 뒤 Bearer access token으로 요청하고, 서버 성공 뒤에만 로컬 token을 삭제해 로그인 화면으로 이동합니다.
+- 이유: 기존 설정의 앱 계정 삭제 안내를 실제 서버 계약과 일치시키고, 서버에서 처리되지 않은 탈퇴를 로컬 세션 삭제로 완료 처리하지 않기 위함입니다.
+- 근거: 사용자의 확정 요청과 [이슈 #149](https://github.com/YAPP-admin/yapp-plus-android/issues/149), [백엔드 인증·로그아웃 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/AuthController.kt), [백엔드 통합 탈퇴 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/api/src/main/kotlin/backend/yappplus/auth/UserWithdrawalController.kt).
+- 반영: [제품 정책](product-policy.md), [회원·역할 정책](membership-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), `AGENTS.md`, `README.md`, Domain·Data 인증 Repository와 설정 문구·App 인증 흐름.
+- 적용 상태: 빌드 복구 [PR #154](https://github.com/YAPP-admin/yapp-plus-android/pull/154), Domain [PR #153](https://github.com/YAPP-admin/yapp-plus-android/pull/153), Data [PR #155](https://github.com/YAPP-admin/yapp-plus-android/pull/155), 설정 안내 [PR #156](https://github.com/YAPP-admin/yapp-plus-android/pull/156)을 순서대로 반영했습니다. App 실행 콜백·성공 후 로그인 복귀·오류 재시도·중복 방지와 취소 후 로딩 해제를 연결했습니다. App 단위 테스트 8건, API 35 에뮬레이터 UI 테스트 6건, App debug 빌드·lint·KtLint를 통과했습니다. 실제 Settings 서버 E2E는 확인하지 못했습니다.
+- 대체한 결정: DEC-0033의 앱 계정 삭제와 YAPP 동아리 탈퇴를 별도 처리한다는 정책을 대체합니다. 설정 화면 구조와 다른 알림·약관 정책은 유지합니다.
+
+## DEC-0042 · 앱 기능 명세서 ver 2를 화면 요구 기준으로 반영
+
+- 기록일: 2026-10-26
+- 결정: 사용자가 제공한 [기능 명세서 `🟠APP (ver 2)` 탭](https://docs.google.com/spreadsheets/d/1K-2VwMPkoT8kq-bujUIMetTPKal11Iql2GUmMd1M7eE/edit?gid=848576421#gid=848576421)을 화면의 목표 요구로 기록합니다. Android에는 Google 로그인을 적용하며 시트의 iOS 전용 Apple 로그인 요구를 Android로 확대하지 않습니다.
+- 이유: 갱신된 기능 명세와 후속 화면 요구를 현재 제품 정책에서 추적하기 위해서입니다.
+- 근거: 사용자의 2026-10-26 Wiki 갱신 요청과 시트의 변경 표시. Drive 개정 이력은 제공되지 않아 변경 열과 기존 APP 탭을 대조했습니다.
+- 반영: [제품 정책](product-policy.md)의 `앱 기능 명세서 ver 2` 절.
+- 적용 상태: 문서에 목표와 현재 구현을 구분해 기록했습니다. DEC-0039의 YAPP 서버 인증·가입 결정은 현재 구현 기준으로 유지합니다. 멤버십 연결·승인, 팀 사진 출석·검수, 공식 회원·출석 조회, 공지·알림 서버 연결은 후속입니다. 탈퇴 보존 문구의 범위와 기간은 미확정으로 유지합니다.
+- 대체한 결정: 없음.
+
+## DEC-0043 · My 출석 조회 연결과 Figma UI 기준
+
+- 기록일: 2026-10-29
+- 결정: My의 출석 점수·이력은 확인된 사용자 API에 연결하고, 화면·별도 이력 이동·설정·확인 팝업은 Figma를 따릅니다. Figma에 없는 앱 버전·탈퇴 문의 이메일·확장 안내를 제거합니다. 서버와 탈퇴 문구의 차이를 설명한 뒤 사용자가 Figma 원문을 명시적으로 재확인했습니다. 서버의 통합 탈퇴·비식별화·이력 보존·실패 시 세션 보존은 변경하지 않습니다. 미지원 API에 대해서는 사용자가 “api 연결만 비워놔”라고 명시했으므로 Figma UI를 유지하고 조회값을 `—`로 표시하며 API·문의 URL 연결만 비워 둡니다. 알림 토글은 화면 상태만 변경합니다.
+- 이유: 준비 중 화면에서 제공되는 실제 출석 조회로 전환하고, 요청된 UI/UX 기준과 구현을 맞추기 위해서입니다.
+- 근거: 사용자의 마이페이지 구현 요청·탈퇴 문구 후속 답변, [Figma](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40302), [이슈 #160](https://github.com/YAPP-admin/yapp-plus-android/issues/160), [서버 API 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md).
+- 반영: [제품 정책](product-policy.md), [아키텍처](architecture.md), [설계 패턴](design-patterns.md), [모듈 구조](module-structure.md), [회원·역할 정책](membership-policy.md), [디자인시스템](design-system-components.md), AGENTS·README, Domain·Data·My·Setting·App.
+- 적용 상태: 로컬 구현과 빌드·lint·ktlint·단위 58건·API 35 UI 13건 검증을 완료했습니다. 사용자용 프로필·지각 면제권·알림 설정·문의 URL과 진행률 산식은 미확인입니다. 해당 UI는 유지하고 API 연결과 산식만 비워 두었습니다. 서버 응답을 임의 계산이나 예시 값으로 대체하지 않습니다. Domain 계약·Data·공통/설정 UI와 My 요약 컴포넌트는 PR #162~#171로 병합했습니다. 2026-10-30 추가 적용: PR #174·#175·#178로 My 프로필·메인·별도 내역 UI와 조회·이동을 반영했습니다.
+- 대체한 결정: DEC-0033/DEC-0038의 앱 버전·추가 탈퇴 안내 유지, DEC-0041의 화면 안내 문구, DEC-0042의 My 출석 조회 미연결 상태를 갱신하며 My·설정의 미지원 필드 숨김을 이 작업에 한해 UI 유지로 대체합니다. 통합 탈퇴 서버 계약과 다른 기능 범위는 유지합니다.
+
+
+## DEC-0044 · 서버에 존재하는 사용자 API의 후속 연결
+
+- 날짜: 2026-10-30
+- 결정: 사용자의 “api 연동 마저해줘”, “서버에있는것만진행해”에 따라 확인된 서버 계약을 연결합니다. 로그인·가입 응답의 이름을 세션과 함께 저장해 My에 표시하고 공지 목록·상세·읽음, 홈 주간 공지와 사전 보고를 연결합니다. 지각 보고는 현재 사용자 Controller가 허용하는 `LATE`를 사용하며 추가 시간 선택은 제거합니다.
+- 근거: [이슈 #161](https://github.com/YAPP-admin/yapp-plus-android/issues/161), [백엔드 f1d29f4](https://github.com/YAPP-admin/yapp-plus-backend/tree/f1d29f44bfbf10793baabce7c0e2f2efdf3a307c), Figma 공지 상세·보고 시트.
+- 적용 상태: API·화면 연결, 전체 모듈 debug 빌드·lint, ktlint, 관련 단위 테스트 97건(Data 52·Network 23·Board 4·Home 9·My 9), API 35 UI 테스트 18건과 Wiki 검사를 완료했습니다. 검증은 Fake·MockEngine·에뮬레이터를 사용했으며 실제 서버 계정으로 E2E 요청을 수행하지 않았습니다. 팀 사진 presign·업로드·제출과 푸시 기기 등록·해제는 Domain·Data·App 조립까지 구현하며, 본인 membershipId·팀원 목록과 Android Firebase 설정을 확인하기 전에는 UI 제출·실제 푸시 수신을 완료로 간주하지 않습니다. 이름이 없던 기존 저장 세션은 다음 로그인 성공부터 이름을 표시합니다. 미확인 회원 정보·면제권·알림 설정·문의 연결은 비워 둡니다.
+- 추가 적용: PR #172~#178로 가입 Route 정리, App 조립, My·홈·게시판의 화면과 API 연결을 영역별로 나누어 병합했습니다. 최종 통합 코드에서 전체 단위 테스트 129건, 전체 debug 빌드·lint·ktlint와 테스트 APK 빌드를 통과했습니다. 동일 기능 코드의 API 35 UI 테스트 18건도 다시 통과했습니다.
+- 대체한 결정: DEC-0038·DEC-0042·DEC-0043의 공지·보고·이름 미연결 상태를 갱신합니다. Figma UI·문구 기준과 확인되지 않은 값의 빈 표시 정책은 유지합니다. 서버 조회 계약이 없는 관리자 전용 API를 사용자 토큰으로 대체 호출하지 않습니다.
+
+## DEC-0045 · Data 모델의 매핑을 원본 타입에 캡슐화
+
+- 기록일: 2026-10-30
+- 결정: 직접 소유하는 DTO·Data 모델의 매핑은 확장 함수 대신 원본 타입 내부의 `toData()`·`toDomain()` 멤버 함수로 둡니다. DataSource·Repository는 해당 함수를 호출해 변환 결과를 사용합니다.
+- 이유: 변환 책임을 원본 모델에 모으고 요청·저장소 코드와 분리하기 위함입니다.
+- 근거: 현재 세션에서 `AttendanceScoreResponse.toData()`와 같은 매핑을 수신 타입 내부로 캡슐화하라는 사용자 요청.
+- 반영: [설계 패턴](design-patterns.md), 출석 점수·이력 DTO와 Data 모델. 같은 작업의 공지 매핑에도 적용합니다.
+- 적용 상태: 출석 점수·이력과 공지 매핑에 반영했으며 기존 검증·변환 동작을 유지합니다.
+- 대체한 결정: 없음. Data의 DTO·Domain 변환 소유권과 계층 의존성은 유지합니다.
+
+## DEC-0046 · My 본인 프로필 조회 계약과 표시
+
+2026-11-09. My에서 변경된 이름과 소속 정보를 확인할 수 있도록 본인 프로필 조회를 추가하기로 했습니다.
+
+- My는 `GET /api/users/me`에서 서버가 선택한 소속과 이름을 조회합니다. 정상 무소속을 조회 실패와 구분하며, 지원하지 않는 회원 구분·직군은 해당 항목만 `—`로 표시합니다. [이슈 #185](https://github.com/YAPP-admin/yapp-plus-android/issues/185), [백엔드 프로필 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/c26950683839f46d6778c2ba0e651a77cec27146/APIDOC.md#L1235-L1258)
+- 소속 유무와 미기록 직군은 Domain에서 각각 표현합니다. 아직 지원하지 않는 회원 구분·직군 값은 `UNKNOWN`으로 표현합니다. 표시 문구와 세션 이름을 사용하는 조건은 [회원·역할 정책](membership-policy.md#my-프로필의-회원-구분과-직군)과 [제품 정책](product-policy.md#my-본인-프로필-조회)에 반영했습니다.
+- Domain과 UI에 이어 인증 Data 어댑터와 My Feature 연결을 구현했습니다. DEC-0043과 DEC-0044의 My 프로필 계약 미확인 범위를 갱신합니다.
+
+## DEC-0047 · Android 런처와 푸시의 YAPP 아이콘
+
+- 기록일: 2026-11-09
+- 결정: Android 앱 표시 이름은 `Yapp`입니다. Figma 앱 아이콘의 주황색 그라데이션과 흰색 Y 심볼을 Android 런처에 사용합니다. 푸시의 작은 아이콘에는 같은 심볼을 투명 배경의 단색 벡터로 사용합니다.
+- 근거: 사용자의 앱 아이콘 교체와 푸시 아이콘 적용 요청, [Figma 앱 아이콘](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-25275).
+- 반영: [디자인시스템](design-system.md#yapp-로고), App 런처 및 푸시 리소스.
+- 적용 상태: Android 7 계열의 기본·원형 아이콘, Android 8 이상의 적응형 아이콘, 푸시 아이콘을 XML 리소스로 연결했습니다.
+- 대체한 결정: 없음.
+
+## DEC-0049 · My 이용 문의 채널
+
+- 기록일: 2026-11-09
+- 결정: My의 이용 문의를 선택하면 YAPP 카카오톡 채널을 엽니다.
+- 근거: 사용자가 제공한 [YAPP 카카오톡 채널](https://pf.kakao.com/_aGxofd).
+- 반영: [제품 정책](product-policy.md), [설계 패턴](design-patterns.md), App의 My 탭 이동 연결.
+- 적용 상태: My 이용 문의의 콜백에서 채널 주소를 엽니다.
+- 대체한 결정: DEC-0043의 문의 링크 연결 대기 상태를 갱신합니다.
+
+## DEC-0050 · 현재 서버 계약을 이용한 기기별 알림 설정
+
+- 기록일: 2026-11-09
+- 결정: 알림 토글은 설치별 수신 선택으로 저장하고 현재 세션의 FID 등록·해제 API에 연결합니다. 서버 성공 뒤 선택을 확정하며 OFF는 재시작·재로그인·FCM 토큰 변경에도 유지합니다. Android 권한은 별도로 확인하고 실패·재시도를 표시합니다. 계정 전체 동의나 다른 기기의 설정, 알림함 조회는 바꾸지 않습니다.
+- UI 보완(2026-11-09 사용자 지적): 기기별 동작의 의미를 화면 문구 추가 승인으로 해석하지 않습니다. 임의로 추가했던 상시 설명 문구를 제거하고 Figma의 알림 행을 유지합니다.
+- 이유: 서버에 확인된 기기 등록·해제 계약으로 사용자가 선택한 기기의 푸시 수신을 제어하기 위해서입니다. 서버에 없는 계정별 boolean 계약은 만들지 않습니다.
+- 근거: 사용자의 기기별 알림 구현 승인(세션 합의), [이슈 #199](https://github.com/YAPP-admin/yapp-plus-android/issues/199), [백엔드 API 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/e2c2612a8652dc9c76f6ce7b6c26e97dbe8348c6/APIDOC.md).
+- 반영: [제품 정책](product-policy.md#기기별-알림-설정), [모듈 구조](module-structure.md), Domain의 NotificationPreferenceRepository 계약. 설정 UI·DataStore 저장과 App 기기 등록·해제 조율자, ViewModel·Route를 연결했습니다.
+- 적용 상태: 저장소·자동 동기화·설정 화면의 조회·변경·권한·재시도 연결을 완료했습니다. 실제 서버와 Firebase를 통한 발송·수신 E2E는 별도 확인이 필요합니다.
+- 대체한 결정: DEC-0043의 알림 토글 화면 상태 및 API 연결 대기 정책을 기기별 연결로 갱신합니다. 탈퇴 문구·이력 보존·면제권 계약의 범위는 유지합니다.
+
+## DEC-0051 · 알림 조회 실패의 원형 재시도 버튼
+
+- 기록일: 2026-11-09
+- 결정: 조회 실패 시 스위치 자리에 restart_alt 원형 버튼을 표시합니다. 재조회 중에는 비활성화하고 성공하면 스위치로 복원합니다. 조회 실패의 별도 텍스트 재시도 행을 제거하며 ON/OFF 변경 실패의 재시도는 유지합니다.
+- 이유: 알림 제어 위치에서 조회를 다시 시도할 수 있도록 합니다.
+- 근거: 사용자의 디자인 변경 요청, [Google restart_alt 아이콘](https://fonts.google.com/icons?icon.query=restart_alt), [PR #201](https://github.com/YAPP-admin/yapp-plus-android/pull/201).
+- 반영: [제품 정책](product-policy.md#android-시스템-알림-설정), 설정 UI·Preview·UI 테스트. 아이콘은 공식 SVG에서 변환하고 Apache-2.0 라이선스를 앱 assets에 포함합니다.
+- 적용 상태: UI는 PR #201에 반영했고 App ViewModel·Route에서 실제 재조회와 중복 요청 방지를 연결했습니다.
+- 대체한 결정: 기존 알림 조회 실패의 텍스트 재시도 행을 원형 버튼으로 변경합니다.
+
+## DEC-0052 · 가입 요청에서 자동 승인 여부 결정
+
+- 기록일: 2026-11-14. 정책은 2026-11-08에 확정했습니다.
+- 결정: 서버가 가입 요청을 처리할 때 사전 등록 명단을 기준으로 자동 승인 여부를 결정합니다. Android 가입 흐름에서 별도 승인 대기 화면과 대기 상태 복원을 제외합니다.
+- 이유: 자동 승인과 운영진 검토용 `PENDING` 모두 가입 성공 시 `SIGNED_IN`을 반환하므로 앱은 공통 가입 완료 흐름을 사용합니다.
+- 근거: 사용자가 확정한 가입 정책을 기록한 로컬 커밋 `5e8510d`, [백엔드 자동 승인 정책](https://github.com/YAPP-admin/yapp-plus-backend/issues/91), [이슈 #206](https://github.com/YAPP-admin/yapp-plus-android/issues/206).
+- 반영: [제품 정책의 회원가입과 승인](product-policy.md#회원가입과-승인), [회원·역할 정책](membership-policy.md).
+- 적용 상태: 현재 앱은 가입 성공 시 세션을 저장하고 완료 화면을 거쳐 메인으로 이동합니다.
+- 대체한 결정: DEC-0042의 가입 후 운영진 연결을 기본으로 하던 흐름과 앱의 승인 대기·복원 요구.
+
+## DEC-0053 · 홈·My 초기 조회 병렬화와 단일 로딩 표시
+
+- 기록일: 2026-11-14. 동작은 2026-11-09에 확정했습니다.
+- 결정: 홈은 이번 주 세션과 주간 공지를 병렬 조회합니다. My는 본인 프로필과 출석 점수를 병렬 조회하고, 출석 내역에서는 첫 이력 페이지도 함께 요청합니다. 각 화면은 초기 요청이 끝날 때까지 로딩 표시 하나를 사용합니다.
+- 근거: 사용자의 홈·My API 병렬 호출과 단일 인디케이터 요청, [이슈 #205](https://github.com/YAPP-admin/yapp-plus-android/issues/205).
+- 반영: [설계 패턴](design-patterns.md#viewmodel과-요청), 홈·My Feature의 요청 상태, 화면, 테스트와 Debug Preview.
+- 적용 상태: 두 Feature의 초기 조회와 로딩 표시에 적용했습니다. My는 프로필 조회 중과 실패 시 세션 이름을 표시하며 요청별 재시도와 이력 페이지 조회를 제공합니다.
+- 대체한 결정: 없음.
+
+## DEC-0054 · 세션 주소 표시와 기기 거리 확인
+
+- 2026-11-14 사용자가 세션까지의 거리를 기기에서 확인하고 코드 출석 흐름을 유지하기로 결정했습니다.
+- 홈과 일정에 조회한 도로명주소와 상세주소를 표시합니다. 홈은 유효한 기준 좌표가 있는 세션에서 위치 권한 확인과 일회성 거리 조회를 제공합니다. 기기 위치·거리 결과는 서버로 보내거나 영구 저장하지 않습니다.
+- [제품 정책](product-policy.md#세션-주소와-기기-거리-확인)에 반영하고 세션 조회 매핑, 홈·일정 UI, Android 위치 요청을 연결했습니다. [Android 이슈 #209](https://github.com/YAPP-admin/yapp-plus-android/issues/209), [백엔드 이슈 #107](https://github.com/YAPP-admin/yapp-plus-backend/issues/107)
+
+## DEC-0055 · 사전 보고 마감과 홈 출석 후 이동
+
+- 기록일: 2026-11-18
+- 결정: 모든 사전 보고는 세션 시작 전까지만 제출하며 세션 정보가 없으면 제출하지 않습니다. 출석 코드 확인은 4자리 입력 후 활성화하고, 출석 완료 버튼으로 My 점수를 확인합니다. 문서화된 활동 기수 없음은 일반 오류와 구분합니다.
+- 근거: 사용자의 미구현 항목 구현·PR·병합 요청과 [Figma 확인 댓글](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x#2010796754), [이슈 #210](https://github.com/YAPP-admin/yapp-plus-android/issues/210).
+- 반영: [제품 정책](product-policy.md#홈-사전-보고와-활동-기간-안내-2026-11-18), Domain 접수 마감, Data 오류 변환, 홈·일정 UI와 App 이동.
+- 적용 상태: Android 구현에 적용합니다. 서버 마감 강제는 후속이며 팀 사진은 사용자 확인에 따라 계약 대기로 유지합니다.
+- 대체한 결정: 결석 사전 보고의 시작 2일 전 접수 제한. 감점 인정 정책은 변경하지 않습니다.
+
+## DEC-0056 · 홈 출석 인증 완료와 사진 검토 상태 복원
+
+- 기록일: 2026-11-22
+- 결정: 홈은 이번 주 세션 조회의 `CHECKED_IN`을 인증 완료로, `PENDING_APPROVAL`을 사진 검토 대기로 표시합니다. 직접 코드 인증에 성공하면 완료 화면을 열며, 홈을 다시 조회할 때는 현재 서버 상태를 표시합니다. 인증 완료 카드는 DEC-0055의 점수 확인 버튼을 제공합니다.
+- 근거: [백엔드 이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/0f2ddbdf0c9aa6a8b754225d9c6938ab70097322/APIDOC.md#L312-L322), [Figma 상태 복원 논의](https://www.figma.com/file/LUFGoDnVmwJT43QhecBI8x#2013000555), 사용자 구현 요청과 [Android 이슈 #215](https://github.com/YAPP-admin/yapp-plus-android/issues/215).
+- 적용 상태: [제품 정책](product-policy.md#수정된-홈-화면과-연결-흐름), Domain·Data 응답 상태와 홈 카드에 적용했습니다. 사진 제출 상세 조회는 당시 회원용 계약 확인을 기다렸으며, 이후 확인한 범위는 [사용자 팀 출석 조회](product-policy.md#사용자-팀-출석-조회)를 따릅니다.
+- 대체한 결정: 없음.
+
+## DEC-0057 · Android 코드 출석 위치 조건
+
+- 기록일: 2026-11-23
+- 결정: Android도 코드 제출 직전에 정확한 위치를 확인합니다. 새 측정의 오차 50m 이하와 세션까지 거리 100m 이내를 모두 충족한 경우 코드 검증 API를 호출합니다.
+- 근거: 사용자가 Android와 iOS의 코드 출석 조건을 맞추도록 요청했습니다. [iOS 기능 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/026-location-attendance/spec.md), [Android 이슈 #217](https://github.com/YAPP-admin/yapp-plus-android/issues/217)
+- 적용 상태: [코드 출석 위치 조건](product-policy.md#코드-출석-위치-조건)과 Android의 출석 확인 흐름에 적용했습니다. 위치 확인 결과는 기기에서 현재 시도에만 사용합니다.
+- 대체한 결정: DEC-0054의 코드 입력 뒤 위치 조건 없이 제출하던 동작. 홈의 거리 확인은 유지합니다.
+
+## DEC-0058 · Android 사전 출결 보고 사유 필수
+
+- 기록일: 2026-11-23
+- 결정: 지각·조퇴·결석 사전 보고에는 30자 이내의 사유가 필요하며, 빈 값과 공백뿐인 값은 제출을 차단합니다.
+- 근거: 사용자의 Android·iOS 정합성 구현 요청, [iOS 사전 출결 보고 명세](https://github.com/YAPP-admin/yapp-plus-frontend/blob/cc90b35ed70b9c1cca466f1d256fd20739017aef/specs/020-member-attendance-submit/spec.md), [Android 이슈 #222](https://github.com/YAPP-admin/yapp-plus-android/issues/222)
+- 적용 상태: [제품 정책](product-policy.md#사전-보고-사유-검증), Android Domain 규칙, 홈 확인 버튼과 ViewModel의 제출 경로에 반영했습니다. 백엔드 요청은 기존 형식을 사용합니다.
+- 대체한 결정: 제품 정책에서 Android 홈 사유를 선택 입력으로 허용하던 규칙.
+
+## DEC-0059 · 이번 주 세션 유형과 종료 시각
+
+- 기록일: 2026-11-24
+- 결정: 홈은 이번 주 세션의 `REGULAR`·`TEAM` 유형과 종료 시각을 서버 조회에서 받습니다. 유형은 출석 진입 경로를, 시작·종료 시각은 팀 세션 시간 안내를 결정하는 데 사용합니다.
+- 근거: [백엔드 이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L334), [Figma 팀 사진 안내](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-11966), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).
+- 적용 상태: Data 어댑터가 두 필드를 Domain으로 전달하며 홈은 팀 출석 화면 분기와 사진 제출 시간창에 사용합니다.
+
+## DEC-0060 · 팀 출석 제출 사진 열람
+
+- 기록일: 2026-11-24
+- 결정: 팀 사진 검토 카드에서 접근 권한이 있는 제출 사진을 열람합니다. 열람 시 사용자 조회로 같은 사진의 유효한 링크를 확인한 뒤 불러옵니다.
+- 근거: [백엔드 사용자 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/9269de0f3e7a08b81d61d34beab9270554eb3ad8/APIDOC.md#L299-L331), [Figma 팀 사진 검토](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728), [Android 이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225).
+- 적용 상태: [제품 정책](product-policy.md#사용자-팀-출석-조회)과 Android 홈에 반영했습니다. 이미지 링크가 없으면 열람을 제공하지 않으며 이미지 캐시에는 저장하지 않습니다.
+
+## DEC-0061 · 일정 조회 결과와 공통 ViewModel
+
+- 기록일: 2026-11-24
+- 결정: 홈·일정 탭의 두 일정 조회는 Domain의 `YappResult`로 성공과 기능별 실패를 전달합니다. `:core:ui`의 `BaseViewModel`이 요청 실행과 상태 갱신을 공유하고, 각 화면이 요청별 로딩·재시도와 표시 상태를 결정합니다.
+- 근거: 사용자가 두 화면에 적용할 설계와 `:core:ui` 배치를 승인했습니다. [Android 이슈 #234](https://github.com/YAPP-admin/yapp-plus-android/issues/234)
+- 적용 상태: `SessionScheduleRepository`의 두 조회가 `YappResult`를 반환하고, 홈과 일정 탭은 `:core:ui`의 `BaseViewModel`에서 그 결과를 화면 상태로 반영합니다. [설계 패턴](design-patterns.md#홈과-일정-탭의-일정-조회) · [모듈 구조](module-structure.md)
+
+## DEC-0062 · 사용자 뒤풀이·정산 연결
+
+- 기록일: 2026-11-25
+- 결정: Android 커뮤니티에서 초대 목록·단일 참석 응답·참석자 조회를 제공하고, 정산은 사용자 계약의 자격·증빙·revision·납부 상태를 따릅니다.
+- 근거: [사용자 뒤풀이 및 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/45e4cdf55d43f5cfcbb0a876a9ec48d52e06f3d4/APIDOC.md#afterparty--기수-초대-및-참석-조사), [Figma 뒤풀이](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1421-13412), [Android 이슈 #238](https://github.com/YAPP-admin/yapp-plus-android/issues/238).
+- 적용 상태: [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산) 및 Android 커뮤니티·홈·My·알림 이동에 적용했습니다.
+
+## DEC-0063 · 알림 토글에서 Android 시스템 설정 열기
+
+- 기록일: 2026-11-25
+- 결정: 설정 화면에서 별도의 “휴대폰 설정에서 알림 허용하기” 행을 제거합니다. 알림 토글은 현재 상태와 무관하게 Android 앱 알림 설정을 열고, 돌아온 뒤 Android 권한·알림 채널 상태를 표시합니다. 기기별 선택은 시스템 상태에 맞추고 서버 등록·해제는 백그라운드에서 동기화합니다. 서버 실패는 화면의 설정 실패·재시도 UI로 노출하지 않습니다.
+- 이유: 사용자가 별도 행 대신 상단 알림 토글에서 시스템 알림 설정 기능을 제공하라고 명확히 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), [기기별 알림 설정](product-policy.md#기기별-알림-설정), [이슈 #199](https://github.com/YAPP-admin/yapp-plus-android/issues/199).
+- 반영: [제품 정책](product-policy.md#기기별-알림-설정), [설계 패턴](design-patterns.md), AGENTS.md, App 알림 Route·ViewModel·기기 동기화와 `:feature:setting`의 토글 섹션.
+- 대체한 결정: DEC-0050의 Android 권한과 앱 선택을 별도로 화면에서 조작하는 흐름. 기기별 선택 저장과 YAPP 서버 기기 API 계약은 유지합니다.
+- 적용 상태: 앱 알림 설정을 토글에서 열고 화면 복귀 시 시스템 상태와 저장 선택을 맞춘 뒤 자동 동기화를 요청합니다.
+
+## DEC-0064 · Android 버튼 리플 제거
+
+- 기록일: 2026-11-25
+- 결정: Android 버튼과 클릭 가능한 행·탭·선택 컨트롤에서 리플을 제거하고 기존 클릭·비활성화·접근성 동작을 유지합니다.
+- 근거: 사용자가 공통 확장 함수로 버튼의 리플을 제거해 달라고 요청했습니다.
+- 적용 상태: [설계 패턴](design-patterns.md#route와-content)과 Designsystem 공통 컴포넌트, 기능 화면의 버튼에 적용했습니다.
+
+## DEC-0065 · 커뮤니티 목록의 단일 로딩 표시
+
+- 기록일: 2026-11-25
+- 결정: 커뮤니티 목록에서 요청마다 로딩 표시를 하나만 사용합니다. 진입·필터 변경·다음 페이지 조회는 목록 안에, 당겨서 새로고침은 상단에 표시합니다.
+- 근거: 커뮤니티 목록의 첫 조회에서 목록과 상단 로딩 표시가 동시에 나타났습니다.
+- 적용 상태: [설계 패턴](design-patterns.md#viewmodel과-요청)과 Android 커뮤니티 목록에 반영했습니다.
+
+## DEC-0066 · Android 구현 전 Figma·Notion 원본 확인
+
+- 기록일: 2026-11-25
+- 결정: 기능 요구와 화면 표현의 근거를 구분합니다. Android UI와 제품 동작의 원본을 구현 전에 확인하고 QA에서 같은 화면·상태를 대조합니다. 원본으로 확정할 수 없는 항목은 확인 뒤 적용합니다.
+- 근거: 사용자가 출결 보고 선택 표시와 홈 거리 확인 UI의 디자인 근거를 지적하고 같은 문제가 반복되지 않도록 문서화해 달라고 요청했습니다.
+- 적용 상태: [원본 확인 절차](README.md#figmanotion-원본-확인), [AGENTS.md](../../AGENTS.md), [PR 템플릿](../../.github/pull_request_template.md)에 반영했습니다.
+- 검증 기록: [2026-11-25 Android QA](../qa/2026-11-25-android-qa.md).
+
+## DEC-0067 · 홈 세션 카드의 거리 조회 UI 제거
+
+- 기록일: 2026-11-25
+- 결정: Figma 홈 세션 카드에 맞춰 독립 거리 확인·재확인 버튼과 측정 결과를 제거합니다. 기기 위치는 코드 출석 확인 흐름에서 조회합니다.
+- 근거: 사용자가 홈에 거리 확인 버튼이 없음을 확인했습니다. [Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16033)
+- 대체한 결정: DEC-0054와 DEC-0057에서 유지하던 홈 수동 거리 확인.
+- 적용 상태: [제품 정책](product-policy.md#세션-주소와-기기-거리-확인)과 Android 홈의 화면·Preview·테스트에 반영했습니다.
+
+## DEC-0068 · 홈 사전 보고 안내 표시 조건
+
+- 기록일: 2026-11-25
+- 결정: 홈의 출결 보고 안내를 조회된 세션의 시작 전에 표시합니다.
+- 근거: 사용자가 세션 시작 전이라는 렌더링 조건을 확인했습니다. [Figma 메인 - None](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16229)
+- 적용 상태: [제품 정책](product-policy.md#홈-사전-보고와-활동-기간-안내-2026-11-18)과 Android 홈에서 기존 사전 보고 마감 조건을 사용합니다.
+
+## DEC-0069 · 홈 세션 주소와 비활성 출석 버튼
+
+- 기록일: 2026-11-25
+- 결정: 홈 세션 카드의 장소 정보는 장소명과 도로명주소를 사용합니다. 비활성 출석 버튼은 Figma의 버튼·글자 색을 사용하며 세션 시작 안내는 `7일 14:00에 세션이 시작돼요` 형식으로 표시합니다.
+- 근거: 사용자가 홈 상세주소 제외와 비활성 출석 버튼의 색·날짜 형식을 확인했습니다. [Figma 메인 - None](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16229)
+- 대체한 결정: DEC-0054의 홈 상세주소 표시.
+- 적용 상태: [제품 정책](product-policy.md#세션-주소와-기기-거리-확인)과 [홈 디자인 토큰](design-system.md#수정된-홈-디자인-토큰)에 반영했습니다.
+
+## DEC-0070 · 커뮤니티 뒤풀이 목록의 Figma 디자인
+
+- 기록일: 2026-11-25
+- 결정: 커뮤니티 첫 화면에 Figma의 뒤풀이 탭·필터·마감 배지·날짜 형식을 적용합니다. 마감과 종료 항목은 투표 마감으로 표시하고 투표 수는 서버의 `respondedCount`를 사용합니다.
+- 근거: 사용자가 커뮤니티 뒤풀이 원본 디자인을 적용해 달라고 요청했습니다. [Figma 뒤풀이 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1437-6052), [Figma 마감 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1755-17663)
+- 적용 상태: Android 뒤풀이 목록에 반영했습니다. 모임 탭은 비활성 표시이며, 뒤풀이 알림 점은 표시 조건을 확인할 때까지 보류합니다. [Notion 12차 회의](https://app.notion.com/p/yapp-workspace/12-41f2106a0e848169a49bff10af13b2ef), [사용자 뒤풀이 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#L1530-L1535)
+
+## DEC-0071 · 정산하기와 정산 수정 화면의 Figma 디자인
+
+- 기록일: 2026-11-25
+- 결정: 정산 작성·수정 폼과 인원·은행 선택에 Figma 디자인을 적용합니다. 인원 조회와 검색은 사용자 API의 정산 후보 범위를 따릅니다. 소수점 옵션은 계산 결과에 적용합니다.
+- 근거: 사용자가 정산하기 화면에 Figma 디자인을 적용해 달라고 요청했습니다. [Figma 정산하기](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16848), [정산할 사람](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-17112), [Notion 12차 회의](https://app.notion.com/p/yapp-workspace/12-41f2106a0e848169a49bff10af13b2ef)
+- 적용 상태: Android 정산 폼과 [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산)에 반영했습니다.
+
+## DEC-0072 · 알림 토글에서 Android 앱 알림 설정 열기
+
+- 기록일: 2026-11-25
+- 결정: 설정 화면에서 별도의 “휴대폰 설정에서 알림 허용하기” 행을 표시하지 않습니다. 알림 토글을 ON으로 바꾸려는데 Android 권한이나 알림 채널이 꺼져 있으면 토글 동작으로 앱 알림 설정을 엽니다. 설정에서 돌아와 알림을 허용한 경우 기존 기기 등록 요청을 진행하고, 서버 성공 뒤에만 ON 선택을 저장합니다. 허용되지 않은 경우 기존 선택을 다시 조회하며 변경하지 않습니다.
+- 이유: 사용자가 별도 안내 행을 제거하고 알림 토글에서 같은 휴대폰 설정 기능을 제공하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), [기기별 알림 설정](product-policy.md#기기별-알림-설정)의 기존 선택·기기 등록 계약. 확인한 [Figma UI 페이지](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487)에는 설정 화면과 알림 권한 문구가 없었고, 연결된 [Notion 정책 원문](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84800f9abfef181b090892)은 현재 연동 계정에서 찾을 수 없었습니다.
+- 반영: [제품 정책](product-policy.md#기기별-알림-설정), App의 알림 설정 Route·ViewModel, `:feature:setting`의 상태·섹션·리소스와 Preview.
+- 적용 상태: OS 권한 확인, 앱 알림 설정 진입, 돌아온 뒤 허용 상태 확인과 기존 서버 등록 흐름을 연결했습니다. OFF 저장과 서버 성공 뒤 선택 확정 규칙은 유지합니다.
+- 대체한 결정: 없음. DEC-0050의 기기별 알림 선택·서버 등록·권한 분리 원칙을 유지하며 설정 진입 동작을 구체화합니다.
+
+## DEC-0073 · 정산 등록 완료·현황·송금·MY 목록의 Figma 디자인
+
+- 기록일: 2026-11-25
+- 결정: Android에 Figma의 정산 등록 완료, 정산 현황, 송금, 보낼 돈·받을 돈을 연결합니다. 서버가 돌려준 요청 인원과 수금 현황을 표시하고, 정산 상태는 사용자 API로 변경합니다.
+- 근거: 사용자가 남은 정산 흐름에 Figma 디자인을 적용해 달라고 요청했습니다. [Figma 정산 등록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1752-16692), [Figma 정산 현황](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1805-19959), [사용자 정산 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/4c6bbf7351e5433e7e0a07858eca6ace52102ace/APIDOC.md#L1557-L1572)
+- 적용 상태: Android와 [제품 정책](product-policy.md#커뮤니티-뒤풀이와-정산)에 반영했습니다. 송금 완료 날짜와 정산 목록의 미확인 표시는 사용자 응답에 필요한 값이 추가될 때까지 보류합니다.
+
+## DEC-0075 · 홈 정규 세션의 출석 완료 카드
+
+- 기록일: 2026-11-25
+- 결정: 홈에서 정규 세션의 `CHECKED_IN`을 달력의 주황색 출석 배지와 회색 비활성 `출석했어요!` 버튼으로 표시합니다. 출석 점수와 내역은 My 탭에서 확인합니다.
+- 근거: 사용자가 홈 출석 완료 카드를 Figma에 맞게 적용해 달라고 요청했습니다. [Figma 출석 후 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-18070) · [앱 기능 명세](https://docs.google.com/spreadsheets/d/1K-2VwMPkoT8kq-bujUIMetTPKal11Iql2GUmMd1M7eE/edit#gid=848576421&range=E12:J12) · [Android 이슈 #261](https://github.com/YAPP-admin/yapp-plus-android/issues/261)
+- 대체한 결정: DEC-0055·DEC-0056의 홈 출석 완료 카드에서 My 점수 확인으로 이동하는 동작.
+- 적용 상태: Android 홈 카드, [제품 정책](product-policy.md#수정된-홈-화면과-연결-흐름)과 [홈 디자인 토큰](design-system.md#수정된-홈-디자인-토큰)에 반영했습니다.
+
+## DEC-0076 · 이번 주 세션의 필수 장소명
+
+- 기록일: 2026-11-25
+- 결정: 이번 주 세션 객체의 `location`은 필수 문자열입니다. 장소명이 누락되거나 null인 세션 응답은 기존 일정 조회 실패 경로로 처리합니다.
+- 근거: 사용자가 이번 주 세션 `location`의 non-null 계약을 확인했습니다. [백엔드 주간 세션 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/dev/APIDOC.md#사용자-앱-이번-주-세션) · [Android 모델 변경](https://github.com/YAPP-admin/yapp-plus-android/commit/762a6d7d9bfafde214f92e3e64092bb4b2c6b6c3)
+- 적용 상태: [제품 정책](product-policy.md#현재-서버-연결)과 Data·Home 테스트에 반영했습니다.
+
+## DEC-0077 · 홈 복귀 자동 조회 제거와 팀 출석 모듈 분리
+
+- 기록일: 2026-11-25
+- 결정: 홈의 이번 주 세션과 주간 공지는 HomeViewModel 생애 동안 최초 한 번 병렬 조회합니다. 앱이 백그라운드에서 돌아올 때 자동 재조회하지 않습니다. 사용자가 홈을 당겨 갱신하면 일정과 공지를 병렬 재요청하고 조회 중에도 기존 콘텐츠를 유지합니다. 팀 출석 화면·상태·ViewModel·리소스는 `:feature:main:home:team`이 소유하고 `:feature:main:home`이 조립합니다.
+- 근거: 사용자가 홈 복귀 때 발생하는 API 재호출을 제거하고 당겨서 새로고침을 추가했으며, 기존 Home 하위 모듈 패턴에 맞춰 팀 출석을 분리하도록 요청했습니다. [이슈 #225](https://github.com/YAPP-admin/yapp-plus-android/issues/225)
+- 반영: [설계 패턴](design-patterns.md#viewmodel과-요청), [모듈 구조](module-structure.md), Home·Home Team Feature.
+- 적용 상태: 초기 조회를 한 번으로 제한하고 당겨서 새로고침을 추가했으며 팀 모듈 연결을 마쳤습니다.
+
+## DEC-0078 · 팀 출석 승인과 업로드 실패 안내
+
+- 기록일: 2026-11-25
+- 결정: 본인의 팀 세션 출석이 확정되면 홈에서 승인 안내를 표시합니다. 사진 업로드 단계의 실패는 선택을 보존해 재시도할 수 있게 안내합니다. 제출 결과가 불확실한 경우 홈에서 상태를 확인하도록 안내합니다.
+- 근거: 사용자가 확인한 디자인 차이 수정을 요청했습니다. [Figma 팀 출석 승인](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-23597) · [Figma 업로드 실패](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24549) · [사용자 팀 사진 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/d3110417a8b24644629a966b80cbf5bf1db4e9f1/APIDOC.md#L337-L361) · [Android 이슈 #264](https://github.com/YAPP-admin/yapp-plus-android/issues/264)
+- 적용 상태: 홈의 팀 사진 흐름과 [제품 정책](product-policy.md#사용자-팀-출석-조회)에 반영했습니다.
+
+## DEC-0079 · 커뮤니티 모임 탭 활성화
+
+- 기록일: 2026-11-25
+- 결정: 커뮤니티에서 `모임`을 선택할 수 있게 하고 `전체·소모임·번개` 필터를 표시합니다. 모임 목록 API 연결 전에는 준비 중 안내를 표시합니다.
+- 근거: 사용자가 소모임 탭 활성화를 요청했습니다. [Figma 모임 목록](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1792-40688) · [Android 이슈 #268](https://github.com/YAPP-admin/yapp-plus-android/issues/268)
+- 적용 상태: 커뮤니티 화면과 [제품 정책](product-policy.md#커뮤니티-모임)에 반영했습니다.
+- 대체: DEC-0070의 모임 탭 비활성 표시를 대체합니다.
+
+## DEC-0080 · 홈 사전 보고 말풍선의 주간 표시 시간
+
+- 기록일: 2026-11-25
+- 결정: 홈의 사전 보고 말풍선은 조회된 세션이 속한 주의 월요일 오전 9시부터 세션 시작 직전까지 표시합니다. 두 시각은 서울 기준입니다.
+- 근거: 사용자가 월요일 오전 9시부터 표시하고 세션 시작 시 숨기도록 요청했습니다. [Android 이슈 #277](https://github.com/YAPP-admin/yapp-plus-android/issues/277)
+- 원본 확인: Figma 홈에서 말풍선 문구와 위치를 확인했습니다. Notion 원문은 연동 계정에서 열리지 않았습니다. [Figma 홈 말풍선](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16229) · [Notion 정책 원문](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84800f9abfef181b090892)
+- 적용 상태: Android 홈과 [제품 정책](product-policy.md#홈-사전-보고와-활동-기간-안내-2026-11-18)에 반영했습니다.
+- 대체한 결정: DEC-0068의 말풍선 표시 조건.
+
+## DEC-0081 · Debug와 Release 앱 설치 분리
+
+- 기록일: 2026-11-25
+- 결정: Debug 앱은 `applicationId` `com.yapp.plus.debug`와 런처 이름 `Yapp (Debug)`를 사용합니다. Release 앱은 기존 `com.yapp.plus`와 `Yapp`을 유지합니다. Debug와 Release를 한 기기에 함께 설치할 수 있으며 Firebase Android 앱과 Google OAuth Android 클라이언트는 각 앱 ID에 맞게 등록합니다.
+- 이유: 사용자가 디버그 앱과 릴리즈 앱을 분리하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), [Android 이슈 #280](https://github.com/YAPP-admin/yapp-plus-android/issues/280).
+- 반영: [제품 정책](product-policy.md#개발과-비공개-테스트-배포), [모듈 구조](module-structure.md), [README](../../README.md), [기여 규칙](../../CONTRIBUTING.md), [AGENTS.md](../../AGENTS.md), App Gradle 설정과 Debug 앱 이름.
+- 적용 상태: Gradle Debug applicationId 접미사와 Debug 런처 이름을 적용했습니다. Firebase 설정 파일은 비밀 설정 파일이므로 저장소 외부에서 각 앱 ID로 관리합니다.
+- 대체한 결정: 없음. Release 앱 ID와 Play 배포 경로는 유지합니다.
+
+## DEC-0082 · Android 런처 이름 YAPP+
+
+- 기록일: 2026-11-25
+- 결정: Release 앱 런처 이름은 `YAPP+`, Debug 앱 이름은 `YAPP+ (Debug)`로 표시합니다. 앱 ID는 Release `com.yapp.plus`, Debug `com.yapp.plus.debug`를 유지하고 기존 아이콘을 바꾸지 않습니다.
+- 이유: 사용자가 앱 이름을 `YAPP+`로 변경하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-25), Google Play Console 화면에서 확인한 최신 프로덕션 `1.0.2 (5)`.
+- 반영: [제품 정책](product-policy.md#개발과-비공개-테스트-배포), [모듈 구조](module-structure.md), [README](../../README.md), [기여 규칙](../../CONTRIBUTING.md), [AGENTS.md](../../AGENTS.md), App 이름 리소스.
+- 적용 상태: 런처 이름을 반영하고 다음 릴리즈를 `versionName` `1.0.3`, `versionCode` `6`으로 설정했습니다. Release AAB는 `release/v1.0.3`에서 생성합니다.
+- 대체한 결정: DEC-0047의 Android 앱 표시 이름과 DEC-0081의 variant 런처 이름만 대체합니다. 아이콘과 앱 ID는 유지합니다.
+
+## DEC-0083 · 로그인 오류 팝업과 제보 채널
+
+- 기록일: 2026-11-26
+- 결정: 로그인 오류 팝업에 Figma의 문구와 `닫기`·`제보하기` 버튼을 표시합니다. 제보 버튼은 기존 YAPP 카카오톡 문의 채널을 엽니다.
+- 근거: 사용자가 첨부한 디자인과 수정 요청, [Figma 로그인 오류 팝업](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=375-11316), [기존 문의 채널 DEC-0049](#dec-0049--my-이용-문의-채널), [Android 이슈 #232](https://github.com/YAPP-admin/yapp-plus-android/issues/232). 연결된 계정에서 Notion 정책 원문을 열 수 없었습니다.
+- 반영: Android 로그인 화면, [제품 정책](product-policy.md#오류-안내와-복구), [공통 컴포넌트](design-system-components.md).
+
+## DEC-0084 · 출결 보고 완료, 팀 사진 반려, 공지 상세 오류 화면
+
+- 기록일: 2026-11-26
+- 결정: 출결 보고 완료 토스트는 Figma의 색상·타이포그래피·여백을 적용합니다. 팀 사진 반려 시트는 서버에서 제공한 반려 사유를 표시하고, 내용이 없으면 해당 영역을 표시하지 않습니다. 공지 상세 조회 실패는 뒤로가기와 왼쪽 정렬 제목·설명, 일러스트가 있는 화면으로 표시합니다.
+- 근거: 사용자 디자인 정합성 수정 요청, [Figma 출결 보고 완료](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=526-13920), [Figma 팀 사진 반려](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1167-24774), [Figma 공지 상세 오류](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40786), [서버 팀 사진 조회 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/710ebabad349cb5d8b5c47a896cc5ca7df68bbe8/APIDOC.md#L339-L362). 연결된 계정에서 Notion 정책 원문을 열 수 없었습니다.
+- 반영: 홈·팀 출석·게시판, [공통 컴포넌트](design-system-components.md#홈-figma-변형), [제품 정책](product-policy.md#오류-안내와-복구).
+- 관련 이슈: [#263 출결 보고 토스트](https://github.com/YAPP-admin/yapp-plus-android/issues/263), [#264 팀 출석 안내](https://github.com/YAPP-admin/yapp-plus-android/issues/264), [#232 Android 오류 화면](https://github.com/YAPP-admin/yapp-plus-android/issues/232).
+
+## DEC-0087 · 회원 탈퇴 진행 상태의 로딩 표시
+
+- 기록일: 2026-11-26
+- 결정: 통합 탈퇴 요청 중에는 “탈퇴 처리 중이에요” 텍스트를 화면에서 숨기고, 기존 컴팩트 확인 팝업 안에 브랜드 색상의 원형 로딩 인디케이터를 표시합니다. 취소·확인 동작은 계속 숨기며 접근성 레이블은 유지합니다.
+- 이유: 사용자가 탈퇴 중 텍스트 대신 로딩 프로그래스바를 표시하도록 요청했습니다.
+- 근거: 사용자 명시 요청(2026-11-26), [Figma 탈퇴 확인 팝업](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-48230). 진행 상태 표현은 사용자의 이번 요청을 적용합니다.
+- 반영: [제품 정책](product-policy.md#figma-기준-my와-설정), [디자인시스템 공통 컴포넌트](design-system-components.md), `:core:designsystem`의 `YappAlertDialog`, `:feature:setting`의 `AccountDeletionDialog`.
+- 적용 상태: 서버 탈퇴 진행 중에만 텍스트 대신 원형 인디케이터를 표시합니다. 확인 문구와 서버 성공·실패 처리 계약은 유지합니다.
+- 대체한 결정: 없음.
 
 ## DEC-0088 · 이번 주 팀 세션의 장소명 응답 처리
 

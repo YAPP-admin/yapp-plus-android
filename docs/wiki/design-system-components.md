@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-26
+last_verified: 2026-11-27
 ---
 
 # 디자인시스템 공통 컴포넌트
@@ -67,7 +67,7 @@ YappText(
 - 홈 빠른 메뉴의 전체 세션·출결 보고 카드는 높이 70dp와 12dp 모서리를 사용합니다. 출결 보고의 내보낸 일러스트는 카드에 보이는 102×70dp 영역을 이미 포함하므로 확대하거나 추가 이동하지 않고 오른쪽 위에 배치합니다. 제출 콜백 연결은 Feature에서 담당합니다.
 
 - `YappButtonSize.HomePrimary`는 52dp·16sp/22sp·12dp 모서리, `HomeSecondary`는 44dp·14sp/19sp·8dp 모서리입니다. 홈 출석 버튼의 `HomeAttendance` 변형은 활성 상태에 검정 배경과 흰 글자를, 비활성 상태에 `#F3F4F5` 배경과 `#D1D3D8` 글자를 사용합니다.
-- `YappBottomSheetVariant.Home`은 가로 바깥 여백 10dp, 모서리 16dp, 52×4dp 핸들을 포함한 32dp 상단 영역, 본문 가로/하단 여백 18dp와 46% dim을 제공합니다. `isDismissible=false`이면 제출 중 숨김 전이를 막습니다. 기존 기본 변형은 유지합니다.
+- `YappBottomSheetVariant.Home`은 가로 바깥 여백 10dp, 기본 모서리 16dp, 52×4dp 핸들을 포함한 32dp 상단 영역, 본문 가로/하단 여백 18dp와 46% dim을 제공합니다. 필요하면 호출부가 `shape`를 전달할 수 있으며 제출 보고 시트는 Figma에 맞춰 24dp 모서리를 사용합니다. `isDismissible=false`이면 제출 중 숨김 전이를 막습니다. 기존 기본 변형은 유지합니다.
 - `YappToastVariant.Home`은 가로 전체 너비, 46dp 최소 높이, 8dp 모서리와 확인 액션을 제공합니다. 메시지·닫기 상태는 Feature에서 전달합니다.
 - `YappToastVariant.Snackbar`는 가로 전체 너비, 8dp 모서리, 내부 좌우 18dp·상하 14dp 여백, 흰색 본문과 주황색 확인 액션을 제공합니다. 홈은 출결 보고 완료 시 탭 바 위에 좌우 16dp·하단 14dp 여백을 두고 표시합니다. [Figma 출결 보고 완료](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=526-13920)
 - `YappTextFieldVariant.Home`은 보고 사유 입력의 50dp 높이·12dp 모서리를 제공하며 `textStyle`로 홈 서체를 전달합니다. `YappMainHeader.iconTint`는 홈의 알림 색상을 선택하며 기본 호출부 표현은 유지합니다.

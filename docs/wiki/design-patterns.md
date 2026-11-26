@@ -54,7 +54,7 @@ last_verified: 2026-11-27
 - `RepositoryImpl`은 기능별 DataSource 인터페이스를 생성자로 주입받고 구체 구현을 내부에서 만들지 않습니다. DataSource 공통 모델·오류 계약은 Data가 소유하며 공급자별 DTO·SDK 타입은 어댑터 내부로 제한합니다. App이 기능별 인터페이스에 공급자 어댑터를 조립하고 Fake는 테스트에서 사용합니다. 현재 일정·출석 검증·보고는 YAPP 서버 어댑터를 사용하며 적용 상태는 [아키텍처](architecture.md#데이터-공급자-교체-경계)를 따릅니다.
 - DTO는 Data 내부에 두고 Domain 변환도 Data에서 처리합니다.
 - 직접 소유하는 DTO·Data 모델의 변환은 원본 타입의 `toData()`·`toDomain()` 멤버 함수로 캡슐화합니다. DataSource·Repository 파일에 해당 타입의 매핑 확장 함수를 두지 않습니다. 호출부는 요청·결과 흐름을 조율하며 의존성 방향은 유지합니다.
-- Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
+- Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. `:core:ui` 모듈의 공통 UI 모델(`AttendanceStatusUiModel`, `HomeAttendanceLocationIssue` 등)로 변환하는 확장 함수 매퍼는 `:core:ui`의 `com.yapp.plus.core.ui.mapper` 패키지로 공통화해 분리합니다. 특정 Feature 전용 UI 모델로 변환하는 매퍼는 해당 Feature의 `model` 패키지에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
 
 알림 선택은 `NotificationPreferenceRepository` → DataSource → 백업 제외 DataStore로 저장합니다. 세션 저장소와 분리하고 손상된 값은 OFF로 복구합니다. App singleton이 저장소와 Firebase·서버 기기 API를 조립합니다. 설정 ViewModel·Route는 Android 앱 알림 설정을 열고 복귀 시 시스템 권한 상태를 선택에 반영합니다. App의 MainActivity는 홈 탭 진입 때 저장 선택이 ON인 경우 알림 권한을, 정밀 위치 권한이 없는 경우 위치 권한을 순서대로 한 번 요청합니다. App 조율자는 자동 동기화와 기기 등록·해제를 직렬화하며 서버 실패는 설정 화면에 전달하지 않습니다.

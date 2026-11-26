@@ -11,7 +11,7 @@ last_verified: 2026-11-27
 | 모듈 | 패키지 기준 | 현재 상태 또는 추가 시점 |
 | --- | --- | --- |
 | `:app` | `com.yapp.plus` namespace; Debug `com.yapp.plus.debug` / `YAPP+ (Debug)`, Release `com.yapp.plus` / `YAPP+` | 앱 진입점·세션 복원에 따른 시작 목적지·Google 인증 결과와 가입 이동·로그아웃/통합 탈퇴 상태와 내비게이션·YAPP Data 조립·토큰 저장/갱신·탭 내비게이션·Firebase 푸시 등록과 공지 이동·기기별 알림 ViewModel과 Android 권한 조율 |
-| `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현 구현됨 |
+| `:core:designsystem` | `com.yapp.plus.core.designsystem` | 테마·공통 컴포넌트·인증 공통 표현·My와 커뮤니티가 공유하는 직군 프로필 아바타 구현됨 |
 | `:core:ui` | `com.yapp.plus.core.ui` | 홈·게시판·일정이 공유하는 `BaseViewModel`, 요청 실행·일회성 이벤트 Channel과 생명주기 기반 `ObserveAsEvents`, 날짜/시간 포맷터 패턴 문자열 리소스 및 공통 DateFormatter 구현됨 |
 | `:core:preview` | `com.yapp.plus.core.preview` | debug 전용 범용 Preview provider·입력 fixture 구현됨 |
 | `:feature:main:home` | `com.yapp.plus.feature.main.home` | 이번 주 세션·사전 보고·주간 공지 화면과 요청을 조율; 팀 출석·코드 출석 모듈을 조립하고 초기 일정·공지 조회는 ViewModel 생애 동안 한 번 요청 |
@@ -52,6 +52,7 @@ App은 다섯 탭과 공지·뒤풀이·정산 ID 기반 화면 이동, 설정 �
 - 각 Android 모듈의 Hilt 의존성 주입 파일(`@Module`, `@Binds`, `@Provides` 선언 등)은 모듈 루트의 `di/` 패키지에 둡니다. 예를 들어 App은 `com.yapp.plus.di`, 로그인 Feature는 `com.yapp.plus.feature.login.di`를 사용합니다.
 - 독립 UI 컴포넌트 구현은 모듈 루트의 `components/` 패키지에 둡니다. 필요하면 `components/auth/`, `components/button/`처럼 하위 패키지로 구분합니다. Route·Screen과 화면 상태 변환은 Feature의 기능 패키지에 두고 `components/`와 분리합니다.
 - Designsystem의 테마는 `core/designsystem/src/main/java/com/yapp/plus/core/designsystem/theme/`에 있습니다. 공통 컴포넌트도 이 모듈의 `components/`에서 관리합니다.
+- My와 커뮤니티 정산에서 공유하는 직군 프로필 아바타 VectorDrawable은 `core/designsystem/src/main/res/drawable/graphic_profile_avatar_*.xml`에 둡니다. `UserPosition`의 리소스 매핑은 각 Feature에서 처리합니다.
 - 인증의 공통 표현은 Designsystem의 `components/auth/`에 둡니다. 표시값과 콜백만 받고 Feature 상태·목적지·인증 정책을 알지 못합니다. 기능별 문구·로그인 공급자 로고·상태 변환은 Feature가 소유합니다.
 - Preview 전용 소스·리소스는 각 모듈의 `src/debug/`에 둡니다. Preview 패키지 경로는 대응하는 `components/` 하위 경로와 맞춥니다. `:core:preview`도 debug 소스에만 provider·fixture를 제공하며 Designsystem·Feature·Domain·Data·Navigation에 의존하지 않습니다. 소비 모듈은 필요한 경우에만 `debugImplementation(project(":core:preview"))`으로 연결합니다. `src/main`은 debug 타입을 참조하지 않고 앱 release 의존성 그래프에 Preview 모듈을 포함하지 않습니다.
 - 사용자 문구는 해당 Android 모듈의 `src/main/res/values/strings.xml`에 둡니다.

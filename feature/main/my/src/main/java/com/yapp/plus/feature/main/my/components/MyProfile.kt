@@ -28,6 +28,7 @@ import com.yapp.plus.domain.profile.UserPosition
 import com.yapp.plus.feature.main.my.R
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
 import com.yapp.plus.feature.main.my.model.MyProfileUiState
+import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun MyProfileSection(
@@ -73,7 +74,7 @@ internal fun MyProfile(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            painter = painterResource(R.drawable.graphic_user_profile),
+            painter = painterResource(profileAvatarResource(profile?.position)),
             contentDescription = null,
             modifier = Modifier.size(66.dp),
         )
@@ -120,6 +121,20 @@ internal fun MyProfile(
         }
     }
 }
+
+private fun profileAvatarResource(position: UserPosition?): Int =
+    when (position) {
+        UserPosition.PM -> DesignSystemR.drawable.graphic_profile_avatar_pm
+        UserPosition.DESIGN -> DesignSystemR.drawable.graphic_profile_avatar_designer
+        UserPosition.WEB -> DesignSystemR.drawable.graphic_profile_avatar_web
+        UserPosition.MOBILE,
+        UserPosition.ANDROID,
+        UserPosition.IOS,
+        -> DesignSystemR.drawable.graphic_profile_avatar_mobile
+        UserPosition.SERVER -> DesignSystemR.drawable.graphic_profile_avatar_server
+        UserPosition.AI_NATIVE -> DesignSystemR.drawable.graphic_profile_avatar_ai
+        UserPosition.UNKNOWN, null -> R.drawable.graphic_user_profile
+    }
 
 private fun MembershipStatus?.labelResource(): Int =
     when (this) {

@@ -40,6 +40,7 @@ import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.domain.profile.UserPosition
 import com.yapp.plus.feature.main.community.R
 import com.yapp.plus.feature.main.community.SettlementEditorState
+import com.yapp.plus.core.designsystem.R as DesignSystemR
 
 internal enum class SettlementRosterFilter(
     val label: Int,
@@ -261,12 +262,15 @@ internal fun SettlementCheckIcon(isChecked: Boolean) {
 
 internal fun settlementAvatar(position: UserPosition?): Int =
     when (position) {
-        UserPosition.PM -> R.drawable.settlement_roster_pm
-        UserPosition.DESIGN -> R.drawable.settlement_roster_design
-        UserPosition.WEB -> R.drawable.settlement_roster_web
-        UserPosition.MOBILE, UserPosition.ANDROID, UserPosition.IOS -> R.drawable.settlement_roster_mobile
-        UserPosition.AI_NATIVE -> R.drawable.settlement_roster_ai
-        else -> R.drawable.settlement_roster_server
+        UserPosition.PM -> DesignSystemR.drawable.graphic_profile_avatar_pm
+        UserPosition.DESIGN -> DesignSystemR.drawable.graphic_profile_avatar_designer
+        UserPosition.WEB -> DesignSystemR.drawable.graphic_profile_avatar_web
+        UserPosition.MOBILE,
+        UserPosition.ANDROID,
+        UserPosition.IOS,
+        -> DesignSystemR.drawable.graphic_profile_avatar_mobile
+        UserPosition.AI_NATIVE -> DesignSystemR.drawable.graphic_profile_avatar_ai
+        else -> DesignSystemR.drawable.graphic_profile_avatar_server
     }
 
 @Composable

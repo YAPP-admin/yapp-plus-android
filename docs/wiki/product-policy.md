@@ -85,6 +85,7 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 
 - 기준은 사용자가 변경을 확정한 [Figma 홈 섹션](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=222-40284)과 [이슈 #82](https://github.com/YAPP-admin/yapp-plus-android/issues/82)입니다. 홈 메인·알림·출석 코드 입력/완료·출결 보고 화면까지 적용합니다.
 - 홈은 이번 주 세션의 장소·제목, 일요일부터 토요일까지의 달력, 출석 상태와 빠른 메뉴, 이번 주 공지를 표시합니다. 오늘은 원형으로, 세션 날짜는 브랜드 색상으로 구분합니다. 서버의 `AVAILABLE` 상태에서만 출석 버튼을 활성화합니다.
+- 홈의 팀 세션 카드 제목은 이번 주 세션 조회 응답의 `session.name`을 넣어 `이번 주는 … 세션이에요`로 표시합니다.
 - 4자리 숫자 입력은 붙여넣기와 숫자 키보드를 지원합니다. 입력 형식 검증 뒤 `POST /api/attendance-verifications`에 `sessionId`와 정수 `code`를 전달합니다. `verified=true`와 유효한 `checkedInAt`을 받은 뒤 완료 화면을 열고 해당 세션 카드에 인증 완료를 반영합니다.
 - 홈에 처음 진입하거나 복귀해 다시 조회하면 `current-week.attendanceStatus`의 현재 값을 표시합니다. 정규 세션의 `CHECKED_IN`은 달력의 세션 날짜에 `출석` 배지와 회색 비활성 `출석했어요!` 버튼을 표시합니다. `PENDING_APPROVAL`은 선택된 팀원의 사진 심사를 기다리는 “출석 확인 중이에요”를 표시합니다. 두 상태에서는 코드를 입력할 수 없습니다. `CHECKED_IN`은 인증 완료이며 최종 출결과 점수는 각 사용자 조회 API를 따릅니다. [Figma 출석 후 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-18070) · [이번 주 세션 계약](https://github.com/YAPP-admin/yapp-plus-backend/blob/0f2ddbdf0c9aa6a8b754225d9c6938ab70097322/APIDOC.md#L312-L322)
 - 지각·조퇴·결석 사전 보고는 [필수 사유 검증](#사전-보고-사유-검증)을 거칩니다. `POST /api/attendance-reports`에 유형과 사유를 보내고, 응답의 `sessionId`와 `submittedAt`을 확인한 뒤 완료 안내를 표시합니다.

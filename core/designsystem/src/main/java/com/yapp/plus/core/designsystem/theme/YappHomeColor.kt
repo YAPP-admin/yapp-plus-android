@@ -10,7 +10,7 @@ object YappHomeColor {
     val subtle = YappColor.foregroundSubtle
     val placeholder = YappColor.foregroundFaint
     val border = YappColor.strokeNeutralWeak
-    val divider = Color(0x10000000)
+    val divider = Color(0xFFEFEFEF)
     val action = YappColor.neutralSolid
     val disabledAction = YappColor.foregroundMuted.copy(alpha = 0.5f)
     val brand = YappColor.brand

@@ -44,6 +44,7 @@ import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -249,12 +250,13 @@ class SessionLocationUiTest {
             includeLocation = false,
             currentAttendanceStatus = { AttendanceStatus.CHECKED_IN },
             weeklySessionType = SessionType.TEAM,
+            weeklySessionName = "반려된 퇴근",
         ).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
             val approvalTitle = "팀 세션 출석이 완료됐어요!"
             waitForText(approvalTitle)
             composeRule.onNodeWithText("확인").performClick()
-            composeRule.onNodeWithText("이번 주는 팀 세션이에요").assertIsDisplayed()
+            composeRule.onNodeWithText("이번 주는 반려된 퇴근 세션이에요").assertIsDisplayed()
             composeRule.onNodeWithText("출석했어요!").assertIsNotEnabled()
         }
     }
@@ -381,6 +383,7 @@ class SessionLocationUiTest {
         weeklySessionDate: LocalDate = LocalDate.of(2026, 11, 14),
         onReport: (String) -> Unit = { error("Unexpected attendance report") },
         weeklySessionType: SessionType = SessionType.REGULAR,
+        weeklySessionName: String = "개발 세션",
         onTeamPhotoLookup: () -> Unit = {},
     ): HttpClient {
         val client =
@@ -395,6 +398,7 @@ class SessionLocationUiTest {
                                     currentAttendanceStatus(),
                                     weeklySessionDate,
                                     weeklySessionType,
+                                    weeklySessionName,
                                 )
                             "sessions" -> generationSessions(includeLocation)
                             "team-attendance-photos" -> {
@@ -453,12 +457,13 @@ class SessionLocationUiTest {
         attendanceStatus: AttendanceStatus,
         sessionDate: LocalDate,
         sessionType: SessionType,
+        sessionName: String,
     ): String {
         val locationDetails = if (includeLocation) locationDetails(venueLatitude) else ""
         val location = if (sessionType == SessionType.TEAM) "null" else "\"DMC 첨단산업센터\""
         return """{"weekStartDate":"${sessionDate.minusDays(6)}","weekEndDate":"$sessionDate",
-            "session":{"sessionId":12,"name":"개발 세션","date":"$sessionDate","startTime":"14:00",
-            "endTime":"18:00","type":"${sessionType.name}","location":$location,
+            "session":{"sessionId":12,"name":${JsonPrimitive(sessionName)},"date":"$sessionDate",
+            "startTime":"14:00","endTime":"18:00","type":"${sessionType.name}","location":$location,
             "attendanceStatus":"${attendanceStatus.name}"$locationDetails}}"""
     }
 

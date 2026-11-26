@@ -6,7 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.feature.login.components.LoginErrorDialog
 
@@ -15,7 +15,7 @@ import com.yapp.plus.feature.login.components.LoginErrorDialog
 @Composable
 private fun LoginContentPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        Scaffold(containerColor = YappAuthColor.background) { padding ->
+        Scaffold(containerColor = YappMainColor.surface) { padding ->
             LoginContent(
                 onBack = {},
                 onGoogleLogin = {},
@@ -32,7 +32,7 @@ private fun LoginContentPreview() {
 @Composable
 private fun LoginErrorDialogPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        Scaffold(containerColor = YappAuthColor.background) { padding ->
+        Scaffold(containerColor = YappMainColor.surface) { padding ->
             LoginContent(
                 onBack = {},
                 onGoogleLogin = {},

@@ -20,7 +20,7 @@
     <string name="home_team_result_reason">사유: %1$s</string>
     <string name="home_team_result_retry">다시 업로드하기</string>
     <string name="home_team_result_contact_staff">운영진에게 문의하기</string>
-    <string name="home_team_result_session_title">이번 주는 팀 세션이에요</string>
+    <string name="home_team_result_session_title">이번 주는 %1$s 세션이에요</string>
     <string name="home_team_result_session_location">팀별 자율 장소 · %1$s</string>
     <string name="home_team_result_upload">인증 사진 업로드하기</string>
     <string name="home_team_result_pending_title">운영진이 확인하고 있어요</string>

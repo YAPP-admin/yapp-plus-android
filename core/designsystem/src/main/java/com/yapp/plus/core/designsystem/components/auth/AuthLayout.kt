@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
 import com.yapp.plus.core.designsystem.modifier.WithoutRipple
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 
 @Composable
 fun AuthLayout(
@@ -31,7 +31,7 @@ fun AuthLayout(
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
-        modifier = modifier.background(YappAuthColor.background),
+        modifier = modifier.background(YappMainColor.surface),
         contentAlignment = Alignment.TopCenter,
     ) {
         Column(

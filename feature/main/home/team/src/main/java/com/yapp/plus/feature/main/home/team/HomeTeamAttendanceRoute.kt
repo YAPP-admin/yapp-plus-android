@@ -117,6 +117,7 @@ private fun HomeTeamAttendanceCard(
     val cardState = state.card(session, now)
     HomeTeamPhotoSessionCard(
         state = cardState,
+        sessionName = session.name,
         sessionTimeLabel = session.teamTimeLabel(),
         weekCalendar = weekCalendar,
         onUpload = onGuide,

@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.R
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 
 @Preview(name = "Auth layout", widthDp = 393, heightDp = 756)
@@ -18,7 +18,7 @@ import com.yapp.plus.core.designsystem.theme.YappTheme
 @Composable
 private fun AuthLayoutPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        Scaffold(containerColor = YappAuthColor.background) { padding ->
+        Scaffold(containerColor = YappMainColor.surface) { padding ->
             AuthLayout(
                 onBack = {},
                 modifier =

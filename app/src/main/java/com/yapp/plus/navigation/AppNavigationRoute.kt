@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
@@ -42,7 +42,7 @@ internal fun AppNavigationRoute(
     } else {
         Scaffold(
             modifier = modifier.fillMaxSize(),
-            containerColor = YappAuthColor.background,
+            containerColor = YappMainColor.surface,
         ) { innerPadding ->
             AppNavHost(
                 onExit = onExit,

@@ -24,6 +24,7 @@ object YappMainColor {
     val warning = Color(0xFFC49725)
     val warningWeak = Color(0xFFFFF7DE)
     val brand = Color(0xFFFF6600)
+    val splashGradientEnd = Color(0xFFFF8500)
     val brandWeak = Color(0xFFFFEFE9)
     val brandWeakSurface = Color(0xFFFFF2EC)
     val brandContrast = Color(0xFFE14D00)

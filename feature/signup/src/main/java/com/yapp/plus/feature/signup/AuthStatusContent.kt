@@ -24,7 +24,7 @@ import com.yapp.plus.core.designsystem.components.auth.AuthLayout
 import com.yapp.plus.core.designsystem.components.auth.AuthPrimaryAction
 import com.yapp.plus.core.designsystem.components.text.YappText
 import com.yapp.plus.core.designsystem.modifier.WithoutRipple
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTypography
 import com.yapp.plus.feature.signup.model.AuthStatus
 
@@ -56,7 +56,7 @@ fun AuthStatusContent(
                 YappText(
                     text = stringResource(status.descriptionResource),
                     style = YappTypography.scaleT5Regular,
-                    color = YappAuthColor.textSecondary,
+                    color = YappMainColor.textSecondary,
                 )
                 if (status == AuthStatus.Pending) {
                     Box(
@@ -106,7 +106,7 @@ internal fun AuthStatusAction(
                             text = stringResource(R.string.auth_contact),
                             style =
                                 YappTypography.scaleT6Bold,
-                            color = YappAuthColor.textSubtle,
+                            color = YappMainColor.textSubtle,
                         )
                     }
                 }

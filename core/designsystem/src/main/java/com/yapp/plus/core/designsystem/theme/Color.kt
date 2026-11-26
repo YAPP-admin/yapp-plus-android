@@ -62,8 +62,6 @@ internal object YappColor {
     val success = Color(0xFF00BF40)
     val error = Color(0xFFFF4242)
     val toastBackgroundDark = Color(0xE02E2F33)
-    val gradientLightSurface = Color(0xFFF7F7F8)
-    val gradientBackground = Color(0xFFF0F0F2)
     val divider = coolNeutral.copy(alpha = 0.22f)
     val scrollIndicator = coolNeutral.copy(alpha = 0.16f)
     val scrim = textPrimary.copy(alpha = 0.28f)

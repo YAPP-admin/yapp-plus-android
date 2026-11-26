@@ -56,7 +56,7 @@ last_verified: 2026-11-26
 - Domain에서 UI 모델·리소스로 바꾸는 책임은 Feature에 둡니다. 실제로 여러 Feature가 공유할 때 의존성 방향을 유지하며 공통화합니다.
 - UseCase는 정책·Repository 조합·재사용이 필요한 경우에 추가하고 단순 전달용 클래스는 일괄 생성하지 않습니다.
 
-알림 선택은 `NotificationPreferenceRepository` → DataSource → 백업 제외 DataStore로 저장합니다. 세션 저장소와 분리하고 손상된 값은 OFF로 복구합니다. App singleton이 저장소와 Firebase·서버 기기 API를 조립합니다. 설정 ViewModel·Route는 Android 앱 알림 설정을 열고 복귀 시 시스템 권한 상태를 선택에 반영합니다. App 조율자는 자동 동기화와 기기 등록·해제를 직렬화하며 서버 실패는 설정 화면에 전달하지 않습니다.
+알림 선택은 `NotificationPreferenceRepository` → DataSource → 백업 제외 DataStore로 저장합니다. 세션 저장소와 분리하고 손상된 값은 OFF로 복구합니다. App singleton이 저장소와 Firebase·서버 기기 API를 조립합니다. 설정 ViewModel·Route는 Android 앱 알림 설정을 열고 복귀 시 시스템 권한 상태를 선택에 반영합니다. App의 MainActivity는 홈 탭 진입 때 저장 선택이 ON인 경우 알림 권한을, 정밀 위치 권한이 없는 경우 위치 권한을 순서대로 한 번 요청합니다. App 조율자는 자동 동기화와 기기 등록·해제를 직렬화하며 서버 실패는 설정 화면에 전달하지 않습니다.
 
 ## 객체 조립과 화면 이동
 

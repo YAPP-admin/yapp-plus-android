@@ -732,3 +732,13 @@ last_verified: 2026-11-26
 - 반영: [설계 패턴](design-patterns.md#viewmodel과-요청), [모듈 구조](module-structure.md), App 내비게이션과 홈·게시판 Route·게시판 ViewModel.
 - 적용 상태: 공지 ID가 일치할 때만 실패 토스트를 표시하고, 읽음 처리 취소 뒤 도착한 결과는 이벤트로 발행하지 않습니다. ViewModel은 ToastManager 의존성을 갖지 않습니다.
 - 대체한 결정: 없음.
+
+## DEC-0092 · 홈 진입 시 알림·위치 권한 요청
+
+- 기록일: 2026-11-26
+- 결정: 홈 탭에 진입할 때 Android 13 이상에서 알림 권한이 없고 저장된 알림 선택이 ON이면 알림 권한을 먼저 요청합니다. 정밀 위치 권한이 없으면 대략적·정확한 위치 권한을 이어서 요청합니다. 홈 진입에 따른 각 권한 자동 요청은 권한별 한 번만 표시합니다. 위치 조회는 출석 가능한 세션에서 사용자가 코드 출석을 확인할 때만 수행합니다.
+- 이유: 사용자가 홈 진입 시 알림·위치 권한을 요청하도록 명시했습니다. 기존 알림 OFF 선택과 코드 확인 시 위치 조회 정책은 유지합니다.
+- 근거: 사용자 명시 요청(2026-11-26), [Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16033)에는 앱 자체 권한 안내 UI가 없습니다. [Android 이슈 #288](https://github.com/YAPP-admin/yapp-plus-android/issues/288). 연결된 Notion 정책 원문은 이전 확인에서 계정에 404로 열렸습니다.
+- 반영: [제품 정책](product-policy.md#코드-출석-위치-조건), [제품 정책](product-policy.md#기기별-알림-설정), [설계 패턴](design-patterns.md), App의 MainActivity·홈 탭 진입 콜백.
+- 적용 상태: 홈 탭 진입을 App의 권한 요청 시작점으로 연결하고, 필요한 권한 요청을 순서대로 표시합니다.
+- 대체한 결정: DEC-0057의 코드 확인 시 위치 권한 요청 시점. 알림의 설치별 선택과 시스템 설정 동작(DEC-0050, DEC-0072)은 유지합니다.

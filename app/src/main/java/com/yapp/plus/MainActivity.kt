@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
@@ -46,7 +47,18 @@ class MainActivity : ComponentActivity() {
     private val notificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             pushRegistration.synchronize()
+            if (shouldRequestLocationAfterNotification) {
+                shouldRequestLocationAfterNotification = false
+                isHomePermissionRequestPending = false
+                requestLocationPermissionIfNeeded()
+            }
         }
+    private val locationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
+    private var isHomePermissionRequestPending = false
+    private var isCheckingHomePermissions = false
+    private var isLocationPermissionRequestPending = false
+    private var shouldRequestLocationAfterNotification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -62,6 +74,7 @@ class MainActivity : ComponentActivity() {
                 AppNavigationRoute(
                     onExit = ::finish,
                     onSessionReady = ::onSessionReady,
+                    onHomeEntered = ::onHomeEntered,
                     pushPostId = pendingPushPostId,
                     onPushPostOpened = ::consumePushTarget,
                     pushSessionId = pendingPushSessionId,
@@ -76,6 +89,8 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         pushRegistration.synchronize()
+        if (isLocationPermissionRequestPending) requestLocationPermissionIfNeeded()
+        requestHomePermissionsIfPossible()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -91,30 +106,111 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun onSessionReady() {
-        if (!pushRegistration.isConfigured()) return
+        pushRegistration.synchronize()
+    }
+
+    private fun onHomeEntered() {
+        isHomePermissionRequestPending = true
+        requestHomePermissionsIfPossible()
+    }
+
+    private fun requestHomePermissionsIfPossible() {
+        if (!canRequestHomePermissions()) return
+        isHomePermissionRequestPending = false
+        isCheckingHomePermissions = true
         lifecycleScope.launch {
             try {
-                if (pushRegistration.fetchEnabled()) requestNotificationPermission()
+                requestHomePermissions()
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
-                // Settings offers a retry if the saved choice cannot be read.
+                requestLocationPermissionIfNeeded()
+                isHomePermissionRequestPending = false
             } finally {
+                isCheckingHomePermissions = false
                 pushRegistration.synchronize()
+                if (isHomePermissionRequestPending) requestHomePermissionsIfPossible()
             }
         }
     }
 
-    private fun requestNotificationPermission() {
+    private fun canRequestHomePermissions(): Boolean =
+        isHomePermissionRequestPending &&
+            !isCheckingHomePermissions &&
+            !shouldRequestLocationAfterNotification &&
+            lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+
+    private suspend fun requestHomePermissions() {
+        val shouldRequestNotification = pushRegistration.fetchEnabled()
+        if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+            isHomePermissionRequestPending = true
+            return
+        }
+        if (shouldRequestNotification) {
+            shouldRequestLocationAfterNotification = true
+            if (launchNotificationPermissionIfNeeded()) {
+                isHomePermissionRequestPending = false
+                return
+            }
+        }
+        shouldRequestLocationAfterNotification = false
+        requestLocationPermissionIfNeeded()
+        isHomePermissionRequestPending = false
+    }
+
+    private fun launchNotificationPermissionIfNeeded(): Boolean {
         val preferences = getPreferences(MODE_PRIVATE)
         if (
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
-            PackageManager.PERMISSION_GRANTED &&
-            !preferences.getBoolean(NOTIFICATION_PERMISSION_REQUESTED, false)
+            !shouldRequestNotificationPermission() ||
+            preferences.getBoolean(NOTIFICATION_PERMISSION_REQUESTED, false)
         ) {
-            preferences.edit().putBoolean(NOTIFICATION_PERMISSION_REQUESTED, true).apply()
+            return false
+        }
+        preferences.edit().putBoolean(NOTIFICATION_PERMISSION_REQUESTED, true).apply()
+        return try {
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+            true
+        } catch (_: IllegalStateException) {
+            preferences.edit().remove(NOTIFICATION_PERMISSION_REQUESTED).apply()
+            false
+        }
+    }
+
+    private fun shouldRequestNotificationPermission(): Boolean =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+
+    private fun requestLocationPermissionIfNeeded() {
+        if (hasPreciseLocationPermission()) {
+            isLocationPermissionRequestPending = false
+            return
+        }
+        if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+            isLocationPermissionRequestPending = true
+            return
+        }
+        launchLocationPermissionIfNeeded()
+    }
+
+    private fun hasPreciseLocationPermission(): Boolean =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED
+
+    private fun launchLocationPermissionIfNeeded() {
+        isLocationPermissionRequestPending = false
+        val preferences = getPreferences(MODE_PRIVATE)
+        if (preferences.getBoolean(LOCATION_PERMISSION_REQUESTED, false)) return
+        preferences.edit().putBoolean(LOCATION_PERMISSION_REQUESTED, true).apply()
+        try {
+            locationPermission.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                ),
+            )
+        } catch (_: IllegalStateException) {
+            preferences.edit().remove(LOCATION_PERMISSION_REQUESTED).apply()
         }
     }
 
@@ -132,5 +228,6 @@ class MainActivity : ComponentActivity() {
 
     private companion object {
         const val NOTIFICATION_PERMISSION_REQUESTED = "notification_permission_requested"
+        const val LOCATION_PERMISSION_REQUESTED = "location_permission_requested"
     }
 }

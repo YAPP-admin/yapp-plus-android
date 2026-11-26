@@ -61,6 +61,7 @@ internal fun AppNavHost(
     modifier: Modifier = Modifier,
     startDestination: AppNavigationDestination = AppNavigationDestination.Login,
     navController: NavHostController = rememberNavController(),
+    onHomeEntered: () -> Unit = {},
     pushPostId: Long? = null,
     onPushPostOpened: () -> Unit = {},
     pushSessionId: Long? = null,
@@ -146,6 +147,7 @@ internal fun AppNavHost(
         val mainContent: @Composable (NavBackStackEntry, Long?) -> Unit = { entry, sessionId ->
             MainTabScaffold(
                 initialTab = if (sessionId == null) MainTab.Home else MainTab.Schedule,
+                onHomeEntered = onHomeEntered,
                 scheduleSessionId = sessionId,
                 onAfterpartyClick = { navController.navigateFrom(entry, AppNavigationDestination.Afterparty(it)) },
                 onSettlementsClick = { navController.navigateFrom(entry, AppNavigationDestination.MySettlements) },

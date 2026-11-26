@@ -100,6 +100,7 @@ private fun TeamPhotoHomePreview(
             )
             HomeTeamPhotoSessionCard(
                 state = state,
+                sessionName = stringResource(R.string.home_team_result_preview_session_name),
                 sessionTimeLabel = stringResource(R.string.home_team_photo_preview_time),
                 weekCalendar = {},
                 onUpload = {},
@@ -168,6 +169,7 @@ fun TeamPhotoSessionCardPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
         HomeTeamPhotoSessionCard(
             state = HomeTeamPhotoSessionUiState.AwaitingPhoto,
+            sessionName = stringResource(R.string.home_team_result_preview_session_name),
             sessionTimeLabel = stringResource(R.string.home_team_photo_preview_time),
             weekCalendar = {},
             onUpload = {},

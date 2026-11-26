@@ -46,6 +46,7 @@ import com.yapp.plus.core.designsystem.R as DesignSystemR
 @Composable
 internal fun HomeTeamPhotoSessionCard(
     state: HomeTeamPhotoSessionUiState,
+    sessionName: String,
     sessionTimeLabel: String,
     weekCalendar: @Composable () -> Unit,
     onUpload: () -> Unit,
@@ -78,7 +79,11 @@ internal fun HomeTeamPhotoSessionCard(
                         stringResource(R.string.home_team_result_session_location, sessionTimeLabel)
                     YappText(location, YappTypography.scaleT3Medium, YappHomeColor.subtle)
                 }
-                val title = stringResource(R.string.home_team_result_session_title)
+                val title =
+                    stringResource(
+                        R.string.home_team_result_session_title,
+                        sessionName.trim().removeSuffix("세션").trimEnd(),
+                    )
                 YappText(title, YappTypography.scaleT7Bold, YappHomeColor.text)
             }
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {

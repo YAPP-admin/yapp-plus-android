@@ -6,7 +6,7 @@ last_verified: 2026-11-27
 
 # 결정 기록
 
-확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0095`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
+확정된 정책의 변경 이유를 날짜순으로 남깁니다. 현재 적용 규칙은 분야별 문서에서 읽습니다. 새 결정에는 다음 `DEC-0096`부터 순서대로 ID를 부여하고, 이전 결정을 대체하면 해당 ID를 기록합니다. 이전 항목은 삭제하거나 현재 규칙처럼 수정하지 않습니다.
 
 ## DEC-0001 · 기존 승인 규칙을 Wiki의 초기 기준으로 이전
 
@@ -761,4 +761,14 @@ last_verified: 2026-11-27
 - 근거: 사용자 명시 요청(2026-11-27), [Figma 팀 사진 검토 카드](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728), [Android 이슈 #297](https://github.com/YAPP-admin/yapp-plus-android/issues/297). Figma에는 사진 카드만 있고 뷰어 표현은 없으며, 연결된 Notion 정책 원문은 404로 확인할 수 없어 기존 제품 정책을 사용했습니다.
 - 반영: [제품 정책](product-policy.md#사용자-팀-출석-조회), `:feature:main:home:team`의 사진 뷰어와 Preview.
 - 적용 상태: 전체 화면 Dialog와 검은 배경, 비율 유지 사진 표시, 상태별 안내를 적용했습니다.
+- 대체한 결정: 없음.
+
+## DEC-0095 · 홈 팀 세션 카드의 세션 이름
+
+- 기록일: 2026-11-27
+- 결정: 홈 팀 세션 카드의 제목에 이번 주 세션 응답의 `session.name`을 사용합니다.
+- 이유: 홈에서 이번 주 팀 세션의 실제 이름을 확인할 수 있어야 합니다.
+- 근거: 사용자 명시 요청(2026-11-27). Figma의 업로드 가능과 검토 중 상태에서 제목의 문장 형식을 확인했습니다. Notion 정책 원문은 404를 반환했습니다. [Figma 업로드 가능 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=810-11509) · [Figma 검토 중 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=1091-4728) · [Notion 정책 원문](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84800f9abfef181b090892) · [Android 이슈 #305](https://github.com/YAPP-admin/yapp-plus-android/issues/305)
+- 반영: [제품 정책](product-policy.md#수정된-홈-화면과-연결-흐름), `:feature:main:home:team`의 팀 세션 카드와 Preview.
+- 적용 상태: 서버 이름으로 `이번 주는 … 세션이에요` 제목을 표시합니다.
 - 대체한 결정: 없음.

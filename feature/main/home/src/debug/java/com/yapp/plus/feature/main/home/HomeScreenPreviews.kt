@@ -16,9 +16,6 @@ private fun HomeScreenPreview() {
     val state =
         AttendanceUiState.Content(
             CurrentWeekSessionUiModel(
-                weekStartDateLabel = stringResource(R.string.attendance_home_demo_week_start),
-                weekEndDateLabel = stringResource(R.string.attendance_home_demo_week_end),
-                dateLabel = stringResource(R.string.attendance_home_demo_session_date),
                 name = stringResource(R.string.attendance_home_demo_session_name),
                 startTimeLabel = stringResource(R.string.attendance_home_demo_session_time),
                 location = stringResource(R.string.attendance_home_demo_session_location),

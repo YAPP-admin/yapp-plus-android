@@ -234,9 +234,6 @@ class HomeTeamAttendanceViewModelTest {
 
     private val session =
         CurrentWeekSessionUiModel(
-            weekStartDateLabel = "",
-            weekEndDateLabel = "",
-            dateLabel = "",
             name = "",
             startTimeLabel = "",
             location = "팀별 자율 장소",

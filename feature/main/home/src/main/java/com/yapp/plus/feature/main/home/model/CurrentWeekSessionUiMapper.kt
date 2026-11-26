@@ -12,9 +12,6 @@ internal object CurrentWeekSessionUiMapper {
 
         return AttendanceUiState.Content(
             CurrentWeekSessionUiModel(
-                weekStartDateLabel = schedule.weekStartDate.format(AppDateFormatter.monthDay),
-                weekEndDateLabel = schedule.weekEndDate.format(AppDateFormatter.monthDay),
-                dateLabel = session.date.format(AppDateFormatter.monthDayDayOfWeek),
                 name = session.name,
                 startTimeLabel = session.startTime.format(AppDateFormatter.timeAmPmHour),
                 location = session.location,
@@ -23,7 +20,6 @@ internal object CurrentWeekSessionUiMapper {
                 weekStartDate = schedule.weekStartDate,
                 sessionDate = session.date,
                 startTime = session.startTime,
-                address = session.locationDetails?.roadAddress?.takeUnless(String::isBlank),
                 coordinates = session.locationDetails?.coordinates,
                 endTime = session.endTime,
                 type = session.type,

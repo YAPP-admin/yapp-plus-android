@@ -37,9 +37,6 @@ private fun HomeSessionCardStatesPreview() {
 @Composable
 private fun sampleSession(status: AttendanceStatusUiModel = AttendanceStatusUiModel.Available) =
     CurrentWeekSessionUiModel(
-        weekStartDateLabel = stringResource(R.string.attendance_home_demo_week_start),
-        weekEndDateLabel = stringResource(R.string.attendance_home_demo_week_end),
-        dateLabel = stringResource(R.string.attendance_home_demo_session_date),
         name = stringResource(R.string.attendance_home_demo_session_name),
         startTimeLabel = stringResource(R.string.attendance_home_demo_session_time),
         location = stringResource(R.string.attendance_home_demo_session_location),
@@ -48,7 +45,6 @@ private fun sampleSession(status: AttendanceStatusUiModel = AttendanceStatusUiMo
         weekStartDate = java.time.LocalDate.of(2026, 10, 18),
         sessionDate = java.time.LocalDate.of(2026, 10, 24),
         startTime = java.time.LocalTime.of(14, 0),
-        address = stringResource(R.string.attendance_home_demo_session_address),
     )
 
 @Preview(name = "Home attendance completed", widthDp = 361)

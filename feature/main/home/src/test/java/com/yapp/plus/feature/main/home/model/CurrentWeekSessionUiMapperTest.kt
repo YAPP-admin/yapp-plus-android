@@ -55,9 +55,6 @@ class CurrentWeekSessionUiMapperTest {
         assertEquals(
             AttendanceUiState.Content(
                 CurrentWeekSessionUiModel(
-                    weekStartDateLabel = "10월 18일",
-                    weekEndDateLabel = "10월 24일",
-                    dateLabel = "10월 24일 (토)",
                     name = "개발 세션",
                     startTimeLabel = "오후 2시",
                     location = "DMC 첨단산업센터",
@@ -66,7 +63,6 @@ class CurrentWeekSessionUiMapperTest {
                     weekStartDate = LocalDate.of(2026, 10, 18),
                     sessionDate = LocalDate.of(2026, 10, 24),
                     startTime = LocalTime.of(14, 0),
-                    address = "서울특별시 마포구 월드컵북로 396",
                     coordinates = SessionCoordinates(latitude = 37.58, longitude = 126.88),
                 ),
             ),

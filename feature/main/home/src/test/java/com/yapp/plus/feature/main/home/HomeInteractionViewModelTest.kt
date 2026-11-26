@@ -33,9 +33,6 @@ class HomeInteractionViewModelTest {
 
     private val session =
         CurrentWeekSessionUiModel(
-            weekStartDateLabel = "",
-            weekEndDateLabel = "",
-            dateLabel = "",
             name = "정규 세션",
             startTimeLabel = "",
             location = "DMC 첨단산업센터",

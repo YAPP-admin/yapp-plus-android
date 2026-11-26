@@ -35,10 +35,7 @@ class HomeViewModelTest {
                 FakeSessionScheduleRepository().apply {
                     currentWeekFailure = ScheduleFailure.NoActiveGeneration
                 }
-            val viewModel =
-                HomeViewModel(repository, FakeHomeNoticeRepository()).also {
-                    it.loadInitialHomeData()
-                }
+            val viewModel = HomeViewModel(repository, FakeHomeNoticeRepository())
             advanceUntilIdle()
             assertEquals(AttendanceUiState.Inactive, viewModel.uiState.value.currentWeekSchedule)
         }
@@ -53,7 +50,6 @@ class HomeViewModelTest {
             val noticeRepository = FakeHomeNoticeRepository()
             val viewModel = HomeViewModel(scheduleRepository, noticeRepository)
 
-            viewModel.loadInitialHomeData()
             advanceUntilIdle()
             assertEquals(AttendanceUiState.Error, viewModel.uiState.value.currentWeekSchedule)
             assertFalse(viewModel.uiState.value.isLoading)
@@ -67,9 +63,6 @@ class HomeViewModelTest {
             assertEquals(
                 AttendanceUiState.Content(
                     CurrentWeekSessionUiModel(
-                        weekStartDateLabel = "10월 18일",
-                        weekEndDateLabel = "10월 24일",
-                        dateLabel = "10월 24일 (토)",
                         name = "개발 세션",
                         startTimeLabel = "오후 2시",
                         location = "DMC 첨단산업센터",
@@ -93,7 +86,6 @@ class HomeViewModelTest {
             val noticeRepository = FakeHomeNoticeRepository().apply { gate = noticeGate }
             val viewModel = HomeViewModel(scheduleRepository, noticeRepository)
 
-            repeat(2) { viewModel.loadInitialHomeData() }
             runCurrent()
             assertEquals(1, scheduleRepository.currentWeekRequestCount)
             assertEquals(1, noticeRepository.requestCount)
@@ -107,8 +99,6 @@ class HomeViewModelTest {
             advanceUntilIdle()
             assertFalse(viewModel.uiState.value.isLoading)
 
-            viewModel.loadInitialHomeData()
-            advanceUntilIdle()
             assertEquals(1, scheduleRepository.currentWeekRequestCount)
             assertEquals(1, noticeRepository.requestCount)
         }
@@ -119,7 +109,6 @@ class HomeViewModelTest {
             val scheduleRepository = FakeSessionScheduleRepository()
             val noticeRepository = FakeHomeNoticeRepository()
             val viewModel = HomeViewModel(scheduleRepository, noticeRepository)
-            viewModel.loadInitialHomeData()
             advanceUntilIdle()
 
             val currentSchedule = viewModel.uiState.value.currentWeekSchedule
@@ -162,7 +151,6 @@ class HomeViewModelTest {
                 }
             val viewModel = HomeViewModel(scheduleRepository, FakeHomeNoticeRepository())
 
-            viewModel.loadInitialHomeData()
             runCurrent()
             assertEquals(HomeNoticeUiState.Empty, viewModel.uiState.value.weeklyNotices)
             assertTrue(viewModel.uiState.value.isLoading)
@@ -182,7 +170,6 @@ class HomeViewModelTest {
                     attendanceStatus = AttendanceStatus.AVAILABLE
                 }
             val viewModel = HomeViewModel(repository, FakeHomeNoticeRepository())
-            viewModel.loadInitialHomeData()
             advanceUntilIdle()
 
             viewModel.markAttendanceVerified(sessionId = 2)
@@ -207,7 +194,6 @@ class HomeViewModelTest {
                 }
             val viewModel = HomeViewModel(FakeSessionScheduleRepository(), noticeRepository)
 
-            viewModel.loadInitialHomeData()
             advanceUntilIdle()
             assertEquals(HomeNoticeUiState.Error, viewModel.uiState.value.weeklyNotices)
 

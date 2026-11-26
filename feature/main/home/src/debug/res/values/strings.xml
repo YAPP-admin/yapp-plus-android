@@ -1,12 +1,8 @@
 <resources>
-    <string name="attendance_home_demo_week_start">10월 18일</string>
-    <string name="attendance_home_demo_week_end">10월 24일</string>
-    <string name="attendance_home_demo_session_date">10월 24일 (토)</string>
     <string name="attendance_home_demo_session_name">개발-디자인 세션</string>
     <string name="attendance_home_demo_completed_session_name">유저 플로우 리뷰 세션</string>
     <string name="attendance_home_demo_session_time">오후 2시</string>
     <string name="attendance_home_demo_session_location">DMC 첨단산업센터</string>
-    <string name="attendance_home_demo_session_address">서울특별시 마포구 월드컵북로 396</string>
     <string name="home_preview_notice_session">5주차 개발-디자인 세션 공지</string>
     <string name="home_preview_notice_survey">뒷풀이 참석 여부 수요 조사</string>
     <string name="home_preview_notice_staff">운영진 공지 사항</string>

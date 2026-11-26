@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.attendance.TeamAttendancePhotoStatus
@@ -43,6 +45,7 @@ fun HomeTeamAttendanceRoute(
     onContactStaff: () -> Unit,
     onRefreshSchedule: () -> Unit,
     weekCalendar: @Composable (CurrentWeekSessionUiModel) -> Unit,
+    approvalViewModelStoreOwner: ViewModelStoreOwner? = null,
     content: @Composable (
         teamSessionCard: (@Composable () -> Unit)?,
         showTeamPhotoUploadTip: Boolean,
@@ -51,14 +54,21 @@ fun HomeTeamAttendanceRoute(
 ) {
     val viewModel: HomeTeamAttendanceViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val approvalViewModel: HomeTeamApprovalViewModel =
+        hiltViewModel(approvalViewModelStoreOwner ?: checkNotNull(LocalViewModelStoreOwner.current))
+    val acknowledgedSessions by approvalViewModel.acknowledgedSessions.collectAsStateWithLifecycle()
     val session =
         (schedule as? AttendanceUiState.Content)?.value?.takeIf { it.type == SessionType.TEAM }
 
-    LaunchedEffect(session) {
-        if (schedule is AttendanceUiState.Content) viewModel.refresh(session)
+    LaunchedEffect(schedule) {
+        when (schedule) {
+            is AttendanceUiState.Content -> viewModel.updateSession(session)
+            AttendanceUiState.Empty, AttendanceUiState.Inactive -> viewModel.updateSession(null)
+            AttendanceUiState.Loading, AttendanceUiState.Error -> Unit
+        }
     }
     DisposableEffect(viewModel) {
-        onDispose(viewModel::clear)
+        onDispose(viewModel::discardFlow)
     }
 
     val teamSessionCard: (@Composable () -> Unit)? =
@@ -77,18 +87,20 @@ fun HomeTeamAttendanceRoute(
         }
     val showUploadTip =
         session != null && state.card(session, now) == HomeTeamPhotoSessionUiState.AwaitingPhoto
-    content(teamSessionCard, showUploadTip) { session?.let(viewModel::refresh) }
+    content(teamSessionCard, showUploadTip) { if (session != null) viewModel.refresh() }
 
     if (session != null) {
         HomeTeamAttendanceOverlays(
             session = session,
             state = state,
             viewModel = viewModel,
-            canShowApproval = canShowApproval,
+            showApproval =
+                canShowApproval && state.shouldShowApproval(session, acknowledgedSessions),
+            onAcknowledgeApproval = { approvalViewModel.acknowledge(session.sessionId) },
         ) {
             if (!viewModel.state.value.isSubmitting) {
                 viewModel.closeFlow()
-                viewModel.refresh(session)
+                viewModel.refresh()
                 onRefreshSchedule()
             }
         }
@@ -153,7 +165,8 @@ private fun HomeTeamAttendanceOverlays(
     session: CurrentWeekSessionUiModel,
     state: HomeTeamAttendanceUiState,
     viewModel: HomeTeamAttendanceViewModel,
-    canShowApproval: Boolean,
+    showApproval: Boolean,
+    onAcknowledgeApproval: () -> Unit,
     onFinish: () -> Unit,
 ) {
     val pickPhoto = rememberHomeTeamPhotoPicker(viewModel)
@@ -209,10 +222,10 @@ private fun HomeTeamAttendanceOverlays(
                         )
                 }
             }
-        canShowApproval && state.shouldShowApproval(session) ->
+        showApproval ->
             HomeTeamPhotoResultSheet(
                 state = HomeTeamPhotoResultSheetState.Approved,
-                onConfirm = { viewModel.acknowledgeApproval(session.sessionId) },
+                onConfirm = onAcknowledgeApproval,
             )
     }
 }

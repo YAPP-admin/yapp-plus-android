@@ -4,6 +4,7 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.view.KeyEvent
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
@@ -288,6 +289,38 @@ class SessionLocationUiTest {
 
             composeRule.onNodeWithText("일정").performClick()
             composeRule.onNodeWithText("홈").performClick()
+            waitForText("출석했어요!")
+            composeRule.onNodeWithText(approvalTitle).assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun confirmedTeamApprovalStaysClosedInHomeOpenedFromScheduleNotification() {
+        val pushSessionId = mutableStateOf<Long?>(null)
+        installApiFixtures(
+            includeLocation = false,
+            currentAttendanceStatus = { AttendanceStatus.CHECKED_IN },
+            weeklySessionType = SessionType.TEAM,
+        ).use {
+            composeRule.setContent {
+                YappTheme {
+                    AppNavHost(
+                        startDestination = AppNavigationDestination.Main,
+                        sessionAuthenticated = true,
+                        onExit = {},
+                        pushSessionId = pushSessionId.value,
+                        onPushSessionOpened = { pushSessionId.value = null },
+                    )
+                }
+            }
+            val approvalTitle = "팀 세션 출석이 완료됐어요!"
+            waitForText(approvalTitle)
+            composeRule.onNodeWithText("확인").performClick()
+
+            composeRule.runOnIdle { pushSessionId.value = 12L }
+            composeRule.waitUntil(10_000) { pushSessionId.value == null }
+            composeRule.onNodeWithText("홈").performClick()
+
             waitForText("출석했어요!")
             composeRule.onNodeWithText(approvalTitle).assertDoesNotExist()
         }

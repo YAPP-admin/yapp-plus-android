@@ -25,7 +25,6 @@ internal data class HomeTeamAttendanceUiState(
     val uncertain: Boolean = false,
     val receipt: HomeTeamPhotoReceiptUiModel? = null,
     val photoViewer: HomeTeamPhotoViewerUiState? = null,
-    val acknowledgedApprovalSessionId: Long? = null,
 ) {
     val isActive: Boolean
         get() = guide || preparing || input != null || receipt != null || photoViewer != null
@@ -33,10 +32,13 @@ internal data class HomeTeamAttendanceUiState(
     val photo: TeamAttendancePhoto?
         get() = (latest as? AttendanceUiState.Content)?.value
 
-    fun shouldShowApproval(session: CurrentWeekSessionUiModel): Boolean =
+    fun shouldShowApproval(
+        session: CurrentWeekSessionUiModel,
+        acknowledgedSessions: LongArray,
+    ): Boolean =
         sessionId == session.sessionId &&
             session.attendanceStatus == AttendanceStatusUiModel.CheckedIn &&
-            acknowledgedApprovalSessionId != session.sessionId
+            session.sessionId !in acknowledgedSessions
 
     fun card(
         session: CurrentWeekSessionUiModel,

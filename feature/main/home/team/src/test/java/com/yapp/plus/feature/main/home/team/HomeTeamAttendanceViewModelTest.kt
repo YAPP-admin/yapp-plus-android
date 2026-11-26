@@ -113,32 +113,99 @@ class HomeTeamAttendanceViewModelTest {
     }
 
     @Test
-    fun approvalNeedsPersonalCheckInAndStaysAcknowledgedForTheSession() {
+    fun approvalNeedsPersonalCheckInAndSharesConfirmationAcrossHomeEntries() {
         val repository =
             FakeTeamAttendance().apply {
                 latestPhoto = photo(1L, Instant.MAX).copy(status = TeamAttendancePhotoStatus.APPROVED)
             }
         val savedState = SavedStateHandle()
-        val viewModel = home(repository, savedState)
+        val approval = HomeTeamApprovalViewModel(savedState)
+        val viewModel = home(repository)
 
-        assertFalse(viewModel.state.value.shouldShowApproval(session))
+        assertFalse(
+            viewModel.state.value.shouldShowApproval(session, approval.acknowledgedSessions.value),
+        )
 
         val approvedSession = session.copy(attendanceStatus = AttendanceStatusUiModel.CheckedIn)
-        viewModel.refresh(approvedSession)
-        assertTrue(viewModel.state.value.shouldShowApproval(approvedSession))
+        viewModel.updateSession(approvedSession)
+        assertTrue(
+            viewModel.state.value.shouldShowApproval(
+                approvedSession,
+                approval.acknowledgedSessions.value,
+            ),
+        )
 
-        viewModel.acknowledgeApproval(approvedSession.sessionId)
-        viewModel.clear()
-        viewModel.refresh(approvedSession)
-        assertFalse(viewModel.state.value.shouldShowApproval(approvedSession))
-
-        val recreatedViewModel = home(repository, savedState)
-        recreatedViewModel.refresh(approvedSession)
-        assertFalse(recreatedViewModel.state.value.shouldShowApproval(approvedSession))
+        approval.acknowledge(approvedSession.sessionId)
+        val restoredApproval = HomeTeamApprovalViewModel(savedState)
+        val otherHome = home(repository)
+        otherHome.updateSession(approvedSession)
+        assertFalse(
+            otherHome.state.value.shouldShowApproval(
+                approvedSession,
+                restoredApproval.acknowledgedSessions.value,
+            ),
+        )
 
         val nextSession = approvedSession.copy(sessionId = 43L)
-        recreatedViewModel.refresh(nextSession)
-        assertTrue(recreatedViewModel.state.value.shouldShowApproval(nextSession))
+        otherHome.updateSession(nextSession)
+        assertTrue(
+            otherHome.state.value.shouldShowApproval(
+                nextSession,
+                restoredApproval.acknowledgedSessions.value,
+            ),
+        )
+        restoredApproval.acknowledge(nextSession.sessionId)
+        restoredApproval.acknowledge(nextSession.sessionId)
+        assertEquals(listOf(42L, 43L), restoredApproval.acknowledgedSessions.value.toList())
+    }
+
+    @Test
+    fun keepsTeamPhotoLookupAndResultAcrossHomeReentry() {
+        val response = CompletableDeferred<TeamAttendancePhoto?>()
+        val repository = FakeTeamAttendance().apply { photoResponse = response }
+        val viewModel = home(repository)
+
+        viewModel.discardFlow()
+        viewModel.updateSession(session)
+        assertEquals(1, repository.photoReads)
+
+        response.complete(photo(1L, Instant.MAX))
+        viewModel.discardFlow()
+        viewModel.updateSession(session)
+
+        assertEquals(1, repository.photoReads)
+        assertEquals(
+            1L,
+            viewModel.state.value.photo
+                ?.photoId,
+        )
+    }
+
+    @Test
+    fun usesLatestAttendanceWhenRefreshingAnInFlightPhotoLookup() {
+        val response = CompletableDeferred<TeamAttendancePhoto?>()
+        val repository = FakeTeamAttendance().apply { photoResponse = response }
+        val viewModel = home(repository)
+        viewModel.refresh()
+        assertEquals(1, repository.photoReads)
+
+        repository.photoResponse = null
+        repository.latestPhoto = photo(2L, Instant.MAX)
+        val approvedSession = session.copy(attendanceStatus = AttendanceStatusUiModel.CheckedIn)
+        viewModel.updateSession(approvedSession)
+        response.complete(photo(1L, Instant.MAX))
+
+        assertEquals(2, repository.photoReads)
+        assertEquals(
+            2L,
+            viewModel.state.value.photo
+                ?.photoId,
+        )
+
+        viewModel.refresh()
+        assertEquals(3, repository.photoReads)
+        viewModel.updateSession(approvedSession.copy(sessionId = 43L))
+        assertEquals(4, repository.photoReads)
     }
 
     @Test
@@ -225,12 +292,10 @@ class HomeTeamAttendanceViewModelTest {
             it.photoPicked(HomeTeamPhotoInput(byteArrayOf(1), "image/jpeg", null))
         }
 
-    private fun home(
-        repository: FakeTeamAttendance,
-        savedState: SavedStateHandle = SavedStateHandle(),
-    ) = HomeTeamAttendanceViewModel(repository, repository, repository, savedState).also {
-        it.refresh(session)
-    }
+    private fun home(repository: FakeTeamAttendance) =
+        HomeTeamAttendanceViewModel(repository, repository, repository).also {
+            it.updateSession(session)
+        }
 
     private val session =
         CurrentWeekSessionUiModel(

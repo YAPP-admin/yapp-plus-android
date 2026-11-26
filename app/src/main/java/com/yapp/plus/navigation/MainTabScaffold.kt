@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.ViewModelStoreOwner
 import com.yapp.plus.R
 import com.yapp.plus.core.designsystem.components.toast.YappToastManager
 import com.yapp.plus.core.designsystem.theme.YappMainColor
@@ -47,6 +48,7 @@ internal fun MainTabScaffold(
     scheduleSessionId: Long? = null,
     onAfterpartyClick: ((Long) -> Unit)? = null,
     onSettlementsClick: (() -> Unit)? = null,
+    teamApprovalViewModelStoreOwner: ViewModelStoreOwner? = null,
 ) {
     val toastManager = remember { YappToastManager() }
     val uriHandler = LocalUriHandler.current
@@ -96,6 +98,7 @@ internal fun MainTabScaffold(
                 MainTab.Home ->
                     HomeRoute(
                         toastManager = toastManager,
+                        teamApprovalViewModelStoreOwner = teamApprovalViewModelStoreOwner,
                         onNotificationsClick = onNotificationsClick,
                         afterpartyBanner = onAfterpartyClick?.let { navigate -> { AfterpartyBanner(navigate) } },
                         onSessionsClick = { selectedTab = MainTab.Schedule },

@@ -25,6 +25,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +53,7 @@ fun YappBottomSheet(
     contentDescription: String? = null,
     variant: YappBottomSheetVariant = YappBottomSheetVariant.Default,
     isDismissible: Boolean = true,
+    shape: Shape = RoundedCornerShape(if (variant == YappBottomSheetVariant.Home) 16.dp else 20.dp),
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     val isHome = variant == YappBottomSheetVariant.Home
@@ -83,7 +85,7 @@ fun YappBottomSheet(
                         },
                 ),
         sheetState = actualSheetState,
-        shape = RoundedCornerShape(if (isHome) 16.dp else 20.dp),
+        shape = shape,
         containerColor = YappColor.white,
         contentColor = YappColor.textPrimary,
         tonalElevation = 0.dp,

@@ -23,6 +23,8 @@ import com.yapp.plus.feature.main.board.model.NoticeUiState
 import com.yapp.plus.feature.main.home.HomeScreen
 import com.yapp.plus.feature.main.home.components.HomeReportReasonPreview
 import com.yapp.plus.feature.main.home.components.HomeReportTypePreview
+import com.yapp.plus.feature.main.home.components.HomeSubmittedReportLegacyPreview
+import com.yapp.plus.feature.main.home.components.HomeSubmittedReportPreview
 import com.yapp.plus.feature.main.home.model.HomeNoticeUiState
 import com.yapp.plus.feature.main.my.MyScreen
 import com.yapp.plus.feature.main.my.model.MyProfileUiModel
@@ -125,6 +127,22 @@ class ConnectedApisUiTest {
         composeRule.onNodeWithText("조퇴 사유를 입력해 주세요").assertIsDisplayed()
         composeRule.onNodeWithText("5/30").assertIsDisplayed()
         screenshot("report-reason")
+    }
+
+    @Test fun submittedReportShowsTheServerTypeAndOriginalReason() {
+        composeRule.setContent { HomeSubmittedReportPreview() }
+        composeRule.onNodeWithText("제출된 사유예요").assertIsDisplayed()
+        composeRule.onNodeWithText("지각").assertIsDisplayed()
+        composeRule.onNodeWithText("병원 진료 후 바로 출발할게요.").assertIsDisplayed()
+        composeRule.onNodeWithText("확인").assertIsDisplayed()
+        composeRule.onNodeWithText("변경하기").assertDoesNotExist()
+        screenshot("submitted-report")
+    }
+
+    @Test fun submittedReportWithLegacyMissingReasonShowsDash() {
+        composeRule.setContent { HomeSubmittedReportLegacyPreview() }
+        composeRule.onNodeWithText("제출된 사유예요").assertIsDisplayed()
+        composeRule.onNodeWithText("—").assertIsDisplayed()
     }
 
     @Test fun myDisplaysSavedNameWithoutInventingMembership() {

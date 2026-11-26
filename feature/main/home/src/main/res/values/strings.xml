@@ -62,6 +62,8 @@
     <string name="home_report_reason_required">사유를 입력해 주세요.</string>
     <string name="home_report_reason_count">%1$d/30</string>
     <string name="home_report_complete">출결 보고를 완료했어요</string>
+    <string name="home_report_submitted_title">제출된 사유예요</string>
+    <string name="home_report_reason_missing">—</string>
     <string name="home_report_not_eligible">현재 기수의 출결 보고 대상이 아니에요.</string>
     <string name="home_report_no_session">보고할 세션이 없어요.</string>
     <string name="home_report_unavailable">이미 출석했거나 보고할 수 있는 시간이 지났어요.</string>

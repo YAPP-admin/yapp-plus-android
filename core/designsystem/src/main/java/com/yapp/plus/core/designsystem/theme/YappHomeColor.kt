@@ -14,6 +14,7 @@ object YappHomeColor {
     val action = YappColor.neutralSolid
     val disabledAction = YappColor.foregroundMuted.copy(alpha = 0.5f)
     val brand = YappColor.brand
+    val reportBadge = Color(0xFFFFF0E5)
     val error = Color(0xFFFA342C)
     val session = Color(0xFF5E98FE)
     val sessionWeak = Color(0xFFEFF6FF)

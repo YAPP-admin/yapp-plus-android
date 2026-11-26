@@ -7,8 +7,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -17,15 +17,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheet
 import com.yapp.plus.core.designsystem.components.popup.YappBottomSheetVariant
+import com.yapp.plus.core.designsystem.components.toast.YappToastData
+import com.yapp.plus.core.designsystem.components.toast.YappToastHost
+import com.yapp.plus.core.designsystem.components.toast.YappToastManager
+import com.yapp.plus.core.designsystem.components.toast.YappToastType
+import com.yapp.plus.core.ui.ObserveAsEvents
 import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.session.SessionType
 import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCodeRoute
-import com.yapp.plus.feature.main.home.components.HomeReportConfirmation
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
 import com.yapp.plus.feature.main.home.components.HomeWeekCalendar
+import com.yapp.plus.feature.main.home.model.HomeInteractionEvent
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
 import com.yapp.plus.feature.main.home.model.shouldShowReportTip
@@ -39,6 +44,7 @@ import java.time.Instant
 
 @Composable
 fun HomeRoute(
+    toastManager: YappToastManager,
     modifier: Modifier = Modifier,
     onNotificationsClick: (() -> Unit)? = null,
     onSessionsClick: () -> Unit = {},
@@ -53,6 +59,8 @@ fun HomeRoute(
     val interaction by interactionViewModel.uiState.collectAsStateWithLifecycle()
     val teamViewModel: HomeTeamAttendanceViewModel = hiltViewModel()
     val team by teamViewModel.state.collectAsStateWithLifecycle()
+
+    val reportCompleteText = stringResource(R.string.home_report_complete)
     val session = (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
     val teamSession = session?.takeIf { it.type == SessionType.TEAM }
 
@@ -135,12 +143,7 @@ fun HomeRoute(
                     }
                 },
         )
-        if (interaction.isReportComplete) {
-            HomeReportConfirmation(
-                onDismiss = interactionViewModel::acknowledgeReportComplete,
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
-        }
+        YappToastHost(toastManager = toastManager)
     }
     if (teamSession != null) {
         HomeTeamAttendanceOverlays(
@@ -217,6 +220,17 @@ fun HomeRoute(
                     onRefreshSession = viewModel::retryCurrentWeekSchedule,
                 )
             }
+        }
+    }
+    ObserveAsEvents(interactionViewModel.events) { event ->
+        when (event) {
+            HomeInteractionEvent.ReportCompleted ->
+                toastManager.tryShow(
+                    YappToastData(
+                        text = reportCompleteText,
+                        type = YappToastType.Default,
+                    ),
+                )
         }
     }
 }

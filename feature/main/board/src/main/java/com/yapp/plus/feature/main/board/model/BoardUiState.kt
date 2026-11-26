@@ -8,5 +8,4 @@ data class BoardUiState(
     val isLoadingMore: Boolean = false,
     val hasLoadMoreError: Boolean = false,
     val isMarkingRead: Boolean = false,
-    val hasReadError: Boolean = false,
 )

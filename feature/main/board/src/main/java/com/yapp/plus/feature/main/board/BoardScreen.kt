@@ -14,17 +14,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.core.designsystem.components.main.YappDetailHeader
 import com.yapp.plus.core.designsystem.components.main.YappMainHeader
-import com.yapp.plus.core.designsystem.components.toast.YappToastData
-import com.yapp.plus.core.designsystem.components.toast.YappToastHost
-import com.yapp.plus.core.designsystem.components.toast.YappToastManager
-import com.yapp.plus.core.designsystem.components.toast.YappToastType
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.components.BoardCategorySelector
 import com.yapp.plus.feature.main.board.components.BoardNoticeCard
@@ -50,25 +45,12 @@ fun BoardScreen(
     hasLoadMoreError: Boolean = false,
     onLoadMore: () -> Unit = {},
     isMarkingRead: Boolean = false,
-    hasReadError: Boolean = false,
     onMarkRead: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
     val isDetailError = detail == NoticeUiState.Error
-    val toastManager = remember { YappToastManager() }
-    val readErrorMessage = stringResource(R.string.board_read_error)
 
     LaunchedEffect(category) { listState.scrollToItem(0) }
-    LaunchedEffect(hasReadError) {
-        if (hasReadError) {
-            toastManager.tryShow(
-                YappToastData(
-                    text = readErrorMessage,
-                    type = YappToastType.Error,
-                ),
-            )
-        }
-    }
 
     Box(
         modifier =
@@ -136,6 +118,5 @@ fun BoardScreen(
                 }
             }
         }
-        YappToastHost(toastManager = toastManager)
     }
 }

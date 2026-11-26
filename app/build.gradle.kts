@@ -19,8 +19,8 @@ android {
     defaultConfig {
         applicationId = "com.yapp.plus"
         targetSdk = 37
-        versionCode = 6
-        versionName = "1.0.3"
+        versionCode = 8
+        versionName = "1.0.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

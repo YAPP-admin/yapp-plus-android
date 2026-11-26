@@ -22,15 +22,22 @@ internal object CurrentWeekScheduleMapper {
             session = data.session?.let(::toDomain),
         )
 
-    private fun toData(response: CurrentWeekSessionResponse): CurrentWeekSessionData =
-        CurrentWeekSessionData(
+    private fun toData(response: CurrentWeekSessionResponse): CurrentWeekSessionData {
+        val type = SessionType.valueOf(response.type)
+        val location =
+            when (type) {
+                SessionType.REGULAR -> requireNotNull(response.location)
+                SessionType.TEAM -> response.location.orEmpty()
+            }
+
+        return CurrentWeekSessionData(
             sessionId = response.sessionId,
             name = response.name,
             date = LocalDate.parse(response.date),
             startTime = LocalTime.parse(response.startTime),
             endTime = LocalTime.parse(response.endTime),
-            type = SessionType.valueOf(response.type),
-            location = response.location,
+            type = type,
+            location = location,
             attendanceStatus = AttendanceStatus.valueOf(response.attendanceStatus),
             locationDetails =
                 SessionLocationData(
@@ -40,6 +47,7 @@ internal object CurrentWeekScheduleMapper {
                     detailAddress = response.detailAddress,
                 ).takeIfPresent(),
         )
+    }
 
     private fun toDomain(data: CurrentWeekSessionData): CurrentWeekSession =
         CurrentWeekSession(

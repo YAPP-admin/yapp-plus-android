@@ -1,7 +1,7 @@
 package com.yapp.plus.feature.main.home
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.core.ui.BaseViewModel
 import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.ui.model.HomeAttendanceLocationIssue
@@ -14,6 +14,7 @@ import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
 import com.yapp.plus.domain.session.SessionDistanceRepository
 import com.yapp.plus.feature.main.home.attendance.model.HomeAttendanceAttempt
+import com.yapp.plus.feature.main.home.model.HomeInteractionEvent
 import com.yapp.plus.feature.main.home.model.HomeInteractionUiState
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
@@ -21,9 +22,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -36,16 +34,14 @@ internal class HomeInteractionViewModel
     constructor(
         private val attendanceRepository: AttendanceRepository,
         private val distanceRepository: SessionDistanceRepository,
-    ) : ViewModel() {
-        private val mutableUiState = MutableStateFlow(HomeInteractionUiState())
-        val uiState = mutableUiState.asStateFlow()
+    ) : BaseViewModel<HomeInteractionUiState, HomeInteractionEvent>(HomeInteractionUiState()) {
         private var attendanceSessionId: Long? = null
         private var pendingPermissionAttempt: HomeAttendanceAttempt? = null
         private var locationCheck: Job? = null
 
         fun openReport() {
-            if (mutableUiState.value.isSubmitting) return
-            mutableUiState.update {
+            if (uiState.value.isSubmitting) return
+            updateState {
                 it.copy(
                     sheet = HomeSheet.ReportType,
                     reportType = null,
@@ -57,12 +53,12 @@ internal class HomeInteractionViewModel
         }
 
         fun selectReportType(type: AttendanceReportType) {
-            if (mutableUiState.value.isSubmitting) return
-            mutableUiState.update { it.copy(reportType = type, errorResource = null) }
+            if (uiState.value.isSubmitting) return
+            updateState { it.copy(reportType = type, errorResource = null) }
         }
 
         fun updateReportReason(value: String) {
-            if (mutableUiState.value.isSubmitting) return
+            if (uiState.value.isSubmitting) return
             val truncated = value.take(AttendanceReportPolicy.MAX_REASON_LENGTH)
             val reason =
                 if (truncated.lastOrNull()?.isHighSurrogate() ==
@@ -72,7 +68,7 @@ internal class HomeInteractionViewModel
                 } else {
                     truncated
                 }
-            mutableUiState.update { it.copy(reportReason = reason, errorResource = null) }
+            updateState { it.copy(reportReason = reason, errorResource = null) }
         }
 
         fun confirmReport(
@@ -80,41 +76,35 @@ internal class HomeInteractionViewModel
             startTime: LocalTime?,
             now: Instant = Instant.now(),
         ) {
-            val state = mutableUiState.value
+            val state = uiState.value
             if (!AttendanceReportPolicy.canSubmit(sessionDate, startTime, now)) {
-                mutableUiState.update { it.copy(errorResource = R.string.home_report_closed) }
+                updateState { it.copy(errorResource = R.string.home_report_closed) }
                 return
             }
             val type = state.reportType ?: return
             if (state.isSubmitting) return
             if (state.sheet == HomeSheet.ReportType) {
-                mutableUiState.update { it.copy(sheet = HomeSheet.ReportReason) }
+                updateState { it.copy(sheet = HomeSheet.ReportReason) }
                 return
             }
             if (state.sheet != HomeSheet.ReportReason) return
             if (!state.isReportReasonValid) {
-                mutableUiState.update { it.copy(errorResource = R.string.home_report_reason_required) }
+                updateState { it.copy(errorResource = R.string.home_report_reason_required) }
                 return
             }
             submit(
                 operation = { attendanceRepository.submitReport(type, state.reportReason.trim()) },
                 onSuccess = {
-                    current,
-                    _,
-                    ->
-                    current.copy(sheet = HomeSheet.None, isReportComplete = true)
+                    updateState { it.copy(sheet = HomeSheet.None) }
+                    sendEvent(HomeInteractionEvent.ReportCompleted)
                 },
             )
         }
 
-        fun acknowledgeReportComplete() {
-            mutableUiState.update { it.copy(isReportComplete = false) }
-        }
-
         fun openAttendanceCode(sessionId: Long) {
-            if (mutableUiState.value.isSubmitting || sessionId <= 0) return
+            if (uiState.value.isSubmitting || sessionId <= 0) return
             attendanceSessionId = sessionId
-            mutableUiState.update {
+            updateState {
                 it.copy(
                     sheet = HomeSheet.AttendanceCode,
                     code = "",
@@ -126,17 +116,17 @@ internal class HomeInteractionViewModel
         }
 
         fun dismissSheet() {
-            if (mutableUiState.value.isSubmitting) return
+            if (uiState.value.isSubmitting) return
             attendanceSessionId = null
-            mutableUiState.update {
+            updateState {
                 it.copy(sheet = HomeSheet.None, errorResource = null, locationIssue = null)
             }
         }
 
         fun updateCode(code: String) {
-            if (mutableUiState.value.isSubmitting) return
+            if (uiState.value.isSubmitting) return
             val digits = code.filter { it in '0'..'9' }.take(CODE_LENGTH)
-            mutableUiState.update {
+            updateState {
                 it.copy(
                     code = digits,
                     errorResource = null,
@@ -165,7 +155,7 @@ internal class HomeInteractionViewModel
             if (state.isSubmitting || state.sheet != HomeSheet.AttendanceCode) return null
             val code = state.code.takeIf { it.length == CODE_LENGTH }?.toIntOrNull()
             if (code == null) {
-                mutableUiState.update {
+                updateState {
                     it.copy(
                         errorResource = R.string.home_code_required,
                         isInvalidCode = true,
@@ -249,17 +239,19 @@ internal class HomeInteractionViewModel
             val sessionId = attempt.sessionId
             submit(
                 operation = { attendanceRepository.verifyAttendance(sessionId, attempt.code) },
-                onSuccess = { state, _ ->
-                    state.copy(
-                        sheet = HomeSheet.None,
-                        verifiedSessionId = sessionId,
-                    )
+                onSuccess = {
+                    updateState {
+                        it.copy(
+                            sheet = HomeSheet.None,
+                            verifiedSessionId = sessionId,
+                        )
+                    }
                 },
             )
         }
 
         private fun updateSubmissionStage(stage: HomeSubmissionStage) {
-            mutableUiState.update {
+            updateState {
                 it.copy(
                     submissionStage = stage,
                     errorResource = null,
@@ -270,7 +262,7 @@ internal class HomeInteractionViewModel
         }
 
         private fun showLocationIssue(issue: HomeAttendanceLocationIssue) {
-            mutableUiState.update {
+            updateState {
                 it.copy(
                     submissionStage = HomeSubmissionStage.Idle,
                     errorResource = null,
@@ -282,19 +274,20 @@ internal class HomeInteractionViewModel
 
         private fun <T> submit(
             operation: suspend () -> T,
-            onSuccess: (HomeInteractionUiState, T) -> HomeInteractionUiState,
+            onSuccess: suspend (T) -> Unit,
         ) {
             updateSubmissionStage(HomeSubmissionStage.Submitting)
             viewModelScope.launch {
                 try {
                     val result = operation()
-                    mutableUiState.update { onSuccess(it, result) }
+                    ensureActive()
+                    onSuccess(result)
                 } catch (cancellationException: CancellationException) {
                     throw cancellationException
                 } catch (exception: Exception) {
                     showSubmissionError(exception)
                 } finally {
-                    mutableUiState.update { it.copy(submissionStage = HomeSubmissionStage.Idle) }
+                    updateState { it.copy(submissionStage = HomeSubmissionStage.Idle) }
                 }
             }
         }
@@ -307,13 +300,13 @@ internal class HomeInteractionViewModel
                 } else {
                     reportErrorResource((exception as? AttendanceException)?.code)
                 }
-            mutableUiState.update {
+            updateState {
                 it.copy(isInvalidCode = isInvalidCode, errorResource = errorResource)
             }
         }
 
         fun acknowledgeAttendanceComplete() {
-            mutableUiState.update { it.copy(verifiedSessionId = null) }
+            updateState { it.copy(verifiedSessionId = null) }
         }
 
         private companion object {

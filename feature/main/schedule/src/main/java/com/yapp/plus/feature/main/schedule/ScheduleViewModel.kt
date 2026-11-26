@@ -15,7 +15,9 @@ internal class ScheduleViewModel
     @Inject
     constructor(
         private val sessionScheduleRepository: SessionScheduleRepository,
-    ) : BaseViewModel<ScheduleUiState<List<ScheduleSessionUiModel>>>(ScheduleUiState.Loading) {
+    ) : BaseViewModel<ScheduleUiState<List<ScheduleSessionUiModel>>, Nothing>(
+            ScheduleUiState.Loading,
+        ) {
         private var scheduleJob: Job? = null
 
         init {

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,8 +17,12 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.attendance.TeamAttendancePhotoStatus
+import com.yapp.plus.domain.session.SessionType
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoGuideSheet
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoResultSheet
 import com.yapp.plus.feature.main.home.team.components.HomeTeamPhotoSessionCard
@@ -30,7 +36,67 @@ import com.yapp.plus.feature.main.home.team.model.teamTimeFormat
 import java.time.Instant
 
 @Composable
-fun HomeTeamAttendanceCard(
+fun HomeTeamAttendanceRoute(
+    schedule: AttendanceUiState<CurrentWeekSessionUiModel>,
+    now: Instant,
+    canShowApproval: Boolean,
+    onContactStaff: () -> Unit,
+    onRefreshSchedule: () -> Unit,
+    weekCalendar: @Composable (CurrentWeekSessionUiModel) -> Unit,
+    content: @Composable (
+        teamSessionCard: (@Composable () -> Unit)?,
+        showTeamPhotoUploadTip: Boolean,
+        onRefreshTeam: () -> Unit,
+    ) -> Unit,
+) {
+    val viewModel: HomeTeamAttendanceViewModel = hiltViewModel()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val session =
+        (schedule as? AttendanceUiState.Content)?.value?.takeIf { it.type == SessionType.TEAM }
+
+    LaunchedEffect(session) {
+        if (schedule is AttendanceUiState.Content) viewModel.refresh(session)
+    }
+    DisposableEffect(viewModel) {
+        onDispose(viewModel::clear)
+    }
+
+    val teamSessionCard: (@Composable () -> Unit)? =
+        session?.let { target ->
+            {
+                HomeTeamAttendanceCard(
+                    session = target,
+                    state = state,
+                    now = now,
+                    weekCalendar = { weekCalendar(target) },
+                    onGuide = { viewModel.openGuide() },
+                    onContact = onContactStaff,
+                    onViewPhoto = viewModel::openSubmittedPhoto,
+                )
+            }
+        }
+    val showUploadTip =
+        session != null && state.card(session, now) == HomeTeamPhotoSessionUiState.AwaitingPhoto
+    content(teamSessionCard, showUploadTip) { session?.let(viewModel::refresh) }
+
+    if (session != null) {
+        HomeTeamAttendanceOverlays(
+            session = session,
+            state = state,
+            viewModel = viewModel,
+            canShowApproval = canShowApproval,
+        ) {
+            if (!viewModel.state.value.isSubmitting) {
+                viewModel.closeFlow()
+                viewModel.refresh(session)
+                onRefreshSchedule()
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeTeamAttendanceCard(
     session: CurrentWeekSessionUiModel,
     state: HomeTeamAttendanceUiState,
     now: Instant,
@@ -83,7 +149,7 @@ fun HomeTeamAttendanceCard(
 }
 
 @Composable
-fun HomeTeamAttendanceOverlays(
+private fun HomeTeamAttendanceOverlays(
     session: CurrentWeekSessionUiModel,
     state: HomeTeamAttendanceUiState,
     viewModel: HomeTeamAttendanceViewModel,

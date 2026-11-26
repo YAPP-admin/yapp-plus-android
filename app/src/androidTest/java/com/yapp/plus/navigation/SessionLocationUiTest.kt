@@ -9,6 +9,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -17,7 +18,9 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.printToString
+import androidx.compose.ui.test.swipeDown
 import androidx.lifecycle.Lifecycle
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yapp.plus.core.designsystem.theme.YappTheme
@@ -258,17 +261,23 @@ class SessionLocationUiTest {
     @Test
     fun teamApprovalAfterRefreshRemembersConfirmationAcrossTabs() {
         val attendanceStatus = AtomicReference(AttendanceStatus.PENDING_APPROVAL)
+        val teamPhotoLookups = AtomicInteger()
         installApiFixtures(
             includeLocation = false,
             currentAttendanceStatus = attendanceStatus::get,
             weeklySessionType = SessionType.TEAM,
+            onTeamPhotoLookup = { teamPhotoLookups.incrementAndGet() },
         ).use {
             composeRule.setContent { YappTheme { MainTabScaffold() } }
             waitForText("출석 확인 중이에요")
-            val scenario = composeRule.activityRule.scenario
-            scenario.moveToState(Lifecycle.State.CREATED)
+
+            val initialLookups = teamPhotoLookups.get()
+            composeRule.onNode(hasScrollAction()).performTouchInput { swipeDown() }
+            composeRule.waitUntil(10_000) { teamPhotoLookups.get() > initialLookups }
+            waitForText("출석 확인 중이에요")
+
             attendanceStatus.set(AttendanceStatus.CHECKED_IN)
-            scenario.moveToState(Lifecycle.State.RESUMED)
+            composeRule.onNode(hasScrollAction()).performTouchInput { swipeDown() }
 
             val approvalTitle = "팀 세션 출석이 완료됐어요!"
             waitForText(approvalTitle)
@@ -339,6 +348,7 @@ class SessionLocationUiTest {
         weeklySessionDate: LocalDate = LocalDate.of(2026, 11, 14),
         onReport: (String) -> Unit = { error("Unexpected attendance report") },
         weeklySessionType: SessionType = SessionType.REGULAR,
+        onTeamPhotoLookup: () -> Unit = {},
     ): HttpClient {
         val client =
             HttpClient(
@@ -354,7 +364,10 @@ class SessionLocationUiTest {
                                     weeklySessionType,
                                 )
                             "sessions" -> generationSessions(includeLocation)
-                            "team-attendance-photos" -> """{"photo":null}"""
+                            "team-attendance-photos" -> {
+                                onTeamPhotoLookup()
+                                """{"photo":null}"""
+                            }
                             "attendance-verifications" -> {
                                 onVerification()
                                 """{"verified":true,"checkedInAt":"2026-11-18T05:00:00Z"}"""

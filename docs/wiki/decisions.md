@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-26
+last_verified: 2026-11-27
 ---
 
 # 결정 기록
@@ -742,3 +742,13 @@ last_verified: 2026-11-26
 - 반영: [제품 정책](product-policy.md#코드-출석-위치-조건), [제품 정책](product-policy.md#기기별-알림-설정), [설계 패턴](design-patterns.md), App의 MainActivity·홈 탭 진입 콜백.
 - 적용 상태: 홈 탭 진입을 App의 권한 요청 시작점으로 연결하고, 필요한 권한 요청을 순서대로 표시합니다.
 - 대체한 결정: DEC-0057의 코드 확인 시 위치 권한 요청 시점. 알림의 설치별 선택과 시스템 설정 동작(DEC-0050, DEC-0072)은 유지합니다.
+
+## DEC-0093 · 홈 하위 모듈의 ViewModel 주입
+
+- 기록일: 2026-11-27
+- 결정: 홈 하위 모듈은 자신이 소유한 ViewModel을 해당 Route에서 `hiltViewModel()`로 가져옵니다. 홈은 필요한 화면 입력과 콜백을 넘겨 하위 Route를 연결합니다.
+- 이유: 팀 출석 카드와 사진 제출·열람, 승인 안내가 모듈 내부에서 같은 ViewModel을 사용하도록 주입과 상태 수집을 옮깁니다.
+- 근거: 사용자 명시 요청, [Android 이슈 #294](https://github.com/YAPP-admin/yapp-plus-android/issues/294).
+- 반영: [설계 패턴](design-patterns.md#route와-content), [모듈 구조](module-structure.md), 홈·팀 출석 Route.
+- 적용 상태: `HomeTeamAttendanceRoute`가 팀 출석 ViewModel을 주입하고 팀 사진 새로고침을 조율합니다. 알림함 Route는 이미 같은 방식으로 자체 ViewModel을 가져옵니다.
+- 대체한 결정: 없음.

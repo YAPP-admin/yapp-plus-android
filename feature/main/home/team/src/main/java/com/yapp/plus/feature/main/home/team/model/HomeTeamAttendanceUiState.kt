@@ -10,7 +10,7 @@ import com.yapp.plus.domain.profile.UserPosition
 import java.time.Instant
 import java.time.LocalDateTime
 
-data class HomeTeamAttendanceUiState(
+internal data class HomeTeamAttendanceUiState(
     val sessionId: Long? = null,
     val latest: AttendanceUiState<TeamAttendancePhoto?> = AttendanceUiState.Loading,
     val isAbsent: Boolean = false,

@@ -3,7 +3,6 @@ package com.yapp.plus.feature.main.home
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -34,11 +33,8 @@ import com.yapp.plus.feature.main.home.model.HomeInteractionEvent
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
 import com.yapp.plus.feature.main.home.model.shouldShowReportTip
-import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceCard
-import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceOverlays
-import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceViewModel
-import com.yapp.plus.feature.main.home.team.model.HomeTeamPhotoSessionUiState
-import com.yapp.plus.feature.main.home.team.model.teamZone
+import com.yapp.plus.feature.main.home.model.teamZone
+import com.yapp.plus.feature.main.home.team.HomeTeamAttendanceRoute
 import kotlinx.coroutines.delay
 import java.time.Instant
 
@@ -57,19 +53,10 @@ fun HomeRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val interactionViewModel: HomeInteractionViewModel = hiltViewModel()
     val interaction by interactionViewModel.uiState.collectAsStateWithLifecycle()
-    val teamViewModel: HomeTeamAttendanceViewModel = hiltViewModel()
-    val team by teamViewModel.state.collectAsStateWithLifecycle()
 
     val reportCompleteText = stringResource(R.string.home_report_complete)
     val session = (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
-    val teamSession = session?.takeIf { it.type == SessionType.TEAM }
 
-    LaunchedEffect(teamSession) {
-        if (state.currentWeekSchedule is AttendanceUiState.Content) teamViewModel.refresh(teamSession)
-    }
-    DisposableEffect(teamViewModel) {
-        onDispose(teamViewModel::clear)
-    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val now by produceState(Instant.now(), session?.sessionId) {
         while (true) {
@@ -93,69 +80,48 @@ fun HomeRoute(
             viewModel.retryCurrentWeekSchedule()
         }
     }
-    Box(modifier.fillMaxSize()) {
-        HomeScreen(
-            state = state.currentWeekSchedule,
-            isLoading = state.isLoading,
-            isRefreshing = state.isRefreshing,
-            onRefresh = {
-                viewModel.refreshHome()
-                teamSession?.let(teamViewModel::refresh)
-            },
-            modifier = Modifier.fillMaxSize(),
-            noticeState = state.weeklyNotices,
-            afterpartyBanner = afterpartyBanner,
-            showReportTip = shouldShowReportTip(session?.sessionDate, session?.startTime, now),
-            showTeamPhotoUploadTip =
-                teamSession != null &&
-                    team.card(teamSession, now) == HomeTeamPhotoSessionUiState.AwaitingPhoto,
-            onNotificationsClick = onNotificationsClick,
-            onAttendanceClick = {
-                session?.takeUnless { it.type == SessionType.TEAM }?.let {
-                    interactionViewModel.openAttendanceCode(it.sessionId)
-                }
-            },
-            onSessionsClick = onSessionsClick,
-            onReportClick = interactionViewModel::openReport,
-            onNoticeClick = onNoticeClick,
-            teamSessionCard =
-                teamSession?.let { target ->
-                    {
-                        HomeTeamAttendanceCard(
-                            session = target,
-                            state = team,
-                            now = now,
-                            weekCalendar = {
-                                HomeWeekCalendar(
-                                    weekStartDate = checkNotNull(target.weekStartDate),
-                                    sessionDate = target.sessionDate,
-                                    today = now.atZone(teamZone).toLocalDate(),
-                                    isSessionAttended =
-                                        target.attendanceStatus == AttendanceStatusUiModel.CheckedIn,
-                                    dayHeight = 58.dp,
-                                )
-                            },
-                            onGuide = { teamViewModel.openGuide() },
-                            onContact = onContactStaff,
-                            onViewPhoto = teamViewModel::openSubmittedPhoto,
-                        )
+    HomeTeamAttendanceRoute(
+        schedule = state.currentWeekSchedule,
+        now = now,
+        canShowApproval = interaction.sheet == HomeSheet.None,
+        onContactStaff = onContactStaff,
+        onRefreshSchedule = viewModel::retryCurrentWeekSchedule,
+        weekCalendar = { target ->
+            HomeWeekCalendar(
+                weekStartDate = checkNotNull(target.weekStartDate),
+                sessionDate = target.sessionDate,
+                today = now.atZone(teamZone).toLocalDate(),
+                isSessionAttended = target.attendanceStatus == AttendanceStatusUiModel.CheckedIn,
+                dayHeight = 58.dp,
+            )
+        },
+    ) { teamSessionCard, showTeamPhotoUploadTip, onRefreshTeam ->
+        Box(modifier.fillMaxSize()) {
+            HomeScreen(
+                state = state.currentWeekSchedule,
+                isLoading = state.isLoading,
+                isRefreshing = state.isRefreshing,
+                onRefresh = {
+                    viewModel.refreshHome()
+                    onRefreshTeam()
+                },
+                modifier = Modifier.fillMaxSize(),
+                noticeState = state.weeklyNotices,
+                afterpartyBanner = afterpartyBanner,
+                showReportTip = shouldShowReportTip(session?.sessionDate, session?.startTime, now),
+                showTeamPhotoUploadTip = showTeamPhotoUploadTip,
+                onNotificationsClick = onNotificationsClick,
+                onAttendanceClick = {
+                    session?.takeUnless { it.type == SessionType.TEAM }?.let {
+                        interactionViewModel.openAttendanceCode(it.sessionId)
                     }
                 },
-        )
-        YappToastHost(toastManager = toastManager)
-    }
-    if (teamSession != null) {
-        HomeTeamAttendanceOverlays(
-            session = teamSession,
-            state = team,
-            viewModel = teamViewModel,
-            canShowApproval = interaction.sheet == HomeSheet.None,
-        ) {
-            if (!teamViewModel.state.value.isSubmitting) {
-                teamViewModel.closeFlow()
-                teamViewModel.refresh(teamSession)
-                viewModel.retryCurrentWeekSchedule()
-            }
+                onSessionsClick = onSessionsClick,
+                onReportClick = interactionViewModel::openReport,
+                onNoticeClick = onNoticeClick,
+                teamSessionCard = teamSessionCard,
+            )
+            YappToastHost(toastManager = toastManager)
         }
     }
     if (interaction.sheet != HomeSheet.None) {

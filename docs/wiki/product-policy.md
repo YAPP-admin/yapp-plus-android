@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-26
+last_verified: 2026-11-27
 ---
 
 # 제품 정책
@@ -95,6 +95,7 @@ YAPP 서버의 출석 인증·보고 계약을 따르며 홈에서 코드 출석
 ## 세션 주소와 기기 거리 확인
 
 - 홈은 세션의 장소명(`location`)과 도로명주소(`roadAddress`)를 표시합니다. 일정은 장소명 아래 도로명주소와 선택적 상세주소(`detailAddress`)를 표시합니다. 주소가 없으면 장소명을 표시합니다. 장소와 주소가 모두 없으면 홈의 기존 세션 라벨과 일정의 `-`를 표시합니다.
+- 현재 Android 홈 카드는 장소명을 표시하며 도로명주소 표시는 후속 구현으로 남아 있습니다. [Android 이슈 #294 검증 기록](https://github.com/YAPP-admin/yapp-plus-android/issues/294)
 - 홈 세션 카드에는 Figma 기준의 장소·세션·출석 상태를 표시합니다. 홈 카드에서 기기의 위치를 확인하는 시점은 [출석 코드 확인](#코드-출석-위치-조건)입니다. [Figma 홈](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=418-16033)
 - 이번 주 세션 조회의 유효한 위도(`latitude`)와 경도(`longitude`)는 코드 출석의 거리 판정에 사용합니다. 서버는 TEAM과 주소 미등록 기존 세션에 이 필드를 null로 반환합니다.
 - 근거는 [백엔드 세션 장소 계약 #107](https://github.com/YAPP-admin/yapp-plus-backend/issues/107), [사용자 세션 조회 API](https://github.com/YAPP-admin/yapp-plus-backend/blob/c7685e86a9c6d2514ab158444a1f4812de57d919/APIDOC.md#L272-L372), [Android 이슈 #209](https://github.com/YAPP-admin/yapp-plus-android/issues/209)입니다.

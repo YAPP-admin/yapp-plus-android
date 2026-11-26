@@ -34,7 +34,7 @@ import javax.inject.Inject
 private const val ACKNOWLEDGED_TEAM_APPROVAL = "acknowledgedTeamApprovalSessionId"
 
 @HiltViewModel
-class HomeTeamAttendanceViewModel
+internal class HomeTeamAttendanceViewModel
     @Inject
     constructor(
         private val read: TeamAttendanceReadRepository,

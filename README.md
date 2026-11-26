@@ -71,6 +71,14 @@ Google OAuth Android 클라이언트도 패키지명과 서명 SHA-1에 맞게 �
 
 네임스페이스는 `com.yapp.plus`입니다. Debug는 `com.yapp.plus.debug` / `YAPP+ (Debug)`, Release는 `com.yapp.plus` / `YAPP+`를 사용해 두 앱을 같은 기기에 설치할 수 있습니다. 비공개 테스트는 기존 `release/v1.0.1` 브랜치와 같은 Play 앱을 사용하며 실제 개발은 `develop`에서 이어갑니다. 자세한 절차는 [CONTRIBUTING.md](CONTRIBUTING.md)를 따릅니다.
 
+### Debug 푸시 검증
+
+`./gradlew :app:processDebugGoogleServices --rerun`에서 `File google-services.json is missing.`이 나오면 위 표의 Debug 경로에 `yappplus-dev`의 `com.yapp.plus.debug` 설정을 저장합니다. 파일이 빠진 APK에서는 Firebase 초기화가 실패해 푸시 기기를 등록할 수 없습니다.
+
+1. `./gradlew :app:assembleDebug`로 빌드하고 실기기에 `YAPP+ (Debug)`를 설치합니다.
+2. 로그인하고 Android 앱 알림과 `YAPP 알림` 채널을 허용합니다. Logcat에서 `FirebaseApp initialization successful`와 `PUT /api/users/me/notification-devices/{installationId}`의 `204 No Content` 응답을 확인합니다.
+3. 앱을 백그라운드로 보냅니다. `yappplus-dev` 콘솔의 **Messaging**에서 알림 제목과 본문을 작성합니다. **테스트 메시지 전송**에 등록 요청의 `{installationId}`를 입력하고 실기기의 알림에 작성한 메시지가 표시되는지 확인합니다.
+
 ## 기여
 
 브랜치 생성, PR 대상, 릴리즈 절차는 [기여 및 Git Flow 규칙](CONTRIBUTING.md)을 따릅니다.

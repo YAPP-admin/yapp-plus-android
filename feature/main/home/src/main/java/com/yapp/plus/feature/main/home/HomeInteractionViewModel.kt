@@ -2,6 +2,7 @@ package com.yapp.plus.feature.main.home
 
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.core.ui.BaseViewModel
+import com.yapp.plus.core.ui.mapper.toUiIssue
 import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.core.ui.model.HomeAttendanceLocationIssue
@@ -9,6 +10,7 @@ import com.yapp.plus.domain.attendance.AttendanceException
 import com.yapp.plus.domain.attendance.AttendanceLocationFailure
 import com.yapp.plus.domain.attendance.AttendanceLocationPolicy
 import com.yapp.plus.domain.attendance.AttendanceLocationReading
+import com.yapp.plus.domain.attendance.AttendanceReportFailure
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
@@ -293,12 +295,13 @@ internal class HomeInteractionViewModel
         }
 
         private fun showSubmissionError(exception: Exception) {
-            val isInvalidCode = (exception as? AttendanceException)?.isInvalidCode == true
+            val attendanceException = exception as? AttendanceException
+            val isInvalidCode = attendanceException?.isInvalidCode == true
             val errorResource =
                 if (isInvalidCode) {
                     R.string.home_code_invalid
                 } else {
-                    reportErrorResource((exception as? AttendanceException)?.code)
+                    reportErrorResource(attendanceException?.reportFailure)
                 }
             updateState {
                 it.copy(isInvalidCode = isInvalidCode, errorResource = errorResource)
@@ -314,25 +317,12 @@ internal class HomeInteractionViewModel
         }
     }
 
-private fun reportErrorResource(code: String?): Int =
-    when (code) {
-        "ATTENDANCE_REPORT_NOT_ELIGIBLE" -> R.string.home_report_not_eligible
-        "ATTENDANCE_SESSION_NOT_FOUND" -> R.string.home_report_no_session
-        "ATTENDANCE_REPORT_UNAVAILABLE" -> R.string.home_report_unavailable
-        "ATTENDANCE_REPORT_SESSION_CHANGED", "ATTENDANCE_REPORT_SESSION_CONFLICT" ->
-            R.string.home_report_session_changed
-        "INVALID_ATTENDANCE_REPORT" -> R.string.home_report_invalid
-        else -> R.string.home_submit_error
-    }
-
-private fun AttendanceLocationFailure.toUiIssue(): HomeAttendanceLocationIssue =
-    when (this) {
-        AttendanceLocationFailure.PRECISE_PERMISSION_REQUIRED ->
-            HomeAttendanceLocationIssue.PrecisePermissionRequired
-        AttendanceLocationFailure.LOCATION_DISABLED -> HomeAttendanceLocationIssue.LocationDisabled
-        AttendanceLocationFailure.TIMED_OUT -> HomeAttendanceLocationIssue.TimedOut
-        AttendanceLocationFailure.UNAVAILABLE -> HomeAttendanceLocationIssue.Unavailable
-        AttendanceLocationFailure.INSUFFICIENT_ACCURACY ->
-            HomeAttendanceLocationIssue.InsufficientAccuracy
-        AttendanceLocationFailure.OUT_OF_RANGE -> HomeAttendanceLocationIssue.OutOfRange
+private fun reportErrorResource(failure: AttendanceReportFailure?): Int =
+    when (failure) {
+        AttendanceReportFailure.NOT_ELIGIBLE -> R.string.home_report_not_eligible
+        AttendanceReportFailure.SESSION_NOT_FOUND -> R.string.home_report_no_session
+        AttendanceReportFailure.UNAVAILABLE -> R.string.home_report_unavailable
+        AttendanceReportFailure.SESSION_CHANGED -> R.string.home_report_session_changed
+        AttendanceReportFailure.INVALID_REPORT -> R.string.home_report_invalid
+        AttendanceReportFailure.UNKNOWN, null -> R.string.home_submit_error
     }

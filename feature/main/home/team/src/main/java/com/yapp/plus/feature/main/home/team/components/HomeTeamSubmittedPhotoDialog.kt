@@ -1,20 +1,32 @@
 package com.yapp.plus.feature.main.home.team.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
@@ -29,38 +41,88 @@ internal fun HomeTeamSubmittedPhotoDialog(
     state: HomeTeamPhotoViewerUiState,
     onClose: () -> Unit,
 ) {
-    AlertDialog(
+    Dialog(
         onDismissRequest = onClose,
-        title = { Text(stringResource(R.string.home_team_result_view_photo)) },
-        text = {
-            when (state) {
-                HomeTeamPhotoViewerUiState.Loading ->
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                HomeTeamPhotoViewerUiState.Unavailable ->
-                    Text(stringResource(R.string.home_team_result_image_unavailable))
-                HomeTeamPhotoViewerUiState.Error ->
-                    Text(stringResource(R.string.home_team_result_image_error))
-                is HomeTeamPhotoViewerUiState.Content ->
-                    SubcomposeAsyncImage(
-                        model = rememberSubmittedPhotoRequest(state.image),
-                        contentDescription = stringResource(R.string.home_team_result_submitted_photo),
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 420.dp),
-                        contentScale = ContentScale.Fit,
-                        loading = { CircularProgressIndicator() },
-                        error = { Text(stringResource(R.string.home_team_result_image_error)) },
-                    )
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false,
+            ),
+    ) {
+        ConfigureBlackPhotoViewerSystemBars()
+        HomeTeamSubmittedPhotoViewer(
+            state = state,
+            onClose = onClose,
+        )
+    }
+}
+
+@Composable
+internal fun HomeTeamSubmittedPhotoViewer(
+    state: HomeTeamPhotoViewerUiState,
+    onClose: () -> Unit,
+) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .systemBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.home_team_result_view_photo),
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                HomeTeamSubmittedPhotoContent(state)
             }
-        },
-        confirmButton = {
             WithoutRipple {
-                TextButton(onClick = onClose) {
+                TextButton(
+                    onClick = onClose,
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.White),
+                    modifier = Modifier.align(Alignment.End),
+                ) {
                     Text(stringResource(R.string.home_confirm))
                 }
             }
-        },
-    )
+        }
+    }
+}
+
+@Composable
+private fun HomeTeamSubmittedPhotoContent(state: HomeTeamPhotoViewerUiState) {
+    when (state) {
+        HomeTeamPhotoViewerUiState.Loading ->
+            CircularProgressIndicator(color = Color.White)
+        HomeTeamPhotoViewerUiState.Unavailable ->
+            Text(stringResource(R.string.home_team_result_image_unavailable), color = Color.White)
+        HomeTeamPhotoViewerUiState.Error ->
+            Text(stringResource(R.string.home_team_result_image_error), color = Color.White)
+        is HomeTeamPhotoViewerUiState.Content ->
+            SubcomposeAsyncImage(
+                model = rememberSubmittedPhotoRequest(state.image),
+                contentDescription = stringResource(R.string.home_team_result_submitted_photo),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit,
+                loading = { CircularProgressIndicator(color = Color.White) },
+                error = {
+                    Text(stringResource(R.string.home_team_result_image_error), color = Color.White)
+                },
+            )
+    }
 }
 
 @Composable
@@ -74,6 +136,22 @@ fun HomeTeamSubmittedPhotoThumbnail(
         modifier = modifier,
         contentScale = ContentScale.Crop,
     )
+}
+
+@Composable
+private fun ConfigureBlackPhotoViewerSystemBars() {
+    val window = (LocalView.current.parent as? DialogWindowProvider)?.window
+    DisposableEffect(window) {
+        val controller = window?.let { WindowCompat.getInsetsController(it, it.decorView) }
+        val previousStatusBarAppearance = controller?.isAppearanceLightStatusBars
+        val previousNavigationBarAppearance = controller?.isAppearanceLightNavigationBars
+        controller?.isAppearanceLightStatusBars = false
+        controller?.isAppearanceLightNavigationBars = false
+        onDispose {
+            previousStatusBarAppearance?.let { controller?.isAppearanceLightStatusBars = it }
+            previousNavigationBarAppearance?.let { controller?.isAppearanceLightNavigationBars = it }
+        }
+    }
 }
 
 @Composable

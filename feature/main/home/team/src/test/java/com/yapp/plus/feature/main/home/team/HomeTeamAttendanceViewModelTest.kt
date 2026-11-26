@@ -1,6 +1,5 @@
 package com.yapp.plus.feature.main.home.team
 
-import androidx.lifecycle.SavedStateHandle
 import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.attendance.AttendanceHistoryPage
@@ -113,32 +112,68 @@ class HomeTeamAttendanceViewModelTest {
     }
 
     @Test
-    fun approvalNeedsPersonalCheckInAndStaysAcknowledgedForTheSession() {
+    fun approvalRequiresPersonalCheckInForCurrentSession() {
         val repository =
             FakeTeamAttendance().apply {
                 latestPhoto = photo(1L, Instant.MAX).copy(status = TeamAttendancePhotoStatus.APPROVED)
             }
-        val savedState = SavedStateHandle()
-        val viewModel = home(repository, savedState)
-
-        assertFalse(viewModel.state.value.shouldShowApproval(session))
+        val viewModel = home(repository)
+        assertFalse(viewModel.state.value.isCheckedIn(session))
 
         val approvedSession = session.copy(attendanceStatus = AttendanceStatusUiModel.CheckedIn)
-        viewModel.refresh(approvedSession)
-        assertTrue(viewModel.state.value.shouldShowApproval(approvedSession))
+        viewModel.updateSession(approvedSession)
 
-        viewModel.acknowledgeApproval(approvedSession.sessionId)
-        viewModel.clear()
-        viewModel.refresh(approvedSession)
-        assertFalse(viewModel.state.value.shouldShowApproval(approvedSession))
+        assertTrue(viewModel.state.value.isCheckedIn(approvedSession))
+        assertFalse(viewModel.state.value.isCheckedIn(approvedSession.copy(sessionId = 43L)))
+    }
 
-        val recreatedViewModel = home(repository, savedState)
-        recreatedViewModel.refresh(approvedSession)
-        assertFalse(recreatedViewModel.state.value.shouldShowApproval(approvedSession))
+    @Test
+    fun keepsTeamPhotoLookupAndResultAcrossHomeReentry() {
+        val response = CompletableDeferred<TeamAttendancePhoto?>()
+        val repository = FakeTeamAttendance().apply { photoResponse = response }
+        val viewModel = home(repository)
 
-        val nextSession = approvedSession.copy(sessionId = 43L)
-        recreatedViewModel.refresh(nextSession)
-        assertTrue(recreatedViewModel.state.value.shouldShowApproval(nextSession))
+        viewModel.discardFlow()
+        viewModel.updateSession(session)
+        assertEquals(1, repository.photoReads)
+
+        response.complete(photo(1L, Instant.MAX))
+        viewModel.discardFlow()
+        viewModel.updateSession(session)
+
+        assertEquals(1, repository.photoReads)
+        assertEquals(
+            1L,
+            viewModel.state.value.photo
+                ?.photoId,
+        )
+    }
+
+    @Test
+    fun usesLatestAttendanceWhenRefreshingAnInFlightPhotoLookup() {
+        val response = CompletableDeferred<TeamAttendancePhoto?>()
+        val repository = FakeTeamAttendance().apply { photoResponse = response }
+        val viewModel = home(repository)
+        viewModel.refresh()
+        assertEquals(1, repository.photoReads)
+
+        repository.photoResponse = null
+        repository.latestPhoto = photo(2L, Instant.MAX)
+        val approvedSession = session.copy(attendanceStatus = AttendanceStatusUiModel.CheckedIn)
+        viewModel.updateSession(approvedSession)
+        response.complete(photo(1L, Instant.MAX))
+
+        assertEquals(2, repository.photoReads)
+        assertEquals(
+            2L,
+            viewModel.state.value.photo
+                ?.photoId,
+        )
+
+        viewModel.refresh()
+        assertEquals(3, repository.photoReads)
+        viewModel.updateSession(approvedSession.copy(sessionId = 43L))
+        assertEquals(4, repository.photoReads)
     }
 
     @Test
@@ -225,12 +260,10 @@ class HomeTeamAttendanceViewModelTest {
             it.photoPicked(HomeTeamPhotoInput(byteArrayOf(1), "image/jpeg", null))
         }
 
-    private fun home(
-        repository: FakeTeamAttendance,
-        savedState: SavedStateHandle = SavedStateHandle(),
-    ) = HomeTeamAttendanceViewModel(repository, repository, repository, savedState).also {
-        it.refresh(session)
-    }
+    private fun home(repository: FakeTeamAttendance) =
+        HomeTeamAttendanceViewModel(repository, repository, repository).also {
+            it.updateSession(session)
+        }
 
     private val session =
         CurrentWeekSessionUiModel(

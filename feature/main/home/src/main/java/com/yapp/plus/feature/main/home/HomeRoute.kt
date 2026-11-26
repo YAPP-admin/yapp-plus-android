@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -25,6 +26,7 @@ import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
 import com.yapp.plus.domain.session.SessionType
+import com.yapp.plus.feature.main.home.approval.HomeTeamApprovalRoute
 import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCodeRoute
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
@@ -48,6 +50,7 @@ fun HomeRoute(
     onAttendanceComplete: () -> Unit = {},
     onContactStaff: () -> Unit = {},
     afterpartyBanner: (@Composable () -> Unit)? = null,
+    teamApprovalViewModelStoreOwner: ViewModelStoreOwner? = null,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -80,48 +83,56 @@ fun HomeRoute(
             viewModel.retryCurrentWeekSchedule()
         }
     }
-    HomeTeamAttendanceRoute(
-        schedule = state.currentWeekSchedule,
-        now = now,
-        canShowApproval = interaction.sheet == HomeSheet.None,
-        onContactStaff = onContactStaff,
-        onRefreshSchedule = viewModel::retryCurrentWeekSchedule,
-        weekCalendar = { target ->
-            HomeWeekCalendar(
-                weekStartDate = checkNotNull(target.weekStartDate),
-                sessionDate = target.sessionDate,
-                today = now.atZone(teamZone).toLocalDate(),
-                isSessionAttended = target.attendanceStatus == AttendanceStatusUiModel.CheckedIn,
-                dayHeight = 58.dp,
-            )
-        },
-    ) { teamSessionCard, showTeamPhotoUploadTip, onRefreshTeam ->
-        Box(modifier.fillMaxSize()) {
-            HomeScreen(
-                state = state.currentWeekSchedule,
-                isLoading = state.isLoading,
-                isRefreshing = state.isRefreshing,
-                onRefresh = {
-                    viewModel.refreshHome()
-                    onRefreshTeam()
-                },
-                modifier = Modifier.fillMaxSize(),
-                noticeState = state.weeklyNotices,
-                afterpartyBanner = afterpartyBanner,
-                showReportTip = shouldShowReportTip(session?.sessionDate, session?.startTime, now),
-                showTeamPhotoUploadTip = showTeamPhotoUploadTip,
-                onNotificationsClick = onNotificationsClick,
-                onAttendanceClick = {
-                    session?.takeUnless { it.type == SessionType.TEAM }?.let {
-                        interactionViewModel.openAttendanceCode(it.sessionId)
-                    }
-                },
-                onSessionsClick = onSessionsClick,
-                onReportClick = interactionViewModel::openReport,
-                onNoticeClick = onNoticeClick,
-                teamSessionCard = teamSessionCard,
-            )
-            YappToastHost(toastManager = toastManager)
+    HomeTeamApprovalRoute(
+        sessionId = session?.takeIf { it.type == SessionType.TEAM }?.sessionId,
+        viewModelStoreOwner = teamApprovalViewModelStoreOwner,
+    ) { isAcknowledged, onAcknowledgeApproval ->
+        HomeTeamAttendanceRoute(
+            schedule = state.currentWeekSchedule,
+            now = now,
+            canShowApproval = interaction.sheet == HomeSheet.None && !isAcknowledged,
+            onAcknowledgeApproval = onAcknowledgeApproval,
+            onContactStaff = onContactStaff,
+            onRefreshSchedule = viewModel::retryCurrentWeekSchedule,
+            weekCalendar = { target ->
+                HomeWeekCalendar(
+                    weekStartDate = checkNotNull(target.weekStartDate),
+                    sessionDate = target.sessionDate,
+                    today = now.atZone(teamZone).toLocalDate(),
+                    isSessionAttended =
+                        target.attendanceStatus == AttendanceStatusUiModel.CheckedIn,
+                    dayHeight = 58.dp,
+                )
+            },
+        ) { teamSessionCard, showTeamPhotoUploadTip, onRefreshTeam ->
+            Box(modifier.fillMaxSize()) {
+                HomeScreen(
+                    state = state.currentWeekSchedule,
+                    isLoading = state.isLoading,
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = {
+                        viewModel.refreshHome()
+                        onRefreshTeam()
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    noticeState = state.weeklyNotices,
+                    afterpartyBanner = afterpartyBanner,
+                    showReportTip =
+                        shouldShowReportTip(session?.sessionDate, session?.startTime, now),
+                    showTeamPhotoUploadTip = showTeamPhotoUploadTip,
+                    onNotificationsClick = onNotificationsClick,
+                    onAttendanceClick = {
+                        session?.takeUnless { it.type == SessionType.TEAM }?.let {
+                            interactionViewModel.openAttendanceCode(it.sessionId)
+                        }
+                    },
+                    onSessionsClick = onSessionsClick,
+                    onReportClick = interactionViewModel::openReport,
+                    onNoticeClick = onNoticeClick,
+                    teamSessionCard = teamSessionCard,
+                )
+                YappToastHost(toastManager = toastManager)
+            }
         }
     }
     if (interaction.sheet != HomeSheet.None) {

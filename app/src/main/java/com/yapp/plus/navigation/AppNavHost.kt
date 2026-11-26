@@ -145,8 +145,14 @@ internal fun AppNavHost(
         modifier = modifier.fillMaxSize(),
     ) {
         val mainContent: @Composable (NavBackStackEntry, Long?) -> Unit = { entry, sessionId ->
+            val teamApprovalOwner =
+                remember(entry) {
+                    runCatching { navController.getBackStackEntry<AppNavigationDestination.Main>() }
+                        .getOrDefault(entry)
+                }
             MainTabScaffold(
                 initialTab = if (sessionId == null) MainTab.Home else MainTab.Schedule,
+                teamApprovalViewModelStoreOwner = teamApprovalOwner,
                 onHomeEntered = onHomeEntered,
                 scheduleSessionId = sessionId,
                 onAfterpartyClick = { navController.navigateFrom(entry, AppNavigationDestination.Afterparty(it)) },

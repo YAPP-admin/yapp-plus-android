@@ -1,6 +1,5 @@
 package com.yapp.plus.feature.main.home.team
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
@@ -31,8 +30,6 @@ import java.time.Clock
 import java.time.Instant
 import javax.inject.Inject
 
-private const val ACKNOWLEDGED_TEAM_APPROVAL = "acknowledgedTeamApprovalSessionId"
-
 @HiltViewModel
 internal class HomeTeamAttendanceViewModel
     @Inject
@@ -40,36 +37,35 @@ internal class HomeTeamAttendanceViewModel
         private val read: TeamAttendanceReadRepository,
         private val write: TeamAttendanceRepository,
         private val history: AttendanceReadRepository,
-        private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-        private val mutableState =
-            MutableStateFlow(
-                HomeTeamAttendanceUiState(
-                    acknowledgedApprovalSessionId = savedStateHandle[ACKNOWLEDGED_TEAM_APPROVAL],
-                ),
-            )
+        private val mutableState = MutableStateFlow(HomeTeamAttendanceUiState())
         val state = mutableState.asStateFlow()
         private var lookup: Job? = null
         private var photoLookup: Job? = null
         private var operation: Job? = null
         private var session: CurrentWeekSessionUiModel? = null
 
-        fun refresh(target: CurrentWeekSessionUiModel?) {
-            if (target?.sessionId != session?.sessionId) clear()
+        fun updateSession(target: CurrentWeekSessionUiModel?) {
+            val previous = session
+            val sessionChanged = target?.sessionId != previous?.sessionId
+            val attendanceChanged = target?.attendanceStatus != previous?.attendanceStatus
             session = target
-            if (target == null || lookup?.isActive == true || state.value.isActive) return
-            mutableState.update {
-                it.copy(sessionId = target.sessionId, latest = AttendanceUiState.Loading, isAbsent = false)
+            if (!sessionChanged && !attendanceChanged) return
+
+            lookup?.cancel()
+            if (sessionChanged) {
+                cancelFlow()
+                mutableState.value = HomeTeamAttendanceUiState(sessionId = target?.sessionId)
             }
-            if (target.attendanceStatus == AttendanceStatusUiModel.NotEligible) return
-            lookup = viewModelScope.launch { fetchLatest(target) }
+            refresh()
         }
 
-        fun acknowledgeApproval(sessionId: Long) {
+        fun refresh() {
             val target = session ?: return
-            if (target.sessionId != sessionId || !state.value.shouldShowApproval(target)) return
-            savedStateHandle[ACKNOWLEDGED_TEAM_APPROVAL] = sessionId
-            mutableState.update { it.copy(acknowledgedApprovalSessionId = sessionId) }
+            if (lookup?.isActive == true || state.value.isActive) return
+            mutableState.update { it.copy(latest = AttendanceUiState.Loading, isAbsent = false) }
+            if (target.attendanceStatus == AttendanceStatusUiModel.NotEligible) return
+            lookup = viewModelScope.launch { fetchLatest(target) }
         }
 
         fun openSubmittedPhoto() {
@@ -161,30 +157,23 @@ internal class HomeTeamAttendanceViewModel
 
         fun closeFlow() {
             if (state.value.isSubmitting) return
-            operation?.cancel()
+            discardFlow()
+        }
+
+        fun discardFlow() {
+            cancelFlow()
             mutableState.update {
                 HomeTeamAttendanceUiState(
                     sessionId = it.sessionId,
                     latest = it.latest,
                     isAbsent = it.isAbsent,
-                    acknowledgedApprovalSessionId = it.acknowledgedApprovalSessionId,
                 )
             }
         }
 
-        fun clear() {
-            lookup?.cancel()
+        private fun cancelFlow() {
             operation?.cancel()
             photoLookup?.cancel()
-            lookup = null
-            operation = null
-            photoLookup = null
-            session = null
-            mutableState.update {
-                HomeTeamAttendanceUiState(
-                    acknowledgedApprovalSessionId = it.acknowledgedApprovalSessionId,
-                )
-            }
         }
 
         private fun loadSubmittedPhoto() {
@@ -237,6 +226,7 @@ internal class HomeTeamAttendanceViewModel
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
+                currentCoroutineContext().ensureActive()
                 mutableState.update { it.copy(latest = AttendanceUiState.Error) }
             }
         }
@@ -267,6 +257,7 @@ internal class HomeTeamAttendanceViewModel
                 } catch (cancelled: CancellationException) {
                     throw cancelled
                 } catch (_: Exception) {
+                    currentCoroutineContext().ensureActive()
                     if (requestedSubmission) {
                         submissionFailed(uncertain = true, error = R.string.home_team_photo_uncertain)
                     } else {

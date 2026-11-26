@@ -32,7 +32,7 @@ internal class HomeViewModel
     constructor(
         private val sessionScheduleRepository: SessionScheduleRepository,
         private val noticeRepository: NoticeRepository,
-    ) : BaseViewModel<HomeUiState>(HomeUiState()) {
+    ) : BaseViewModel<HomeUiState, Nothing>(HomeUiState()) {
         private var scheduleJob: Job? = null
         private var noticesJob: Job? = null
         private var refreshJob: Job? = null

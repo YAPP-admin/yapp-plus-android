@@ -1,13 +1,20 @@
 package com.yapp.plus.feature.main.home
 
+import androidx.lifecycle.ViewModelStore
 import com.yapp.plus.domain.attendance.AttendanceException
 import com.yapp.plus.domain.attendance.AttendanceReportType
 import com.yapp.plus.domain.attendance.AttendanceRepository
+import com.yapp.plus.feature.main.home.model.HomeInteractionEvent
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -32,6 +39,10 @@ class HomeReportViewModelTest {
                         42L
                     },
                 )
+            val events = mutableListOf<HomeInteractionEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.events.toList(events)
+            }
             val date = LocalDate.of(2026, 11, 21)
             val time = LocalTime.of(14, 0)
             val beforeStart = Instant.parse("2026-11-21T04:59:59Z")
@@ -48,6 +59,7 @@ class HomeReportViewModelTest {
                     viewModel.confirmReport(date, time, beforeStart)
                     advanceUntilIdle()
                     assertEquals(previousRequests, requests.size)
+                    assertEquals(previousRequests, events.size)
                     assertFalse(viewModel.uiState.value.isSubmitting)
                     assertEquals(reason, viewModel.uiState.value.reportReason)
                     assertEquals(
@@ -61,8 +73,8 @@ class HomeReportViewModelTest {
                 advanceUntilIdle()
                 assertEquals(previousRequests + 1, requests.size)
                 assertEquals(type to "개인 일정", requests.last())
-                assertTrue(viewModel.uiState.value.isReportComplete)
-                viewModel.acknowledgeReportComplete()
+                assertEquals(HomeInteractionEvent.ReportCompleted, events.last())
+                assertEquals(requests.size, events.size)
             }
         }
 
@@ -77,6 +89,10 @@ class HomeReportViewModelTest {
                         response.await()
                     },
                 )
+            val events = mutableListOf<HomeInteractionEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.events.toList(events)
+            }
             viewModel.openReport()
             viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
             assertEquals(HomeSheet.ReportType, viewModel.uiState.value.sheet)
@@ -89,15 +105,14 @@ class HomeReportViewModelTest {
             viewModel.dismissSheet()
             viewModel.updateReportReason("변경")
             assertTrue(viewModel.uiState.value.isSubmitting)
-            assertFalse(viewModel.uiState.value.isReportComplete)
+            assertTrue(events.isEmpty())
             assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
             response.complete(42)
             advanceUntilIdle()
             assertEquals(listOf(AttendanceReportType.EARLY_LEAVE to "개인 일정"), requests)
             assertEquals(HomeSheet.None, viewModel.uiState.value.sheet)
-            assertTrue(viewModel.uiState.value.isReportComplete)
-            viewModel.acknowledgeReportComplete()
-            assertFalse(viewModel.uiState.value.isReportComplete)
+            assertEquals(listOf(HomeInteractionEvent.ReportCompleted), events)
+            assertFalse(viewModel.uiState.value.isSubmitting)
         }
 
     @Test fun failurePreservesInputAndReasonMatchesServerLengthLimit() =
@@ -114,6 +129,10 @@ class HomeReportViewModelTest {
                         42
                     },
                 )
+            val events = mutableListOf<HomeInteractionEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.events.toList(events)
+            }
             viewModel.openReport()
             viewModel.selectReportType(AttendanceReportType.LATE)
             viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
@@ -125,10 +144,37 @@ class HomeReportViewModelTest {
                 viewModel.uiState.value.errorResource,
             )
             assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
-            assertFalse(viewModel.uiState.value.isReportComplete)
+            assertTrue(events.isEmpty())
             fails = false
             viewModel.confirmReport(java.time.LocalDate.of(2099, 1, 1), java.time.LocalTime.NOON)
-            assertTrue(viewModel.uiState.value.isReportComplete)
+            assertEquals(listOf(HomeInteractionEvent.ReportCompleted), events)
+        }
+
+    @Test
+    fun clearedViewModelDoesNotEmitCompletionForALateReportResponse() =
+        runTest {
+            val response = CompletableDeferred<Long>()
+            val viewModel =
+                viewModel(repository { _, _ -> withContext(NonCancellable) { response.await() } })
+            val store = ViewModelStore().apply { put("report", viewModel) }
+            val events = mutableListOf<HomeInteractionEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.events.toList(events)
+            }
+            viewModel.openReport()
+            viewModel.selectReportType(AttendanceReportType.LATE)
+            viewModel.confirmReport(LocalDate.of(2099, 1, 1), LocalTime.NOON)
+            viewModel.updateReportReason("개인 일정")
+            viewModel.confirmReport(LocalDate.of(2099, 1, 1), LocalTime.NOON)
+            assertTrue(viewModel.uiState.value.isSubmitting)
+
+            store.clear()
+            response.complete(42L)
+            advanceUntilIdle()
+
+            assertTrue(events.isEmpty())
+            assertEquals(HomeSheet.ReportReason, viewModel.uiState.value.sheet)
+            assertFalse(viewModel.uiState.value.isSubmitting)
         }
 
     @Test

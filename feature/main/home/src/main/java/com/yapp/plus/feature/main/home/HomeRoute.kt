@@ -7,7 +7,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,6 +21,7 @@ import com.yapp.plus.core.designsystem.components.toast.YappToastData
 import com.yapp.plus.core.designsystem.components.toast.YappToastHost
 import com.yapp.plus.core.designsystem.components.toast.YappToastManager
 import com.yapp.plus.core.designsystem.components.toast.YappToastType
+import com.yapp.plus.core.ui.ObserveAsEvents
 import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.domain.attendance.AttendanceReportPolicy
@@ -30,6 +30,7 @@ import com.yapp.plus.feature.main.home.attendance.HomeAttendanceCodeRoute
 import com.yapp.plus.feature.main.home.components.HomeReportSheet
 import com.yapp.plus.feature.main.home.components.HomeSheetContent
 import com.yapp.plus.feature.main.home.components.HomeWeekCalendar
+import com.yapp.plus.feature.main.home.model.HomeInteractionEvent
 import com.yapp.plus.feature.main.home.model.HomeSheet
 import com.yapp.plus.feature.main.home.model.HomeSubmissionStage
 import com.yapp.plus.feature.main.home.model.shouldShowReportTip
@@ -43,8 +44,8 @@ import java.time.Instant
 
 @Composable
 fun HomeRoute(
+    toastManager: YappToastManager,
     modifier: Modifier = Modifier,
-    toastManager: YappToastManager = remember { YappToastManager() },
     onNotificationsClick: (() -> Unit)? = null,
     onSessionsClick: () -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
@@ -60,17 +61,6 @@ fun HomeRoute(
     val team by teamViewModel.state.collectAsStateWithLifecycle()
 
     val reportCompleteText = stringResource(R.string.home_report_complete)
-    LaunchedEffect(interaction.isReportComplete) {
-        if (interaction.isReportComplete) {
-            toastManager.tryShow(
-                YappToastData(
-                    text = reportCompleteText,
-                    type = YappToastType.Default,
-                ),
-            )
-            interactionViewModel.acknowledgeReportComplete()
-        }
-    }
     val session = (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
     val teamSession = session?.takeIf { it.type == SessionType.TEAM }
 
@@ -230,6 +220,17 @@ fun HomeRoute(
                     onRefreshSession = viewModel::retryCurrentWeekSchedule,
                 )
             }
+        }
+    }
+    ObserveAsEvents(interactionViewModel.events) { event ->
+        when (event) {
+            HomeInteractionEvent.ReportCompleted ->
+                toastManager.tryShow(
+                    YappToastData(
+                        text = reportCompleteText,
+                        type = YappToastType.Default,
+                    ),
+                )
         }
     }
 }

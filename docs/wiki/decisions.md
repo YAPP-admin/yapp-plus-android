@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-25
+last_verified: 2026-11-26
 ---
 
 # 결정 기록
@@ -712,3 +712,23 @@ last_verified: 2026-11-25
 - 이유: Notion의 출석 가능 시간과 11월 25일 Figma 코멘트의 시작 30분 전부터 당일 23:59까지라는 안내가 달라 사용자에게 적용 기준을 확인했습니다.
 - 근거: 사용자 확인, [Notion 화면 및 기능별 정책 2026](https://app.notion.com/p/yapp-workspace/2026-3fa2106a0e84800f9abfef181b090892), [Figma 코멘트](https://www.figma.com/file/LUFGoDnVmwJT43QhecBI8x#2022617813).
 - 적용 상태: [제품 정책](product-policy.md#세션과-출석-대상)에 확인 근거를 추가했습니다. Android의 코드 출석 가능 여부는 이번 주 세션 조회의 서버 상태를 따릅니다.
+
+## DEC-0090 · 공통 ViewModel의 일회성 이벤트 Channel
+
+- 기록일: 2026-11-26
+- 결정: `BaseViewModel<S, E>`가 `Channel.BUFFERED` 기반 이벤트 Flow와 발행 함수를 제공하고, Route는 `ObserveAsEvents`로 수집합니다. 상태 변환 안에서는 이벤트를 발행하지 않으며 복원이 필요한 처리 결과는 UI 상태로 유지합니다.
+- 이유: 홈 사전 보고 완료 토스트를 Boolean 상태와 소비 확인 콜백 대신 일회성 이벤트로 처리합니다.
+- 근거: 사용자 명시 요청(2026-11-26), [Android 이슈 #292](https://github.com/YAPP-admin/yapp-plus-android/issues/292).
+- 반영: [설계 패턴](design-patterns.md#viewmodel과-요청), [아키텍처](architecture.md), [모듈 구조](module-structure.md), `:core:ui`와 홈 사전 보고 이벤트 연결.
+- 적용 상태: 보고 성공 후 시트를 닫고 `ReportCompleted`를 발행합니다. `HomeRoute`는 기존 토스트를 표시하며 `isReportComplete`와 `acknowledgeReportComplete()`를 제거했습니다. 출석 인증의 결과 상태는 유지합니다.
+- 대체한 결정: 없음.
+
+## DEC-0091 · 게시판 일회성 이벤트와 Route의 ToastManager 전달
+
+- 기록일: 2026-11-26
+- 결정: 게시판 읽음 처리 실패를 `BaseViewModel`의 `ReadFailed` 이벤트로 전달하고 `BoardRoute`가 `ObserveAsEvents`로 처리합니다. 홈·게시판 Route는 App에서 생성·유지한 `YappToastManager`를 필수 매개변수로 받습니다.
+- 이유: 화면의 Boolean 토스트 상태와 내부 ToastManager 생성을 공통 이벤트 처리와 명시적인 UI 의존성 전달로 바꿉니다.
+- 근거: 다른 화면에도 같은 패턴을 적용하고 ToastManager를 Route에서 받으라는 사용자 명시 요청(2026-11-26), [Android 이슈 #292](https://github.com/YAPP-admin/yapp-plus-android/issues/292).
+- 반영: [설계 패턴](design-patterns.md#viewmodel과-요청), [모듈 구조](module-structure.md), App 내비게이션과 홈·게시판 Route·게시판 ViewModel.
+- 적용 상태: 공지 ID가 일치할 때만 실패 토스트를 표시하고, 읽음 처리 취소 뒤 도착한 결과는 이벤트로 발행하지 않습니다. ViewModel은 ToastManager 의존성을 갖지 않습니다.
+- 대체한 결정: 없음.

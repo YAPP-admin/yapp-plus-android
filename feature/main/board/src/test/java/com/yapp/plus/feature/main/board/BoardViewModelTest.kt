@@ -1,13 +1,20 @@
 package com.yapp.plus.feature.main.board
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelStore
 import com.yapp.plus.domain.notice.NoticeType
 import com.yapp.plus.feature.main.board.model.BoardCategory
+import com.yapp.plus.feature.main.board.model.BoardEvent
 import com.yapp.plus.feature.main.board.model.NoticeUiState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -113,18 +120,53 @@ class BoardViewModelTest {
             val repository = FakeNoticeRepository()
             repository.fetchDetail = { error("offline") }
             val viewModel = BoardViewModel(SavedStateHandle(), repository)
+            val events = mutableListOf<BoardEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.events.toList(events)
+            }
             viewModel.showNotice(4)
             assertEquals(NoticeUiState.Error, viewModel.uiState.value.detail)
             repository.fetchDetail = { repository.detail(it) }
             viewModel.retry()
             repository.read = { error("offline") }
             viewModel.markRead()
-            assertTrue(viewModel.uiState.value.hasReadError)
+            assertEquals(listOf(BoardEvent.ReadFailed(4)), events)
             assertFalse((viewModel.uiState.value.detail as NoticeUiState.Content).value.isRead)
+            viewModel.markRead()
+            assertEquals(listOf(BoardEvent.ReadFailed(4), BoardEvent.ReadFailed(4)), events)
             repository.read = {}
             repository.fetchDetail = { repository.detail(it, isRead = true, count = 1) }
             viewModel.markRead()
-            assertFalse(viewModel.uiState.value.hasReadError)
+            assertEquals(2, events.size)
             assertTrue((viewModel.uiState.value.detail as NoticeUiState.Content).value.isRead)
+        }
+
+    @Test
+    fun changingNoticeOrClearingViewModelPreventsALateReadFailureEvent() =
+        runTest {
+            for (shouldClearViewModel in listOf(false, true)) {
+                val response = CompletableDeferred<Unit>()
+                val repository = FakeNoticeRepository()
+                repository.read = {
+                    withContext(NonCancellable) { response.await() }
+                    error("late failure")
+                }
+                val viewModel = BoardViewModel(SavedStateHandle(), repository)
+                val store = ViewModelStore().apply { put("board", viewModel) }
+                val events = mutableListOf<BoardEvent>()
+                backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                    viewModel.events.toList(events)
+                }
+                viewModel.showNotice(4)
+                viewModel.markRead()
+                if (shouldClearViewModel) store.clear() else viewModel.showNotice(5)
+                response.complete(Unit)
+                advanceUntilIdle()
+
+                assertTrue(events.isEmpty())
+                assertFalse(viewModel.uiState.value.isMarkingRead)
+                assertFalse((viewModel.uiState.value.detail as NoticeUiState.Content).value.isRead)
+                store.clear()
+            }
         }
 }

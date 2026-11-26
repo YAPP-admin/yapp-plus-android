@@ -9,13 +9,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Lifecycle 상태가 [minActiveState] 이상일 때 [event]의 일회성 이벤트를 수집합니다.
- *
- * @param event 관찰할 이벤트 흐름.
- * @param minActiveState 수집을 시작하는 최소 Lifecycle 상태.
- * @param onEvent 이벤트가 발생했을 때 실행할 suspend 콜백 함수.
- */
 @Composable
 fun <T> ObserveAsEvents(
     event: Flow<T>,

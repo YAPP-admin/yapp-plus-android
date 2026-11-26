@@ -1,7 +1,7 @@
 ---
 authority: canonical
 status: active
-last_verified: 2026-11-24
+last_verified: 2026-11-26
 ---
 
 # 아키텍처
@@ -14,7 +14,7 @@ MVVM과 단방향 상태 흐름(UDF)을 사용하고, 비즈니스 규칙에 필
 | --- | --- |
 | App | 앱 진입점, 전체 내비게이션, 의존성 조립 |
 | Feature | Compose 화면, ViewModel, UiState, 기능 흐름 |
-| Core UI | 여러 Feature가 공유하는 ViewModel 상태와 요청 실행 |
+| Core UI | 여러 Feature가 공유하는 ViewModel 상태·요청 실행과 일회성 이벤트 전달·수집 |
 | Domain | 순수 Kotlin 모델, 업무 정책, Repository 계약, 필요한 UseCase |
 | Data | Repository 구현, 원격·로컬 DataSource, DTO와 Domain 매핑 |
 | Designsystem | 공통 테마, 색상, 타이포그래피, Compose 컴포넌트 |

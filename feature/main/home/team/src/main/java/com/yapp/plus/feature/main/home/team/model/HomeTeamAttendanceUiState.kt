@@ -32,13 +32,9 @@ internal data class HomeTeamAttendanceUiState(
     val photo: TeamAttendancePhoto?
         get() = (latest as? AttendanceUiState.Content)?.value
 
-    fun shouldShowApproval(
-        session: CurrentWeekSessionUiModel,
-        acknowledgedSessions: LongArray,
-    ): Boolean =
+    fun isCheckedIn(session: CurrentWeekSessionUiModel): Boolean =
         sessionId == session.sessionId &&
-            session.attendanceStatus == AttendanceStatusUiModel.CheckedIn &&
-            session.sessionId !in acknowledgedSessions
+            session.attendanceStatus == AttendanceStatusUiModel.CheckedIn
 
     fun card(
         session: CurrentWeekSessionUiModel,

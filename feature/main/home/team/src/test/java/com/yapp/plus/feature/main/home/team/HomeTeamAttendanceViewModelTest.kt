@@ -1,6 +1,5 @@
 package com.yapp.plus.feature.main.home.team
 
-import androidx.lifecycle.SavedStateHandle
 import com.yapp.plus.core.ui.model.AttendanceStatusUiModel
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.attendance.AttendanceHistoryPage
@@ -113,50 +112,19 @@ class HomeTeamAttendanceViewModelTest {
     }
 
     @Test
-    fun approvalNeedsPersonalCheckInAndSharesConfirmationAcrossHomeEntries() {
+    fun approvalRequiresPersonalCheckInForCurrentSession() {
         val repository =
             FakeTeamAttendance().apply {
                 latestPhoto = photo(1L, Instant.MAX).copy(status = TeamAttendancePhotoStatus.APPROVED)
             }
-        val savedState = SavedStateHandle()
-        val approval = HomeTeamApprovalViewModel(savedState)
         val viewModel = home(repository)
-
-        assertFalse(
-            viewModel.state.value.shouldShowApproval(session, approval.acknowledgedSessions.value),
-        )
+        assertFalse(viewModel.state.value.isCheckedIn(session))
 
         val approvedSession = session.copy(attendanceStatus = AttendanceStatusUiModel.CheckedIn)
         viewModel.updateSession(approvedSession)
-        assertTrue(
-            viewModel.state.value.shouldShowApproval(
-                approvedSession,
-                approval.acknowledgedSessions.value,
-            ),
-        )
 
-        approval.acknowledge(approvedSession.sessionId)
-        val restoredApproval = HomeTeamApprovalViewModel(savedState)
-        val otherHome = home(repository)
-        otherHome.updateSession(approvedSession)
-        assertFalse(
-            otherHome.state.value.shouldShowApproval(
-                approvedSession,
-                restoredApproval.acknowledgedSessions.value,
-            ),
-        )
-
-        val nextSession = approvedSession.copy(sessionId = 43L)
-        otherHome.updateSession(nextSession)
-        assertTrue(
-            otherHome.state.value.shouldShowApproval(
-                nextSession,
-                restoredApproval.acknowledgedSessions.value,
-            ),
-        )
-        restoredApproval.acknowledge(nextSession.sessionId)
-        restoredApproval.acknowledge(nextSession.sessionId)
-        assertEquals(listOf(42L, 43L), restoredApproval.acknowledgedSessions.value.toList())
+        assertTrue(viewModel.state.value.isCheckedIn(approvedSession))
+        assertFalse(viewModel.state.value.isCheckedIn(approvedSession.copy(sessionId = 43L)))
     }
 
     @Test

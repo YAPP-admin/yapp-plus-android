@@ -1,4 +1,4 @@
-package com.yapp.plus.feature.main.home.team
+package com.yapp.plus.feature.main.home.approval
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

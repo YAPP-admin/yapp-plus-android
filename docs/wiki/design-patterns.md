@@ -12,6 +12,7 @@ last_verified: 2026-11-27
 
 - Route는 ViewModel 연결, 생명주기에 맞춘 상태 수집과 App이 제공하는 화면 이동 콜백 연결을 처리합니다.
 - 홈 하위 모듈의 Route는 해당 모듈이 소유한 ViewModel을 `hiltViewModel()`로 직접 가져옵니다. 홈은 하위 Route에 필요한 화면 입력과 콜백을 전달합니다.
+- 팀 출석 완료 확인 Route는 App이 지정한 메인 내비게이션 범위에서 `sessionId`별 확인 기록을 읽습니다. 홈이 팀 출석 Route에 시트 표시 가능 여부와 확인 콜백을 전달합니다.
 - Content는 상태와 콜백을 받아 화면을 그립니다. 하위 UI 컴포넌트는 Repository·DataSource를 호출하거나 화면 이동을 직접 조립하지 않습니다.
 - 펼침 여부 같은 일시적인 UI 상태는 Composable에서, 업무 처리·공유·복원이 필요한 화면 상태는 ViewModel에서 관리합니다.
 - 공통 텍스트·버튼·색상·타이포그래피는 Designsystem에서 제공하고 반복되는 변형은 공통 컴포넌트의 variant로 추가합니다.

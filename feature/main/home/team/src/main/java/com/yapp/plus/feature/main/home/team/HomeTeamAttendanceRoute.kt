@@ -18,9 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.yapp.plus.core.ui.model.AttendanceUiState
 import com.yapp.plus.core.ui.model.CurrentWeekSessionUiModel
 import com.yapp.plus.domain.attendance.TeamAttendancePhotoStatus
@@ -42,10 +40,10 @@ fun HomeTeamAttendanceRoute(
     schedule: AttendanceUiState<CurrentWeekSessionUiModel>,
     now: Instant,
     canShowApproval: Boolean,
+    onAcknowledgeApproval: () -> Unit,
     onContactStaff: () -> Unit,
     onRefreshSchedule: () -> Unit,
     weekCalendar: @Composable (CurrentWeekSessionUiModel) -> Unit,
-    approvalViewModelStoreOwner: ViewModelStoreOwner? = null,
     content: @Composable (
         teamSessionCard: (@Composable () -> Unit)?,
         showTeamPhotoUploadTip: Boolean,
@@ -54,9 +52,6 @@ fun HomeTeamAttendanceRoute(
 ) {
     val viewModel: HomeTeamAttendanceViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val approvalViewModel: HomeTeamApprovalViewModel =
-        hiltViewModel(approvalViewModelStoreOwner ?: checkNotNull(LocalViewModelStoreOwner.current))
-    val acknowledgedSessions by approvalViewModel.acknowledgedSessions.collectAsStateWithLifecycle()
     val session =
         (schedule as? AttendanceUiState.Content)?.value?.takeIf { it.type == SessionType.TEAM }
 
@@ -94,9 +89,8 @@ fun HomeTeamAttendanceRoute(
             session = session,
             state = state,
             viewModel = viewModel,
-            showApproval =
-                canShowApproval && state.shouldShowApproval(session, acknowledgedSessions),
-            onAcknowledgeApproval = { approvalViewModel.acknowledge(session.sessionId) },
+            showApproval = canShowApproval && state.isCheckedIn(session),
+            onAcknowledgeApproval = onAcknowledgeApproval,
         ) {
             if (!viewModel.state.value.isSubmitting) {
                 viewModel.closeFlow()

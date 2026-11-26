@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.yapp.plus.R
+import com.yapp.plus.core.designsystem.components.toast.YappToastManager
 import com.yapp.plus.domain.auth.AuthResult
 import com.yapp.plus.domain.auth.GoogleLoginCredential
 import com.yapp.plus.domain.notification.SettlementNotificationTarget
@@ -288,6 +289,7 @@ internal fun AppNavHost(
         }
         composable<AppNavigationDestination.NotificationPost> { entry ->
             BoardRoute(
+                toastManager = remember { YappToastManager() },
                 noticeId = entry.toRoute<AppNavigationDestination.NotificationPost>().postId,
                 onNoticeClick = {},
                 onBack = { navController.navigateBackFrom(entry, onExit) },

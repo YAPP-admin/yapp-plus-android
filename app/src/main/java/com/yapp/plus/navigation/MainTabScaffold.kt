@@ -10,12 +10,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import com.yapp.plus.R
+import com.yapp.plus.core.designsystem.components.toast.YappToastManager
 import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.feature.main.board.BoardRoute
 import com.yapp.plus.feature.main.community.AfterpartyBanner
@@ -44,6 +46,7 @@ internal fun MainTabScaffold(
     onAfterpartyClick: ((Long) -> Unit)? = null,
     onSettlementsClick: (() -> Unit)? = null,
 ) {
+    val toastManager = remember { YappToastManager() }
     val uriHandler = LocalUriHandler.current
     val contactChannelUrl = stringResource(R.string.yapp_contact_channel_url)
     var selectedTab by rememberSaveable(initialTab) { mutableStateOf(initialTab) }
@@ -87,6 +90,7 @@ internal fun MainTabScaffold(
             when (selectedTab) {
                 MainTab.Home ->
                     HomeRoute(
+                        toastManager = toastManager,
                         onNotificationsClick = onNotificationsClick,
                         afterpartyBanner = onAfterpartyClick?.let { navigate -> { AfterpartyBanner(navigate) } },
                         onSessionsClick = { selectedTab = MainTab.Schedule },
@@ -100,6 +104,7 @@ internal fun MainTabScaffold(
                 MainTab.Schedule -> ScheduleRoute(targetSessionId = scheduleSessionId)
                 MainTab.Board ->
                     BoardRoute(
+                        toastManager = toastManager,
                         noticeId = selectedNoticeId,
                         onNoticeClick = { selectedNoticeId = it },
                         onBack = { selectedNoticeId = null },

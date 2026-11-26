@@ -1,19 +1,18 @@
 package com.yapp.plus.feature.main.board
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yapp.plus.core.ui.BaseViewModel
 import com.yapp.plus.domain.notice.NoticeRepository
 import com.yapp.plus.feature.main.board.model.BoardCategory
+import com.yapp.plus.feature.main.board.model.BoardEvent
 import com.yapp.plus.feature.main.board.model.BoardUiState
 import com.yapp.plus.feature.main.board.model.NoticeUiState
 import com.yapp.plus.feature.main.board.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,12 +22,7 @@ internal class BoardViewModel
     constructor(
         private val savedState: SavedStateHandle,
         private val repository: NoticeRepository,
-    ) : ViewModel() {
-        private val savedCategory = savedState.get<String>(CATEGORY_KEY)
-        private val initialCategory =
-            BoardCategory.entries.find { it.name == savedCategory } ?: BoardCategory.All
-        private val mutableState = MutableStateFlow(BoardUiState(category = initialCategory))
-        val uiState = mutableState.asStateFlow()
+    ) : BaseViewModel<BoardUiState, BoardEvent>(initialBoardState(savedState)) {
         private var listJob: Job? = null
         private var detailJob: Job? = null
         private var readJob: Job? = null
@@ -42,7 +36,7 @@ internal class BoardViewModel
         fun selectCategory(value: BoardCategory) {
             if (uiState.value.category == value) return
             savedState[CATEGORY_KEY] = value.name
-            mutableState.update { it.copy(category = value) }
+            updateState { it.copy(category = value) }
             fetchNotices()
         }
 
@@ -50,7 +44,7 @@ internal class BoardViewModel
             listJob?.cancel()
             val category = uiState.value.category
             cursors.clear()
-            mutableState.update {
+            updateState {
                 it.copy(
                     notices = NoticeUiState.Loading,
                     nextCursor = null,
@@ -64,7 +58,7 @@ internal class BoardViewModel
                         val page = repository.fetchNotices(category.toNoticeType())
                         if (uiState.value.category != category) return@launch
                         val items = page.items.distinctBy { it.id }.map { it.toUiModel() }
-                        mutableState.update {
+                        updateState {
                             it.copy(
                                 notices =
                                     if (items.isEmpty()) {
@@ -79,7 +73,7 @@ internal class BoardViewModel
                         throw exception
                     } catch (_: Exception) {
                         if (uiState.value.category == category) {
-                            mutableState.update { it.copy(notices = NoticeUiState.Error) }
+                            updateState { it.copy(notices = NoticeUiState.Error) }
                         }
                     }
                 }
@@ -90,7 +84,7 @@ internal class BoardViewModel
             val current = (state.notices as? NoticeUiState.Content)?.value ?: return
             val cursor = state.nextCursor ?: return
             if (listJob?.isActive == true) return
-            mutableState.update { it.copy(isLoadingMore = true, hasLoadMoreError = false) }
+            updateState { it.copy(isLoadingMore = true, hasLoadMoreError = false) }
             listJob =
                 viewModelScope.launch {
                     try {
@@ -103,7 +97,7 @@ internal class BoardViewModel
                                 .associateBy { it.id }
                                 .values
                                 .toList()
-                        mutableState.update {
+                        updateState {
                             it.copy(
                                 notices = NoticeUiState.Content(items),
                                 nextCursor = page.nextCursor,
@@ -114,7 +108,7 @@ internal class BoardViewModel
                         throw exception
                     } catch (_: Exception) {
                         if (uiState.value.category == state.category) {
-                            mutableState.update {
+                            updateState {
                                 it.copy(
                                     isLoadingMore = false,
                                     hasLoadMoreError = true,
@@ -130,11 +124,10 @@ internal class BoardViewModel
             detailJob?.cancel()
             readJob?.cancel()
             noticeId = id
-            mutableState.update {
+            updateState {
                 it.copy(
                     detail = null,
                     isMarkingRead = false,
-                    hasReadError = false,
                 )
             }
             if (id != null) fetchDetail()
@@ -147,19 +140,19 @@ internal class BoardViewModel
         private fun fetchDetail() {
             val id = noticeId ?: return
             detailJob?.cancel()
-            mutableState.update { it.copy(detail = NoticeUiState.Loading, hasReadError = false) }
+            updateState { it.copy(detail = NoticeUiState.Loading) }
             detailJob =
                 viewModelScope.launch {
                     try {
                         val notice = repository.fetchNotice(id).toUiModel()
                         if (noticeId == id) {
-                            mutableState.update { it.copy(detail = NoticeUiState.Content(notice)) }
+                            updateState { it.copy(detail = NoticeUiState.Content(notice)) }
                         }
                     } catch (exception: CancellationException) {
                         throw exception
                     } catch (_: Exception) {
                         if (noticeId == id) {
-                            mutableState.update { it.copy(detail = NoticeUiState.Error) }
+                            updateState { it.copy(detail = NoticeUiState.Error) }
                         }
                     }
                 }
@@ -169,20 +162,22 @@ internal class BoardViewModel
             val id = noticeId ?: return
             val notice = (uiState.value.detail as? NoticeUiState.Content)?.value ?: return
             if (notice.isRead || readJob?.isActive == true) return
-            mutableState.update { it.copy(isMarkingRead = true, hasReadError = false) }
+            updateState { it.copy(isMarkingRead = true) }
             readJob =
                 viewModelScope.launch {
                     try {
                         repository.markRead(id)
+                        ensureActive()
                         if (noticeId != id) return@launch
-                        mutableState.update {
+                        updateState {
                             it.copy(
                                 detail = NoticeUiState.Content(notice.copy(isRead = true)),
                             )
                         }
                         val refreshed = repository.fetchNotice(id).toUiModel()
+                        ensureActive()
                         if (noticeId == id) {
-                            mutableState.update {
+                            updateState {
                                 it.copy(
                                     detail = NoticeUiState.Content(refreshed),
                                 )
@@ -191,9 +186,10 @@ internal class BoardViewModel
                     } catch (exception: CancellationException) {
                         throw exception
                     } catch (_: Exception) {
-                        if (noticeId == id) mutableState.update { it.copy(hasReadError = true) }
+                        ensureActive()
+                        if (noticeId == id) sendEvent(BoardEvent.ReadFailed(id))
                     } finally {
-                        if (noticeId == id) mutableState.update { it.copy(isMarkingRead = false) }
+                        if (noticeId == id) updateState { it.copy(isMarkingRead = false) }
                     }
                 }
         }
@@ -202,3 +198,9 @@ internal class BoardViewModel
             const val CATEGORY_KEY = "boardCategory"
         }
     }
+
+private fun initialBoardState(savedState: SavedStateHandle): BoardUiState {
+    val savedCategory = savedState.get<String>(BoardViewModel.CATEGORY_KEY)
+    val category = BoardCategory.entries.find { it.name == savedCategory } ?: BoardCategory.All
+    return BoardUiState(category = category)
+}

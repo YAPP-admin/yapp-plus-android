@@ -14,7 +14,6 @@ data class HomeInteractionUiState(
     val verifiedSessionId: Long? = null,
     val reportType: AttendanceReportType? = null,
     val reportReason: String = "",
-    val isReportComplete: Boolean = false,
 ) {
     val isSubmitting: Boolean
         get() = submissionStage != HomeSubmissionStage.Idle

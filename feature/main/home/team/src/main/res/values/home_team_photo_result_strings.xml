@@ -30,6 +30,7 @@
     <string name="home_team_result_check">인증 결과 확인하기</string>
     <string name="home_team_result_pending_action">출석 확인 중이에요</string>
     <string name="home_team_result_view_photo">인증 사진 보기</string>
+    <string name="home_team_result_close">닫기</string>
     <string name="home_team_result_submitted_photo">제출된 팀 출석 사진</string>
     <string name="home_team_result_image_unavailable">이 사진은 더 이상 볼 수 없어요.</string>
     <string name="home_team_result_image_error">인증 사진을 불러오지 못했어요.</string>

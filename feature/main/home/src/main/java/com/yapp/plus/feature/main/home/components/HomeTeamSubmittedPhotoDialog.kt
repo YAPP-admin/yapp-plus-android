@@ -4,12 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +18,7 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.yapp.plus.core.designsystem.modifier.WithoutRipple
+import com.yapp.plus.core.designsystem.modifier.shimmerEffect
 import com.yapp.plus.domain.attendance.TeamAttendancePhotoImage
 import com.yapp.plus.feature.main.home.R
 import com.yapp.plus.feature.main.home.model.HomeTeamPhotoViewerUiState
@@ -35,9 +34,7 @@ internal fun HomeTeamSubmittedPhotoDialog(
         text = {
             when (state) {
                 HomeTeamPhotoViewerUiState.Loading ->
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
+                    Box(Modifier.fillMaxWidth().heightIn(min = 180.dp).shimmerEffect())
                 HomeTeamPhotoViewerUiState.Unavailable ->
                     Text(stringResource(R.string.home_team_result_image_unavailable))
                 HomeTeamPhotoViewerUiState.Error ->
@@ -48,7 +45,7 @@ internal fun HomeTeamSubmittedPhotoDialog(
                         contentDescription = stringResource(R.string.home_team_result_submitted_photo),
                         modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 420.dp),
                         contentScale = ContentScale.Fit,
-                        loading = { CircularProgressIndicator() },
+                        loading = { Box(Modifier.fillMaxWidth().heightIn(min = 180.dp).shimmerEffect()) },
                         error = { Text(stringResource(R.string.home_team_result_image_error)) },
                     )
             }

@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.yapp.plus.core.designsystem.components.input.YappInputState
-import com.yapp.plus.core.designsystem.theme.YappAuthColor
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 import com.yapp.plus.core.designsystem.theme.YappTheme
 import com.yapp.plus.core.preview.TextInputPreviewFixture
 import com.yapp.plus.feature.signup.model.AuthStatus
@@ -37,7 +37,7 @@ private fun SignUpContentPreview(
             else -> YappInputState.Default
         }
     YappTheme(darkTheme = false, dynamicColor = false) {
-        Scaffold(containerColor = YappAuthColor.background) { padding ->
+        Scaffold(containerColor = YappMainColor.surface) { padding ->
             SignUpContent(
                 step = step,
                 value = previewValue,
@@ -72,7 +72,7 @@ private fun SignUpContentPreview(
 @Composable
 private fun SignUpNameCorrectionPreview() {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        Scaffold(containerColor = YappAuthColor.background) { padding ->
+        Scaffold(containerColor = YappMainColor.surface) { padding ->
             SignUpContent(
                 step = SignUpStep.Name,
                 value = stringResource(R.string.auth_preview_name),
@@ -98,7 +98,7 @@ private fun AuthStatusContentPreview(
     @PreviewParameter(AuthStatusPreviewProvider::class) status: AuthStatus,
 ) {
     YappTheme(darkTheme = false, dynamicColor = false) {
-        Scaffold(containerColor = YappAuthColor.background) { padding ->
+        Scaffold(containerColor = YappMainColor.surface) { padding ->
             AuthStatusContent(
                 status = status,
                 onBack = {},

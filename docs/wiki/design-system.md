@@ -12,7 +12,7 @@ last_verified: 2026-10-25
 
 [로그인·회원가입 Figma](https://www.figma.com/design/LUFGoDnVmwJT43QhecBI8x/YAPP-?node-id=9-58487)의 변형은 별도 색상 토큰을 사용합니다. 기존 `primary`와 공용 컴포넌트 기본값을 바꾸지 않습니다.
 
-Feature의 제목·설명·링크·배경에는 공개 `YappAuthColor`의 `brand`, `textPrimary`, `textSecondary`, `textSubtle`, `textFaint`, `background`를 사용합니다. 나머지 공용 색상과 컴포넌트 내부 색상은 `YappColor`에서 관리합니다.
+Feature의 제목·설명·링크·배경에는 공개 `YappMainColor`를 사용합니다. 나머지 공용 색상과 컴포넌트 내부 색상은 `YappColor`에서 관리합니다.
 
 메인 탭의 배경·표면·본문·구분선 색상은 `:core:designsystem/theme/YappMainColor.kt`에서 관리합니다. 공통 헤더·아이콘과 텍스트 행은 `components/main/`의 `YappMainHeader`, `YappIconLabel`로 제공합니다. 화면별 안내 문구와 동작은 Feature가 소유합니다. 인증 화면에서 사용하는 기존 색상 토큰은 변경하지 않습니다.
 

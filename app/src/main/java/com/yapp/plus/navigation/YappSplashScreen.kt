@@ -16,7 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.yapp.plus.R
-import com.yapp.plus.core.designsystem.theme.YappSplashColor
+import com.yapp.plus.core.designsystem.theme.YappMainColor
 
 @Composable
 internal fun YappSplashScreen(modifier: Modifier = Modifier) {
@@ -29,8 +29,8 @@ internal fun YappSplashScreen(modifier: Modifier = Modifier) {
                         Brush.verticalGradient(
                             colors =
                                 listOf(
-                                    YappSplashColor.gradientStart,
-                                    YappSplashColor.gradientEnd,
+                                    YappMainColor.brand,
+                                    YappMainColor.splashGradientEnd,
                                 ),
                         ),
                 ),

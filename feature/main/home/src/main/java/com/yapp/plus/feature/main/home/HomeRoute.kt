@@ -64,7 +64,6 @@ fun HomeRoute(
     val session = (state.currentWeekSchedule as? AttendanceUiState.Content)?.value
     val teamSession = session?.takeIf { it.type == SessionType.TEAM }
 
-    LaunchedEffect(viewModel) { viewModel.loadInitialHomeData() }
     LaunchedEffect(teamSession) {
         if (state.currentWeekSchedule is AttendanceUiState.Content) teamViewModel.refresh(teamSession)
     }

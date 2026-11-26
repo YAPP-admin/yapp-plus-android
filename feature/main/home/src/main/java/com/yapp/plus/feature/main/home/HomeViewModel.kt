@@ -38,7 +38,11 @@ internal class HomeViewModel
         private var refreshJob: Job? = null
         private var hasRequestedInitialHomeData = false
 
-        fun loadInitialHomeData() {
+        init {
+            loadInitialHomeData()
+        }
+
+        private fun loadInitialHomeData() {
             if (hasRequestedInitialHomeData) return
             hasRequestedInitialHomeData = true
             retryCurrentWeekSchedule()
